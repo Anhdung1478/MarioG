@@ -1,3 +1,0 @@
-E:/Project/MarioG/build/_deps/vorbis-subbuild/CMakeFiles/vorbis-populate.dir
-E:/Project/MarioG/build/_deps/vorbis-subbuild/CMakeFiles/edit_cache.dir
-E:/Project/MarioG/build/_deps/vorbis-subbuild/CMakeFiles/rebuild_cache.dir
