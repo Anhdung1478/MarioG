@@ -1,0 +1,1 @@
+-isystem "E:/Project/MarioG/build/_deps/vorbis-src/include" -isystem "E:/Project/MarioG/build/_deps/ogg-src/include" -isystem "E:/Project/MarioG/build/_deps/ogg-build/include"

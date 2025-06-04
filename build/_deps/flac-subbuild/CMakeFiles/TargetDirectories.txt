@@ -1,0 +1,3 @@
+E:/Project/MarioG/build/_deps/flac-subbuild/CMakeFiles/flac-populate.dir
+E:/Project/MarioG/build/_deps/flac-subbuild/CMakeFiles/edit_cache.dir
+E:/Project/MarioG/build/_deps/flac-subbuild/CMakeFiles/rebuild_cache.dir

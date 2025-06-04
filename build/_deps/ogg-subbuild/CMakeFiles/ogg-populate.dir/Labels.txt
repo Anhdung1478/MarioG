@@ -1,0 +1,14 @@
+# Target labels
+ ogg-populate
+# Source files and their labels
+E:/Project/MarioG/build/_deps/ogg-subbuild/CMakeFiles/ogg-populate
+E:/Project/MarioG/build/_deps/ogg-subbuild/CMakeFiles/ogg-populate.rule
+E:/Project/MarioG/build/_deps/ogg-subbuild/CMakeFiles/ogg-populate-complete.rule
+E:/Project/MarioG/build/_deps/ogg-subbuild/ogg-populate-prefix/src/ogg-populate-stamp/ogg-populate-build.rule
+E:/Project/MarioG/build/_deps/ogg-subbuild/ogg-populate-prefix/src/ogg-populate-stamp/ogg-populate-configure.rule
+E:/Project/MarioG/build/_deps/ogg-subbuild/ogg-populate-prefix/src/ogg-populate-stamp/ogg-populate-download.rule
+E:/Project/MarioG/build/_deps/ogg-subbuild/ogg-populate-prefix/src/ogg-populate-stamp/ogg-populate-install.rule
+E:/Project/MarioG/build/_deps/ogg-subbuild/ogg-populate-prefix/src/ogg-populate-stamp/ogg-populate-mkdir.rule
+E:/Project/MarioG/build/_deps/ogg-subbuild/ogg-populate-prefix/src/ogg-populate-stamp/ogg-populate-patch.rule
+E:/Project/MarioG/build/_deps/ogg-subbuild/ogg-populate-prefix/src/ogg-populate-stamp/ogg-populate-test.rule
+E:/Project/MarioG/build/_deps/ogg-subbuild/ogg-populate-prefix/src/ogg-populate-stamp/ogg-populate-update.rule

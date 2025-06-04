@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"E:/Project/MarioG/build/_deps/sfml-subbuild/cmake_install.cmake"
+	],
+	"Parallel" : false
+}
