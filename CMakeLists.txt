@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.28)
+cmake_minimum_required(VERSION 3.5)
 
 # Tên project và ngôn ngữ
 project(MARIOG LANGUAGES CXX)
@@ -14,6 +14,14 @@ FetchContent_Declare(SFML
     SYSTEM)
 FetchContent_MakeAvailable(SFML)
 
+include(FetchContent)
+FetchContent_Declare(
+    eventpp
+    GIT_REPOSITORY https://github.com/wqking/eventpp
+    GIT_TAG        d2db8af2a46c79f8dc75759019fba487948e9442 # v0.1.3
+)
+FetchContent_MakeAvailable(eventpp)
+
 # Cài đặt chuẩn C++ (ví dụ C++17)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -21,4 +29,5 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Thêm file nguồn
 add_executable(MARIOG src/main_app/main.cpp src/main_app/main-window.cpp src/main_app/pages/main-menu.cpp)
 
-target_link_libraries(MARIOG PRIVATE SFML::Graphics)
+# target_link_directories(MARIOG PRIVATE ${CMAKE_SOURCE_DIR}/extern/include/SFML/ ${CMAKE_SOURCE_DIR}/extern/include/BOX2D/ ${CMAKE_SOURCE_DIR}/extern/include/)
+target_link_libraries(MARIOG PRIVATE SFML::Graphics SFML::Window SFML::System SFML::Audio BOX2D eventpp::eventpp)

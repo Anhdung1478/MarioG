@@ -3,7 +3,7 @@
 #include <bits/stdc++.h>
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
-#include "pages/page.hpp"
+#include "../widget_toolkit/interfaces.hpp"
 
 #define DEFAULT_FPS 60
 #define DEFAULT_WIN_WIDTH 1280
@@ -18,14 +18,16 @@ namespace mario {
             int initScreenWidth = DEFAULT_WIN_WIDTH, initScreenHeight = DEFAULT_WIN_HEIGHT;
             std::string title = "Mario Visualization";
             sf::Clock clock;
+            bool isRunning = true;
         
         public:
-            std::unique_ptr<sf::RenderWindow> window;
+            sf::RenderWindow *window;
             std::shared_ptr<Page> content, content_to;
             std::function<void()> _deferredStateChange = nullptr;
 
             void changePage(std::shared_ptr<Page> to);
-            std::unique_ptr<sf::RenderWindow> render(std::unique_ptr<sf::RenderWindow> window) override;
+            void render(sf::RenderWindow *window) override;
+            void closeWindow();
             void run();
     };
 }

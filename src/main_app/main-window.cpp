@@ -10,46 +10,55 @@ void mario::MainWindow::changePage(std::shared_ptr<Page> to) {
     };
 }
 
-std::unique_ptr<sf::RenderWindow> mario::MainWindow::render(std::unique_ptr<sf::RenderWindow> window) {
+void mario::MainWindow::render(sf::RenderWindow *window) {
     window->clear(sf::Color::Black);
 
     if (content) {
-        window = content->render(std::move(window));
+        content->render(window);
     }
 
     window->display();
-    return window;
+}
+
+void mario::MainWindow::closeWindow() {
+    isRunning = false;
 }
 
 void mario::MainWindow::run() {
-    window = std::make_unique<sf::RenderWindow>(sf::VideoMode({initScreenWidth, initScreenHeight}), title, sf::Style::Default);
+    window = new sf::RenderWindow(sf::VideoMode(sf::Vector2u(initScreenWidth, initScreenHeight)), title, sf::Style::Default);
     window->setFramerateLimit(fixedFPS);
 
-    changePage(std::make_shared<pages::MainMenuPage>(*this)); // Initialize with a default page
+    changePage(std::make_shared<pages::MainMenuPage>(*this)); // Initialize with main-menu page
 
     clock.reset();
-    bool running = true;
-    while (running) {
+    isRunning = true;
+    while (isRunning) {
         while (const std::optional event = window->pollEvent()) {
-            if (event->is<sf::Event::Closed>()) {
-                running = false;
+            if(event->is<sf::Event::Closed>()) {
+                isRunning = false;
+            }
+
+            if(event->is<sf::Event::Resized>()) {
+                window->setSize(sf::Vector2u(initScreenWidth, initScreenHeight));
             }
 
             if(content) {
-                content->handleEvent(*event); // Pass the event to the current content page
+                content->handleEvent(window, *event); // Pass the event to the current content page
             }
         }
 
         sf::Time deltaTime = clock.restart();
         if (content) {
-            content->update(deltaTime.asSeconds()); // Update with a dummy delta time
+            content->update(window, deltaTime.asSeconds()); // Update with a delta time
         }
 
-        window = render(std::move(window));
+        render(window);
 
         if (_deferredStateChange) {
             _deferredStateChange();
             _deferredStateChange = nullptr;
         }
     }
+
+    delete[] window;
 }

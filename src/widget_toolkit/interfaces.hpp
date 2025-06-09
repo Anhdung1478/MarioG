@@ -8,15 +8,15 @@ namespace mario
     {
         public:
         virtual ~IRenderable() = default;
-        virtual std::unique_ptr<sf::RenderWindow> render(const std::unique_ptr<sf::RenderWindow> window) = 0;
+        virtual void render(sf::RenderWindow *window) = 0;
     };
 
     class IUpdateable
     {
         public:
         virtual ~IUpdateable() = default;
-        virtual void update(float deltaTime) = 0;
-        virtual void handleEvent(const sf::Event &event) = 0;
+        virtual void update(const sf::RenderWindow *window, float deltaTime) = 0;
+        virtual void handleEvent(const sf::RenderWindow *window, const sf::Event &event) = 0;
     };
 
     class IScreenElement : public IRenderable, public IUpdateable {};
