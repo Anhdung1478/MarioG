@@ -13,19 +13,35 @@ namespace mario {
         Pressed = 3
     };
 
+    struct ButtonListNode;
+
     class Button : public IScreenElement {
-        public:
+        private:
             std::unique_ptr<sf::Font> font;
+            ButtonState state;
+
+        public:
             std::string buttonText;
             sf::FloatRect buttonRect;
+            ButtonListNode *p_nodeOnButton;
 
             eventpp::CallbackList<void()> Click;
-            ButtonState state;
             int fontSize;
-            bool enabled;
+            bool enabled, selected;
 
-            Button() : fontSize(20), enabled(true), buttonText("") {
+            Button(std::string buttText = "") : fontSize(20), enabled(true), selected(false), buttonText(buttText) {
                 font = std::make_unique<sf::Font>("../../asset/fonts/Cascadia.ttf");
+                p_nodeOnButton = nullptr;
+            }
+
+            Button(const Button &button) {
+                buttonText = button.buttonText;
+                buttonRect = button.buttonRect;
+                Click = button.Click;
+                state = button.state;
+                fontSize = button.fontSize;
+                enabled = button.enabled;
+                selected = button.selected;
             }
             
             void update(const sf::RenderWindow *window, float dt) override {
@@ -61,6 +77,13 @@ namespace mario {
                     
                     window->draw(rect);
 
+                    if(selected) {
+                        sf::CircleShape triangle(5);
+                        triangle.setPosition(sf::Vector2f(buttonRect.position.x - 30, buttonRect.position.y));
+                        triangle.setFillColor(sf::Color::White);
+                        window->draw(triangle);
+                    }
+
                     sf::Text text(*font, buttonText, fontSize);
                     float textLenX = text.getGlobalBounds().size.x;
                     float textLenY = text.getGlobalBounds().size.y;
@@ -70,5 +93,5 @@ namespace mario {
                     window->draw(text); 
                 }
             }
-        };
+    };
 }

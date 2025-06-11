@@ -12,88 +12,82 @@ mario::pages::MainMenuPage::MainMenuPage(mario::MainWindow &context) : Page(cont
     p_showMenu->setPosition({500, 500});
     p_showMenu->setFillColor(sf::Color::White);
 
-    p_newGameButton = std::make_unique<mario::Button>();
-    p_newGameButton->buttonText = "New Game";
-    p_newGameButton->buttonRect = sf::FloatRect(sf::Vector2f(540, 490), sf::Vector2f(200, 30));
-    p_newGameButton->enabled = false;
-    p_newGameButton->Click.append([this]() {
-        for (int i = 1; i <= NUM_LEVELS; ++i) {
-            p_levelButton[i]->enabled = true;
-        }
+    p_menuButtonListNode = new ButtonListNode();
+    p_newGameButtonListNode = new ButtonListNode();
+    p_continueButtonListNode = new ButtonListNode();
 
-        p_newGameButton->enabled = p_continueButton->enabled = p_settingsButton->enabled = p_exitButton->enabled = false;
-    });
+    mario::Button *p_button;
+    p_button = new mario::Button("New Game");
+    p_button->buttonRect = sf::FloatRect(sf::Vector2f(540, 490), sf::Vector2f(200, 30));
+    p_button->p_nodeOnButton = p_newGameButtonListNode;
+    p_button->Click.append([this]() {});
 
-    p_continueButton = std::make_unique<mario::Button>();
-    p_continueButton->buttonText = "Continue";
-    p_continueButton->buttonRect = sf::FloatRect(sf::Vector2f(540, 540), sf::Vector2f(200, 30));
-    p_continueButton->enabled = false;
-    p_continueButton->Click.append([this]() {
+    p_menuButtonListNode->buttonList.push_back(p_button);
+
+    p_button = new mario::Button("Continue");
+    p_button->buttonRect = sf::FloatRect(sf::Vector2f(540, 540), sf::Vector2f(200, 30));
+    p_button->p_nodeOnButton = nullptr;
+    p_button->Click.append([this]() {
         
     });
 
-    p_settingsButton = std::make_unique<mario::Button>();
-    p_settingsButton->buttonText = "Settings";
-    p_settingsButton->buttonRect = sf::FloatRect(sf::Vector2f(540, 590), sf::Vector2f(200, 30));
-    p_settingsButton->enabled = false;
-    p_settingsButton->Click.append([this]() {
+    p_menuButtonListNode->buttonList.push_back(p_button);
+
+    p_button = new mario::Button("Settings");
+    p_button->buttonRect = sf::FloatRect(sf::Vector2f(540, 590), sf::Vector2f(200, 30));
+    p_button->p_nodeOnButton = nullptr;
+    p_button->Click.append([this]() {
 
     });
 
-    p_exitButton = std::make_unique<mario::Button>();
-    p_exitButton->buttonText = "Exit Game";
-    p_exitButton->buttonRect = sf::FloatRect(sf::Vector2f(540, 640), sf::Vector2f(200, 30));
-    p_exitButton->enabled = false;
-    p_exitButton->Click.append([this]() {
+    p_menuButtonListNode->buttonList.push_back(p_button);
+
+    p_button = new mario::Button("Exit Game");
+    p_button->buttonRect = sf::FloatRect(sf::Vector2f(540, 640), sf::Vector2f(200, 30));
+    p_button->p_nodeOnButton = nullptr;
+    p_button->Click.append([this]() {
         closeWindow();
     });
 
+    p_menuButtonListNode->buttonList.push_back(p_button);
+
     for (int i = 1; i <= NUM_LEVELS; ++i) {
-        p_levelButton[i] = std::make_unique<mario::Button>();
-        p_levelButton[i]->buttonText = "Level " + std::to_string(i);
-        p_levelButton[i]->buttonRect = sf::FloatRect(sf::Vector2f(540, 440 + 50 * i), sf::Vector2f(200, 30));
-        p_levelButton[i]->enabled = false;
+        p_button = new mario::Button("Level " + std::to_string(i));
+        p_button->buttonRect = sf::FloatRect(sf::Vector2f(540, 440 + 50 * i), sf::Vector2f(200, 30));
+        p_button->p_nodeOnButton = nullptr;
+        p_button->Click.append([this]() {
+
+        });
+
+        p_newGameButtonListNode->buttonList.push_back(p_button); 
     }
 
-
+    p_currButtonList = std::make_unique<mario::ButtonList>(p_menuButtonListNode, nullptr);
 }
 
 void mario::pages::MainMenuPage::handleEvent(const sf::RenderWindow *window, const sf::Event &event) {
     if (_isMenuVisible == false && (event.is<sf::Event::KeyPressed>() || event.is<sf::Event::MouseButtonPressed>())) {
         _isMenuVisible = true;
-        p_newGameButton->enabled = p_continueButton->enabled = p_settingsButton->enabled = p_exitButton->enabled = true;
+        p_currButtonList->delay_time = 0.3f;
     }
 
-    p_newGameButton->handleEvent(window, event);
-    p_continueButton->handleEvent(window, event);
-    p_settingsButton->handleEvent(window, event);
-    p_exitButton->handleEvent(window, event);
-
-    for (int i = 1; i <= NUM_LEVELS; ++i)
-        p_levelButton[i]->handleEvent(window, event);
+    if(_isMenuVisible && p_currButtonList != nullptr) {
+        p_currButtonList->handleEvent(window, event);
+    }
 }
 
 void mario::pages::MainMenuPage::update(const sf::RenderWindow *window, float dt) {
-    p_newGameButton->update(window, dt);
-    p_continueButton->update(window, dt);
-    p_settingsButton->update(window, dt);
-    p_exitButton->update(window, dt);
-
-    for (int i = 1; i <= NUM_LEVELS; ++i)
-        p_levelButton[i]->update(window, dt);
+    if(_isMenuVisible && p_currButtonList != nullptr) {
+        p_currButtonList->update(window, dt);
+    }
 }
 
 void mario::pages::MainMenuPage::render(sf::RenderWindow *window) {
     window->draw(*p_title);
     if(!_isMenuVisible) {
         window->draw(*p_showMenu);
-    } 
-
-    p_newGameButton->render(window);
-    p_continueButton->render(window);
-    p_settingsButton->render(window);
-    p_exitButton->render(window);
-
-    for (int i = 1; i <= NUM_LEVELS; ++i)
-        p_levelButton[i]->render(window);
+    } else 
+        if(p_currButtonList != nullptr) {
+            p_currButtonList->render(window);
+        }
 }

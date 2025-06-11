@@ -3,6 +3,7 @@
 #include <bits/stdc++.h>
 #include <SFML/Graphics.hpp>
 #include "../../widget_toolkit/controls/button.hpp"
+#include "../../widget_toolkit/controls/button-list.hpp"
 #include "page.hpp"
 
 const int NUM_LEVELS = 3;
@@ -14,12 +15,13 @@ namespace mario::pages {
             std::unique_ptr<sf::Text> p_title;
             std::unique_ptr<sf::Text> p_showMenu;
 
-            std::unique_ptr<mario::Button> p_newGameButton;
-            std::unique_ptr<mario::Button> p_continueButton;
-            std::unique_ptr<mario::Button> p_settingsButton;
-            std::unique_ptr<mario::Button> p_exitButton;
+            mario::ButtonListNode *p_levelButton[NUM_LEVELS + 1];
 
-            std::unique_ptr<mario::Button> p_levelButton[NUM_LEVELS + 1];
+            mario::ButtonListNode *p_newGameButtonListNode;
+            mario::ButtonListNode *p_continueButtonListNode;
+            mario::ButtonListNode *p_menuButtonListNode;
+
+            std::unique_ptr<mario::ButtonList> p_currButtonList;
 
             std::function<void()> _deferredStateChange;
             bool _isMenuVisible = false;
