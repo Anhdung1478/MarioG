@@ -15,10 +15,7 @@ namespace mario::pages {
             std::unique_ptr<sf::Text> p_title;
             std::unique_ptr<sf::Text> p_showMenu;
 
-            mario::ButtonListNode *p_levelButton[NUM_LEVELS + 1];
-
             mario::ButtonListNode *p_newGameButtonListNode;
-            mario::ButtonListNode *p_continueButtonListNode;
             mario::ButtonListNode *p_menuButtonListNode;
 
             std::unique_ptr<mario::ButtonList> p_currButtonList;

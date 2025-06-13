@@ -14,7 +14,6 @@ mario::pages::MainMenuPage::MainMenuPage(mario::MainWindow &context) : Page(cont
 
     p_menuButtonListNode = new ButtonListNode();
     p_newGameButtonListNode = new ButtonListNode();
-    p_continueButtonListNode = new ButtonListNode();
 
     mario::Button *p_button;
     p_button = new mario::Button("New Game");
