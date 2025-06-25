@@ -1,7 +1,7 @@
+#pragma once
+
 #include<bits/stdc++.h>
 #include "../interfaces.hpp"
-
-
 
 namespace mario {
     class Entity : public IScreenElement {
