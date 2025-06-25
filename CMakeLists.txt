@@ -22,6 +22,15 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(eventpp)
 
+FetchContent_Declare(
+	box2d
+	GIT_REPOSITORY https://github.com/erincatto/box2d.git
+	GIT_TAG main
+	GIT_SHALLOW TRUE
+	GIT_PROGRESS TRUE
+)
+FetchContent_MakeAvailable(box2d)
+
 # Cài đặt chuẩn C++ (ví dụ C++17)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -30,4 +39,4 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_executable(MARIOG src/main_app/main.cpp src/main_app/main-window.cpp src/main_app/pages/main-menu.cpp src/main_app/pages/levels.cpp)
 
 # target_link_directories(MARIOG PRIVATE ${CMAKE_SOURCE_DIR}/extern/include/SFML/ ${CMAKE_SOURCE_DIR}/extern/include/BOX2D/ ${CMAKE_SOURCE_DIR}/extern/include/)
-target_link_libraries(MARIOG PRIVATE SFML::Graphics SFML::Window SFML::System SFML::Audio BOX2D eventpp::eventpp)
+target_link_libraries(MARIOG PRIVATE SFML::Graphics SFML::Window SFML::System SFML::Audio box2d eventpp::eventpp)
