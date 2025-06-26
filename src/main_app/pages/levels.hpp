@@ -5,15 +5,15 @@
 
 namespace mario::pages {
     struct LevelState {
-        int level, score, num_lives, player_type;
+        int level, score, coins, num_lives, player_type;
 
-        LevelState(int _level = 0, int _score = 0, int _lives = 0, int _type = 0) : level(_level), score(_score), num_lives(_lives), player_type(_type) {};
+        LevelState(int _level = 0, int _lives = 0, int _type = 0, int _score = 0, int _coins = 0) : level(_level), score(_score), coins(_coins), num_lives(_lives), player_type(_type) {};
         LevelState(const LevelState &state) : level(state.level), score(state.score), num_lives(state.num_lives), player_type(state.player_type) {};
     };
 
     class LevelsPage : public Page {
         private:
-            std::unique_ptr<Player> p_player;
+            std::unique_ptr<mario::entity::Player> p_player;
             std::unique_ptr<mario::input::InputManager> p_inputManager;
 
         public:

@@ -3,12 +3,19 @@
 #include<bits/stdc++.h>
 #include "entity.hpp"
 #include <box2d/box2d.h>
-#include "../dynamic-box.hpp"
+#include "box/dynamic-box.hpp"
 
-const float PIXEL_RUN_PER_SCREEN = 5.0f;
 
-namespace mario {
+namespace mario::entity {
+    
+    constexpr static float MOVE_ACCELERATION = 15.f;
+    constexpr static float MAX_SPEED = 200.f; // pixel per second
+    constexpr static float GROUND_DAMPING = 3.f;
+    constexpr static float AIR_DAMPING = 0.5f;
 
+    constexpr static float JUMP_ACCELERATION = 50.f;
+    constexpr static float MAX_JUMP_TIME = 0.2f;
+    
     class Player : public Entity {
         private:
             std::unique_ptr<sf::Sprite> p_sprite;
@@ -17,7 +24,7 @@ namespace mario {
             float shootingDelayTime = 0.f;
             bool _isRunning = false, _isRunningForward, _isJumping = false;
             bool _isFaceForward = true;
-            DynamicBox *p_dynamicBox = nullptr;
+            DynamicBox *p_playerBody = nullptr;
             sf::Time jumpTimer;
 
         public:
@@ -28,15 +35,15 @@ namespace mario {
                 p_sprite->setOrigin({11.5, 31});
                 p_sprite->setScale({2.5f, 2.5f});
                 position = sf::Vector2f(15, 720);
-                p_dynamicBox = new DynamicBox(worldId, sf::Vector2f(500.f, 200.f), sf::Vector2f(24.f, 31.f));
+                p_playerBody = new DynamicBox(worldId, sf::Vector2f(500.f, 200.f), sf::Vector2f(24.f, 31.f), 1.0f, 0.8f);
             }
 
             ~Player() override {
-                delete p_dynamicBox;
+                delete p_playerBody;
             }
 
             bool isInSurface() {
-                return (p_dynamicBox->getPosition().y + p_dynamicBox->getDimension().y >= 715.f && p_dynamicBox->getVeclocity().y <= 0.001f && p_dynamicBox->getVeclocity().y >= -0.0001f);
+                return (p_playerBody->getPosition().y + p_playerBody->getDimension().y >= 714.f && p_playerBody->getVelocity().y <= 0.1f && p_playerBody->getVelocity().y >= -0.1f);
             }
 
             bool isFaceToBlock() {
@@ -82,23 +89,42 @@ namespace mario {
             }
                 
             void update(const sf::RenderWindow *window, float dt) override {
+                sf::Vector2f vel = p_playerBody->getVelocity();
+                if(!isInSurface()) {
+                    // change texture to jumping
+                } else {
+                    if(abs(vel.x) <= 0.001f) {
+                        // change texture to idle
+                    } else {
+                        // change texture to next running texture 
+                    }
+                }
+
+                float bodyMass = p_playerBody->getMass();
+
                 if(_isJumping) {
-                    p_dynamicBox->applyForce({0.f, -20.f * 40.f});
+                    p_playerBody->applyForce(sf::Vector2f(0.f, -JUMP_ACCELERATION * bodyMass));
                     jumpTimer += sf::seconds(dt);
                 }
 
-                if(_isJumping && jumpTimer >= sf::seconds(0.2f))
+                if(_isJumping && jumpTimer >= sf::seconds(MAX_JUMP_TIME))
                     _isJumping = false;
 
                 if(_isRunning && isFaceToBlock()) 
                     _isRunning = false;
                 
                 if(_isRunning) {
-                    if(_isRunningForward != _isFaceForward)
+                    if(_isFaceForward != _isRunningForward && (vel.x == 0.f || (_isFaceForward != (vel.x > 0.f))))
                         rotateDirection();
 
-                    position.x += (_isRunningForward ? 1 : -1) * PIXEL_RUN_PER_SCREEN;
+                    if(_isRunningForward && vel.x < MAX_SPEED || !_isRunningForward && vel.x > -MAX_SPEED) {
+                        sf::Vector2f force = sf::Vector2f((_isRunningForward ? 1 : -1) * MOVE_ACCELERATION * bodyMass, 0.f);
+                        p_playerBody->applyForce(force);
+                    }
                 }
+
+                p_playerBody->setDamping(isInSurface() ? GROUND_DAMPING : AIR_DAMPING);
+                std::cerr << "PLAYER VELOCITY: " << vel.x << ' ' << vel.y << '\n';
             }
             
             void handleEvent(const sf::RenderWindow *window, const sf::Event &event) override {
@@ -107,7 +133,7 @@ namespace mario {
             
             void render(sf::RenderWindow *window) override {
                 p_sprite->setPosition(position);
-                p_sprite->setPosition(p_dynamicBox->getPosition());
+                p_sprite->setPosition(p_playerBody->getPosition());
 
                 window->draw(*p_sprite);
             }

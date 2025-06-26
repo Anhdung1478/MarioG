@@ -3,7 +3,7 @@
 #include<bits/stdc++.h>
 #include "../interfaces.hpp"
 
-namespace mario {
+namespace mario::entity {
     class Entity : public IScreenElement {
         public:
             void update(const sf::RenderWindow *window, float dt) override {

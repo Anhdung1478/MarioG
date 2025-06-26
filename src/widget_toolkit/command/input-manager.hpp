@@ -17,7 +17,7 @@ namespace mario::input {
                 keyMap[scanKey] = std::move(command);
             }
 
-            void handleEvent(Player &player, const sf::Event &event) {
+            void handleEvent(mario::entity::Player &player, const sf::Event &event) {
                 if(const auto* key = event.getIf<sf::Event::KeyPressed>()) {
                     auto it = keyMap.find(key->scancode);
                     if(it != keyMap.end())

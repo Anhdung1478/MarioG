@@ -4,7 +4,7 @@
 #include "../../widget_toolkit/interfaces.hpp"
 
 namespace mario {
-    class Page : public IScreenElement {
+    class Page : public IScreenElement { // State pattern
         protected:
             MainWindow *_context;
         

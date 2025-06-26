@@ -2,7 +2,7 @@
 #include "levels.hpp"
 
 mario::pages::LevelsPage::LevelsPage(MainWindow &context, LevelState state) : Page(context) {
-    p_player = std::make_unique<Player>("../../asset/entity/mario.png", _context->getWorldId());
+    p_player = std::make_unique<mario::entity::Player>("../../asset/entity/mario.png", _context->getWorldId());
     p_inputManager = std::make_unique<mario::input::InputManager>();
 
     p_inputManager->bind(sf::Keyboard::Scancode::Left, std::make_unique<mario::input::RunCommand>(0));
