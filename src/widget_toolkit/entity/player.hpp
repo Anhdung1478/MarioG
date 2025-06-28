@@ -124,7 +124,7 @@ namespace mario::entity {
                 }
 
                 p_playerBody->setDamping(isInSurface() ? GROUND_DAMPING : AIR_DAMPING);
-                std::cerr << "PLAYER VELOCITY: " << vel.x << ' ' << vel.y << '\n';
+                //std::cerr << "PLAYER VELOCITY: " << vel.x << ' ' << vel.y << '\n';
             }
             
             void handleEvent(const sf::RenderWindow *window, const sf::Event &event) override {
