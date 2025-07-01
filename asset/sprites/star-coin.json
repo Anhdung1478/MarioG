@@ -1,0 +1,16 @@
+{
+  "star-coin": {
+    "front": [
+      { "x": 106, "y": 54, "width": 40, "height": 40 }
+    ],
+    "left": [
+      { "x": 154, "y": 54, "width": 40, "height": 40 }
+    ],
+    "side": [
+      { "x": 205, "y": 54, "width": 40, "height": 40 }
+    ],
+    "right": [
+      { "x": 254, "y": 54, "width": 40, "height": 40 }
+    ]
+  }
+}

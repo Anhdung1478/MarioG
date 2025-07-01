@@ -1,0 +1,16 @@
+{
+  "100-coin": {
+    "front": [
+      { "x": 99, "y": 101, "width": 50, "height": 50 }
+    ],
+    "left": [
+      { "x": 150, "y": 101, "width": 50, "height": 50 }
+    ],
+    "side": [
+      { "x": 201, "y": 101, "width": 50, "height": 50 }
+    ],
+    "right": [
+      { "x": 250, "y": 101, "width": 50, "height": 50 }
+    ]
+  }
+}
