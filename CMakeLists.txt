@@ -39,8 +39,4 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_executable(MARIOG src/main_app/main.cpp src/main_app/main-window.cpp src/main_app/pages/main-menu.cpp src/main_app/pages/levels.cpp)
 
 # target_link_directories(MARIOG PRIVATE ${CMAKE_SOURCE_DIR}/extern/include/SFML/ ${CMAKE_SOURCE_DIR}/extern/include/BOX2D/ ${CMAKE_SOURCE_DIR}/extern/include/)
-<<<<<<< Updated upstream
 target_link_libraries(MARIOG PRIVATE SFML::Graphics SFML::Window SFML::System SFML::Audio box2d eventpp::eventpp)
-=======
-target_link_libraries(MARIOG PRIVATE SFML::Graphics SFML::Window SFML::System SFML::Audio eventpp::eventpp)
->>>>>>> Stashed changes
