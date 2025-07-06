@@ -1,0 +1,9 @@
+{
+  "explosion": {
+    "explode": [
+      { "x": 324, "y": 235, "width": 19, "height": 20 },
+      { "x": 358, "y": 235, "width": 19, "height": 20 },
+      { "x": 394, "y": 235, "width": 19, "height": 20 }
+    ]
+  }
+}

@@ -1,0 +1,416 @@
+{
+  "mario-small": {
+    "idle": [
+      { "x": 46, "y": 9, "width": 17, "height": 19 }
+    ],
+    "walk": [
+      { "x": 81, "y": 9, "width": 17, "height": 19 },
+      { "x": 116, "y": 9, "width": 17, "height": 19 }
+    ],
+    "jump": [
+      { "x": 220, "y": 35, "width": 17, "height": 19 }
+    ],
+    "get-ready": [
+      { "x": 361, "y": 9, "width": 17, "height": 19 }
+    ],
+    "fly-with-arms-in-front": [
+      { "x": 44, "y": 62, "width": 17, "height": 19 }
+    ],
+    "fly-with-arms-level": [
+      { "x": 78, "y": 62, "width": 17, "height": 19 }
+    ],
+    "fly-with-arms-behind": [
+      { "x": 113, "y": 62, "width": 17, "height": 19 }
+    ],
+    "backing": [
+      { "x": 253, "y": 62, "width": 17, "height": 19 }
+    ],
+    "idle-with-hands-in-front": [
+      { "x": 288, "y": 62, "width": 17, "height": 19 }
+    ],
+    "cheering": [
+      { "x": 359, "y": 62, "width": 17, "height": 19 }
+    ],
+    "saying-hi": [
+      { "x": 395, "y": 62, "width": 17, "height": 19 }
+    ]
+  },
+
+  "mario-super": {
+    "idle": [
+      { "x": 43, "y": 99, "width": 20, "height": 31 }
+    ],
+    "walk": [
+      { "x": 113, "y": 99, "width": 20, "height": 31 },
+      { "x": 77, "y": 99, "width": 20, "height": 31 }
+    ],
+    "jump": [
+      { "x": 218, "y": 149, "width": 20, "height": 31 }
+    ],
+    "sit": [
+      { "x": 429, "y": 149, "width": 20, "height": 31 }
+    ],
+    "get-ready": [
+      { "x": 357, "y": 98, "width": 20, "height": 31 }
+    ],
+    "fly-with-arms-in-front": [
+      { "x": 42, "y": 199, "width": 20, "height": 31 }
+    ],
+    "fly-with-arms-level": [
+      { "x": 76, "y": 199, "width": 20, "height": 31 }
+    ],
+    "fly-with-arms-behind": [
+      { "x": 112, "y": 199, "width": 20, "height": 31 }
+    ],
+    "backing": [
+      { "x": 251, "y": 199, "width": 20, "height": 31 },
+      { "x": 286, "y": 199, "width": 20, "height": 31 }
+    ],
+    "idle-with-hands-in-front": [
+      { "x": 324, "y": 199, "width": 20, "height": 31 }
+    ],
+    "cheering": [
+      { "x": 358, "y": 199, "width": 20, "height": 31 }
+    ],
+    "saying-hi": [
+      { "x": 393, "y": 199, "width": 20, "height": 31 }
+    ],
+    "stand-with-hands-on-nose": [
+      { "x": 41, "y": 249, "width": 20, "height": 31 }
+    ]
+  },
+
+  "fire": {
+    "roll": [
+      { "x": 183, "y": 235, "width": 16, "height": 14 },
+      { "x": 217, "y": 235, "width": 16, "height": 14 },
+      { "x": 252, "y": 235, "width": 16, "height": 14 },
+      { "x": 287, "y": 235, "width": 16, "height": 14 }
+    ]
+  },
+
+  "explosion": {
+    "explode": [
+      { "x": 324, "y": 235, "width": 19, "height": 20 },
+      { "x": 358, "y": 235, "width": 19, "height": 20 },
+      { "x": 394, "y": 235, "width": 19, "height": 20 }
+    ]
+  },
+
+  "sparkle": [
+    { "x": 151, "y": 265, "width": 15, "height": 13 }
+  ],
+
+  "fireflower": [
+    { "x": 324, "y": 261, "width": 18, "height": 19 }
+  ],
+
+  "star": [
+    { "x": 394, "y": 262, "width": 18, "height": 19 }
+  ],
+
+  "1up-mushroom": [
+    { "x": 46, "y": 60, "width": 503, "height": 487 }
+  ],
+
+  "red-mushroom": [
+    { "x": 50, "y": 49, "width": 498, "height": 499 }
+  ],
+
+  "10-coin": {
+    "front": [
+      { "x": 105, "y": 5, "width": 40, "height": 40 }
+    ],
+    "left": [
+      { "x": 154, "y": 5, "width": 40, "height": 40 }
+    ],
+    "side": [
+      { "x": 204, "y": 5, "width": 40, "height": 40 }
+    ],
+    "right": [
+      { "x": 254, "y": 5, "width": 40, "height": 40 }
+    ]
+  },
+
+  "question-coin": {
+    "front": [
+      { "x": 304, "y": 5, "width": 40, "height": 40 }
+    ],
+    "left": [
+      { "x": 356, "y": 5, "width": 40, "height": 40 }
+    ],
+    "side": [
+      { "x": 405, "y": 5, "width": 40, "height": 40 }
+    ],
+    "right": [
+      { "x": 454, "y": 5, "width": 40, "height": 40 }
+    ]
+  },
+
+  "star-coin": {
+    "front": [
+      { "x": 106, "y": 54, "width": 40, "height": 40 }
+    ],
+    "left": [
+      { "x": 154, "y": 54, "width": 40, "height": 40 }
+    ],
+    "side": [
+      { "x": 205, "y": 54, "width": 40, "height": 40 }
+    ],
+    "right": [
+      { "x": 254, "y": 54, "width": 40, "height": 40 }
+    ]
+  },
+
+  "100-coin": {
+    "front": [
+      { "x": 99, "y": 101, "width": 50, "height": 50 }
+    ],
+    "left": [
+      { "x": 150, "y": 101, "width": 50, "height": 50 }
+    ],
+    "side": [
+      { "x": 201, "y": 101, "width": 50, "height": 50 }
+    ],
+    "right": [
+      { "x": 250, "y": 101, "width": 50, "height": 50 }
+    ]
+  },
+
+  "luigi-small": {
+    "idle": [
+      { "x": 45, "y": 8, "width": 17, "height": 19 }
+    ],
+    "walk": [
+      { "x": 115, "y": 8, "width": 17, "height": 19 },
+      { "x": 79, "y": 8, "width": 17, "height": 19 }
+    ],
+    "jump": [
+      { "x": 219, "y": 34, "width": 17, "height": 19 }
+    ],
+    "get-ready": [
+      { "x": 359, "y": 8, "width": 17, "height": 19 }
+    ],
+    "fly-with-arms-in-front": [
+      { "x": 44, "y": 62, "width": 17, "height": 19 }
+    ],
+    "fly-with-arms-level": [
+      { "x": 78, "y": 62, "width": 17, "height": 19 }
+    ],
+    "fly-with-arms-behind": [
+      { "x": 113, "y": 62, "width": 17, "height": 19 }
+    ],
+    "backing": [
+      { "x": 254, "y": 62, "width": 17, "height": 19 }
+    ],
+    "idle-with-hands-in-front": [
+      { "x": 288, "y": 62, "width": 17, "height": 19 }
+    ],
+    "cheering": [
+      { "x": 359, "y": 62, "width": 17, "height": 19 }
+    ],
+    "saying-hi": [
+      { "x": 394, "y": 62, "width": 17, "height": 19 }
+    ]
+  },
+
+  "luigi-super": {
+    "idle": [
+      { "x": 43, "y": 99, "width": 20, "height": 31 }
+    ],
+    "walk": [
+      { "x": 112, "y": 98, "width": 20, "height": 31 },
+      { "x": 77, "y": 98, "width": 20, "height": 31 }
+    ],
+    "jump": [
+      { "x": 218, "y": 148, "width": 20, "height": 31 }
+    ],
+    "sit": [
+      { "x": 428, "y": 150, "width": 20, "height": 31 }
+    ],
+    "get-ready": [
+      { "x": 357, "y": 98, "width": 20, "height": 31 }
+    ],
+    "fly-with-arms-in-front": [
+      { "x": 40, "y": 197, "width": 20, "height": 31 }
+    ],
+    "fly-with-arms-level": [
+      { "x": 75, "y": 198, "width": 20, "height": 31 }
+    ],
+    "fly-with-arms-behind": [
+      { "x": 110, "y": 198, "width": 20, "height": 31 }
+    ],
+    "backing": [
+      { "x": 286, "y": 198, "width": 20, "height": 31 },
+      { "x": 251, "y": 198, "width": 20, "height": 31 }
+    ],
+    "idle-with-hands-in-front": [
+      { "x": 323, "y": 198, "width": 20, "height": 31 }
+    ],
+    "cheering": [
+      { "x": 357, "y": 199, "width": 20, "height": 31 }
+    ],
+    "saying-hi": [
+      { "x": 393, "y": 198, "width": 20, "height": 31 }
+    ],
+    "stand-with-hands-on-nose": [
+      { "x": 41, "y": 248, "width": 20, "height": 31 }
+    ]
+  },
+  
+  "goomba": {
+    "idle": [
+      { "x": 4, "y": 30, "width": 22, "height": 27 },
+      { "x": 27, "y": 30, "width": 22, "height": 27 },
+      { "x": 49, "y": 30, "width": 22, "height": 27 },
+      { "x": 72, "y": 30, "width": 22, "height": 27 },
+      { "x": 95, "y": 30, "width": 22, "height": 27 },
+      { "x": 117, "y": 29, "width": 22, "height": 27 },
+      { "x": 141, "y": 30, "width": 22, "height": 27 },
+      { "x": 165, "y": 30, "width": 22, "height": 27 }
+    ],
+    "hurt": [
+      { "x": 229, "y": 32, "width": 22, "height": 27 }
+    ],
+    "walking": [
+      { "x": 5, "y": 61, "width": 22, "height": 27 },
+      { "x": 27, "y": 61, "width": 22, "height": 27 },
+      { "x": 51, "y": 61, "width": 22, "height": 27 },
+      { "x": 73, "y": 61, "width": 22, "height": 27 },
+      { "x": 96, "y": 61, "width": 22, "height": 27 },
+      { "x": 120, "y": 61, "width": 22, "height": 27 },
+      { "x": 142, "y": 94, "width": 22, "height": 27 },
+      { "x": 166, "y": 61, "width": 22, "height": 27 }
+    ],
+    "before-attack": [
+      { "x": 4, "y": 94, "width": 22, "height": 27 },
+      { "x": 27, "y": 94, "width": 22, "height": 27 },
+      { "x": 50, "y": 94, "width": 22, "height": 27 },
+      { "x": 73, "y": 94, "width": 22, "height": 27 },
+      { "x": 96, "y": 94, "width": 22, "height": 27 },
+      { "x": 120, "y": 94, "width": 22, "height": 27 },
+      { "x": 144, "y": 94, "width": 22, "height": 27 },
+      { "x": 168, "y": 94, "width": 22, "height": 27 }
+    ],
+    "rolling": [
+      { "x": 4, "y": 129, "width": 22, "height": 27 },
+      { "x": 27, "y": 129, "width": 22, "height": 27 },
+      { "x": 53, "y": 129, "width": 22, "height": 27 },
+      { "x": 77, "y": 129, "width": 22, "height": 27 },
+      { "x": 101, "y": 129, "width": 22, "height": 27 },
+      { "x": 129, "y": 129, "width": 22, "height": 27 },
+      { "x": 153, "y": 129, "width": 22, "height": 27 },
+      { "x": 178, "y": 129, "width": 22, "height": 27 },
+      { "x": 200, "y": 129, "width": 22, "height": 27 },
+      { "x": 224, "y": 129, "width": 22, "height": 27 }
+    ],
+    "after-attack": [
+      { "x": 4, "y": 162, "width": 22, "height": 27 },
+      { "x": 27, "y": 162, "width": 22, "height": 27 },
+      { "x": 51, "y": 162, "width": 22, "height": 27 },
+      { "x": 75, "y": 162, "width": 22, "height": 27 },
+      { "x": 98, "y": 162, "width": 22, "height": 27 },
+      { "x": 121, "y": 162, "width": 22, "height": 27 },
+      { "x": 144, "y": 162, "width": 22, "height": 27 },
+      { "x": 168, "y": 162, "width": 22, "height": 27 },
+      { "x": 192, "y": 162, "width": 22, "height": 27 },
+      { "x": 215, "y": 161, "width": 22, "height": 27 },
+      { "x": 240, "y": 161, "width": 22, "height": 27 }
+    ]
+  },
+
+  "koopa-troopa-red": {
+    "idle": [
+      { "x": 1, "y": 2, "width": 25, "height": 36 }
+    ],
+    "running": [
+      { "x": 28, "y": 1, "width": 25, "height": 36 },
+      { "x": 52, "y": 1, "width": 25, "height": 36 },
+      { "x": 80, "y": 1, "width": 25, "height": 36 },
+      { "x": 104, "y": 1, "width": 25, "height": 36 },
+      { "x": 128, "y": 1, "width": 25, "height": 36 },
+      { "x": 153, "y": 1, "width": 25, "height": 36 },
+      { "x": 177, "y": 1, "width": 25, "height": 36 },
+      { "x": 203, "y": 1, "width": 25, "height": 36 },
+      { "x": 226, "y": 1, "width": 25, "height": 36 },
+      { "x": 249, "y": 1, "width": 25, "height": 36 }
+    ],
+    "knocked-out": [
+      { "x": 7, "y": 89, "width": 25, "height": 36 },
+      { "x": 31, "y": 89, "width": 25, "height": 36 }
+    ],
+    "jumping-back-into-shell": [
+      { "x": 79, "y": 89, "width": 25, "height": 36 },
+      { "x": 106, "y": 89, "width": 25, "height": 36 },
+      { "x": 138, "y": 89, "width": 25, "height": 36 },
+      { "x": 165, "y": 89, "width": 25, "height": 36 }
+    ],
+    "jumping-out-of-shell": [
+      { "x": 165, "y": 89, "width": 25, "height": 36 },
+      { "x": 189, "y": 94, "width": 25, "height": 36 },
+      { "x": 215, "y": 94, "width": 25, "height": 36 },
+      { "x": 243, "y": 93, "width": 25, "height": 36 }
+    ],
+    "naked": [
+      { "x": 0, "y": 38, "width": 22, "height": 35 },
+      { "x": 27, "y": 38, "width": 22, "height": 35 },
+      { "x": 52, "y": 38, "width": 22, "height": 35 },
+      { "x": 80, "y": 38, "width": 22, "height": 35 },
+      { "x": 104, "y": 38, "width": 22, "height": 35 },
+      { "x": 128, "y": 38, "width": 22, "height": 35 },
+      { "x": 153, "y": 38, "width": 22, "height": 35 },
+      { "x": 176, "y": 38, "width": 22, "height": 35 },
+      { "x": 199, "y": 38, "width": 22, "height": 35 },
+      { "x": 219, "y": 38, "width": 22, "height": 35 },
+      { "x": 245, "y": 38, "width": 22, "height": 35 }
+    ]
+  },
+
+  "koopa-troopa-green": {
+    "idle": [
+      { "x": 0, "y": 184, "width": 25, "height": 36 }
+    ],
+    "running": [
+      { "x": 28, "y": 184, "width": 25, "height": 36 },
+      { "x": 52, "y": 184, "width": 25, "height": 36 },
+      { "x": 82, "y": 184, "width": 25, "height": 36 },
+      { "x": 105, "y": 184, "width": 25, "height": 36 },
+      { "x": 129, "y": 184, "width": 25, "height": 36 },
+      { "x": 151, "y": 184, "width": 25, "height": 36 },
+      { "x": 180, "y": 184, "width": 25, "height": 36 },
+      { "x": 203, "y": 184, "width": 25, "height": 36 },
+      { "x": 226, "y": 184, "width": 25, "height": 36 },
+      { "x": 249, "y": 184, "width": 25, "height": 36 }
+    ],
+    "knocked-out": [
+      { "x": 6, "y": 270, "width": 25, "height": 36 },
+      { "x": 32, "y": 270, "width": 25, "height": 36 }
+    ],
+    "jumping-back-into-shell": [
+      { "x": 80, "y": 272, "width": 25, "height": 36 },
+      { "x": 108, "y": 272, "width": 25, "height": 36 },
+      { "x": 139, "y": 272, "width": 25, "height": 36 },
+      { "x": 164, "y": 272, "width": 25, "height": 36 }
+    ],
+    "jumping-out-of-shell": [
+      { "x": 164, "y": 272, "width": 25, "height": 36 },
+      { "x": 190, "y": 274, "width": 25, "height": 36 },
+      { "x": 215, "y": 274, "width": 25, "height": 36 },
+      { "x": 244, "y": 274, "width": 25, "height": 36 }
+    ],
+    "naked": [
+      { "x": 2, "y": 219, "width": 22, "height": 35 },
+      { "x": 29, "y": 219, "width": 22, "height": 35 },
+      { "x": 52, "y": 219, "width": 22, "height": 35 },
+      { "x": 79, "y": 219, "width": 22, "height": 35 },
+      { "x": 105, "y": 219, "width": 22, "height": 35 },
+      { "x": 128, "y": 219, "width": 22, "height": 35 },
+      { "x": 153, "y": 219, "width": 22, "height": 35 },
+      { "x": 176, "y": 219, "width": 22, "height": 35 },
+      { "x": 199, "y": 219, "width": 22, "height": 35 },
+      { "x": 219, "y": 219, "width": 22, "height": 35 },
+      { "x": 245, "y": 219, "width": 22, "height": 35 }
+    ]
+  }
+}
+
