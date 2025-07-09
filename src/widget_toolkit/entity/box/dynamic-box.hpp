@@ -11,6 +11,8 @@ namespace mario::entity {
         public:
             DynamicBox(b2WorldId worldId, sf::Vector2f position, sf::Vector2f _dimension, float density = 1.0f, float friction = 0.0f) : Box(worldId, position, _dimension, density, friction, 1) {}
 
+            ~DynamicBox() override {}
+
             void applyForce(sf::Vector2f force) {
                 b2Vec2 forceVec = {force.x, force.y}; 
                 b2Body_ApplyForceToCenter(bodyId, forceVec, true);

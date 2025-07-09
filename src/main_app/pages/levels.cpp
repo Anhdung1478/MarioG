@@ -2,7 +2,8 @@
 #include "levels.hpp"
 
 mario::pages::LevelsPage::LevelsPage(MainWindow &context, LevelState state) : Page(context) {
-    p_player = std::make_unique<mario::entity::Player>("../../asset/entity/mario.png", _context->getWorldId());
+    #define PREFIX_PATH "../../asset/sprites/"
+    p_player = std::make_unique<mario::entity::Player>(PREFIX_PATH"mario.json", PREFIX_PATH"mario_sheets.png", "mario-super.idle[0]", _context->getWorldId(), sf::Vector2f(15, 720));
     p_inputManager = std::make_unique<mario::input::InputManager>();
 
     p_inputManager->bind(sf::Keyboard::Scancode::Left, std::make_unique<mario::input::RunCommand>(0));

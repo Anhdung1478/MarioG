@@ -5,7 +5,6 @@
 #include <box2d/box2d.h>
 #include "box/dynamic-box.hpp"
 
-
 namespace mario::entity {
     
     constexpr static float MOVE_ACCELERATION = 15.f;
@@ -18,32 +17,28 @@ namespace mario::entity {
     
     class Player : public Entity {
         private:
-            std::unique_ptr<sf::Sprite> p_sprite;
-            std::unique_ptr<sf::Texture> p_texture;
-            sf::Vector2f position;
-            float shootingDelayTime = 0.f;
-            bool _isRunning = false, _isRunningForward, _isJumping = false;
-            bool _isFaceForward = true;
-            DynamicBox *p_playerBody = nullptr;
             sf::Time jumpTimer;
+            
+            float shootingDelayTime = 0.f;
+            bool _isRunning = false;
+            bool _isRunningForward;
+            bool _isJumping = false;
 
         public:
-            Player(std::string fileName, b2WorldId worldId) {
-                p_texture = std::make_unique<sf::Texture>(fileName);
-                p_sprite = std::make_unique<sf::Sprite>(*p_texture);
-                p_sprite->setTextureRect(sf::IntRect({76, 97}, {24, 31}));
-                p_sprite->setOrigin({11.5, 31});
-                p_sprite->setScale({2.5f, 2.5f});
-                position = sf::Vector2f(15, 720);
-                p_playerBody = new DynamicBox(worldId, sf::Vector2f(500.f, 200.f), sf::Vector2f(24.f, 31.f), 1.0f, 0.8f);
+            Player(std::string jsonPath, std::string texturePath, std::string randomSpriteID, b2WorldId worldId, sf::Vector2f spawnPoint) 
+            : Entity(jsonPath, texturePath, sf::Vector2f(2.5f, 2.5f), randomSpriteID) {
+                p_body = new DynamicBox(worldId, spawnPoint, p_animation->getScale(), 1.0f, 0.8f);
+                p_animation->addAnimationStep("mario-super.walk[1]");
+                p_animation->addAnimationStep("mario-super.walk[0]");
+                p_animation->addAnimationStep("mario-super.idle[0]");
             }
 
             ~Player() override {
-                delete p_playerBody;
+                delete p_body;
             }
 
             bool isInSurface() {
-                return (p_playerBody->getPosition().y + p_playerBody->getDimension().y >= 714.f && p_playerBody->getVelocity().y <= 0.1f && p_playerBody->getVelocity().y >= -0.1f);
+                return (p_body->getPosition().y + p_body->getDimension().y >= 714.f && p_body->getVelocity().y <= 0.1f && p_body->getVelocity().y >= -0.1f);
             }
 
             bool isFaceToBlock() {
@@ -63,12 +58,7 @@ namespace mario::entity {
             }
 
             void rotateDirection() {
-                _isFaceForward = 1 - _isFaceForward;
-                if(_isFaceForward) {
-                    p_sprite->setScale(sf::Vector2f(2.5f, 2.5f));
-                } else {
-                    p_sprite->setScale(sf::Vector2f(-2.5f, 2.5f));
-                }
+                p_animation->rotate();
             }
             
             void run(bool isForward, bool isReleased) {
@@ -89,21 +79,27 @@ namespace mario::entity {
             }
                 
             void update(const sf::RenderWindow *window, float dt) override {
-                sf::Vector2f vel = p_playerBody->getVelocity();
+                sf::Vector2f vel = p_body->getVelocity();
                 if(!isInSurface()) {
                     // change texture to jumping
+                    p_animation->setSpriteAnimation("mario-super.jump[0]");
+                    p_animation->setAnimationState(false);
                 } else {
                     if(abs(vel.x) <= 0.001f) {
                         // change texture to idle
+                        p_animation->setSpriteAnimation("mario-super.idle[0]");
+                        p_animation->setAnimationState(false);
                     } else {
-                        // change texture to next running texture 
+                        // change to next run animation step
+                        p_animation->setAnimationState(true);
                     }
                 }
-
-                float bodyMass = p_playerBody->getMass();
+                
+                p_animation->update(window, dt);
+                float bodyMass = p_body->getMass();
 
                 if(_isJumping) {
-                    p_playerBody->applyForce(sf::Vector2f(0.f, -JUMP_ACCELERATION * bodyMass));
+                    p_body->applyForce(sf::Vector2f(0.f, -JUMP_ACCELERATION * bodyMass));
                     jumpTimer += sf::seconds(dt);
                 }
 
@@ -114,16 +110,16 @@ namespace mario::entity {
                     _isRunning = false;
                 
                 if(_isRunning) {
-                    if(_isFaceForward != _isRunningForward && (vel.x == 0.f || (_isFaceForward != (vel.x > 0.f))))
+                    if(p_animation->isFaceForward() != _isRunningForward && (vel.x == 0.f || (p_animation->isFaceForward() != (vel.x > 0.f))))
                         rotateDirection();
 
                     if(_isRunningForward && vel.x < MAX_SPEED || !_isRunningForward && vel.x > -MAX_SPEED) {
                         sf::Vector2f force = sf::Vector2f((_isRunningForward ? 1 : -1) * MOVE_ACCELERATION * bodyMass, 0.f);
-                        p_playerBody->applyForce(force);
+                        p_body->applyForce(force);
                     }
                 }
 
-                p_playerBody->setDamping(isInSurface() ? GROUND_DAMPING : AIR_DAMPING);
+                p_body->setDamping(isInSurface() ? GROUND_DAMPING : AIR_DAMPING);
                 //std::cerr << "PLAYER VELOCITY: " << vel.x << ' ' << vel.y << '\n';
             }
             
@@ -132,10 +128,7 @@ namespace mario::entity {
             }
             
             void render(sf::RenderWindow *window) override {
-                p_sprite->setPosition(position);
-                p_sprite->setPosition(p_playerBody->getPosition());
-
-                window->draw(*p_sprite);
+                p_animation->renderWithPosition(window, p_body->getPosition());
             }
 
     };

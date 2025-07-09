@@ -2,16 +2,29 @@
 
 #include<bits/stdc++.h>
 #include "../interfaces.hpp"
+#include "animation/animation.hpp"
+#include "box/box.hpp"
 
 namespace mario::entity {
     class Entity : public IScreenElement {
+        protected:
+            Animation *p_animation;
+            Box *p_body;
+
         public:
-            void update(const sf::RenderWindow *window, float dt) override {
-                
+            Entity() {};
+            
+            Entity(std::string jsonPath, std::string texturePath, sf::Vector2f scale, const std::string& randomSpriteID) {
+                p_animation = new Animation(jsonPath, texturePath, scale, randomSpriteID);
             }
 
-            void handleEvent(const sf::RenderWindow *window, const sf::Event &event) override {
+            virtual ~Entity() {
+                delete p_animation;
+                delete p_body;
+            }
 
+            void update(const sf::RenderWindow *window, float dt) override {
+                
             }
 
             void render(sf::RenderWindow *window) override {
