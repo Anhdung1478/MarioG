@@ -6,14 +6,17 @@
 using json = nlohmann::json;
 
 void TextureManager::loadSheet(const std::string& jsonPath, const std::string& imagePath) {
-    textures.emplace_back();
-    sf::Texture& texture = textures.back();
-
-    if (!texture.loadFromFile(imagePath)) {
-        throw std::runtime_error("Failed to load texture: " + imagePath);
+    // Only load texture if it hasn't been loaded yet
+    if (textureMap.find(imagePath) == textureMap.end()) {
+        sf::Texture texture;
+        if (!texture.loadFromFile(imagePath)) {
+            throw std::runtime_error("Failed to load texture: " + imagePath);
+        }
+        // Use imagePath as a key for textures/sprites
+        textureMap[imagePath] = std::move(texture);
     }
 
-    loadFromJson(jsonPath, texture);
+    loadFromJson(jsonPath, textureMap[imagePath]);
 }
 
 void TextureManager::loadFromJson(const std::string& jsonPath, sf::Texture& texture) {

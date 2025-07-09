@@ -21,7 +21,7 @@ public:
 private:
     void loadFromJson(const std::string& jsonPath, sf::Texture& texture);
 
-    std::vector<sf::Texture> textures; 
+    std::unordered_map<std::string, sf::Texture> textureMap;
     std::unordered_map<std::string, SpriteData> spriteMap; 
 };
 
