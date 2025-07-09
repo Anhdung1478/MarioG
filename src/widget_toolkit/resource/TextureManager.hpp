@@ -26,3 +26,17 @@ private:
 };
 
 #endif
+
+// HOW TO USE
+// First, create a TextureManager 
+// TextureManager textureManager;
+
+// Load a sprite sheet + its JSON metadata
+// textureManager.loadSheet("mario.json", "mario-sheets.png");
+// const SpriteData& mario = textureManager.getSpriteData("mario-small.walk[0]");
+// setTexture + setTextureRect
+
+// All sprites from mario.json are now loaded.
+// - Loads the mario.png image file
+// - Reads mario.json to see where each sprite is located
+// - Creates names automatically for each sprite
