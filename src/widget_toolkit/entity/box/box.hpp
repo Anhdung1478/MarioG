@@ -62,5 +62,10 @@ namespace mario::entity {
             float getMass() {
                 return b2Body_GetMass(bodyId);
             }
+
+            virtual void applyForce(sf::Vector2f force) = 0;
+            virtual sf::Vector2f getVelocity() = 0;
+            virtual void setVelocity(sf::Vector2f vel) = 0;
+            virtual void setDamping(float damp) = 0;
     };
 }
