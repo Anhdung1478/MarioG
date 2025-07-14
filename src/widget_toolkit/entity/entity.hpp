@@ -12,10 +12,11 @@ namespace mario::entity {
             Box *p_body;
 
         public:
-            Entity() {};
+            Entity() : p_animation(nullptr), p_body(nullptr) {};
             
             Entity(std::string jsonPath, std::string texturePath, sf::Vector2f scale, const std::string& randomSpriteID) {
                 p_animation = new Animation(jsonPath, texturePath, scale, randomSpriteID);
+                p_body = nullptr;
             }
 
             virtual ~Entity() {

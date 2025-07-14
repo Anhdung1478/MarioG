@@ -1,0 +1,33 @@
+#pragma once
+
+#include<bits/stdc++.h>
+#include<SFML/Graphics.hpp>
+#include "mario-state.hpp"
+
+namespace mario::entity::player_state {
+    class MarioStateManager : public PlayerStateManager {
+        private:
+            const std::string MARIO_TYPE_STR[3] = {
+                "mario-small",
+                "mario-super",
+                "mario-fire",
+            };
+
+        public:
+            MarioStateManager(b2WorldId worldId, sf::Vector2f pos, Animation *&p_animation, Box *&p_box) {
+
+                player_small = new MarioSmallState(worldId);
+                player_super = new MarioSuperState(worldId);
+                //player_fire = new MarioFireState(worldId);
+                curr_state = player_small;
+                curr_state->update(p_animation, p_box, pos);
+            }
+
+            ~MarioStateManager() override {
+            }
+
+            void setAnimation(Animation *&p_animation, const std::string &ID) override {
+                p_animation->setSpriteAnimation(MARIO_TYPE_STR[(int) currStateType] + "." + ID);
+            }
+    };
+}

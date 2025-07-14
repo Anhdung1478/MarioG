@@ -92,6 +92,7 @@ void mario::MainWindow::run() {
         }
     }
 
+    b2DestroyBody(groundBodyId);
     window->close();
     delete window;
 }

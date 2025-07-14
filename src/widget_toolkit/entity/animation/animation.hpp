@@ -6,7 +6,7 @@
 #include "../../resource/TextureManager.hpp"
 
 namespace mario::entity {
-    constexpr static float TIME_BETWEEN_STEP = 1.0f / 5.0f;
+    constexpr static float TIME_BETWEEN_STEP = 1.0f / 10.0f;
 
     class Animation : public IScreenElement {
         private:
@@ -18,10 +18,16 @@ namespace mario::entity {
             sf::Time animationTimer;
             
             int step = 0;
-            bool _isFaceForward = true, _isRunning = true;
+            bool _isFaceForward = true;
+            bool _isRunning = true;
             
             void setAnimationStep(int x) {
                 step = x % int(animationSteps.size());
+            }
+
+            void setSprite(const SpriteData &data) {
+                p_sprite->setTextureRect(sf::IntRect({data.x, data.y}, {data.z, data.t}));
+                p_sprite->setOrigin({data.z / 2.f, 1.f * data.t});
             }
 
             void performNextAnimation() {
@@ -37,8 +43,8 @@ namespace mario::entity {
 
                 SpriteData data = p_textureResource->getSpriteData(randomSpriteID);
                 p_sprite = std::make_unique<sf::Sprite>(*(data.texture));
-                p_sprite->setTextureRect(sf::IntRect({data.x, data.y}, {data.z, data.t}));
-                p_sprite->setOrigin({data.z / 2.f, 1.f * data.t});
+                
+                setSprite(data);
                 p_sprite->setScale(scale);
             }
 
@@ -46,11 +52,10 @@ namespace mario::entity {
                 animationSteps.push_back(p_textureResource->getSpriteData(spriteID));
             }
 
-
-            void setSprite(const SpriteData &data) {
-                p_sprite->setTextureRect(sf::IntRect({data.x, data.y}, {data.z, data.t}));
+            void clearAnimationStep() {
+                animationSteps.clear();
+                step = 0;
             }
-
 
             void setSpriteAnimation(const std::string &spriteID) {
                 setSprite(p_textureResource->getSpriteData(spriteID));
