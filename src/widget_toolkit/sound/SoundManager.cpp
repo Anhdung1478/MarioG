@@ -21,47 +21,47 @@ namespace game::audio {
 
     void SoundManager::loadSounds() {
         // Sound effects
-        soundFiles[game::event::SoundEvent::ONE_UP] = "assets/sounds/1_up.wav";
-        soundFiles[game::event::SoundEvent::BLOCK_BREAK] = "assets/sounds/break_brick_block.wav";
-        soundFiles[game::event::SoundEvent::BLOCK_BUMP] = "assets/sounds/bump.wav";
-        soundFiles[game::event::SoundEvent::COIN_COLLECT] = "assets/sounds/coin.wav";
-        soundFiles[game::event::SoundEvent::LEVEL_ENTER] = "assets/sounds/enter_level.wav";
-        soundFiles[game::event::SoundEvent::FIREBALL_THROW] = "assets/sounds/fireball.wav";
-        soundFiles[game::event::SoundEvent::GAME_OVER] = "assets/sounds/game_over.wav";
-        soundFiles[game::event::SoundEvent::PLAYER_JUMP] = "assets/sounds/jump.wav";
-        soundFiles[game::event::SoundEvent::SHELL_KICK] = "assets/sounds/kick.wav";
-        soundFiles[game::event::SoundEvent::LEVEL_CLEAR] = "assets/sounds/level_clear.wav";
-        soundFiles[game::event::SoundEvent::PLAYER_DIE] = "assets/sounds/lost_life.wav";
-        soundFiles[game::event::SoundEvent::POWER_DOWN] = "assets/sounds/lost_suit.wav";
-        soundFiles[game::event::SoundEvent::POWERUP_APPEARS] = "assets/sounds/mushroom_appears.wav";
-        soundFiles[game::event::SoundEvent::GAME_PAUSE] = "assets/sounds/pause.wav";
-        soundFiles[game::event::SoundEvent::PMETER_FULL] = "assets/sounds/pmeter.wav";
-        soundFiles[game::event::SoundEvent::POWER_UP] = "assets/sounds/power_up.wav";
-        soundFiles[game::event::SoundEvent::CANNON_SHOT] = "assets/sounds/shot.wav";
-        soundFiles[game::event::SoundEvent::PLAYER_SKID] = "assets/sounds/skid.wav";
-        soundFiles[game::event::SoundEvent::ENEMY_STOMP] = "assets/sounds/stomp.wav";
-        soundFiles[game::event::SoundEvent::TIME_WARNING] = "assets/sounds/time_up.wav";
+        soundFiles[game::event::SoundEvent::ONE_UP] = "asset/sounds/sound/1_up.wav";
+        soundFiles[game::event::SoundEvent::BLOCK_BREAK] = "asset/sounds/sound/break_brick_block.wav";
+        soundFiles[game::event::SoundEvent::BLOCK_BUMP] = "asset/sounds/sound/bump.wav";
+        soundFiles[game::event::SoundEvent::COIN_COLLECT] = "asset/sounds/sound/coin.wav";
+        soundFiles[game::event::SoundEvent::LEVEL_ENTER] = "asset/sounds/sound/enter_level.wav";
+        soundFiles[game::event::SoundEvent::FIREBALL_THROW] = "asset/sounds/sound/fireball.wav";
+        soundFiles[game::event::SoundEvent::GAME_OVER] = "asset/sounds/sound/game_over.wav";
+        soundFiles[game::event::SoundEvent::PLAYER_JUMP] = "asset/sounds/sound/jump.wav";
+        soundFiles[game::event::SoundEvent::SHELL_KICK] = "asset/sounds/sound/kick.wav";
+        soundFiles[game::event::SoundEvent::LEVEL_CLEAR] = "asset/sounds/sound/level_clear.wav";
+        soundFiles[game::event::SoundEvent::PLAYER_DIE] = "asset/sounds/sound/lost_life.wav";
+        soundFiles[game::event::SoundEvent::POWER_DOWN] = "asset/sounds/sound/lost_suit.wav";
+        soundFiles[game::event::SoundEvent::POWERUP_APPEARS] = "asset/sounds/sound/mushroom_appears.wav";
+        soundFiles[game::event::SoundEvent::GAME_PAUSE] = "asset/sounds/sound/pause.wav";
+        soundFiles[game::event::SoundEvent::PMETER_FULL] = "asset/sounds/sound/pmeter.wav";
+        soundFiles[game::event::SoundEvent::POWER_UP] = "asset/sounds/sound/power_up.wav";
+        soundFiles[game::event::SoundEvent::CANNON_SHOT] = "asset/sounds/sound/shot.wav";
+        soundFiles[game::event::SoundEvent::PLAYER_SKID] = "asset/sounds/sound/skid.wav";
+        soundFiles[game::event::SoundEvent::ENEMY_STOMP] = "asset/sounds/sound/stomp.wav";
+        soundFiles[game::event::SoundEvent::TIME_WARNING] = "asset/sounds/sound/time_up.wav";
 
         // Background Music
-        backgroundMusicFiles[game::event::BackgroundMusicState::MAIN_MENU] = "assets/music/main_menu.mp3";
-        backgroundMusicFiles[game::event::BackgroundMusicState::LEVEL_1] = "assets/music/level_1.mp3";
-        backgroundMusicFiles[game::event::BackgroundMusicState::LEVEL_2] = "assets/music/level_2.mp3";
-        backgroundMusicFiles[game::event::BackgroundMusicState::LEVEL_3] = "assets/music/level_3.mp3";
-        backgroundMusicFiles[game::event::BackgroundMusicState::GAME_OVER_SCREEN] = "assets/music/boss_battle.mp3";
-        backgroundMusicFiles[game::event::BackgroundMusicState::SETTING_SCREEN] = "assets/music/game_over_screen.mp3";
-        backgroundMusicFiles[game::event::BackgroundMusicState::LEVEL_SCREEN] = "assets/music/level_clear_screen.mp3";
+        backgroundMusicFiles[game::event::BackgroundMusicState::MAIN_MENU] = "asset/sounds/music/MainMenu.mp3";
+        backgroundMusicFiles[game::event::BackgroundMusicState::LEVEL_1] = "asset/sounds/music/World1.mp3";
+        backgroundMusicFiles[game::event::BackgroundMusicState::LEVEL_2] = "asset/sounds/music/World2.mp3";
+        backgroundMusicFiles[game::event::BackgroundMusicState::LEVEL_3] = "asset/sounds/music/World3.mp3";
+        backgroundMusicFiles[game::event::BackgroundMusicState::GAME_OVER_SCREEN] = "asset/sounds/music/MainMenu.mp3";
+        backgroundMusicFiles[game::event::BackgroundMusicState::SETTING_SCREEN] = "asset/sounds/music/Athletic.mp3";
+        backgroundMusicFiles[game::event::BackgroundMusicState::LEVEL_SCREEN] = "asset/sounds/music/Coin Heaven.mp3";
 
-        // Load các file sound effect
+        // Load file sound effect
         for (const auto& pair : soundFiles) {
             loadSoundFile(pair.first, pair.second);
         }
 
-        // Load các file nhạc nền
+        // Load file music background
         for (const auto& pair : backgroundMusicFiles) {
             loadBackgroundMusicFile(pair.first, pair.second);
         }
 
-        // Phát nhạc nền mặc định (MAIN_MENU)
+        // Play BackgroundMusic
         setBackgroundMusic(currentMusicState);
     }
 
