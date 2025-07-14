@@ -1,17 +1,17 @@
 {
   "mario-small": {
     "idle": [
-      { "x": 46, "y": 9, "width": 17, "height": 19 }
+      { "x": 45, "y": 8, "width": 17, "height": 19 }
     ],
     "walk": [
-      { "x": 81, "y": 9, "width": 17, "height": 19 },
-      { "x": 116, "y": 9, "width": 17, "height": 19 }
+      { "x": 81, "y": 8, "width": 17, "height": 19 },
+      { "x": 114, "y": 8, "width": 17, "height": 19 }
     ],
     "jump": [
       { "x": 220, "y": 35, "width": 17, "height": 19 }
     ],
     "get-ready": [
-      { "x": 361, "y": 9, "width": 17, "height": 19 }
+      { "x": 361, "y": 8, "width": 17, "height": 19 }
     ],
     "fly-with-arms-in-front": [
       { "x": 44, "y": 62, "width": 17, "height": 19 }
