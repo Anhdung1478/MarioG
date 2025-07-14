@@ -18,6 +18,7 @@ namespace mario::pages {
 
         public:
             LevelsPage(MainWindow &context, LevelState state);
+            ~LevelsPage();
             void update(const sf::RenderWindow *window, float dt) override;
             void handleEvent(const sf::RenderWindow *window, const sf::Event &event) override;
             void render(sf::RenderWindow *window) override;
