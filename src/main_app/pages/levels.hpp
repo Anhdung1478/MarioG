@@ -2,6 +2,7 @@
 #include "page.hpp"
 #include "../../widget_toolkit/entity/player.hpp"
 #include "../../widget_toolkit/command/input-manager.hpp"
+#include "../../widget_toolkit/entity/blocks/QuestionBlock.hpp"
 
 namespace mario::pages {
     struct LevelState {
@@ -15,6 +16,7 @@ namespace mario::pages {
         private:
             std::unique_ptr<mario::entity::Player> p_player;
             std::unique_ptr<mario::input::InputManager> p_inputManager;
+            std::unique_ptr<QuestionBlock> p_questionBlock;
 
         public:
             LevelsPage(MainWindow &context, LevelState state);

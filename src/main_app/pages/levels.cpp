@@ -1,6 +1,7 @@
 #include<bits/stdc++.h>
 #include "levels.hpp"
 
+
 mario::pages::LevelsPage::LevelsPage(MainWindow &context, LevelState state) : Page(context) {
     #define PREFIX_PATH "../../asset/sprites/"
     p_player = std::make_unique<mario::entity::Player>(PREFIX_PATH"mario.json", PREFIX_PATH"mario_sheets.png", "mario-super.idle[0]", _context->getWorldId(), sf::Vector2f(15, 720));
@@ -10,17 +11,22 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, LevelState state) : Pa
     p_inputManager->bind(sf::Keyboard::Scancode::Right, std::make_unique<mario::input::RunCommand>(1));
     p_inputManager->bind(sf::Keyboard::Scancode::Up, std::make_unique<mario::input::JumpCommand>());
     p_inputManager->bind(sf::Keyboard::Scancode::Z, std::make_unique<mario::input::FireCommand>());
+
+    p_questionBlock = std::make_unique<QuestionBlock>(sf::Vector2f(100, 600));
 }
 
 void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) {
     p_player->update(window, dt);
+    p_questionBlock->update(window, dt);
 }
 
 void mario::pages::LevelsPage::handleEvent(const sf::RenderWindow *window, const sf::Event &event) {
     p_player->handleEvent(window, event);
     p_inputManager->handleEvent(*p_player, event);
+    p_questionBlock->handleEvent(window, event);
 }
 
 void mario::pages::LevelsPage::render(sf::RenderWindow *window) {
     p_player->render(window);
+    p_questionBlock->render(window);
 }
