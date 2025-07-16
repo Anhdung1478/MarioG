@@ -6,16 +6,18 @@
 #include "box/dynamic-box.hpp"
 #include "player_state/mario-state-manager.hpp"
 #include "player_state/luigi-state-manager.hpp"
+//#include "item/item.hpp"
 
 namespace mario::entity {
     
     constexpr static float MOVE_ACCELERATION = 15.f;
-    constexpr static float MAX_SPEED = 200.f; // pixel per second
-    constexpr static float GROUND_DAMPING = 3.f;
+    constexpr static float MAX_SPEED = 250.f; // pixel per second
+    constexpr static float GROUND_DAMPING = 0.75f;
     constexpr static float AIR_DAMPING = 0.5f;
 
-    constexpr static float JUMP_ACCELERATION = 50.f;
-    constexpr static float MAX_JUMP_TIME = 0.2f;
+    constexpr static float JUMP_VELO = 300.f;
+    constexpr static float START_JUMP_FORCE = 1.5f;
+    constexpr static float MAX_JUMP_HEIGHT = 40.f * 4;
 
     #define FILE_PATH "../../asset/sprites/"
 
@@ -32,6 +34,7 @@ namespace mario::entity {
 
             sf::Time jumpTimer;
             
+            float startJumpPosY = -10000.f;
             float shootingDelayTime = 0.f;
             bool _isRunning = false;
             bool _isJumping = false;
@@ -70,7 +73,8 @@ namespace mario::entity {
 
                 if(!_isJumping && isInSurface()) {
                     _isJumping = true;
-                    jumpTimer = sf::Time::Zero;
+                    startJumpPosY = p_body->getPosition().y;
+                    p_body->applyLinearImpulseToCenter(sf::Vector2f(0.f, -START_JUMP_FORCE));
                 }
             }
 
@@ -97,6 +101,16 @@ namespace mario::entity {
                 
             void update(const sf::RenderWindow *window, float dt) override {
                 sf::Vector2f vel = p_body->getVelocity();
+                if(abs(vel.x) <= 1.f) {
+                    vel.x = 0.f;
+                    p_body->setVelocity(sf::Vector2f(0.f, vel.y));
+                }
+
+                if(abs(vel.y) <= 1.f) {
+                    vel.y = 0.f;
+                    p_body->setVelocity(sf::Vector2f(vel.x, 0.f));
+                }
+
                 if(!isInSurface()) {
                     // change texture to jumping
                     p_stateManager->setAnimation(p_animation, "jump[0]");
@@ -108,7 +122,7 @@ namespace mario::entity {
                         p_animation->setAnimationState(false);
                     } else {
                         // change to next run animation step
-                        p_animation->setAnimationState(true);
+                        p_animation->setAnimationState(true);   
                     }
                 }
 
@@ -124,17 +138,25 @@ namespace mario::entity {
                     p_stateManager->changeToSuperState(p_animation, p_body, p_body->getPosition());
                     std::cerr << "SUCCESFULLY\n";
                 }
+
+                if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Num3)) {
+                    std::cerr << "CHANGE TO FIRE STATE\n";
+                    p_stateManager->changeToFireState(p_animation, p_body, p_body->getPosition());
+                    std::cerr << "SUCCESFULLY\n";
+                }
                 
                 p_animation->update(window, dt);
                 float bodyMass = p_body->getMass();
 
-                if(_isJumping) {
-                    p_body->applyForce(sf::Vector2f(0.f, -JUMP_ACCELERATION * bodyMass));
-                    jumpTimer += sf::seconds(dt);
-                }
+                if(_isJumping)
+                    p_body->setVelocity(sf::Vector2f(p_body->getVelocity().x, -JUMP_VELO));
 
-                if(_isJumping && jumpTimer >= sf::seconds(MAX_JUMP_TIME))
+                //std::cerr << "VEL: " << vel.x << ' ' << vel.y << ' ' << MAX_JUMP_HEIGHT << ' ' << _isJumping << " POS: " << p_body->getPosition().y << " START JUMP POS Y: " << startJumpPosY << '\n';
+                if(p_body->getPosition().y <= startJumpPosY - MAX_JUMP_HEIGHT) {
+                    startJumpPosY = -10000.f;
+                    p_body->applyLinearImpulseToCenter(sf::Vector2f(0.f, 0.5f));
                     _isJumping = false;
+                }
 
                 if(_isRunning && isFaceToBlock()) 
                     _isRunning = false;
@@ -156,6 +178,16 @@ namespace mario::entity {
             void handleEvent(const sf::RenderWindow *window, const sf::Event &event) override {
                 
             }
+
+            /*void pickUpPowerUp(Item *item) {
+                if(item == nullptr) { // item is fireflower
+                    p_stateManager->changeToFireState(p_animation, p_body, p_body->getPosition());
+                }
+
+                if(item == nullptr) { // item is mushroom
+                    p_stateManager->changeToSuperState(p_animation, p_body, p_body->getPosition());
+                }
+            }*/
             
             void render(sf::RenderWindow *window) override {
                 p_animation->renderWithPosition(window, p_body->getPosition());

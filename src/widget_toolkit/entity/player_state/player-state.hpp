@@ -30,6 +30,7 @@ namespace mario::entity::player_state {
         public:
             PlayerStateManager() {
                 currStateType = PlayerStateType::Small;
+                player_small = player_super = player_fire = curr_state = nullptr;
             }
 
             virtual ~PlayerStateManager() {

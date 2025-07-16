@@ -39,8 +39,8 @@ namespace mario::entity::player_state {
                 
                 p_eBox = new DynamicBox(_worldId, pos, MARIO_DIM, LUIGI_DENSITY, LUIGI_FRICTION);
                 p_eAnimation->clearAnimationStep();
-                p_eAnimation->addAnimationStep(LUIGI_TYPE + ".walk[1]");
                 p_eAnimation->addAnimationStep(LUIGI_TYPE + ".walk[0]");
+                p_eAnimation->addAnimationStep(LUIGI_TYPE + ".walk[1]");
                 p_eAnimation->addAnimationStep(LUIGI_TYPE + ".idle[0]");
             }
     };
@@ -60,15 +60,31 @@ namespace mario::entity::player_state {
                 
                 p_eBox = new DynamicBox(_worldId, pos, MARIO_DIM, LUIGI_DENSITY, LUIGI_FRICTION);
                 p_eAnimation->clearAnimationStep();
-                p_eAnimation->addAnimationStep(LUIGI_TYPE + ".walk[1]");
                 p_eAnimation->addAnimationStep(LUIGI_TYPE + ".walk[0]");
+                p_eAnimation->addAnimationStep(LUIGI_TYPE + ".walk[1]");
                 p_eAnimation->addAnimationStep(LUIGI_TYPE + ".idle[0]");
             }
     };
 
     
     class LuigiFireState : public LuigiState {
+        private:
+            const sf::Vector2f MARIO_DIM = sf::Vector2f(20, 31);
+
         public:
+            LuigiFireState(b2WorldId worldId) : LuigiState(worldId, "luigi-fire") {
+            }
+
+            void update(Animation *&p_eAnimation, Box *&p_eBox, sf::Vector2f pos) override {
+                if(p_eBox != nullptr) 
+                    delete p_eBox; 
+                
+                p_eBox = new DynamicBox(_worldId, pos, MARIO_DIM, LUIGI_DENSITY, LUIGI_FRICTION);
+                p_eAnimation->clearAnimationStep();
+                p_eAnimation->addAnimationStep(LUIGI_TYPE + ".walk[0]");
+                p_eAnimation->addAnimationStep(LUIGI_TYPE + ".walk[1]");
+                p_eAnimation->addAnimationStep(LUIGI_TYPE + ".idle[0]");
+            }
     };
 
     #undef LUIGI_FILE_PATH

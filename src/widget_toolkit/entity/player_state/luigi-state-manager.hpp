@@ -18,7 +18,7 @@ namespace mario::entity::player_state {
 
                 player_small = new LuigiSmallState(worldId);
                 player_super = new LuigiSuperState(worldId);
-                //player_fire = new LuigiFireState(worldId);
+                player_fire = new LuigiFireState(worldId);
                 curr_state = player_small;
                 curr_state->update(p_animation, p_box, pos);
             }
