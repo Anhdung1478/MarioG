@@ -1,6 +1,6 @@
 #pragma once
 
-namespace game::event{
+namespace mario::event{
     enum class SoundEvent {
         ONE_UP,                    // When gaining an extra life (1_up.wav)
         BLOCK_BREAK,               // When breaking a brick block (break_brick_block.wav)

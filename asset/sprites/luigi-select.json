@@ -1,0 +1,10 @@
+{
+  "luigi-level": {
+    "small": [
+      { "x": 115, "y": 97, "width": 15, "height": 19}
+    ],
+    "super": [
+      { "x": 105, "y": 66, "width": 20, "height": 31}
+    ]
+  }
+}
