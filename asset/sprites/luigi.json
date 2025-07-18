@@ -4,8 +4,8 @@
       { "x": 45, "y": 8, "width": 17, "height": 19 }
     ],
     "walk": [
-      { "x": 115, "y": 8, "width": 17, "height": 19 },
-      { "x": 79, "y": 8, "width": 17, "height": 19 }
+      { "x": 79, "y": 8, "width": 17, "height": 19 },
+      { "x": 115, "y": 8, "width": 17, "height": 19 }
     ],
     "jump": [
       { "x": 219, "y": 34, "width": 17, "height": 19 }
