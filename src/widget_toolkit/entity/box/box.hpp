@@ -35,10 +35,10 @@ namespace mario::entity {
                 dimension = _dimension; // Store the dimensions of the dynamic box
                 b2BodyDef bodyDef = b2DefaultBodyDef();
                 bodyDef.type = (isDynamicBody) ? b2_dynamicBody : b2_staticBody;
-                bodyDef.position = b2Vec2({position.x - _dimension.x / 2.f, position.y - _dimension.y / 2.f});
+                bodyDef.position = b2Vec2({position.x, position.y - _dimension.y / 2.f});
                 bodyId = b2CreateBody(worldId, &bodyDef);
 
-                b2Polygon box = b2MakeBox(_dimension.x / 2.0f, _dimension.y / 2.0f); // Create a box shape with the given dimensions
+                b2Polygon box = b2MakeBox(_dimension.x / 2.f, _dimension.y / 2.f); // Create a box shape with the given dimensions
                 b2ShapeDef shapeDef = b2DefaultShapeDef(); // Create a default shape definition
                 shapeDef.density = density;
                 shapeDef.material.friction = friction;
@@ -63,7 +63,7 @@ namespace mario::entity {
 
             sf::Vector2f getPosition() {
                 b2Vec2 pos = b2Body_GetPosition(bodyId);
-                return convertUnitToPixel(sf::Vector2f(pos.x, pos.y));
+                return convertUnitToPixel(sf::Vector2f(pos.x, pos.y + dimension.y / 2.f));
             }
 
             sf::Vector2f getDimension() {
