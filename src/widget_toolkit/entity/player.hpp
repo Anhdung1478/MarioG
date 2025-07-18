@@ -4,6 +4,8 @@
 #include "entity.hpp"
 #include <box2d/box2d.h>
 #include "box/dynamic-box.hpp"
+#include "player_state/mario-state-manager.hpp"
+#include "player_state/luigi-state-manager.hpp"
 
 namespace mario::entity {
     
@@ -14,27 +16,42 @@ namespace mario::entity {
 
     constexpr static float JUMP_ACCELERATION = 50.f;
     constexpr static float MAX_JUMP_TIME = 0.2f;
+
+    #define FILE_PATH "../../asset/sprites/"
+
+    const static sf::Vector2f PLAYER_SCALE = sf::Vector2f(2.5f, 2.5f);
     
+    enum class CharacterListType {
+        Mario = 0,
+        Luigi = 1
+    };
+
     class Player : public Entity {
         private:
+            mario::entity::player_state::PlayerStateManager *p_stateManager;
+
             sf::Time jumpTimer;
             
             float shootingDelayTime = 0.f;
             bool _isRunning = false;
-            bool _isRunningForward;
             bool _isJumping = false;
+            bool _isRunningForward;
 
         public:
-            Player(std::string jsonPath, std::string texturePath, std::string randomSpriteID, b2WorldId worldId, sf::Vector2f spawnPoint) 
-            : Entity(jsonPath, texturePath, sf::Vector2f(2.5f, 2.5f), randomSpriteID) {
-                p_body = new DynamicBox(worldId, spawnPoint, p_animation->getSize(), 1.0f, 0.8f);
-                p_animation->addAnimationStep("mario-super.walk[1]");
-                p_animation->addAnimationStep("mario-super.walk[0]");
-                p_animation->addAnimationStep("mario-super.idle[0]");
+            Player(b2WorldId worldId, sf::Vector2f spawnPoint, CharacterListType characterType) {
+                if(characterType == CharacterListType::Mario) {
+                    p_animation = new Animation(FILE_PATH"mario.json", FILE_PATH"mario_sheets.png", PLAYER_SCALE, "mario-small.idle[0]");
+                    p_stateManager = new mario::entity::player_state::MarioStateManager(worldId, spawnPoint, p_animation, p_body);
+                }
+
+                if(characterType == CharacterListType::Luigi) {
+                    p_animation = new Animation(FILE_PATH"luigi.json", FILE_PATH"luigi_sheets.png", PLAYER_SCALE, "luigi-small.idle[0]");
+                    p_stateManager = new mario::entity::player_state::LuigiStateManager(worldId, spawnPoint, p_animation, p_body);
+                }
             }
 
             ~Player() override {
-                delete p_body;
+                delete p_stateManager;
             }
 
             bool isInSurface() {
@@ -82,17 +99,30 @@ namespace mario::entity {
                 sf::Vector2f vel = p_body->getVelocity();
                 if(!isInSurface()) {
                     // change texture to jumping
-                    p_animation->setSpriteAnimation("mario-super.jump[0]");
+                    p_stateManager->setAnimation(p_animation, "jump[0]");
                     p_animation->setAnimationState(false);
                 } else {
                     if(abs(vel.x) <= 0.001f) {
                         // change texture to idle
-                        p_animation->setSpriteAnimation("mario-super.idle[0]");
+                        p_stateManager->setAnimation(p_animation, "idle[0]");
                         p_animation->setAnimationState(false);
                     } else {
                         // change to next run animation step
                         p_animation->setAnimationState(true);
                     }
+                }
+
+                // change state for debugging
+                if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Num1)) {
+                    std::cerr << "CHANGE TO SMALL STATE\n";
+                    p_stateManager->changeToSmallState(p_animation, p_body, p_body->getPosition());
+                    std::cerr << "SUCCESFULLY\n";
+                }
+
+                if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Num2)) {
+                    std::cerr << "CHANGE TO SUPER STATE\n";
+                    p_stateManager->changeToSuperState(p_animation, p_body, p_body->getPosition());
+                    std::cerr << "SUCCESFULLY\n";
                 }
                 
                 p_animation->update(window, dt);
@@ -132,4 +162,6 @@ namespace mario::entity {
             }
 
     };
+
+    #undef FILE_PATH
 }

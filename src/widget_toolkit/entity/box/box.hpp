@@ -11,8 +11,8 @@ namespace mario::entity {
             constexpr static float PIXEL_PER_UNIT = 40.f;
         
         protected:
-            b2BodyId bodyId;
-            b2ShapeId shapeId;
+            b2BodyId bodyId = {0};
+            b2ShapeId shapeId = {0};
             sf::Vector2f dimension;
 
             sf::Vector2f convertPixelToUnit(sf::Vector2f vec) { // Convert vector2D from pixels to Box2D units
@@ -47,7 +47,18 @@ namespace mario::entity {
             }
 
             virtual ~Box() {
-                b2DestroyBody(bodyId);
+                if(b2Body_IsValid(bodyId)) {
+                    b2DestroyBody(bodyId);
+                }
+            }
+            
+            void enable() {
+                b2Body_Enable(bodyId);
+                b2Body_SetAwake(bodyId, true);
+            }
+
+            void disable() {
+                b2Body_Disable(bodyId);
             }
 
             sf::Vector2f getPosition() {
