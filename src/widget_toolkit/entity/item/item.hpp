@@ -7,12 +7,19 @@
 #include "../box/dynamic-box.hpp"
 
 namespace mario::entity {
+    enum class ItemType {
+        Coin,
+        RedMushroom,
+        OneupMushroom
+    };
     class Item : public Entity { 
         private:
             std::unique_ptr<DynamicBox> p_body;
             bool isMoving;
+            ItemType type;
         public:
-            Item(const std::string& jsonPath, const std::string& texturePath, 
+            Item(ItemType itemType,
+                 const std::string& jsonPath, const std::string& texturePath, 
                  sf::Vector2f scale, const std::string& spriteID, 
                  b2WorldId worldId, sf::Vector2f startPosition = {0, 0},
                  sf::Vector2f dimension = {32, 32},
@@ -20,10 +27,14 @@ namespace mario::entity {
                  sf::Vector2f startVelocity = {0, 0})
                 : Entity(jsonPath, texturePath, scale, spriteID), 
                   p_body(std::make_unique<DynamicBox>(worldId, startPosition, dimension, density, friction, isDynamicBody)),
-                  isMoving(true) {
+                  isMoving(true), type(itemType) {
                     p_body->setVelocity(startVelocity);
                     p_animation->setAnimationState(false);
                     p_animation->setSpriteAnimation(spriteID);
+            }
+
+            ItemType getType() const {
+                return type;
             }
 
             void enable() {
@@ -77,6 +88,11 @@ namespace mario::entity {
             // For power-up transformations
             void changeSprite(const std::string& newSpriteID) {
                 p_animation->setSpriteAnimation(newSpriteID);
+            }
+
+            // For items' behaviour
+            virtual void onCollect(Entity* collector) {
+                // Each item will have a different onCollect method
             }
     };
 }
