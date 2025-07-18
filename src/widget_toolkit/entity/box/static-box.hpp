@@ -13,6 +13,10 @@ namespace mario::entity {
     
             ~StaticBox() override {}
 
+            void applyLinearImpulseToCenter(sf::Vector2f force) {
+                abort();
+            }
+
             void applyForce(sf::Vector2f force) {
                 abort();
             }

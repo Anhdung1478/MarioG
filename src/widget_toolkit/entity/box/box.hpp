@@ -74,6 +74,7 @@ namespace mario::entity {
                 return b2Body_GetMass(bodyId);
             }
 
+            virtual void applyLinearImpulseToCenter(sf::Vector2f force) = 0;
             virtual void applyForce(sf::Vector2f force) = 0;
             virtual sf::Vector2f getVelocity() = 0;
             virtual void setVelocity(sf::Vector2f vel) = 0;
