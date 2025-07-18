@@ -35,7 +35,7 @@ namespace mario::entity {
                 dimension = _dimension; // Store the dimensions of the dynamic box
                 b2BodyDef bodyDef = b2DefaultBodyDef();
                 bodyDef.type = (isDynamicBody) ? b2_dynamicBody : b2_staticBody;
-                bodyDef.position = b2Vec2({position.x, position.y});
+                bodyDef.position = b2Vec2({position.x - _dimension.x / 2.f, position.y - _dimension.y / 2.f});
                 bodyId = b2CreateBody(worldId, &bodyDef);
 
                 b2Polygon box = b2MakeBox(_dimension.x / 2.0f, _dimension.y / 2.0f); // Create a box shape with the given dimensions

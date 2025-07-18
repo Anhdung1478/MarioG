@@ -90,6 +90,10 @@ namespace mario::entity {
                 return scale;
             }
 
+            sf::Vector2f getSize() {
+                return p_sprite->getGlobalBounds().size;
+            }
+
             void update(const sf::RenderWindow *window, float dt) override {
                 animationTimer += (_isRunning ? sf::seconds(dt) : sf::seconds(0));
                 if(animationTimer >= sf::seconds(TIME_BETWEEN_STEP)) {

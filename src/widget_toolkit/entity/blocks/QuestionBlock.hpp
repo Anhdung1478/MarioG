@@ -5,7 +5,7 @@
 class QuestionBlock : public Block {
 public:
     QuestionBlock(){};
-    QuestionBlock(sf::Vector2f pos);
+    QuestionBlock(b2WorldId worldId, sf::Vector2f pos);
     void loadSpritesSheet(const std::vector<SpriteData2>& sprites);
     void InitSpritesSheet();
     void update(const sf::RenderWindow *window, float dt) override;

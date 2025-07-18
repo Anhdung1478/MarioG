@@ -27,7 +27,7 @@ namespace mario::entity {
         public:
             Player(std::string jsonPath, std::string texturePath, std::string randomSpriteID, b2WorldId worldId, sf::Vector2f spawnPoint) 
             : Entity(jsonPath, texturePath, sf::Vector2f(2.5f, 2.5f), randomSpriteID) {
-                p_body = new DynamicBox(worldId, spawnPoint, p_animation->getScale(), 1.0f, 0.8f);
+                p_body = new DynamicBox(worldId, spawnPoint, p_animation->getSize(), 1.0f, 0.8f);
                 p_animation->addAnimationStep("mario-super.walk[1]");
                 p_animation->addAnimationStep("mario-super.walk[0]");
                 p_animation->addAnimationStep("mario-super.idle[0]");
