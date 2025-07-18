@@ -12,9 +12,39 @@ struct SpriteData {
     const sf::Texture* texture; 
 };
 
+struct SpriteData2 {
+    std::string id;
+    int x, y;
+    int z, t;
+    SpriteData2(const std::string& id, int x, int y, int z, int t)
+        : id(id), x(x), y(y), z(z), t(t) {}
+};
+
 class TextureManager {
 public:
     void loadSheet(const std::string& jsonPath, const std::string& imagePath);
+    void loadSheet(const std::string& imagePath, const std::vector<SpriteData2>& sprites) {
+        // Load texture without JSON metadata
+        if (textureMap.find(imagePath) == textureMap.end()) {
+            sf::Texture texture;
+            if (!texture.loadFromFile(imagePath)) {
+                throw std::runtime_error("Failed to load texture: " + imagePath);
+            }
+            textureMap[imagePath] = std::move(texture);
+        }
+
+        for (auto &spr : sprites) {
+            SpriteData data;
+            data.x = spr.x;
+            data.y = spr.y;
+            data.z = spr.z;
+            data.t = spr.t;
+            data.texture = &textureMap[imagePath];
+
+            // Use the sprite ID as the key
+            spriteMap[spr.id] = data;
+        }
+    }
 
     const SpriteData& getSpriteData(const std::string& name) const;
 

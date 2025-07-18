@@ -43,17 +43,10 @@ void mario::MainWindow::run() {
     worldDef.gravity = b2Vec2({0.0f, 20.f}); // Set gravity for the Box2D world
     worldId = b2CreateWorld(&worldDef); // Create the Box2D world
 
-    b2BodyDef groundDef = b2DefaultBodyDef(); // Create a default ground definition
-    groundDef.type = b2_staticBody; // Set the ground body as static
-    groundDef.position = b2Vec2({640.f / 40.f, 725.f / 40.f}); // Set the position of the ground body
-    b2BodyId groundBodyId = b2CreateBody(worldId, &groundDef); // Create the ground body
-    b2Polygon groundBox = b2MakeBox(1280.0f / 40.f / 2.0f, 10.0f / 40.f / 2.0f); // Create a box shape for the ground
-    b2ShapeDef groundShapeDef = b2DefaultShapeDef(); // Create a default shape definition
-    groundShapeDef.density = 1.0f; // Set density for the ground shape
-    groundShapeDef.material.friction = 0.3f; // Set friction for the ground shape
-    b2ShapeId groundShapeId = b2CreatePolygonShape(groundBodyId, &groundShapeDef, &groundBox); // Create a polygon shape for the ground body
+    sf::Vector2f groundPos = sf::Vector2f(640, 725);
+    sf::Vector2f groundDim = sf::Vector2f(1280, 10);
+    mario::entity::Box *p_ground = new mario::entity::StaticBox(worldId, groundPos, groundDim, 1.f, 0.3f);
 
-    clock.reset();
     isRunning = true;
 
     sf::Time accumalator = sf::Time::Zero;
@@ -98,7 +91,6 @@ void mario::MainWindow::run() {
         }
     }
 
-    b2DestroyBody(groundBodyId);
     window->close();
     delete window;
 }

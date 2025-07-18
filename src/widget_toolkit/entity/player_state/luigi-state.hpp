@@ -27,7 +27,7 @@ namespace mario::entity::player_state {
 
     class LuigiSmallState : public LuigiState {
         private:
-            const sf::Vector2f MARIO_DIM = sf::Vector2f(17, 19);
+            const sf::Vector2f LUIGI_DIM = sf::Vector2f(17, 19);
 
         public:
             LuigiSmallState(b2WorldId worldId) : LuigiState(worldId, "luigi-small") {
@@ -37,7 +37,8 @@ namespace mario::entity::player_state {
                 if(p_eBox != nullptr) 
                     delete p_eBox; 
                 
-                p_eBox = new DynamicBox(_worldId, pos, MARIO_DIM, LUIGI_DENSITY, LUIGI_FRICTION);
+                sf::Vector2f GLOBAL_DIM = sf::Vector2f(LUIGI_DIM.x * LUIGI_SCALE.x, LUIGI_DIM.y * LUIGI_SCALE.y);
+                p_eBox = new DynamicBox(_worldId, pos, GLOBAL_DIM, LUIGI_DENSITY, LUIGI_FRICTION);
                 p_eAnimation->clearAnimationStep();
                 p_eAnimation->addAnimationStep(LUIGI_TYPE + ".walk[0]");
                 p_eAnimation->addAnimationStep(LUIGI_TYPE + ".walk[1]");
@@ -48,7 +49,7 @@ namespace mario::entity::player_state {
 
     class LuigiSuperState : public LuigiState {
         private:
-            const sf::Vector2f MARIO_DIM = sf::Vector2f(20, 31);
+            const sf::Vector2f LUIGI_DIM = sf::Vector2f(20, 31);
 
         public:
             LuigiSuperState(b2WorldId worldId) : LuigiState(worldId, "luigi-super") {
@@ -58,7 +59,8 @@ namespace mario::entity::player_state {
                 if(p_eBox != nullptr) 
                     delete p_eBox; 
                 
-                p_eBox = new DynamicBox(_worldId, pos, MARIO_DIM, LUIGI_DENSITY, LUIGI_FRICTION);
+                sf::Vector2f GLOBAL_DIM = sf::Vector2f(LUIGI_DIM.x * LUIGI_SCALE.x, LUIGI_DIM.y * LUIGI_SCALE.y);
+                p_eBox = new DynamicBox(_worldId, pos, GLOBAL_DIM, LUIGI_DENSITY, LUIGI_FRICTION);
                 p_eAnimation->clearAnimationStep();
                 p_eAnimation->addAnimationStep(LUIGI_TYPE + ".walk[0]");
                 p_eAnimation->addAnimationStep(LUIGI_TYPE + ".walk[1]");
@@ -69,7 +71,7 @@ namespace mario::entity::player_state {
     
     class LuigiFireState : public LuigiState {
         private:
-            const sf::Vector2f MARIO_DIM = sf::Vector2f(20, 31);
+            const sf::Vector2f LUIGI_DIM = sf::Vector2f(20, 31);
 
         public:
             LuigiFireState(b2WorldId worldId) : LuigiState(worldId, "luigi-fire") {
@@ -79,7 +81,8 @@ namespace mario::entity::player_state {
                 if(p_eBox != nullptr) 
                     delete p_eBox; 
                 
-                p_eBox = new DynamicBox(_worldId, pos, MARIO_DIM, LUIGI_DENSITY, LUIGI_FRICTION);
+                sf::Vector2f GLOBAL_DIM = sf::Vector2f(LUIGI_DIM.x * LUIGI_SCALE.x, LUIGI_DIM.y * LUIGI_SCALE.y);
+                p_eBox = new DynamicBox(_worldId, pos, GLOBAL_DIM, LUIGI_DENSITY, LUIGI_FRICTION);
                 p_eAnimation->clearAnimationStep();
                 p_eAnimation->addAnimationStep(LUIGI_TYPE + ".walk[0]");
                 p_eAnimation->addAnimationStep(LUIGI_TYPE + ".walk[1]");

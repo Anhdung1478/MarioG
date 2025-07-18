@@ -1,0 +1,10 @@
+{
+  "mario-level": {
+    "small": [
+      { "x": 114, "y": 97, "width": 18, "height": 20}
+    ],
+    "super": [
+      { "x": 105, "y": 66, "width": 20, "height": 32}
+    ]
+  }
+}
