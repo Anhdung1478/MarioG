@@ -48,6 +48,17 @@ namespace mario::entity {
                 p_sprite->setScale(scale);
             }
 
+            Animation(const std::string& imagePath, sf::Vector2f _scale, const std::vector<SpriteData2>& sprites) : scale(_scale) {
+                p_textureResource = std::make_unique<TextureManager>();
+                p_textureResource->loadSheet(imagePath, sprites);
+
+                SpriteData data = p_textureResource->getSpriteData(sprites[0].id);
+                p_sprite = std::make_unique<sf::Sprite>(*(data.texture));
+                p_sprite->setTextureRect(sf::IntRect({data.x, data.y}, {data.z, data.t}));
+                p_sprite->setOrigin({data.z / 2.f, 1.f * data.t});
+                p_sprite->setScale(scale);
+            }
+
             void addAnimationStep(const std::string& spriteID) {
                 animationSteps.push_back(p_textureResource->getSpriteData(spriteID));
             }
@@ -82,6 +93,10 @@ namespace mario::entity {
 
             sf::Vector2f getScale() {
                 return scale;
+            }
+
+            sf::Vector2f getSize() {
+                return p_sprite->getGlobalBounds().size;
             }
 
             void update(const sf::RenderWindow *window, float dt) override {

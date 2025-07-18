@@ -19,6 +19,10 @@ namespace mario::entity {
                 p_body = nullptr;
             }
 
+            Entity(const std::string& imagePath, sf::Vector2f _scale, const std::vector<SpriteData2>& sprites) {
+                p_animation = new Animation(imagePath, _scale, sprites);
+            }
+
             virtual ~Entity() {
                 delete p_animation;
                 delete p_body;

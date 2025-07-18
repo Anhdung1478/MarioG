@@ -5,6 +5,7 @@
 #include <SFML/Graphics.hpp>
 #include <box2d/box2d.h>
 #include "../widget_toolkit/interfaces.hpp"
+#include "../widget_toolkit/entity/box/static-box.hpp"
 
 #define DEFAULT_FPS 120
 #define DEFAULT_WIN_WIDTH 1280
