@@ -31,6 +31,7 @@ namespace mario::entity {
     class Player : public Entity {
         private:
             mario::entity::player_state::PlayerStateManager *p_stateManager;
+            CharacterListType _characterType;
 
             sf::Time jumpTimer;
             
@@ -41,15 +42,15 @@ namespace mario::entity {
             bool _isRunningForward;
 
         public:
-            Player(b2WorldId worldId, sf::Vector2f spawnPoint, CharacterListType characterType) {
+            Player(b2WorldId worldId, sf::Vector2f spawnPoint, CharacterListType characterType, player_state::PlayerStateType stateType) : _characterType(characterType) {
                 if(characterType == CharacterListType::Mario) {
                     p_animation = new Animation(FILE_PATH"mario.json", FILE_PATH"mario_sheets.png", PLAYER_SCALE, "mario-small.idle[0]");
-                    p_stateManager = new mario::entity::player_state::MarioStateManager(worldId, spawnPoint, p_animation, p_body);
+                    p_stateManager = new mario::entity::player_state::MarioStateManager(worldId, spawnPoint, p_animation, p_body, stateType);
                 }
 
                 if(characterType == CharacterListType::Luigi) {
                     p_animation = new Animation(FILE_PATH"luigi.json", FILE_PATH"luigi_sheets.png", PLAYER_SCALE, "luigi-small.idle[0]");
-                    p_stateManager = new mario::entity::player_state::LuigiStateManager(worldId, spawnPoint, p_animation, p_body);
+                    p_stateManager = new mario::entity::player_state::LuigiStateManager(worldId, spawnPoint, p_animation, p_body, stateType);
                 }
             }
 
@@ -192,6 +193,14 @@ namespace mario::entity {
             
             void render(sf::RenderWindow *window) override {
                 p_animation->renderWithPosition(window, p_body->getPosition());
+            }
+
+            CharacterListType getCharacterType() {
+                return _characterType;
+            }
+
+            player_state::PlayerStateType getPlayerStateType() {
+                return p_stateManager->getCurrentState();
             }
 
     };

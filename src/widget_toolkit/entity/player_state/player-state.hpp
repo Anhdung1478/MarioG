@@ -80,6 +80,10 @@ namespace mario::entity::player_state {
                 curr_state->update(p_animation, p_box, pos);
             }
 
+            PlayerStateType getCurrentState() {
+                return currStateType;
+            }
+
             virtual void setAnimation(Animation *&p_animation, const std::string &ID) = 0;
     };
 }

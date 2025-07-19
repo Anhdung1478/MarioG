@@ -59,15 +59,15 @@ mario::pages::MainMenuPage::MainMenuPage(mario::MainWindow &context) : Page(cont
     }
 
     p_levelButton[1]->Click.append([this]() {
-        _context->changePage(std::make_shared<mario::pages::LevelsPage>(*_context, LevelState(1, 2, 0, 0, 0)));
+        _context->changePage(std::make_shared<mario::pages::LevelsPage>(*_context, mario::resource::LevelState(1, 2, 0, 0)));
     });
 
     p_levelButton[2]->Click.append([this]() {
-        _context->changePage(std::make_shared<mario::pages::LevelsPage>(*_context, LevelState(2, 2, 0, 0, 0)));
+        _context->changePage(std::make_shared<mario::pages::LevelsPage>(*_context, mario::resource::LevelState(2, 2, 0, 0)));
     });
 
     p_levelButton[3]->Click.append([this]() {
-        _context->changePage(std::make_shared<mario::pages::LevelsPage>(*_context, LevelState(3, 2, 0, 0, 0)));
+        _context->changePage(std::make_shared<mario::pages::LevelsPage>(*_context, mario::resource::LevelState(3, 2, 0, 0)));
     });
     
     for (int i = 1; i <= NUM_LEVELS; ++i) {

@@ -14,12 +14,25 @@ namespace mario::entity::player_state {
             };
 
         public:
-            MarioStateManager(b2WorldId worldId, sf::Vector2f pos, Animation *&p_animation, Box *&p_box) {
+            MarioStateManager(b2WorldId worldId, sf::Vector2f pos, Animation *&p_animation, Box *&p_box, PlayerStateType stateType) {
 
                 player_small = new MarioSmallState(worldId);
                 player_super = new MarioSuperState(worldId);
                 player_fire = new MarioFireState(worldId);
-                curr_state = player_small;
+
+                currStateType = stateType;
+                if(stateType == PlayerStateType::Small) {
+                    curr_state = player_small;
+                }
+
+                if(stateType == PlayerStateType::Super) {
+                    curr_state = player_super;
+                }
+
+                if(stateType == PlayerStateType::Fire) {
+                    curr_state = player_fire;
+                }
+
                 curr_state->update(p_animation, p_box, pos);
             }
 
