@@ -17,60 +17,58 @@ void mario::resource::LevelDataManager::autoSave(LevelState levelData) {
 }
 
 void encryptDataIntoFile(std::ofstream &ofst, mario::resource::LevelState levelData) {
-    ofst << "Level = " << levelData.level << '\n';
-    ofst << "Lives = " << levelData.num_lives << '\n';
-    ofst << "Coins = " << levelData.coins << '\n';
-    ofst << "Score = " << levelData.score << '\n';
-    ofst << "CharacterType = " << int(levelData.characterType) << '\n';
-    ofst << "StateType = " << int(levelData.stateType) << '\n';
+    ofst << "Level= " << levelData.level << '\n';
+    ofst << "Lives= " << levelData.num_lives << '\n';
+    ofst << "Coins= " << levelData.coins << '\n';
+    ofst << "Score= " << levelData.score << '\n';
+    ofst << "CharacterType= " << int(levelData.characterType) << '\n';
+    ofst << "StateType= " << int(levelData.stateType) << '\n';
 }
 
 mario::resource::LevelState decryptDataFromFile(std::ifstream &ifst) {
     mario::resource::LevelState levelData;
     std::string strTemp;
-    char charTemp;
     int intTemp;
 
     ifst >> strTemp;
-    ifst >> charTemp;
     ifst >> intTemp;
 
-    assert(strTemp == "Level" && charTemp == '=');
+    assert(strTemp == "Level=");
     levelData.level = intTemp;
 
     ifst >> strTemp;
-    ifst >> charTemp;
     ifst >> intTemp;
+    std::cerr << strTemp << intTemp << '\n';
 
-    assert(strTemp == "Lives" && charTemp == '=');
+    assert(strTemp == "Lives=");
     levelData.num_lives = intTemp;
 
     ifst >> strTemp;
-    ifst >> charTemp;
     ifst >> intTemp;
+    std::cerr << strTemp << intTemp << '\n';
 
-    assert(strTemp == "Coins" && charTemp == '=');
+    assert(strTemp == "Coins=");
     levelData.coins = intTemp;
 
     ifst >> strTemp;
-    ifst >> charTemp;
     ifst >> intTemp;
+    std::cerr << strTemp << intTemp << '\n';
 
-    assert(strTemp == "Score" && charTemp == '=');
+    assert(strTemp == "Score=");
     levelData.score = intTemp;
 
     ifst >> strTemp;
-    ifst >> charTemp;
     ifst >> intTemp;
+    std::cerr << strTemp << intTemp << '\n';
 
-    assert(strTemp == "CharacterType" && charTemp == '=');
+    assert(strTemp == "CharacterType=");
     levelData.characterType = mario::entity::CharacterListType(intTemp);
 
     ifst >> strTemp;
-    ifst >> charTemp;
     ifst >> intTemp;
+    std::cerr << strTemp << intTemp << '\n';
 
-    assert(strTemp == "StateType" && charTemp == '=');
+    assert(strTemp == "StateType=");
     levelData.stateType = mario::entity::player_state::PlayerStateType(intTemp);
 
     return levelData;
@@ -84,4 +82,8 @@ void mario::resource::LevelDataManager::saveLevelDataIntoFile(LevelState levelDa
 mario::resource::LevelState mario::resource::LevelDataManager::loadLevelDataFromFile(const std::string &fileName) {
     std::ifstream ifst(fileName);
     return decryptDataFromFile(ifst);
+}
+
+mario::resource::LevelState mario::resource::LevelDataManager::loadAutoSaveLevelData() {
+    return loadLevelDataFromFile(defaultAutoSaveFilePath);
 }

@@ -116,16 +116,17 @@ namespace mario::entity {
                     // change texture to jumping
                     p_stateManager->setAnimation(p_animation, "jump[0]");
                     p_animation->setAnimationState(false);
-                } else {
+                } else 
                     if(abs(vel.x) <= 0.001f) {
                         // change texture to idle
                         p_stateManager->setAnimation(p_animation, "idle[0]");
                         p_animation->setAnimationState(false);
-                    } else {
-                        // change to next run animation step
-                        p_animation->setAnimationState(true);   
-                    }
-                }
+                    } else 
+                        if(p_animation->getAnimationState() == false) {
+                            // change to run animation
+                            p_stateManager->setAnimation(p_animation, "idle[0]");
+                            p_animation->setAnimationState(true);   
+                        }
 
                 // change state for debugging
                 if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Num1)) {

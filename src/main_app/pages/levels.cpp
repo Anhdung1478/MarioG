@@ -2,7 +2,6 @@
 #include "levels.hpp"
 
 mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::LevelState state) : Page(context) {
-    state.stateType = mario::entity::player_state::PlayerStateType::Super;
     p_player = std::make_unique<mario::entity::Player>(_context->getWorldId(), sf::Vector2f(15, 10), state.characterType, state.stateType);
     p_inputManager = std::make_unique<mario::input::InputManager>();
 
@@ -18,7 +17,7 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
 }
 
 void mario::pages::LevelsPage::autoSave() {
-    p_levelDataManager->saveLevelDataIntoFile(currLevelState, defaultContinueFileSavePath);
+    p_levelDataManager->autoSave(currLevelState);
 }
 
 mario::pages::LevelsPage::~LevelsPage() {

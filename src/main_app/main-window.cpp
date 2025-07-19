@@ -53,12 +53,12 @@ void mario::MainWindow::run() {
     sf::sleep(timeStep);
     while (isRunning) {
         sf::Time deltaTime = clock.restart(); // Get the time elapsed since the last frame
-        if(deltaTime < timeStep) {
+        while(deltaTime < timeStep) {
             sf::sleep(timeStep - deltaTime);
             deltaTime += clock.restart();
         }
 
-        std::cerr << deltaTime.asSeconds() << ' ' << timeStep.asSeconds() << '\n';
+        //std::cerr << deltaTime.asSeconds() << ' ' << timeStep.asSeconds() << '\n';
         while (const std::optional event = window->pollEvent()) {
             if(event->is<sf::Event::Closed>()) {
                 isRunning = false;
@@ -80,7 +80,7 @@ void mario::MainWindow::run() {
 
         while(accumalator >= timeStep) {
             float stepTime = timeStep.asSeconds();
-            b2World_Step(worldId, stepTime, 8);
+            b2World_Step(worldId, stepTime, 16);
             accumalator -= sf::seconds(stepTime);
         }
 

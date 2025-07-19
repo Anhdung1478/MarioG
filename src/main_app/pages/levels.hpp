@@ -18,8 +18,6 @@ namespace mario::pages {
             mario::resource::LevelState currLevelState;
             sf::Time timeRemaining;
 
-            const std::string defaultContinueFileSavePath = "../../asset/save_data/autosave.txt";
-
         public:
             LevelsPage(MainWindow &context, mario::resource::LevelState state);
             ~LevelsPage();
