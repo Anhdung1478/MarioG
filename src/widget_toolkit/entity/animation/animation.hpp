@@ -10,7 +10,7 @@ namespace mario::entity {
 
     class Animation : public IScreenElement {
         private:
-            std::unique_ptr<TextureManager> p_textureResource;
+            TextureManager& p_textureResource = TextureManager::getInstance();
             std::unique_ptr<sf::Sprite> p_sprite;
             std::vector<SpriteData> animationSteps;
             sf::Vector2f scale;
@@ -38,10 +38,9 @@ namespace mario::entity {
     
         public:
             Animation(const std::string& jsonPath, const std::string& texturePath, sf::Vector2f _scale, const std::string& randomSpriteID) : scale(_scale) {
-                p_textureResource = std::make_unique<TextureManager>();
-                p_textureResource->loadSheet(jsonPath, texturePath);
+                p_textureResource.loadSheet(jsonPath, texturePath);
 
-                SpriteData data = p_textureResource->getSpriteData(randomSpriteID);
+                SpriteData data = p_textureResource.getSpriteData(randomSpriteID);
                 p_sprite = std::make_unique<sf::Sprite>(*(data.texture));
                 
                 setSprite(data);
@@ -49,10 +48,9 @@ namespace mario::entity {
             }
 
             Animation(const std::string& imagePath, sf::Vector2f _scale, const std::vector<SpriteData2>& sprites) : scale(_scale) {
-                p_textureResource = std::make_unique<TextureManager>();
-                p_textureResource->loadSheet(imagePath, sprites);
+                p_textureResource.loadSheet(imagePath, sprites);
 
-                SpriteData data = p_textureResource->getSpriteData(sprites[0].id);
+                SpriteData data = p_textureResource.getSpriteData(sprites[0].id);
                 p_sprite = std::make_unique<sf::Sprite>(*(data.texture));
                 p_sprite->setTextureRect(sf::IntRect({data.x, data.y}, {data.z, data.t}));
                 p_sprite->setOrigin({data.z / 2.f, 1.f * data.t});
@@ -60,7 +58,7 @@ namespace mario::entity {
             }
 
             void addAnimationStep(const std::string& spriteID) {
-                animationSteps.push_back(p_textureResource->getSpriteData(spriteID));
+                animationSteps.push_back(p_textureResource.getSpriteData(spriteID));
             }
 
             void clearAnimationStep() {
@@ -69,7 +67,7 @@ namespace mario::entity {
             }
 
             void setSpriteAnimation(const std::string &spriteID) {
-                setSprite(p_textureResource->getSpriteData(spriteID));
+                setSprite(p_textureResource.getSpriteData(spriteID));
             }
             
             void setAnimationState(bool running) {

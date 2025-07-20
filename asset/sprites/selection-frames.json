@@ -1,0 +1,15 @@
+{
+  "select-title": [
+    { "x": 257, "y": 2, "width": 163, "height": 22 }
+  ],
+  "char-frame": [
+    { "x": 302, "y": 140, "width": 58, "height": 59 },
+    { "x": 356, "y": 138, "width": 58, "height": 59 }
+  ],
+  "mario": [
+    { "x": 0, "y": 197, "width": 34, "height": 40 }
+  ],
+  "luigi": [
+    { "x": 231, "y": 196, "width": 34, "height": 40 }
+  ]
+}

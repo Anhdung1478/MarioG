@@ -14,9 +14,9 @@ namespace mario::entity {
     };
     class Item : public Entity { 
         private:
-            std::unique_ptr<DynamicBox> p_body;
             bool isMoving;
             ItemType type;
+            std::unique_ptr<Box> p_body;
         public:
             Item(ItemType itemType,
                  const std::string& jsonPath, const std::string& texturePath, 

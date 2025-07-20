@@ -74,3 +74,8 @@ const SpriteData& TextureManager::getSpriteData(const std::string& name) const {
     }
     return it->second;
 }
+
+TextureManager& TextureManager::getInstance() {
+    static TextureManager instance;
+    return instance;
+}
