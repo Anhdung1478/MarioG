@@ -10,7 +10,10 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, LevelState state) : Pa
     p_inputManager->bind(sf::Keyboard::Scancode::Up, std::make_unique<mario::input::JumpCommand>());
     p_inputManager->bind(sf::Keyboard::Scancode::Z, std::make_unique<mario::input::FireCommand>());
 
-    p_questionBlock = std::make_unique<QuestionBlock>(_context->getWorldId(), sf::Vector2f(100, 600));
+    tileMap = std::make_unique<TileMap>("../../asset/maps/tiles-8.json", "../../asset/maps/Map_1.json");
+    tileMap->createBlock(_context->getWorldId(), blocks);
+
+    // p_questionBlock = std::make_unique<QuestionBlock>(_context->getWorldId(), sf::Vector2f(100, 600));
 }
 
 mario::pages::LevelsPage::~LevelsPage() {
@@ -19,16 +22,27 @@ mario::pages::LevelsPage::~LevelsPage() {
 
 void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) {
     p_player->update(window, dt);
-    p_questionBlock->update(window, dt);
+    for(const auto &block : blocks) {
+        block->update(window, dt);
+    }
+
+    // p_questionBlock->update(window, dt);
 }
 
 void mario::pages::LevelsPage::handleEvent(const sf::RenderWindow *window, const sf::Event &event) {
     p_player->handleEvent(window, event);
     p_inputManager->handleEvent(*p_player, event);
-    p_questionBlock->handleEvent(window, event);
+    for(const auto &block : blocks) {
+        block->handleEvent(window, event);
+    }
+
+    // p_questionBlock->handleEvent(window, event);
 }
 
 void mario::pages::LevelsPage::render(sf::RenderWindow *window) {
+    for(const auto &block : blocks) {
+        block->render(window);
+    }
     p_player->render(window);
-    p_questionBlock->render(window);
+    // p_questionBlock->render(window);
 }
