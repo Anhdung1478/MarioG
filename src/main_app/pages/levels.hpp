@@ -2,7 +2,7 @@
 #include "page.hpp"
 #include "../../widget_toolkit/entity/player.hpp"
 #include "../../widget_toolkit/command/input-manager.hpp"
-#include "../../widget_toolkit/entity/blocks/QuestionBlock.hpp"
+#include "../../widget_toolkit/entity/blocks/TileMap.hpp"
 #include "../../widget_toolkit/resource/LevelState.hpp"
 #include "../../widget_toolkit/resource/LevelDataManager.hpp"
 
@@ -11,6 +11,9 @@ namespace mario::pages {
         private:
             std::unique_ptr<mario::entity::Player> p_player;
             std::unique_ptr<mario::input::InputManager> p_inputManager;
+            std::vector<std::unique_ptr<Block>> blocks;
+            std::unique_ptr<TileMap> tileMap;
+
             std::unique_ptr<QuestionBlock> p_questionBlock;
 
             std::unique_ptr<mario::resource::LevelDataManager> p_levelDataManager;
