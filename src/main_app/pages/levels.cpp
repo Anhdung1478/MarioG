@@ -46,10 +46,15 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
 }
 
 void mario::pages::LevelsPage::handleEvent(const sf::RenderWindow *window, const sf::Event &event) {
-    if (const auto key = event.getIf<sf::Event::KeyPressed>(); key && key->code == sf::Keyboard::Key::P) {
+    if (const auto key = event.getIf<sf::Event::KeyPressed>(); key && key->code == sf::Keyboard::Key::Escape) {
         isPaused = !isPaused;
-        if(!isPaused && p_player) {
-            p_player->run(false, true);
+        if(isPaused) {
+            _context->getSoundManager().pauseBackgroundMusic();
+        } else {
+            _context->getSoundManager().resumeBackgroundMusic();
+            if(p_player) {
+                p_player->run(false, true);
+            }
         }
     }
     
