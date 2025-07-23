@@ -38,35 +38,30 @@ mario::resource::LevelState decryptDataFromFile(std::ifstream &ifst) {
 
     ifst >> strTemp;
     ifst >> intTemp;
-    std::cerr << strTemp << intTemp << '\n';
 
     assert(strTemp == "Lives=");
     levelData.num_lives = intTemp;
 
     ifst >> strTemp;
     ifst >> intTemp;
-    std::cerr << strTemp << intTemp << '\n';
 
     assert(strTemp == "Coins=");
     levelData.coins = intTemp;
 
     ifst >> strTemp;
     ifst >> intTemp;
-    std::cerr << strTemp << intTemp << '\n';
 
     assert(strTemp == "Score=");
     levelData.score = intTemp;
 
     ifst >> strTemp;
     ifst >> intTemp;
-    std::cerr << strTemp << intTemp << '\n';
 
     assert(strTemp == "CharacterType=");
     levelData.characterType = mario::entity::CharacterListType(intTemp);
 
     ifst >> strTemp;
     ifst >> intTemp;
-    std::cerr << strTemp << intTemp << '\n';
 
     assert(strTemp == "StateType=");
     levelData.stateType = mario::entity::player_state::PlayerStateType(intTemp);

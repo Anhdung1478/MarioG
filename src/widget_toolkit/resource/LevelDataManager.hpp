@@ -8,7 +8,7 @@ namespace mario::resource {
         private:
             sf::Time timeUntilNextAutoSave;
 
-            const std::string defaultAutoSaveFilePath = "../../asset/save_data/autosave.txt";
+            const std::string defaultAutoSaveFilePath = "../../asset/save_data/autosave.svx";
             const sf::Time defaultTimeDiffereceBetweenAutoSave = sf::seconds(60);
 
             friend void encryptDataIntoFile(std::ofstream &ofst, LevelState levelData);
