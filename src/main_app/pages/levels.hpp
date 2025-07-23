@@ -4,6 +4,9 @@
 #include "../../widget_toolkit/command/input-manager.hpp"
 #include "../../widget_toolkit/entity/blocks/QuestionBlock.hpp"
 
+#include "../../widget_toolkit/controls/button.hpp"
+#include "../../widget_toolkit/controls/button-list.hpp"
+
 namespace mario::pages {
     struct LevelState {
         int level, score, coins, num_lives, player_type;
@@ -21,6 +24,10 @@ namespace mario::pages {
             // for Sound Manager
             LevelState levelState;
 
+            // Pause/Resume game
+            bool isPaused = false;
+            std::unique_ptr<mario::ButtonList> p_pauseMenu;
+            mario::ButtonListNode *p_menuButtonListNode;
         public:
             LevelsPage(MainWindow &context, LevelState state);
             ~LevelsPage();
@@ -30,5 +37,8 @@ namespace mario::pages {
 
             // for Sound Manager
             LevelState getLevelState() const { return levelState; }
+
+            // Pause Game
+            bool getPaused() const override { return isPaused; }
     };
 }

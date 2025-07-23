@@ -36,6 +36,13 @@ void mario::MainWindow::closeWindow() {
     isRunning = false;
 }
 
+void mario::MainWindow::stepWorld(float dt) {
+    if (content && !content->getPaused()) {
+        b2World_Step(worldId, dt, 4);
+    }
+}
+
+
 void mario::MainWindow::run() {
     window = new sf::RenderWindow(sf::VideoMode(sf::Vector2u(initScreenWidth, initScreenHeight)), title, sf::Style::Default);
     window->setFramerateLimit(fixedFPS);
@@ -83,7 +90,7 @@ void mario::MainWindow::run() {
 
         while(accumalator >= timeStep) {
             float stepTime = timeStep.asSeconds();
-            b2World_Step(worldId, stepTime, 8);
+            stepWorld(stepTime);
             accumalator -= sf::seconds(stepTime);
         }
 
@@ -104,7 +111,6 @@ void mario::MainWindow::setPageMusic(std::shared_ptr<Page> page) {
     // } else if (dynamic_cast<pages::SettingsPage*>(page.get())) {
         // soundManager.setBackgroundMusic(mario::event::BackgroundMusicState::SETTING_SCREEN);
     } else if (auto* levelsPage = dynamic_cast<pages::LevelsPage*>(page.get())) {
-        // Lấy thông tin cấp độ từ LevelsPage
         int level = levelsPage->getLevelState().level;
         switch (level) {
             case 1:
