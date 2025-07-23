@@ -26,8 +26,23 @@ namespace mario::pages {
 
             // Pause/Resume game
             bool isPaused = false;
-            std::unique_ptr<mario::ButtonList> p_pauseMenu;
-            mario::ButtonListNode *p_menuButtonListNode;
+            std::unique_ptr<sf::Texture> pauseTexture;
+            std::unique_ptr<sf::Sprite> pauseSprite;
+            std::unique_ptr<sf::Texture> pauseHoverTexture;
+            
+            std::unique_ptr<sf::Texture> panelTexture;
+            std::unique_ptr<sf::Sprite> panelSprite;
+
+            // Home
+            std::unique_ptr<sf::Texture> homeTexture;
+            std::unique_ptr<sf::Sprite> homeSprite;
+            std::unique_ptr<sf::Texture> homeHoverTexture;
+
+            // Settings
+            std::unique_ptr<sf::Texture> settingsTexture;
+            std::unique_ptr<sf::Sprite> settingsSprite;
+            std::unique_ptr<sf::Texture> settingsHoverTexture;
+
         public:
             LevelsPage(MainWindow &context, LevelState state);
             ~LevelsPage();

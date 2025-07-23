@@ -13,23 +13,38 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, LevelState state) : Pa
     p_inputManager->bind(sf::Keyboard::Scancode::Z, std::make_unique<mario::input::FireCommand>());
 
     // Pause/Resume game
-    p_menuButtonListNode = new ButtonListNode();
+    pauseTexture = std::make_unique<sf::Texture>("../../asset/textures/pause-button.png");
+    pauseSprite = std::make_unique<sf::Sprite>(*pauseTexture);
+    pauseSprite->setPosition({20, 95});
+    pauseSprite->setScale({1.f, 1.f});
 
-    p_pauseMenu = std::make_unique<mario::ButtonList>(new ButtonListNode(), nullptr);
-    mario::Button *p_button;
-    p_button = new mario::Button("Resume");
-    p_button->buttonRect = sf::FloatRect(sf::Vector2f(540, 340), sf::Vector2f(200, 30));
-    p_button->Click.append([this]() { isPaused = false; });
+    pauseHoverTexture = std::make_unique<sf::Texture>("../../asset/textures/pause-button-hover.png");
 
-    p_menuButtonListNode->buttonList.push_back(p_button);
+    // Home
+    homeTexture = std::make_unique<sf::Texture>("../../asset/textures/home.png");
+    homeSprite = std::make_unique<sf::Sprite>(*homeTexture);
+    homeSprite->setPosition({20, 20});
+    homeSprite->setScale({1.f, 1.f});
 
-    p_button = new mario::Button("Exit");
-    p_button->buttonRect = sf::FloatRect(sf::Vector2f(540, 390), sf::Vector2f(200, 30));
-    p_button->Click.append([this]() { _context->changePage(std::make_shared<mario::pages::MainMenuPage>(*_context)); });
-    
-    p_menuButtonListNode->buttonList.push_back(p_button);
+    homeHoverTexture = std::make_unique<sf::Texture>("../../asset/textures/home-hover.png");
 
-    p_pauseMenu = std::make_unique<mario::ButtonList>(p_menuButtonListNode, nullptr); 
+    // Settings
+    settingsTexture = std::make_unique<sf::Texture>("../../asset/textures/settings.png");
+    settingsSprite = std::make_unique<sf::Sprite>(*settingsTexture);
+    settingsSprite->setPosition({20, 170});
+    settingsSprite->setScale({1.f, 1.f});
+
+    settingsHoverTexture = std::make_unique<sf::Texture>("../../asset/textures/settings-hover.png");
+
+    // Panel
+    panelTexture = std::make_unique<sf::Texture>("../../asset/textures/pause-text.png");
+    panelSprite = std::make_unique<sf::Sprite>(*panelTexture);
+
+    sf::Vector2u windowSize =  sf::Vector2u(1280, 720);
+    sf::Vector2u textureSize = panelTexture->getSize();
+    sf::Vector2f panelSize = sf::Vector2f(textureSize.x * 0.15f, textureSize.y * 0.15f);
+    panelSprite->setPosition(sf::Vector2f((windowSize.x - panelSize.x) / 2.0f, (windowSize.y - panelSize.y) / 2.0f));
+    panelSprite->setScale({0.15f, 0.15f});
 
     p_questionBlock = std::make_unique<QuestionBlock>(_context->getWorldId(), sf::Vector2f(100, 600));
 }
@@ -42,6 +57,38 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
     if(!isPaused) {
         p_player->update(window, dt);
         p_questionBlock->update(window, dt);
+    }
+
+    // Check for hover state
+    sf::Vector2i mousePos = sf::Mouse::getPosition(*window);
+    sf::FloatRect pauseRect = sf::FloatRect(pauseSprite->getPosition(), 
+        sf::Vector2f(pauseTexture->getSize().x * pauseSprite->getScale().x, 
+                     pauseTexture->getSize().y * pauseSprite->getScale().y));
+    
+    sf::FloatRect homeRect = sf::FloatRect(homeSprite->getPosition(), 
+        sf::Vector2f(homeTexture->getSize().x * homeSprite->getScale().x, 
+                     homeTexture->getSize().y * homeSprite->getScale().y));
+    
+    sf::FloatRect settingsRect = sf::FloatRect(settingsSprite->getPosition(), 
+        sf::Vector2f(settingsTexture->getSize().x * settingsSprite->getScale().x, 
+                     settingsTexture->getSize().y * settingsSprite->getScale().y));
+
+    if (pauseRect.contains(sf::Vector2f(mousePos)) || isPaused) {
+        pauseSprite->setTexture(*pauseHoverTexture);
+    } else {
+        pauseSprite->setTexture(*pauseTexture);
+    }
+
+    if(homeRect.contains(sf::Vector2f(mousePos))) {
+        homeSprite->setTexture(*homeHoverTexture);
+    } else {
+        homeSprite->setTexture(*homeTexture);
+    }
+
+    if(settingsRect.contains(sf::Vector2f(mousePos))) {
+        settingsSprite->setTexture(*settingsHoverTexture);
+    } else {
+        settingsSprite->setTexture(*settingsTexture);
     }
 }
 
@@ -58,19 +105,38 @@ void mario::pages::LevelsPage::handleEvent(const sf::RenderWindow *window, const
         }
     }
     
+    if (auto* mouseButtonPressed = event.getIf<sf::Event::MouseButtonPressed>()) {
+        if(mouseButtonPressed->button == sf::Mouse::Button::Left) {
+            sf::Vector2i mousePos = sf::Mouse::getPosition(*window);
+            sf::FloatRect iconRect = sf::FloatRect(pauseSprite->getPosition(), sf::Vector2f(pauseTexture->getSize().x * pauseSprite->getScale().x, pauseTexture->getSize().y * pauseSprite->getScale().y));
+            if (iconRect.contains(sf::Vector2f(mousePos))) {
+                isPaused = !isPaused;
+                if (isPaused) {
+                    _context->getSoundManager().pauseBackgroundMusic();
+                } else {
+                    _context->getSoundManager().resumeBackgroundMusic();
+                    if (p_player) {
+                        p_player->run(false, true);
+                    }
+                }
+            }
+        }  
+    }
+
     if(!isPaused) {
         p_player->handleEvent(window, event);
         p_inputManager->handleEvent(*p_player, event);
         p_questionBlock->handleEvent(window, event);
-    } else {
-        p_pauseMenu->handleEvent(window, event);
     }
 }
 
 void mario::pages::LevelsPage::render(sf::RenderWindow *window) {
     p_player->render(window);
     p_questionBlock->render(window);
-    if(isPaused) {
-        p_pauseMenu->render(window);
+    window->draw(*pauseSprite);
+    window->draw(*homeSprite);
+    window->draw(*settingsSprite);
+    if(isPaused && panelSprite) {
+        window->draw(*panelSprite);
     }
 }

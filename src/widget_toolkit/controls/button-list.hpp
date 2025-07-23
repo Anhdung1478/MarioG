@@ -24,7 +24,7 @@ namespace mario {
                     delay_time -= dt;
                     return;
                 }
-
+                
                 int buttonListSize = p_curListNode->buttonList.size();
                 if(p_curListNode != nullptr) {
                     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::Up)) {

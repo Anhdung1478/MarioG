@@ -68,7 +68,7 @@ void mario::MainWindow::run() {
             deltaTime += clock.restart();
         }
 
-        std::cerr << deltaTime.asSeconds() << ' ' << timeStep.asSeconds() << '\n';
+        //std::cerr << deltaTime.asSeconds() << ' ' << timeStep.asSeconds() << '\n';
         while (const std::optional event = window->pollEvent()) {
             if(event->is<sf::Event::Closed>()) {
                 isRunning = false;
