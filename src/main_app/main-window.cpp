@@ -40,20 +40,25 @@ void mario::MainWindow::run() {
     changePage(std::make_shared<pages::MainMenuPage>(*this)); // Initialize with main-menu page
 
     b2WorldDef worldDef = b2DefaultWorldDef(); // Create a default world definition
-    worldDef.gravity = b2Vec2({0.0f, 9.81f}); // Set gravity for the Box2D world
+    worldDef.gravity = b2Vec2({0.0f, 20.f}); // Set gravity for the Box2D world
     worldId = b2CreateWorld(&worldDef); // Create the Box2D world
 
     sf::Vector2f groundPos = sf::Vector2f(640, 725);
     sf::Vector2f groundDim = sf::Vector2f(1280, 10);
     mario::entity::Box *p_ground = new mario::entity::StaticBox(worldId, groundPos, groundDim, 1.f, 0.3f);
 
-    clock.reset();
     isRunning = true;
 
     sf::Time accumalator = sf::Time::Zero;
     sf::sleep(timeStep);
     while (isRunning) {
         sf::Time deltaTime = clock.restart(); // Get the time elapsed since the last frame
+        if(deltaTime < timeStep) {
+            sf::sleep(timeStep - deltaTime);
+            deltaTime += clock.restart();
+        }
+
+        std::cerr << deltaTime.asSeconds() << ' ' << timeStep.asSeconds() << '\n';
         while (const std::optional event = window->pollEvent()) {
             if(event->is<sf::Event::Closed>()) {
                 isRunning = false;
@@ -73,8 +78,8 @@ void mario::MainWindow::run() {
             content->update(window, deltaTime.asSeconds()); // Update with a delta time
         }
 
-        while(accumalator > sf::seconds(0.f)) {
-            float stepTime = std::min(accumalator.asSeconds(), timeStep.asSeconds());
+        while(accumalator >= timeStep) {
+            float stepTime = timeStep.asSeconds();
             b2World_Step(worldId, stepTime, 8);
             accumalator -= sf::seconds(stepTime);
         }

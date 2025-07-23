@@ -1,7 +1,6 @@
 #include<bits/stdc++.h>
 #include "levels.hpp"
 
-
 mario::pages::LevelsPage::LevelsPage(MainWindow &context, LevelState state) : Page(context) {
     p_player = std::make_unique<mario::entity::Player>(_context->getWorldId(), sf::Vector2f(15, 10), mario::entity::CharacterListType::Luigi);
     p_inputManager = std::make_unique<mario::input::InputManager>();
