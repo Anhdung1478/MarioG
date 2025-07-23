@@ -18,11 +18,17 @@ namespace mario::pages {
             std::unique_ptr<mario::input::InputManager> p_inputManager;
             std::unique_ptr<QuestionBlock> p_questionBlock;
 
+            // for Sound Manager
+            LevelState levelState;
+
         public:
             LevelsPage(MainWindow &context, LevelState state);
             ~LevelsPage();
             void update(const sf::RenderWindow *window, float dt) override;
             void handleEvent(const sf::RenderWindow *window, const sf::Event &event) override;
             void render(sf::RenderWindow *window) override;
+
+            // for Sound Manager
+            LevelState getLevelState() const { return levelState; }
     };
 }

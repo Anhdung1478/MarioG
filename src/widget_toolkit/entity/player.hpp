@@ -173,7 +173,7 @@ namespace mario::entity {
 
                 p_body->setDamping(isInSurface() ? GROUND_DAMPING : AIR_DAMPING);
                 //std::cerr << "PLAYER VELOCITY: " << vel.x << ' ' << vel.y << '\n';
-                std::cout << "PLAYER POSITION: " << p_body->getPosition().x << ' ' << p_body->getPosition().y << '\n';
+                //std::cout << "PLAYER POSITION: " << p_body->getPosition().x << ' ' << p_body->getPosition().y << '\n';
             }
             
             void handleEvent(const sf::RenderWindow *window, const sf::Event &event) override {
