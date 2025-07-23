@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 #include "pages/main-menu.hpp"
 #include "main-window.hpp"
-//#include "pages/settings.hpp"
+#include "pages/settings.hpp"
 #include "pages/levels.hpp"
 #include <box2d/math_functions.h>
 
@@ -108,8 +108,8 @@ void mario::MainWindow::run() {
 void mario::MainWindow::setPageMusic(std::shared_ptr<Page> page) {
     if (dynamic_cast<pages::MainMenuPage*>(page.get())) {
         soundManager.setBackgroundMusic(mario::event::BackgroundMusicState::MAIN_MENU);
-    // } else if (dynamic_cast<pages::SettingsPage*>(page.get())) {
-        // soundManager.setBackgroundMusic(mario::event::BackgroundMusicState::SETTING_SCREEN);
+    } else if (dynamic_cast<pages::SettingsPage*>(page.get())) {
+        soundManager.setBackgroundMusic(mario::event::BackgroundMusicState::SETTING_SCREEN);
     } else if (auto* levelsPage = dynamic_cast<pages::LevelsPage*>(page.get())) {
         int level = levelsPage->getLevelState().level;
         switch (level) {

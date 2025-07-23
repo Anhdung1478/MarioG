@@ -160,4 +160,20 @@ namespace mario::audio {
         }
     }
 
+    bool SoundManager::isMusicEnable() {
+        return isMusicEnabled;
+    }
+
+    bool SoundManager::isSoundEnable() {
+        return isSoundEffectsEnabled;
+    }
+
+    float SoundManager::getMusicVolume() {
+        return musicVolume;
+    }
+
+    float SoundManager::getSoundVolume() {
+        return soundEffectsVolume;
+    }
+
 }

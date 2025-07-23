@@ -50,9 +50,12 @@ namespace mario {
                     || sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && p_curListNode->buttonList[curr_button]->buttonRect.contains(sf::Vector2f(mouse_pos))) {
                     
                     p_curListNode->buttonList[curr_button]->Click();
-                    ButtonList *p_curList = new ButtonList(p_curListNode, p_prvList);
-                    p_curListNode = p_curListNode->buttonList[curr_button]->p_nodeOnButton;
-                    p_prvList = p_curList;
+                    if(p_curListNode->buttonList[curr_button]->p_nodeOnButton != nullptr) {
+                        ButtonList *p_curList = new ButtonList(p_curListNode, p_prvList);
+                        p_curListNode = p_curListNode->buttonList[curr_button]->p_nodeOnButton;
+                        p_prvList = p_curList;
+                        delay_time = 0.3f;
+                    }
                     delay_time = 0.3f;
                     return;
                 }
