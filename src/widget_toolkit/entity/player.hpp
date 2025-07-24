@@ -59,7 +59,7 @@ namespace mario::entity {
             }
 
             bool isInSurface() {
-                return (p_body->getPosition().y + p_body->getDimension().y >= 714.f && p_body->getVelocity().y <= 0.1f && p_body->getVelocity().y >= -0.1f);
+                return (p_body->getPosition().y >= 600.f && p_body->getVelocity().y <= 0.1f && p_body->getVelocity().y >= -0.1f);
             }
 
             bool isFaceToBlock() {
@@ -175,7 +175,7 @@ namespace mario::entity {
 
                 p_body->setDamping(isInSurface() ? GROUND_DAMPING : AIR_DAMPING);
                 //std::cerr << "PLAYER VELOCITY: " << vel.x << ' ' << vel.y << '\n';
-                std::cout << "PLAYER POSITION: " << p_body->getPosition().x << ' ' << p_body->getPosition().y << '\n';
+                std::cout << "PLAYER: POSITION: " << p_body->getPosition().x << ' ' << p_body->getPosition().y << " VELOCITY: " << vel.x << ' ' << vel.y << '\n';
             }
             
             void handleEvent(const sf::RenderWindow *window, const sf::Event &event) override {
@@ -193,7 +193,7 @@ namespace mario::entity {
             }*/
             
             void render(sf::RenderWindow *window) override {
-                p_animation->renderWithPosition(window, p_body->getPosition());
+                Entity::render(window);
             }
 
             CharacterListType getCharacterType() {

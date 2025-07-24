@@ -38,19 +38,9 @@ void mario::MainWindow::run() {
     window->setFramerateLimit(fixedFPS);
 
     changePage(std::make_shared<pages::MainMenuPage>(*this)); // Initialize with main-menu page
-
-    b2WorldDef worldDef = b2DefaultWorldDef(); // Create a default world definition
-    worldDef.gravity = b2Vec2({0.0f, 20.f}); // Set gravity for the Box2D world
-    worldId = b2CreateWorld(&worldDef); // Create the Box2D world
-
-    sf::Vector2f groundPos = sf::Vector2f(640, 725);
-    sf::Vector2f groundDim = sf::Vector2f(1280, 10);
-    mario::entity::Box *p_ground = new mario::entity::StaticBox(worldId, groundPos, groundDim, 1.f, 0.3f);
-
     isRunning = true;
 
     sf::Time accumalator = sf::Time::Zero;
-    sf::sleep(timeStep);
     while (isRunning) {
         sf::Time deltaTime = clock.restart(); // Get the time elapsed since the last frame
         while(deltaTime < timeStep) {

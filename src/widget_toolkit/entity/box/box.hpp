@@ -74,6 +74,42 @@ namespace mario::entity {
                 return b2Body_GetMass(bodyId);
             }
 
+            void renderHitBoxRec(sf::RenderWindow *window) {
+                sf::FloatRect rect;
+                b2Vec2 pos = b2Body_GetPosition(bodyId);
+                pos.x -= dimension.x / 2.f;
+                pos.y -= dimension.y / 2.f;
+                
+                sf::Vector2f rPos = convertUnitToPixel(sf::Vector2f(pos.x, pos.y));
+                sf::Vector2f rDim = convertUnitToPixel(sf::Vector2f(dimension.x, dimension.y));
+
+                std::array line1 = {
+                    sf::Vertex{rPos},
+                    sf::Vertex{sf::Vector2f(rPos.x + rDim.x, rPos.y)}
+                };
+                
+                std::array line2 = {
+                    sf::Vertex{sf::Vector2f(rPos.x + rDim.x, rPos.y)},
+                    sf::Vertex{sf::Vector2f(rPos.x + rDim.x, rPos.y + rDim.y)}
+                };
+                
+                std::array line3 = {
+                    sf::Vertex{sf::Vector2f(rPos.x + rDim.x, rPos.y + rDim.y)},
+                    sf::Vertex{sf::Vector2f(rPos.x, rPos.y + rDim.y)}
+                };
+                
+                std::array line4 = {
+                    sf::Vertex{sf::Vector2f(rPos.x, rPos.y + rDim.y)},
+                    sf::Vertex{rPos}
+                };
+
+                window->draw(line1.data(), line1.size(), sf::PrimitiveType::Lines);
+                window->draw(line2.data(), line2.size(), sf::PrimitiveType::Lines);
+                window->draw(line3.data(), line3.size(), sf::PrimitiveType::Lines);
+                window->draw(line4.data(), line4.size(), sf::PrimitiveType::Lines);
+
+            }
+
             virtual void applyLinearImpulseToCenter(sf::Vector2f force) = 0;
             virtual void applyForce(sf::Vector2f force) = 0;
             virtual sf::Vector2f getVelocity() = 0;

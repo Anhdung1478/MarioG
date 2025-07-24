@@ -114,7 +114,8 @@ void SolidBlock::handleEvent(const sf::RenderWindow *window, const sf::Event &ev
 }
 
 void SolidBlock::render(sf::RenderWindow *window) {
-    p_animation->renderWithPosition(window, p_body->getPosition());
+    Entity::render(window);
+    //p_animation->renderWithPosition(window, p_body->getPosition());
     // if (sprite) {
     //     sprite->setPosition(p_body->getPosition());
     //     window->draw(*sprite);

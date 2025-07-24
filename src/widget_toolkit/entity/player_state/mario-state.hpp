@@ -37,7 +37,8 @@ namespace mario::entity::player_state {
                 if(p_eBox != nullptr) 
                     delete p_eBox; 
                 
-                p_eBox = new DynamicBox(_worldId, pos, MARIO_DIM, MARIO_DENSITY, MARIO_FRICTION);
+                sf::Vector2f GLOBAL_DIM = sf::Vector2f(MARIO_DIM.x * MARIO_SCALE.x, MARIO_DIM.y * MARIO_SCALE.y);
+                p_eBox = new DynamicBox(_worldId, pos, GLOBAL_DIM, MARIO_DENSITY, MARIO_FRICTION);
                 p_eAnimation->clearAnimationStep();
                 p_eAnimation->addAnimationStep(MARIO_TYPE + ".walk[0]");
                 p_eAnimation->addAnimationStep(MARIO_TYPE + ".walk[1]");
@@ -58,7 +59,8 @@ namespace mario::entity::player_state {
                 if(p_eBox != nullptr) 
                     delete p_eBox; 
                 
-                p_eBox = new DynamicBox(_worldId, pos, MARIO_DIM, MARIO_DENSITY, MARIO_FRICTION);
+                sf::Vector2f GLOBAL_DIM = sf::Vector2f(MARIO_DIM.x * MARIO_SCALE.x, MARIO_DIM.y * MARIO_SCALE.y);
+                p_eBox = new DynamicBox(_worldId, pos, GLOBAL_DIM, MARIO_DENSITY, MARIO_FRICTION);
                 p_eAnimation->clearAnimationStep();
                 p_eAnimation->addAnimationStep(MARIO_TYPE + ".walk[0]");
                 p_eAnimation->addAnimationStep(MARIO_TYPE + ".walk[1]");
@@ -79,7 +81,8 @@ namespace mario::entity::player_state {
                 if(p_eBox != nullptr) 
                     delete p_eBox; 
                 
-                p_eBox = new DynamicBox(_worldId, pos, MARIO_DIM, MARIO_DENSITY, MARIO_FRICTION);
+                sf::Vector2f GLOBAL_DIM = sf::Vector2f(MARIO_DIM.x * MARIO_SCALE.x, MARIO_DIM.y * MARIO_SCALE.y);
+                p_eBox = new DynamicBox(_worldId, pos, GLOBAL_DIM, MARIO_DENSITY, MARIO_FRICTION);
                 p_eAnimation->clearAnimationStep();
                 p_eAnimation->addAnimationStep(MARIO_TYPE + ".walk[0]");
                 p_eAnimation->addAnimationStep(MARIO_TYPE + ".walk[1]");

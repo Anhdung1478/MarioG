@@ -34,7 +34,8 @@ namespace mario::entity {
             }
 
             void render(sf::RenderWindow *window) override {
-                
+                p_body->renderHitBoxRec(window);
+                p_animation->renderWithPosition(window, p_body->getPosition());
             }
     };
 }
