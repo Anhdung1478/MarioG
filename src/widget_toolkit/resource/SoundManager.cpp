@@ -5,7 +5,7 @@ using namespace std;
 namespace mario::audio {
     SoundManager::SoundManager() :
         isMusicEnabled(true), isSoundEffectsEnabled(true),
-        musicVolume(100.0f), soundEffectsVolume(100.0f),
+        musicVolume(50.0f), soundEffectsVolume(50.0f),
         currentMusicState(mario::event::BackgroundMusicState::MAIN_MENU),
         currentMusic(nullptr)
         {

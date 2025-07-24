@@ -6,6 +6,7 @@
 
 #include "../../widget_toolkit/controls/button.hpp"
 #include "../../widget_toolkit/controls/button-list.hpp"
+#include "../../widget_toolkit/controls/slider.hpp"
 
 namespace mario::pages {
     struct LevelState {
@@ -43,6 +44,17 @@ namespace mario::pages {
             std::unique_ptr<sf::Sprite> settingsSprite;
             std::unique_ptr<sf::Texture> settingsHoverTexture;
 
+            // Settings panel
+            bool isSettingsOpen = false;
+            std::unique_ptr<sf::Texture> settingsPanelTexture;
+            std::unique_ptr<sf::Sprite> settingsPanelSprite;
+
+            std::unique_ptr<sf::Font> font;
+            std::unique_ptr<sf::Texture> sliderBarTexture;
+            std::unique_ptr<sf::Texture> sliderHandleTexture;
+
+            std::unique_ptr<Slider> musicSlider;
+            std::unique_ptr<Slider> sfxSlider;
         public:
             LevelsPage(MainWindow &context, LevelState state);
             ~LevelsPage();

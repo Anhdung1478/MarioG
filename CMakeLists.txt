@@ -36,7 +36,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Thêm file nguồn
-add_executable(MARIOG src/main_app/main.cpp src/main_app/main-window.cpp src/main_app/pages/main-menu.cpp src/main_app/pages/levels.cpp src/widget_toolkit/resource/TextureManager.cpp src/widget_toolkit/resource/SoundManager.cpp src/widget_toolkit/entity/blocks/Block.cpp src/widget_toolkit/entity/blocks/QuestionBlock.cpp src/main_app/pages/settings.cpp)
+add_executable(MARIOG src/main_app/main.cpp src/main_app/main-window.cpp src/main_app/pages/main-menu.cpp src/main_app/pages/levels.cpp src/widget_toolkit/resource/TextureManager.cpp src/widget_toolkit/resource/SoundManager.cpp src/widget_toolkit/entity/blocks/Block.cpp src/widget_toolkit/entity/blocks/QuestionBlock.cpp src/main_app/pages/settings.cpp src/widget_toolkit/controls/slider.cpp)
 
 # target_link_directories(MARIOG PRIVATE ${CMAKE_SOURCE_DIR}/extern/include/SFML/ ${CMAKE_SOURCE_DIR}/extern/include/BOX2D/ ${CMAKE_SOURCE_DIR}/extern/include/)
 target_link_libraries(MARIOG PRIVATE SFML::Graphics SFML::Window SFML::System SFML::Audio box2d eventpp::eventpp)
