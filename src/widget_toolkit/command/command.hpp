@@ -13,9 +13,17 @@ namespace mario::input { // Command pattern
 
     class JumpCommand : public Command {
         public: 
+            JumpCommand(MainWindow& context) : context_(context) {}
             void execute(mario::entity::Player &player, bool isReleased) override {
                 player.jump(isReleased);
+
+                if(!player.hasPlayedJumpSound()) {
+                    context_.getSoundManager().playSound(mario::event::SoundEvent::PLAYER_JUMP);
+                    player.setJumpSoundPlayed(true);
+                }
             }
+        private:
+            MainWindow& context_;
     };
 
     class RunCommand : public Command {

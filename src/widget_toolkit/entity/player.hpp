@@ -40,6 +40,7 @@ namespace mario::entity {
             bool _isJumping = false;
             bool _isRunningForward;
 
+            bool hasPlayedJumpSound_ = false; // For sound effect
         public:
             Player(b2WorldId worldId, sf::Vector2f spawnPoint, CharacterListType characterType) {
                 if(characterType == CharacterListType::Mario) {
@@ -124,6 +125,7 @@ namespace mario::entity {
                         // change to next run animation step
                         p_animation->setAnimationState(true);   
                     }
+                    hasPlayedJumpSound_ = false;
                 }
 
                 // change state for debugging
@@ -193,7 +195,8 @@ namespace mario::entity {
             void render(sf::RenderWindow *window) override {
                 p_animation->renderWithPosition(window, p_body->getPosition());
             }
-
+            bool hasPlayedJumpSound() const { return hasPlayedJumpSound_; }
+            void setJumpSoundPlayed(bool played) { hasPlayedJumpSound_ = played; }
     };
 
     #undef FILE_PATH

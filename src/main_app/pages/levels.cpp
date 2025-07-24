@@ -9,7 +9,7 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, LevelState state) : Pa
 
     p_inputManager->bind(sf::Keyboard::Scancode::Left, std::make_unique<mario::input::RunCommand>(0));
     p_inputManager->bind(sf::Keyboard::Scancode::Right, std::make_unique<mario::input::RunCommand>(1));
-    p_inputManager->bind(sf::Keyboard::Scancode::Up, std::make_unique<mario::input::JumpCommand>());
+    p_inputManager->bind(sf::Keyboard::Scancode::Up, std::make_unique<mario::input::JumpCommand>(*_context));
     p_inputManager->bind(sf::Keyboard::Scancode::Z, std::make_unique<mario::input::FireCommand>());
 
     // Pause/Resume game
@@ -132,7 +132,7 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
         homeSprite->setTexture(*homeTexture);
     }
 
-    if(settingsRect.contains(sf::Vector2f(mousePos))) {
+    if(settingsRect.contains(sf::Vector2f(mousePos)) || isSettingsOpen) {
         settingsSprite->setTexture(*settingsHoverTexture);
     } else {
         settingsSprite->setTexture(*settingsTexture);
