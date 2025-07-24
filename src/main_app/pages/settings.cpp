@@ -1,5 +1,5 @@
 #include "settings.hpp"
-#include "main-menu.hpp" // để quay lại menu chính
+#include "main-menu.hpp"
 
 using namespace mario::pages;
 
@@ -10,85 +10,87 @@ SettingsPage::SettingsPage(MainWindow& context) : Page(context) {
     p_title->setPosition({540, 100});
     p_title->setFillColor(sf::Color::White);
 
-    p_settingsButtonListNode = new ButtonListNode();
+    // Slider textures
+    sliderBarTexture = std::make_unique<sf::Texture>("../../asset/textures/slider-bar.png");
+    sliderHandleTexture = std::make_unique<sf::Texture>("../../asset/textures/slider-handle.png");
 
-    // Music Toggle Button
-    auto* musicToggleBtn = new Button("Music: " + std::string(_context->getSoundManager().isMusicEnable() ? "On" : "Off"));
-    musicToggleBtn->buttonRect = sf::FloatRect({540, 200}, {200, 30});
-    musicToggleBtn->Click.append([this, musicToggleBtn]() {
-        bool current = _context->getSoundManager().isMusicEnable();
-        _context->getSoundManager().toggleBackgroundMusic(!current);
-        musicToggleBtn->buttonText = "Music: " + std::string(!current ? "On" : "Off");
+    sf::Vector2u windowSize =  sf::Vector2u(1280, 720);
+    sf::Vector2f pos = {windowSize.x / 2.f, windowSize.y / 2.f};
+
+    // Music Slider
+    musicSlider = std::make_unique<Slider>(
+        std::make_unique<sf::Texture>(*sliderBarTexture),
+        std::make_unique<sf::Texture>(*sliderHandleTexture),
+        std::make_unique<sf::Font>(*p_font),
+        sf::Vector2f(pos.x + 80, pos.y - 50),
+        std::string("Music"),
+        sf::Vector2f(0.5f, 0.5f),
+        0.0f, 100.0f,
+        _context->getSoundManager().getMusicVolume()
+    );
+    musicSlider->setOnValueChanged([this](float value) {
+        _context->getSoundManager().adjustBackgroundMusicVolume(value);
     });
-    p_settingsButtonListNode->buttonList.push_back(musicToggleBtn);
 
-    // Sound Toggle Button
-    auto* soundToggleBtn = new Button("SFX: " + std::string(_context->getSoundManager().isSoundEnable() ? "On" : "Off"));
-    soundToggleBtn->buttonRect = sf::FloatRect({540, 250}, {200, 30});
-    soundToggleBtn->Click.append([this, soundToggleBtn]() {
-        bool current = _context->getSoundManager().isSoundEnable();
-        _context->getSoundManager().toggleSoundEffects(!current);
-        soundToggleBtn->buttonText = "SFX: " + std::string(!current ? "On" : "Off");
+    // SFX Slider
+    sfxSlider = std::make_unique<Slider>(
+        std::make_unique<sf::Texture>(*sliderBarTexture),
+        std::make_unique<sf::Texture>(*sliderHandleTexture),
+        std::make_unique<sf::Font>(*p_font),
+        sf::Vector2f(pos.x + 80, pos.y + 50),
+        std::string("SFX"),
+        sf::Vector2f(0.5f, 0.5f),
+        0.0f, 100.0f,
+        _context->getSoundManager().getSoundVolume()
+    );
+    sfxSlider->setOnValueChanged([this](float value) {
+        _context->getSoundManager().adjustSoundEffectsVolume(value);
     });
-    p_settingsButtonListNode->buttonList.push_back(soundToggleBtn);
 
-    // Music Volume Up
-    auto* musicUpBtn = new Button("Music Volume +");
-    musicUpBtn->buttonRect = sf::FloatRect({540, 300}, {200, 30});
-    musicUpBtn->Click.append([this]() {
-        _context->getSoundManager().adjustBackgroundMusicVolume(10.0f + _context->getSoundManager().getMusicVolume());
-    });
-    p_settingsButtonListNode->buttonList.push_back(musicUpBtn);
-
-    // Music Volume Down
-    auto* musicDownBtn = new Button("Music Volume -");
-    musicDownBtn->buttonRect = sf::FloatRect({540, 350}, {200, 30});
-    musicDownBtn->Click.append([this]() {
-        _context->getSoundManager().adjustBackgroundMusicVolume(_context->getSoundManager().getMusicVolume() - 10.0f);
-    });
-    p_settingsButtonListNode->buttonList.push_back(musicDownBtn);
-
-    // SFX Volume Up
-    auto* sfxUpBtn = new Button("SFX Volume +");
-    sfxUpBtn->buttonRect = sf::FloatRect({540, 400}, {200, 30});
-    sfxUpBtn->Click.append([this]() {
-        _context->getSoundManager().adjustSoundEffectsVolume(10.0f + _context->getSoundManager().getSoundVolume());
-    });
-    p_settingsButtonListNode->buttonList.push_back(sfxUpBtn);
-
-    // SFX Volume Down
-    auto* sfxDownBtn = new Button("SFX Volume -");
-    sfxDownBtn->buttonRect = sf::FloatRect({540, 450}, {200, 30});
-    sfxDownBtn->Click.append([this]() {
-        _context->getSoundManager().adjustSoundEffectsVolume(_context->getSoundManager().getSoundVolume() - 10.0f);
-    });
-    p_settingsButtonListNode->buttonList.push_back(sfxDownBtn);
-
-    // Back to Menu
-    auto* backBtn = new Button("Back");
-    backBtn->buttonRect = sf::FloatRect({540, 500}, {200, 30});
-    backBtn->Click.append([this]() {
-        _context->changePage(std::make_shared<mario::pages::MainMenuPage>(*_context));
-    });
-    p_settingsButtonListNode->buttonList.push_back(backBtn);
-
-    p_currButtonList = std::make_unique<ButtonList>(p_settingsButtonListNode, nullptr);
+    // Back Button (as sprite)
+    backTexture = std::make_unique<sf::Texture>("../../asset/textures/home.png");
+    backHoverTexture = std::make_unique<sf::Texture>("../../asset/textures/home-hover.png");
+    backSprite = std::make_unique<sf::Sprite>(*backTexture);
+    backSprite->setPosition({20, 20});
+    backSprite->setScale({1.f, 1.f});
 }
 
 void SettingsPage::handleEvent(const sf::RenderWindow* window, const sf::Event& event) {
-    if (p_currButtonList)
-        p_currButtonList->handleEvent(window, event);
+    musicSlider->handleEvent(event, *window);
+    sfxSlider->handleEvent(event, *window);
+
+    if (auto* mouseButtonPressed = event.getIf<sf::Event::MouseButtonPressed>()) {
+        if (mouseButtonPressed->button == sf::Mouse::Button::Left) {
+            sf::Vector2i mousePos = sf::Mouse::getPosition(*window);
+            sf::FloatRect backRect = sf::FloatRect(backSprite->getPosition(),
+                sf::Vector2f(backTexture->getSize().x * backSprite->getScale().x,
+                             backTexture->getSize().y * backSprite->getScale().y));
+            if (backRect.contains(sf::Vector2f(mousePos))) {
+                _context->changePage(std::make_shared<mario::pages::MainMenuPage>(*_context));
+            }
+        }
+    }
 }
 
 void SettingsPage::update(const sf::RenderWindow* window, float dt) {
-    if (p_currButtonList){
-        p_currButtonList->update(window, dt);
+    musicSlider->update(*window);
+    sfxSlider->update(*window);
+
+    // Check for hover state on back button
+    sf::Vector2i mousePos = sf::Mouse::getPosition(*window);
+    sf::FloatRect backRect = sf::FloatRect(backSprite->getPosition(),
+        sf::Vector2f(backTexture->getSize().x * backSprite->getScale().x,
+                     backTexture->getSize().y * backSprite->getScale().y));
+    if (backRect.contains(sf::Vector2f(mousePos))) {
+        backSprite->setTexture(*backHoverTexture);
+    } else {
+        backSprite->setTexture(*backTexture);
     }
 }
 
 void SettingsPage::render(sf::RenderWindow* window) {
     window->draw(*p_title);
-    if (p_currButtonList){
-        p_currButtonList->render(window);
-    }
+    musicSlider->render(*window);
+    sfxSlider->render(*window);
+    window->draw(*backSprite);
 }

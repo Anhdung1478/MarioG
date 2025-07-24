@@ -149,6 +149,7 @@ void mario::pages::LevelsPage::handleEvent(const sf::RenderWindow *window, const
     if (const auto key = event.getIf<sf::Event::KeyPressed>(); key && key->code == sf::Keyboard::Key::Escape) {
         isPaused = !isPaused;
         if(isPaused) {
+            _context->getSoundManager().playSound(mario::event::SoundEvent::GAME_PAUSE);
             _context->getSoundManager().pauseBackgroundMusic();
         } else {
             _context->getSoundManager().resumeBackgroundMusic();
@@ -168,6 +169,7 @@ void mario::pages::LevelsPage::handleEvent(const sf::RenderWindow *window, const
             if (pauseRectF.contains(sf::Vector2f(mousePos))) {
                 isPaused = !isPaused;
                 if (isPaused) {
+                    _context->getSoundManager().playSound(mario::event::SoundEvent::GAME_PAUSE);
                     _context->getSoundManager().pauseBackgroundMusic();
                 } else {
                     _context->getSoundManager().resumeBackgroundMusic();
@@ -179,6 +181,9 @@ void mario::pages::LevelsPage::handleEvent(const sf::RenderWindow *window, const
                 _context->changePage(std::make_shared<mario::pages::MainMenuPage>(*_context));
             } else if (settingsRectF.contains(sf::Vector2f(mousePos))) {
                 isSettingsOpen = !isSettingsOpen;
+                if(isSettingsOpen) {
+                    _context->getSoundManager().playSound(mario::event::SoundEvent::GAME_PAUSE);
+                }
             }
         } 
     }
