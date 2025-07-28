@@ -2,16 +2,16 @@
 #include "levels.hpp"
 
 mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::LevelState state) : Page(context) {
-    p_player = std::make_unique<mario::entity::Player>(_context->getWorldId(), sf::Vector2f(15, 10), state.characterType, state.stateType);
+    p_player = std::make_unique<mario::entity::Player>(sf::Vector2f(15, 10), state.characterType, state.stateType);
     p_inputManager = std::make_unique<mario::input::InputManager>();
 
-    p_inputManager->bind(sf::Keyboard::Scancode::Left, std::make_unique<mario::input::RunCommand>(0));
-    p_inputManager->bind(sf::Keyboard::Scancode::Right, std::make_unique<mario::input::RunCommand>(1));
+    p_inputManager->bind(sf::Keyboard::Scancode::Left, std::make_unique<mario::input::MoveCommand>(0));
+    p_inputManager->bind(sf::Keyboard::Scancode::Right, std::make_unique<mario::input::MoveCommand>(1));
     p_inputManager->bind(sf::Keyboard::Scancode::Up, std::make_unique<mario::input::JumpCommand>());
     p_inputManager->bind(sf::Keyboard::Scancode::Z, std::make_unique<mario::input::FireCommand>());
 
     tileMap = std::make_unique<TileMap>("../../asset/maps/tiles-8.json", "../../asset/maps/Map_1.json");
-    tileMap->createBlock(_context->getWorldId(), blocks);
+    tileMap->createBlock(blocks);
 
     p_levelDataManager = std::make_unique<mario::resource::LevelDataManager>();
     currLevelState = state;
@@ -37,6 +37,7 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
     currLevelState.stateType = p_player->getPlayerStateType();
     p_levelDataManager->update(dt, currLevelState);
     
+    std::cerr << "!";
     for(const auto &block : blocks) {
         block->update(window, dt);
     }

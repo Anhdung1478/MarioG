@@ -1,14 +1,8 @@
 #include <bits/stdc++.h>
 #include "pages/main-menu.hpp"
 #include "main-window.hpp"
-#include <box2d/math_functions.h>
 
 mario::MainWindow::~MainWindow() {
-    b2DestroyWorld(worldId); // Clean up Box2D world    
-}
-
-b2WorldId mario::MainWindow::getWorldId() {
-    return worldId;
 }
 
 void mario::MainWindow::changePage(std::shared_ptr<Page> to) {
@@ -40,7 +34,6 @@ void mario::MainWindow::run() {
     changePage(std::make_shared<pages::MainMenuPage>(*this)); // Initialize with main-menu page
     isRunning = true;
 
-    sf::Time accumalator = sf::Time::Zero;
     while (isRunning) {
         sf::Time deltaTime = clock.restart(); // Get the time elapsed since the last frame
         while(deltaTime < timeStep) {
@@ -63,15 +56,8 @@ void mario::MainWindow::run() {
             }
         }
 
-        accumalator += deltaTime;
         if (content) {
             content->update(window, deltaTime.asSeconds()); // Update with a delta time
-        }
-
-        while(accumalator >= timeStep) {
-            float stepTime = timeStep.asSeconds();
-            b2World_Step(worldId, stepTime, 16);
-            accumalator -= sf::seconds(stepTime);
         }
 
         render(window);

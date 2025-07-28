@@ -9,7 +9,7 @@ namespace mario::entity {
     class Entity : public IScreenElement {
         protected:
             Animation *p_animation;
-            Box *p_body;
+            Box *p_body; // input position as middle at the bottom, it means if box has size (x, y) its origin will be (x / 2, y)
 
         public:
             Entity() : p_animation(nullptr), p_body(nullptr) {};
@@ -34,8 +34,20 @@ namespace mario::entity {
             }
 
             void render(sf::RenderWindow *window) override {
-                p_body->renderHitBoxRec(window);
                 p_animation->renderWithPosition(window, p_body->getPosition());
+                p_body->renderHitboxRect(window);
+            }
+
+            sf::Vector2f getPosition() const {
+                return p_body->getPosition();
+            }
+
+            sf::Vector2f getSize() const {
+                return p_body->getSize();
+            }
+
+            sf::FloatRect getHitbox() const {
+                return p_body->getHitbox();
             }
     };
 }

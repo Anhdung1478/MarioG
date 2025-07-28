@@ -26,5 +26,5 @@ public:
 
     bool loadTileset(const std::string &tilesetPath);
     bool loadMap(const std::string &mapPath);
-    void createBlock(b2WorldId worldId, std::vector<std::unique_ptr<Block>> &Blocks);
+    void createBlock(std::vector<std::unique_ptr<Block>> &Blocks);
 };

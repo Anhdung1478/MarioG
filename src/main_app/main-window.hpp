@@ -3,7 +3,6 @@
 #include <bits/stdc++.h>
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
-#include <box2d/box2d.h>
 #include "../widget_toolkit/interfaces.hpp"
 #include "../widget_toolkit/entity/box/static-box.hpp"
 
@@ -25,11 +24,9 @@ namespace mario {
             const sf::Time timeStep = sf::seconds(1.0f / fixedFPS);
             sf::Clock clock;
             bool isRunning = true;
-            b2WorldId worldId;
         
         public:
             ~MainWindow() override;
-            b2WorldId getWorldId();
             void changePage(std::shared_ptr<Page> to);
             void render(sf::RenderWindow *window) override;
             void closeWindow();

@@ -11,7 +11,7 @@ protected:
 
 public:
     Block();
-    Block(b2WorldId worldId, sf::Vector2f pos, sf::Vector2f size, const std::string &name);
+    Block(sf::Vector2f pos, sf::Vector2f size, const std::string &name);
     virtual void InitSpritesSheet() = 0;
     virtual ~Block() = default;
 }; 

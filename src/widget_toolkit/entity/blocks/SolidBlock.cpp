@@ -6,8 +6,8 @@ SolidBlock::SolidBlock()
     // Default constructor
 }
 
-SolidBlock::SolidBlock(b2WorldId worldId, const sf::Vector2f &pos, const sf::Vector2f &size, const std::string &name) 
-    : Block(worldId, pos, size, name), texture(nullptr), sprite(nullptr)
+SolidBlock::SolidBlock(const sf::Vector2f &pos, const sf::Vector2f &size, const std::string &name) 
+    : Block(pos, size, name), texture(nullptr), sprite(nullptr)
 {
     InitSpritesSheet();
     // texture = new sf::Texture();

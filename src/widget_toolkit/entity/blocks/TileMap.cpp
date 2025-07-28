@@ -114,7 +114,7 @@ bool TileMap::loadMap(const std::string& mapPath) {
     return true;
 }
 
-void TileMap::createBlock(b2WorldId worldId, std::vector<std::unique_ptr<Block>> &Blocks) {
+void TileMap::createBlock(std::vector<std::unique_ptr<Block>> &Blocks) {
     Blocks.clear();
 
     for (int y = 0; y < mapHeight; ++y) {
@@ -131,101 +131,101 @@ void TileMap::createBlock(b2WorldId worldId, std::vector<std::unique_ptr<Block>>
             switch (tileId) {
                 // Grass ground tiles
                 case 0:
-                    Blocks.push_back(std::make_unique<SolidBlock>(worldId, sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "grass-ground[0]"));
+                    Blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "grass-ground[0]"));
                     break;
                 case 1:
-                    Blocks.push_back(std::make_unique<SolidBlock>(worldId, sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "grass-ground[1]"));
+                    Blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "grass-ground[1]"));
                     break;
                 case 2:
-                    Blocks.push_back(std::make_unique<SolidBlock>(worldId, sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "grass-ground[2]"));
+                    Blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "grass-ground[2]"));
                     break;
                 case 39:
-                    Blocks.push_back(std::make_unique<SolidBlock>(worldId, sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "grass-ground[3]"));
+                    Blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "grass-ground[3]"));
                     break;
                 case 40:
-                    Blocks.push_back(std::make_unique<SolidBlock>(worldId, sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "grass-ground[4]"));
+                    Blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "grass-ground[4]"));
                     break;
                 case 41:
-                    Blocks.push_back(std::make_unique<SolidBlock>(worldId, sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "grass-ground[5]"));
+                    Blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "grass-ground[5]"));
                     break;
                     
                 // Stone ground tiles
                 case 4:
-                    Blocks.push_back(std::make_unique<SolidBlock>(worldId, sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "stone-ground[0]"));
+                    Blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "stone-ground[0]"));
                     break;
                 case 5:
-                    Blocks.push_back(std::make_unique<SolidBlock>(worldId, sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "stone-ground[1]"));
+                    Blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "stone-ground[1]"));
                     break;
                 case 6:
-                    Blocks.push_back(std::make_unique<SolidBlock>(worldId, sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "stone-ground[2]"));
+                    Blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "stone-ground[2]"));
                     break;
                 case 43:
-                    Blocks.push_back(std::make_unique<SolidBlock>(worldId, sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "stone-ground[3]"));
+                    Blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "stone-ground[3]"));
                     break;
                 case 44:
-                    Blocks.push_back(std::make_unique<SolidBlock>(worldId, sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "stone-ground[4]"));
+                    Blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "stone-ground[4]"));
                     break;
                 case 45:
-                    Blocks.push_back(std::make_unique<SolidBlock>(worldId, sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "stone-ground[5]"));
+                    Blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "stone-ground[5]"));
                     break;
                 
                 // Snow ground tiles
                 case 8:
-                    Blocks.push_back(std::make_unique<SolidBlock>(worldId, sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "snow-ground[0]"));
+                    Blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "snow-ground[0]"));
                     break;
                 case 9:
-                    Blocks.push_back(std::make_unique<SolidBlock>(worldId, sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "snow-ground[1]"));
+                    Blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "snow-ground[1]"));
                     break;
                 case 10:
-                    Blocks.push_back(std::make_unique<SolidBlock>(worldId, sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "snow-ground[2]"));
+                    Blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "snow-ground[2]"));
                     break;
                 case 47:
-                    Blocks.push_back(std::make_unique<SolidBlock>(worldId, sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "snow-ground[3]"));
+                    Blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "snow-ground[3]"));
                     break;
                 case 48:
-                    Blocks.push_back(std::make_unique<SolidBlock>(worldId, sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "snow-ground[4]"));
+                    Blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "snow-ground[4]"));
                     break;
                 case 49:
-                    Blocks.push_back(std::make_unique<SolidBlock>(worldId, sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "snow-ground[5]"));
+                    Blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "snow-ground[5]"));
                     break;
 
                 // Green pipe tiles
                 case 123:
-                    Blocks.push_back(std::make_unique<SolidBlock>(worldId, sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "green-pipe[0]"));
+                    Blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "green-pipe[0]"));
                     break;
                 case 124:
-                    Blocks.push_back(std::make_unique<SolidBlock>(worldId, sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "green-pipe[1]"));
+                    Blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "green-pipe[1]"));
                     break;
                 case 162:
-                    Blocks.push_back(std::make_unique<SolidBlock>(worldId, sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "green-pipe[2]"));
+                    Blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "green-pipe[2]"));
                     break;
                 case 163:
-                    Blocks.push_back(std::make_unique<SolidBlock>(worldId, sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "green-pipe[3]"));
+                    Blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "green-pipe[3]"));
                     break;
                 
                 // Gray pipe tiles
                 case 128:
-                    Blocks.push_back(std::make_unique<SolidBlock>(worldId, sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "gray-pipe[0]"));
+                    Blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "gray-pipe[0]"));
                     break;
                 case 129:
-                    Blocks.push_back(std::make_unique<SolidBlock>(worldId, sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "gray-pipe[1]"));
+                    Blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "gray-pipe[1]"));
                     break;
                 case 167:
-                    Blocks.push_back(std::make_unique<SolidBlock>(worldId, sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "gray-pipe[2]"));
+                    Blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "gray-pipe[2]"));
                     break;
                 case 168:
-                    Blocks.push_back(std::make_unique<SolidBlock>(worldId, sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "gray-pipe[3]"));
+                    Blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "gray-pipe[3]"));
                     break;
 
                 // Stair blocks
                 case 351:
-                    Blocks.push_back(std::make_unique<SolidBlock>(worldId, sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "stair-block[0]"));
+                    Blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "stair-block[0]"));
                     break;
                 case 352:
-                    Blocks.push_back(std::make_unique<SolidBlock>(worldId, sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "stair-block[1]"));
+                    Blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "stair-block[1]"));
                     break;
                 case 353:
-                    Blocks.push_back(std::make_unique<SolidBlock>(worldId, sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "stair-block[2]"));
+                    Blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "stair-block[2]"));
                     break;
 
                 default:

@@ -5,8 +5,8 @@
 class QuestionBlock : public Block {
 public:
     QuestionBlock(){};
-    QuestionBlock(b2WorldId worldId, sf::Vector2f pos);
-    QuestionBlock(b2WorldId worldId, sf::Vector2f pos, sf::Vector2f size, std::string name);
+    QuestionBlock(sf::Vector2f pos);
+    QuestionBlock(sf::Vector2f pos, sf::Vector2f size, std::string name);
     void InitSpritesSheet() override;
     void update(const sf::RenderWindow *window, float dt) override;
     void handleEvent(const sf::RenderWindow *window, const sf::Event &event) override;
