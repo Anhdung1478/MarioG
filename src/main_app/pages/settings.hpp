@@ -2,8 +2,11 @@
 
 #include "page.hpp"
 #include "../../widget_toolkit/controls/slider.hpp"
+#include "../../widget_toolkit/command/key-binding-button.hpp"
+#include "../../widget_toolkit/resource/json.hpp"
 #include <memory>
 #include <SFML/Graphics.hpp>
+#include <fstream>
 
 namespace mario::pages {
     class SettingsPage : public Page {
@@ -22,6 +25,9 @@ namespace mario::pages {
 
         std::function<void()> _deferredStateChange;
         
+        std::vector<std::unique_ptr<KeyBindingButton>> keyBindings;
+        std::unique_ptr<sf::RectangleShape> confirmButton;
+        std::unique_ptr<sf::Text> confirmText;
     public:
         SettingsPage(MainWindow& context);
 
