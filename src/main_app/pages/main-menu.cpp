@@ -29,7 +29,20 @@ mario::pages::MainMenuPage::MainMenuPage(mario::MainWindow &context) : Page(cont
     p_button->buttonRect = sf::FloatRect(sf::Vector2f(540, 540), sf::Vector2f(200, 30));
     p_button->p_nodeOnButton = nullptr;
     p_button->Click.append([this]() {
-        
+        std::ifstream file("../../src/widget_toolkit/save-state.json");
+        if (file.is_open()) {
+            nlohmann::json j;
+            file >> j;
+            file.close();
+            int savedLevelId = j["levelId"].get<int>();
+            if (savedLevelId > 0 && savedLevelId <= NUM_LEVELS) {
+                _context->changePage(std::make_shared<mario::pages::LevelsPage>(*_context, LevelState(savedLevelId, 2, 0, 0, 0)));
+            } else {
+                _context->changePage(std::make_shared<mario::pages::LevelsPage>(*_context, LevelState(1, 2, 0, 0, 0))); 
+            }
+        } else {
+            _context->changePage(std::make_shared<mario::pages::LevelsPage>(*_context, LevelState(1, 2, 0, 0, 0)));
+        }
     });
 
     p_menuButtonListNode->buttonList.push_back(p_button);

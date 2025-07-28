@@ -2,6 +2,7 @@
 
 #include <bits/stdc++.h>
 #include <SFML/Graphics.hpp>
+#include "../../widget_toolkit/resource/json.hpp"
 #include "../../widget_toolkit/controls/button.hpp"
 #include "../../widget_toolkit/controls/button-list.hpp"
 #include "page.hpp"

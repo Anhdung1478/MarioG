@@ -2,6 +2,8 @@
 #include "levels.hpp"
 #include "main-menu.hpp"
 #include "../../widget_toolkit/resource/SoundManager.hpp"
+#include "../../widget_toolkit/resource/json.hpp"
+#include<fstream>
 
 mario::pages::LevelsPage::LevelsPage(MainWindow &context, LevelState state) : Page(context), levelState(state) {
     p_player = std::make_unique<mario::entity::Player>(_context->getWorldId(), sf::Vector2f(15, 10), mario::entity::CharacterListType::Luigi);
@@ -98,6 +100,7 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, LevelState state) : Pa
 
 mario::pages::LevelsPage::~LevelsPage() {
     p_player.reset();
+    saveState("../../src/widget_toolkit/save-state.json");
 }
 
 void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) {
@@ -178,6 +181,7 @@ void mario::pages::LevelsPage::handleEvent(const sf::RenderWindow *window, const
                     }
                 }
             } else if (homeRectF.contains(sf::Vector2f(mousePos))) {
+                saveState("../../src/widget_toolkit/save-state.json");
                 _context->changePage(std::make_shared<mario::pages::MainMenuPage>(*_context));
             } else if (settingsRectF.contains(sf::Vector2f(mousePos))) {
                 isSettingsOpen = !isSettingsOpen;
@@ -214,5 +218,17 @@ void mario::pages::LevelsPage::render(sf::RenderWindow *window) {
         window->draw(*settingsPanelSprite);
         musicSlider->render(*window);
         sfxSlider->render(*window);
+    }
+}
+
+void mario::pages::LevelsPage::saveState(const std::string& filename) {
+    nlohmann::json j;
+    j["levelId"] = levelState.level;
+    std::ofstream file(filename);
+    if (file.is_open()) {
+        file << j.dump(4);
+        file.close();
+    } else {
+        std::cerr << "Failed to save state to " << filename << std::endl;
     }
 }

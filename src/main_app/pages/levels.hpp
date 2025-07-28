@@ -67,5 +67,8 @@ namespace mario::pages {
 
             // Pause Game
             bool getPaused() const override { return isPaused; }
+
+            void initializeWorld();
+            void saveState(const std::string& filename);
     };
 }
