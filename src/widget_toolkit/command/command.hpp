@@ -18,15 +18,15 @@ namespace mario::input { // Command pattern
             }
     };
 
-    class RunCommand : public Command {
+    class MoveCommand : public Command {
         private:
             bool _isForward;
 
         public: 
-            RunCommand(bool isForward) : _isForward(isForward) {}
+            MoveCommand(bool isForward) : _isForward(isForward) {}
 
             void execute(mario::entity::Player &player, bool isReleased) override {
-                player.run(_isForward, isReleased);
+                player.move(_isForward, isReleased);
             }
     };
     

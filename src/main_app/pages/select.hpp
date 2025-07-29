@@ -1,9 +1,14 @@
 #pragma once
 
 #include "page.hpp"
+#include "../../widget_toolkit/resource/LevelState.hpp"
 #include "../../widget_toolkit/entity/player.hpp"
+#include "../../widget_toolkit/entity/player_state/player-state.hpp"
 
 namespace mario::pages {
+
+    static const int DEFAULT_NUM_LIVES = 2;
+
     class SelectPage : public Page {
         private:
             int selectedChar;

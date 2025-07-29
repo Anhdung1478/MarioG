@@ -1,7 +1,7 @@
 #include "QuestionBlock.hpp"
 
-QuestionBlock::QuestionBlock(b2WorldId worldId, sf::Vector2f pos) 
-    : Block(worldId, pos, sf::Vector2f(16, 16), "question-block") 
+QuestionBlock::QuestionBlock(sf::Vector2f pos) 
+    : Block(pos, sf::Vector2f(16, 16), "question-block") 
 {
     InitSpritesSheet();
     p_animation = new mario::entity::Animation("../../asset/maps/Image/tiles-8.png", BLOCK_SCALE, sprites);
@@ -11,8 +11,8 @@ QuestionBlock::QuestionBlock(b2WorldId worldId, sf::Vector2f pos)
     p_animation->setAnimationState(true);
 }
 
-QuestionBlock::QuestionBlock(b2WorldId worldId, sf::Vector2f pos, sf::Vector2f size, std::string name) 
-    : Block(worldId, pos, size, name) 
+QuestionBlock::QuestionBlock(sf::Vector2f pos, sf::Vector2f size, std::string name) 
+    : Block(pos, size, name) 
 {
     InitSpritesSheet();
     p_animation = new mario::entity::Animation("../../asset/maps/Image/tiles-8.png", sf::Vector2f(2.5f, 2.5f), sprites);

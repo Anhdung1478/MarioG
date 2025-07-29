@@ -2,7 +2,6 @@
 
 #include<bits/stdc++.h>
 #include "entity.hpp"
-#include <box2d/box2d.h>
 #include "box/dynamic-box.hpp"
 #include "player_state/mario-state-manager.hpp"
 #include "player_state/luigi-state-manager.hpp"
@@ -31,6 +30,7 @@ namespace mario::entity {
     class Player : public Entity {
         private:
             mario::entity::player_state::PlayerStateManager *p_stateManager;
+            CharacterListType _characterType;
 
             sf::Time jumpTimer;
             
@@ -41,15 +41,16 @@ namespace mario::entity {
             bool _isRunningForward;
 
         public:
-            Player(b2WorldId worldId, sf::Vector2f spawnPoint, CharacterListType characterType) {
+            Player(sf::Vector2f spawnPoint, CharacterListType characterType, player_state::PlayerStateType stateType) : _characterType(characterType) {
+                p_body = new DynamicBox(spawnPoint, sf::Vector2f(40.f, 40.f));
                 if(characterType == CharacterListType::Mario) {
                     p_animation = new Animation(FILE_PATH"mario.json", FILE_PATH"mario_sheets.png", PLAYER_SCALE, "mario-small.idle[0]");
-                    p_stateManager = new mario::entity::player_state::MarioStateManager(worldId, spawnPoint, p_animation, p_body);
+                    p_stateManager = new mario::entity::player_state::MarioStateManager(p_animation, p_body, stateType);
                 }
 
                 if(characterType == CharacterListType::Luigi) {
                     p_animation = new Animation(FILE_PATH"luigi.json", FILE_PATH"luigi_sheets.png", PLAYER_SCALE, "luigi-small.idle[0]");
-                    p_stateManager = new mario::entity::player_state::LuigiStateManager(worldId, spawnPoint, p_animation, p_body);
+                    p_stateManager = new mario::entity::player_state::LuigiStateManager(p_animation, p_body, stateType);
                 }
             }
 
@@ -58,7 +59,7 @@ namespace mario::entity {
             }
 
             bool isInSurface() {
-                return (p_body->getPosition().y + p_body->getDimension().y >= 714.f && p_body->getVelocity().y <= 0.1f && p_body->getVelocity().y >= -0.1f);
+                return (p_body->getPosition().y >= 600.f && p_body->getVelocity().y <= 0.1f && p_body->getVelocity().y >= -0.1f);
             }
 
             bool isFaceToBlock() {
@@ -66,114 +67,68 @@ namespace mario::entity {
             }
 
             void jump(bool isReleased) {
-                if(isReleased) {
-                    _isJumping = false;
-                    return;
-                }
-
-                if(!_isJumping && isInSurface()) {
-                    _isJumping = true;
-                    startJumpPosY = p_body->getPosition().y;
-                    p_body->applyLinearImpulseToCenter(sf::Vector2f(0.f, -START_JUMP_FORCE));
-                }
+                p_body->jump(isReleased);
             }
 
             void rotateDirection() {
                 p_animation->rotate();
             }
             
-            void run(bool isForward, bool isReleased) {
-                if(isReleased) {
-                    _isRunning = false;
-                    return;
-                }
-
-                if(!_isRunning && !isFaceToBlock()) {
-                    _isRunning = true;
-                    _isRunningForward = isForward;
-                }
+            void move(bool isForward, bool isReleased) {
+                p_body->move(isForward, isReleased);
             }
             
             void shotFireball(bool isReleased) {
                 if(isReleased)
                     return;
             }
+
+            void setVelocity(sf::Vector2f vel) {
+                p_body->setVelocity(vel);
+            }
                 
             void update(const sf::RenderWindow *window, float dt) override {
                 sf::Vector2f vel = p_body->getVelocity();
-                if(abs(vel.x) <= 1.f) {
-                    vel.x = 0.f;
-                    p_body->setVelocity(sf::Vector2f(0.f, vel.y));
-                }
-
-                if(abs(vel.y) <= 1.f) {
-                    vel.y = 0.f;
-                    p_body->setVelocity(sf::Vector2f(vel.x, 0.f));
-                }
 
                 if(!isInSurface()) {
                     // change texture to jumping
                     p_stateManager->setAnimation(p_animation, "jump[0]");
                     p_animation->setAnimationState(false);
-                } else {
+                } else 
                     if(abs(vel.x) <= 0.001f) {
                         // change texture to idle
                         p_stateManager->setAnimation(p_animation, "idle[0]");
                         p_animation->setAnimationState(false);
-                    } else {
-                        // change to next run animation step
-                        p_animation->setAnimationState(true);   
-                    }
-                }
+                    } else 
+                        if(p_animation->getAnimationState() == false) {
+                            // change to run animation
+                            p_stateManager->setAnimation(p_animation, "idle[0]");
+                            p_animation->setAnimationState(true);   
+                        }
 
                 // change state for debugging
                 if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Num1)) {
                     std::cerr << "CHANGE TO SMALL STATE\n";
-                    p_stateManager->changeToSmallState(p_animation, p_body, p_body->getPosition());
+                    p_stateManager->changeToSmallState(p_animation, p_body);
                     std::cerr << "SUCCESFULLY\n";
                 }
 
                 if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Num2)) {
                     std::cerr << "CHANGE TO SUPER STATE\n";
-                    p_stateManager->changeToSuperState(p_animation, p_body, p_body->getPosition());
+                    p_stateManager->changeToSuperState(p_animation, p_body);
                     std::cerr << "SUCCESFULLY\n";
                 }
 
                 if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Num3)) {
                     std::cerr << "CHANGE TO FIRE STATE\n";
-                    p_stateManager->changeToFireState(p_animation, p_body, p_body->getPosition());
+                    p_stateManager->changeToFireState(p_animation, p_body);
                     std::cerr << "SUCCESFULLY\n";
                 }
                 
                 p_animation->update(window, dt);
-                float bodyMass = p_body->getMass();
+                p_body->update(dt);
 
-                if(_isJumping)
-                    p_body->setVelocity(sf::Vector2f(p_body->getVelocity().x, -JUMP_VELO));
-
-                //std::cerr << "VEL: " << vel.x << ' ' << vel.y << ' ' << MAX_JUMP_HEIGHT << ' ' << _isJumping << " POS: " << p_body->getPosition().y << " START JUMP POS Y: " << startJumpPosY << '\n';
-                if(p_body->getPosition().y <= startJumpPosY - MAX_JUMP_HEIGHT) {
-                    startJumpPosY = -10000.f;
-                    p_body->applyLinearImpulseToCenter(sf::Vector2f(0.f, 0.5f));
-                    _isJumping = false;
-                }
-
-                if(_isRunning && isFaceToBlock()) 
-                    _isRunning = false;
-                
-                if(_isRunning) {
-                    if(p_animation->isFaceForward() != _isRunningForward && (vel.x == 0.f || (p_animation->isFaceForward() != (vel.x > 0.f))))
-                        rotateDirection();
-
-                    if(_isRunningForward && vel.x < MAX_SPEED || !_isRunningForward && vel.x > -MAX_SPEED) {
-                        sf::Vector2f force = sf::Vector2f((_isRunningForward ? 1 : -1) * MOVE_ACCELERATION * bodyMass, 0.f);
-                        p_body->applyForce(force);
-                    }
-                }
-
-                p_body->setDamping(isInSurface() ? GROUND_DAMPING : AIR_DAMPING);
-                //std::cerr << "PLAYER VELOCITY: " << vel.x << ' ' << vel.y << '\n';
-                std::cout << "PLAYER POSITION: " << p_body->getPosition().x << ' ' << p_body->getPosition().y << '\n';
+                //std::cout << "PLAYER: POSITION: " << p_body->getPosition().x << ' ' << p_body->getPosition().y << " VELOCITY: " << vel.x << ' ' << vel.y << '\n';
             }
             
             void handleEvent(const sf::RenderWindow *window, const sf::Event &event) override {
@@ -191,7 +146,15 @@ namespace mario::entity {
             }*/
             
             void render(sf::RenderWindow *window) override {
-                p_animation->renderWithPosition(window, p_body->getPosition());
+                Entity::render(window);
+            }
+
+            CharacterListType getCharacterType() {
+                return _characterType;
+            }
+
+            player_state::PlayerStateType getPlayerStateType() {
+                return p_stateManager->getCurrentState();
             }
 
     };

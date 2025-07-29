@@ -78,6 +78,10 @@ namespace mario::entity {
                 }
             }
 
+            bool getAnimationState() {
+                return _isRunning;
+            }
+
             void rotate() {
                 _isFaceForward = 1 - _isFaceForward;
                 

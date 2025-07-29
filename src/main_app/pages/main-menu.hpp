@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include "../../widget_toolkit/controls/button.hpp"
 #include "../../widget_toolkit/controls/button-list.hpp"
+#include "../../widget_toolkit/resource/LevelDataManager.hpp"
 #include "page.hpp"
 
 const int NUM_LEVELS = 3;
@@ -19,6 +20,8 @@ namespace mario::pages {
             mario::ButtonListNode *p_menuButtonListNode;
 
             std::unique_ptr<mario::ButtonList> p_currButtonList;
+
+            std::unique_ptr<mario::resource::LevelDataManager> p_levelDataManager;
 
             std::function<void()> _deferredStateChange;
             bool _isMenuVisible = false;

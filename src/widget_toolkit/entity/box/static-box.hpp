@@ -2,35 +2,28 @@
 
 #include <bits/stdc++.h>
 #include <SFML/Graphics.hpp>
-#include <box2d/box2d.h>
 #include "box.hpp"
 
 namespace mario::entity {
 
     class StaticBox : public Box {
         public:
-            StaticBox(b2WorldId worldId, sf::Vector2f position, sf::Vector2f _dimension, float density = 1.0f, float friction = 0.0f) : Box(worldId, position, _dimension, density, friction, 0) {}
-    
-            ~StaticBox() override {}
+            StaticBox(sf::Vector2f _pos, sf::Vector2f _size) : Box(_pos, _size) {};
 
-            void applyLinearImpulseToCenter(sf::Vector2f force) {
-                abort();
+            void move(bool _isMoveRight, bool _isReleased) override {
             }
 
-            void applyForce(sf::Vector2f force) {
-                abort();
-            }
-            
-            sf::Vector2f getVelocity() {
-                abort();
+            void jump(bool _isReleased) override {
             }
 
-            void setVelocity(sf::Vector2f vel) {
-                abort();
+            void update(float dt) override {
             }
 
-            void setDamping(float damp) {
-                abort();
+            sf::Vector2f getVelocity() const override {
+                return sf::Vector2f(0, 0);
+            }
+
+            void setVelocity(sf::Vector2f vel) override {
             }
     };
 }

@@ -17,10 +17,9 @@ namespace mario::entity::player_state {
     class MarioState : public PlayerState {
         protected:
             const std::string MARIO_TYPE;
-            b2WorldId _worldId;
     
         public:
-            MarioState(b2WorldId worldId, std::string marioType) : _worldId(worldId), MARIO_TYPE(marioType) {
+            MarioState(std::string marioType) : MARIO_TYPE(marioType) {
             }
     };
     
@@ -30,14 +29,12 @@ namespace mario::entity::player_state {
             const sf::Vector2f MARIO_DIM = sf::Vector2f(17, 19);
 
         public:
-            MarioSmallState(b2WorldId worldId) : MarioState(worldId, "mario-small") {
+            MarioSmallState() : MarioState("mario-small") {
             }
 
-            void update(Animation *&p_eAnimation, Box *&p_eBox, sf::Vector2f pos) override {
-                if(p_eBox != nullptr) 
-                    delete p_eBox; 
-                
-                p_eBox = new DynamicBox(_worldId, pos, MARIO_DIM, MARIO_DENSITY, MARIO_FRICTION);
+            void update(Animation *p_eAnimation, Box *p_eBox) override {
+                sf::Vector2f GLOBAL_DIM = sf::Vector2f(MARIO_DIM.x * MARIO_SCALE.x, MARIO_DIM.y * MARIO_SCALE.y);
+                p_eBox->reSize(GLOBAL_DIM);
                 p_eAnimation->clearAnimationStep();
                 p_eAnimation->addAnimationStep(MARIO_TYPE + ".walk[0]");
                 p_eAnimation->addAnimationStep(MARIO_TYPE + ".walk[1]");
@@ -51,14 +48,12 @@ namespace mario::entity::player_state {
             const sf::Vector2f MARIO_DIM = sf::Vector2f(20, 31);
 
         public:
-            MarioSuperState(b2WorldId worldId) : MarioState(worldId, "mario-super") {
+            MarioSuperState() : MarioState("mario-super") {
             }
 
-            void update(Animation *&p_eAnimation, Box *&p_eBox, sf::Vector2f pos) override {
-                if(p_eBox != nullptr) 
-                    delete p_eBox; 
-                
-                p_eBox = new DynamicBox(_worldId, pos, MARIO_DIM, MARIO_DENSITY, MARIO_FRICTION);
+            void update(Animation *p_eAnimation, Box *p_eBox) override {
+                sf::Vector2f GLOBAL_DIM = sf::Vector2f(MARIO_DIM.x * MARIO_SCALE.x, MARIO_DIM.y * MARIO_SCALE.y);
+                p_eBox->reSize(GLOBAL_DIM);
                 p_eAnimation->clearAnimationStep();
                 p_eAnimation->addAnimationStep(MARIO_TYPE + ".walk[0]");
                 p_eAnimation->addAnimationStep(MARIO_TYPE + ".walk[1]");
@@ -72,14 +67,12 @@ namespace mario::entity::player_state {
             const sf::Vector2f MARIO_DIM = sf::Vector2f(20, 31);
 
         public:
-            MarioFireState(b2WorldId worldId) : MarioState(worldId, "mario-fire") {
+            MarioFireState() : MarioState("mario-fire") {
             }
 
-            void update(Animation *&p_eAnimation, Box *&p_eBox, sf::Vector2f pos) override {
-                if(p_eBox != nullptr) 
-                    delete p_eBox; 
-                
-                p_eBox = new DynamicBox(_worldId, pos, MARIO_DIM, MARIO_DENSITY, MARIO_FRICTION);
+            void update(Animation *p_eAnimation, Box *p_eBox) override {
+                sf::Vector2f GLOBAL_DIM = sf::Vector2f(MARIO_DIM.x * MARIO_SCALE.x, MARIO_DIM.y * MARIO_SCALE.y);
+                p_eBox->reSize(GLOBAL_DIM);
                 p_eAnimation->clearAnimationStep();
                 p_eAnimation->addAnimationStep(MARIO_TYPE + ".walk[0]");
                 p_eAnimation->addAnimationStep(MARIO_TYPE + ".walk[1]");

@@ -14,19 +14,32 @@ namespace mario::entity::player_state {
             };
 
         public:
-            MarioStateManager(b2WorldId worldId, sf::Vector2f pos, Animation *&p_animation, Box *&p_box) {
+            MarioStateManager(Animation *p_animation, Box *p_box, PlayerStateType stateType) {
 
-                player_small = new MarioSmallState(worldId);
-                player_super = new MarioSuperState(worldId);
-                player_fire = new MarioFireState(worldId);
-                curr_state = player_small;
-                curr_state->update(p_animation, p_box, pos);
+                player_small = new MarioSmallState();
+                player_super = new MarioSuperState();
+                player_fire = new MarioFireState();
+
+                currStateType = stateType;
+                if(stateType == PlayerStateType::Small) {
+                    curr_state = player_small;
+                }
+
+                if(stateType == PlayerStateType::Super) {
+                    curr_state = player_super;
+                }
+
+                if(stateType == PlayerStateType::Fire) {
+                    curr_state = player_fire;
+                }
+
+                curr_state->update(p_animation, p_box);
             }
 
             ~MarioStateManager() override {
             }
 
-            void setAnimation(Animation *&p_animation, const std::string &ID) override {
+            void setAnimation(Animation *p_animation, const std::string &ID) override {
                 p_animation->setSpriteAnimation(MARIO_TYPE_STR[(int) currStateType] + "." + ID);
             }
     };

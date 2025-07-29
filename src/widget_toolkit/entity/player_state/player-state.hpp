@@ -15,7 +15,7 @@ namespace mario::entity::player_state {
     class PlayerState {
         public:
             virtual ~PlayerState() = default;
-            virtual void update(Animation *&p_eAnimation, Box *&p_eBox, sf::Vector2f pos) = 0;
+            virtual void update(Animation *p_eAnimation, Box *p_eBox) = 0;
     };
 
     class PlayerStateManager {
@@ -39,47 +39,51 @@ namespace mario::entity::player_state {
                 delete player_fire;
             }
 
-            void changeState(PlayerStateType stateType, Animation *&p_animation, Box *&p_box, sf::Vector2f pos) {
+            void changeState(PlayerStateType stateType, Animation *p_animation, Box *p_box) {
                 if(stateType == PlayerStateType::Small) {
-                    changeToSmallState(p_animation, p_box, pos);
+                    changeToSmallState(p_animation, p_box);
                 }
 
                 if(stateType == PlayerStateType::Super) {
-                    changeToSuperState(p_animation, p_box, pos);
+                    changeToSuperState(p_animation, p_box);
                 }
 
                 if(stateType == PlayerStateType::Fire) {
-                    changeToFireState(p_animation, p_box, pos);
+                    changeToFireState(p_animation, p_box);
                 }
             }
 
-            void changeToSmallState(Animation *&p_animation, Box *&p_box, sf::Vector2f pos) {
+            void changeToSmallState(Animation *p_animation, Box *p_box) {
                 if(currStateType == PlayerStateType::Small)
                     return;
 
                 curr_state = player_small;
                 currStateType = PlayerStateType::Small;
-                curr_state->update(p_animation, p_box, pos);
+                curr_state->update(p_animation, p_box);
             }
 
-            void changeToSuperState(Animation *&p_animation, Box *&p_box, sf::Vector2f pos) {
+            void changeToSuperState(Animation *p_animation, Box *p_box) {
                 if(currStateType == PlayerStateType::Super)
                     return;
 
                 curr_state = player_super;
                 currStateType = PlayerStateType::Super;
-                curr_state->update(p_animation, p_box, pos);
+                curr_state->update(p_animation, p_box);
             }
 
-            void changeToFireState(Animation *&p_animation, Box *&p_box, sf::Vector2f pos) {
+            void changeToFireState(Animation *p_animation, Box *p_box) {
                 if(currStateType != PlayerStateType::Fire)
                     return;
 
                 curr_state = player_fire;
                 currStateType = PlayerStateType::Fire;
-                curr_state->update(p_animation, p_box, pos);
+                curr_state->update(p_animation, p_box);
             }
 
-            virtual void setAnimation(Animation *&p_animation, const std::string &ID) = 0;
+            PlayerStateType getCurrentState() {
+                return currStateType;
+            }
+
+            virtual void setAnimation(Animation *p_animation, const std::string &ID) = 0;
     };
 }
