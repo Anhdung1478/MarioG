@@ -8,16 +8,6 @@
 //#include "item/item.hpp"
 
 namespace mario::entity {
-    
-    constexpr static float MOVE_ACCELERATION = 15.f;
-    constexpr static float MAX_SPEED = 250.f; // pixel per second
-    constexpr static float GROUND_DAMPING = 0.75f;
-    constexpr static float AIR_DAMPING = 0.5f;
-
-    constexpr static float JUMP_VELO = 300.f;
-    constexpr static float START_JUMP_FORCE = 1.5f;
-    constexpr static float MAX_JUMP_HEIGHT = 40.f * 4;
-
     #define FILE_PATH "../../asset/sprites/"
 
     const static sf::Vector2f PLAYER_SCALE = sf::Vector2f(2.5f, 2.5f);
@@ -32,12 +22,7 @@ namespace mario::entity {
             mario::entity::player_state::PlayerStateManager *p_stateManager;
             CharacterListType _characterType;
 
-            sf::Time jumpTimer;
-            
-            float startJumpPosY = -10000.f;
             float shootingDelayTime = 0.f;
-            bool _isRunning = false;
-            bool _isJumping = false;
             bool _isRunningForward;
 
         public:
@@ -58,14 +43,6 @@ namespace mario::entity {
                 delete p_stateManager;
             }
 
-            bool isInSurface() {
-                return (p_body->getPosition().y >= 600.f && p_body->getVelocity().y <= 0.1f && p_body->getVelocity().y >= -0.1f);
-            }
-
-            bool isFaceToBlock() {
-                return false;
-            }
-
             void jump(bool isReleased) {
                 p_body->jump(isReleased);
             }
@@ -74,8 +51,8 @@ namespace mario::entity {
                 p_animation->rotate();
             }
             
-            void move(bool isForward, bool isReleased) {
-                p_body->move(isForward, isReleased);
+            void move(bool isMoveRight, bool isReleased) {
+                p_body->move(isMoveRight, isReleased);
             }
             
             void shotFireball(bool isReleased) {
@@ -84,14 +61,12 @@ namespace mario::entity {
             }
                 
             void update(const sf::RenderWindow *window, float dt) override {
-                sf::Vector2f vel = p_body->getVelocity();
-
-                if(!isInSurface()) {
+                if(!p_body->isOnSurface()) {
                     // change texture to jumping
                     p_stateManager->setAnimation(p_animation, "jump[0]");
                     p_animation->setAnimationState(false);
                 } else 
-                    if(abs(vel.x) <= 0.001f) {
+                    if(p_body->isNotMoving()) {
                         // change texture to idle
                         p_stateManager->setAnimation(p_animation, "idle[0]");
                         p_animation->setAnimationState(false);
@@ -124,7 +99,11 @@ namespace mario::entity {
                 p_animation->update(window, dt);
                 p_body->update(dt);
 
-                //std::cout << "PLAYER: POSITION: " << p_body->getPosition().x << ' ' << p_body->getPosition().y << " VELOCITY: " << vel.x << ' ' << vel.y << '\n';
+                if(p_animation->isFaceForward() != p_body->isFaceForward())
+                    rotateDirection();
+
+                sf::Vector2f vel = p_body->getVelocity();
+                std::cerr << "PLAYER: POSITION: " << p_body->getPosition().x << ' ' << p_body->getPosition().y << " VELOCITY: " << vel.x << ' ' << vel.y << '\n';
             }
             
             void handleEvent(const sf::RenderWindow *window, const sf::Event &event) override {

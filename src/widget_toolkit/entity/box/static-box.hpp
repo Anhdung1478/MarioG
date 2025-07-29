@@ -22,5 +22,17 @@ namespace mario::entity {
             sf::Vector2f getVelocity() const override {
                 return sf::Vector2f(0, 0);
             }
+
+            bool isNotMoving() const override {
+                return true;
+            }
+
+            bool isOnSurface() const override {
+                return true;
+            }
+
+            bool isFaceForward() const override {
+                return true;
+            }
     };
 }

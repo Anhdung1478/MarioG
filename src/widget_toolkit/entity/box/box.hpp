@@ -37,29 +37,33 @@ namespace mario::entity {
             virtual void move(bool isMoveRight, bool isReleased) = 0;
             virtual void jump(bool isReleased) = 0;
             virtual void update(float dt) = 0;
+            virtual bool isNotMoving() const = 0;
+            virtual bool isOnSurface() const = 0;
+            virtual bool isFaceForward() const = 0;
 
             void renderHitboxRect(sf::RenderWindow *window) {
                 sf::FloatRect hitbox = getHitbox();
                 sf::Vector2f _pos = hitbox.position;
                 sf::Vector2f _size = hitbox.size;
+                ++_pos.x, ++_pos.y;
 
                 std::array line1 = {
                     sf::Vertex{_pos},
-                    sf::Vertex{sf::Vector2f(_pos.x + _size.x - 1, _pos.y)}
+                    sf::Vertex{sf::Vector2f(_pos.x + _size.x, _pos.y)}
                 };
                 
                 std::array line2 = {
-                    sf::Vertex{sf::Vector2f(_pos.x + _size.x - 1, _pos.y)},
-                    sf::Vertex{sf::Vector2f(_pos.x + _size.x - 1, _pos.y + _size.y - 1)}
+                    sf::Vertex{sf::Vector2f(_pos.x + _size.x, _pos.y)},
+                    sf::Vertex{sf::Vector2f(_pos.x + _size.x, _pos.y + _size.y)}
                 };
                 
                 std::array line3 = {
-                    sf::Vertex{sf::Vector2f(_pos.x + _size.x - 1, _pos.y + _size.y - 1)},
-                    sf::Vertex{sf::Vector2f(_pos.x, _pos.y + _size.y - 1)}
+                    sf::Vertex{sf::Vector2f(_pos.x + _size.x, _pos.y + _size.y)},
+                    sf::Vertex{sf::Vector2f(_pos.x, _pos.y + _size.y)}
                 };
                 
                 std::array line4 = {
-                    sf::Vertex{sf::Vector2f(_pos.x, _pos.y + _size.y - 1)},
+                    sf::Vertex{sf::Vector2f(_pos.x, _pos.y + _size.y)},
                     sf::Vertex{_pos}
                 };
 
