@@ -1,7 +1,7 @@
 #include<bits/stdc++.h>
 #include "levels.hpp"
 
-mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::LevelState state) : Page(context) {
+mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::LevelState state) : Page(context), camera({1280, 720}) {
     p_player = std::make_unique<mario::entity::Player>(sf::Vector2f(15, 600), state.characterType, state.stateType);
     p_inputManager = std::make_unique<mario::input::InputManager>();
 
@@ -14,6 +14,8 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
 
     p_levelDataManager = std::make_unique<mario::resource::LevelDataManager>();
     currLevelState = state;
+
+    camera.setMapBounds(tileMap->getWorldBounds());
 }
 
 void mario::pages::LevelsPage::autoSave() {
@@ -33,6 +35,10 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
     }
 
     p_player->update(window, dt);
+
+    camera.followEntity(*p_player, dt);
+    camera.update(dt);
+
     currLevelState.stateType = p_player->getPlayerStateType();
     p_levelDataManager->update(dt, currLevelState);
     
@@ -51,6 +57,7 @@ void mario::pages::LevelsPage::handleEvent(const sf::RenderWindow *window, const
 }
 
 void mario::pages::LevelsPage::render(sf::RenderWindow *window) {
+    camera.applyTo(*window);
     tileMap->render(window);
     p_player->render(window);
 }
