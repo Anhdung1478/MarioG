@@ -5,6 +5,7 @@
 #include "../../widget_toolkit/entity/blocks/TileMap.hpp"
 #include "../../widget_toolkit/resource/LevelState.hpp"
 #include "../../widget_toolkit/resource/LevelDataManager.hpp"
+#include "../../widget_toolkit/camera/camera.hpp"
 
 namespace mario::pages {
     class LevelsPage : public Page {
@@ -19,6 +20,7 @@ namespace mario::pages {
 
             mario::resource::LevelState currLevelState;
             sf::Time timeRemaining;
+            Camera camera;
 
         public:
             LevelsPage(MainWindow &context, mario::resource::LevelState state);

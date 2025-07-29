@@ -434,3 +434,7 @@ void TileMap::render(sf::RenderWindow *window){
         block->render(window);
     }
 }
+
+sf::FloatRect TileMap::getWorldBounds() const {
+    return sf::FloatRect(sf::Vector2f(0.f, 0.f), sf::Vector2f(1280.f, 720.f));
+}
