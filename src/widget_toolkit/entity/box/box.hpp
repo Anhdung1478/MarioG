@@ -66,6 +66,14 @@ namespace mario::entity {
                 return convertUnitToPixel(sf::Vector2f(pos.x, pos.y + dimension.y / 2.f));
             }
 
+            void setPosition(const sf::Vector2f& position) {
+                if (b2Body_IsValid(bodyId)) {
+                    sf::Vector2f unitPos = convertPixelToUnit(position);
+                    b2Rot rotation = b2MakeRot(0.0f);
+                    b2Body_SetTransform(bodyId, b2Vec2({unitPos.x, unitPos.y - dimension.y / 2.f}), rotation);
+                }
+            }
+
             sf::Vector2f getDimension() {
                 return convertUnitToPixel(sf::Vector2f(dimension.x, dimension.y));
             }

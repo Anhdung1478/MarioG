@@ -55,6 +55,7 @@ namespace mario::pages {
 
             std::unique_ptr<Slider> musicSlider;
             std::unique_ptr<Slider> sfxSlider;
+            friend class MainMenuPage;
         public:
             LevelsPage(MainWindow &context, LevelState state);
             ~LevelsPage();
@@ -68,7 +69,9 @@ namespace mario::pages {
             // Pause Game
             bool getPaused() const override { return isPaused; }
 
+            // Save state and continue game
             void initializeWorld();
             void saveState(const std::string& filename);
+            void saveStateToMemory();
     };
 }

@@ -181,6 +181,7 @@ void mario::pages::LevelsPage::handleEvent(const sf::RenderWindow *window, const
                     }
                 }
             } else if (homeRectF.contains(sf::Vector2f(mousePos))) {
+                saveStateToMemory();
                 saveState("../../src/widget_toolkit/save-state.json");
                 _context->changePage(std::make_shared<mario::pages::MainMenuPage>(*_context));
             } else if (settingsRectF.contains(sf::Vector2f(mousePos))) {
@@ -231,4 +232,14 @@ void mario::pages::LevelsPage::saveState(const std::string& filename) {
     } else {
         std::cerr << "Failed to save state to " << filename << std::endl;
     }
+}
+
+void mario::pages::LevelsPage::saveStateToMemory() {
+    GameState state;
+    state.levelId = levelState.level;
+    state.playerX = p_player->getPosition().x;
+    state.playerY = p_player->getPosition().y;
+    state.coins = levelState.coins;
+    state.score = levelState.score;
+    _context->saveCurrentState(state);
 }

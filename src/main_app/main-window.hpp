@@ -16,6 +16,12 @@
 namespace mario {
     class Page;
 
+    struct GameState {
+        int levelId;
+        float playerX, playerY;
+        int coins, score;
+    };
+
     class MainWindow : public IRenderable {
         private:
             sf::RenderWindow *window;
@@ -31,7 +37,13 @@ namespace mario {
 
             // SoundManager
             mario::audio::SoundManager soundManager;
-            
+
+            // For save state and continue in main-menu
+            std::unique_ptr<GameState> currentState;
+            bool hasStartedNewGame = false;
+
+            // Store current page
+            std::shared_ptr<Page> currentPage;
         public:
             ~MainWindow() override;
             b2WorldId getWorldId();
@@ -44,7 +56,14 @@ namespace mario {
             void stepWorld(float dt);
 
             // Use for sound manager
-            mario::audio::SoundManager& getSoundManager() { return soundManager; }
+            audio::SoundManager& getSoundManager();
             void setPageMusic(std::shared_ptr<Page> page);
+
+            // Use for save state and continue in main-menu
+            void saveCurrentState(const GameState& state);
+            std::unique_ptr<GameState> getCurrentState();
+            bool getHasStartedNewGame() const;
+            void setHasStartedNewGame(bool value);
+            std::shared_ptr<Page> getCurrentPage() const;
     };
 }

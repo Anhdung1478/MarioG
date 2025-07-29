@@ -29,19 +29,31 @@ mario::pages::MainMenuPage::MainMenuPage(mario::MainWindow &context) : Page(cont
     p_button->buttonRect = sf::FloatRect(sf::Vector2f(540, 540), sf::Vector2f(200, 30));
     p_button->p_nodeOnButton = nullptr;
     p_button->Click.append([this]() {
-        std::ifstream file("../../src/widget_toolkit/save-state.json");
-        if (file.is_open()) {
-            nlohmann::json j;
-            file >> j;
-            file.close();
-            int savedLevelId = j["levelId"].get<int>();
-            if (savedLevelId > 0 && savedLevelId <= NUM_LEVELS) {
-                _context->changePage(std::make_shared<mario::pages::LevelsPage>(*_context, LevelState(savedLevelId, 2, 0, 0, 0)));
+        if(!_context->getHasStartedNewGame()) {
+            std::ifstream file("../../src/widget_toolkit/save-state.json");
+            if (file.is_open()) {
+                nlohmann::json j;
+                file >> j;
+                file.close();
+                int savedLevelId = j["levelId"].get<int>();
+                if (savedLevelId > 0 && savedLevelId <= NUM_LEVELS) {
+                    _context->changePage(std::make_shared<mario::pages::LevelsPage>(*_context, LevelState(savedLevelId, 2, 0, 0, 0)));
+                } else {
+                    _context->changePage(std::make_shared<mario::pages::LevelsPage>(*_context, LevelState(1, 2, 0, 0, 0))); 
+                }
             } else {
-                _context->changePage(std::make_shared<mario::pages::LevelsPage>(*_context, LevelState(1, 2, 0, 0, 0))); 
+                _context->changePage(std::make_shared<mario::pages::LevelsPage>(*_context, LevelState(1, 2, 0, 0, 0)));
             }
         } else {
-            _context->changePage(std::make_shared<mario::pages::LevelsPage>(*_context, LevelState(1, 2, 0, 0, 0)));
+             if (auto state = _context->getCurrentState()) {
+                _context->changePage(std::make_shared<mario::pages::LevelsPage>(*_context, LevelState(state->levelId, 2, state->coins, state->score, 0)));
+                auto levelsPage = dynamic_cast<LevelsPage*>(_context->getCurrentPage().get());
+                if (levelsPage && levelsPage->p_player) {
+                    levelsPage->p_player->setPosition(sf::Vector2f(state->playerX, state->playerY)); // Đặt lại vị trí
+                }
+            } else {
+                _context->changePage(std::make_shared<mario::pages::LevelsPage>(*_context, LevelState(1, 2, 0, 0, 0)));
+            }
         }
     });
 
@@ -73,14 +85,17 @@ mario::pages::MainMenuPage::MainMenuPage(mario::MainWindow &context) : Page(cont
     }
 
     p_levelButton[1]->Click.append([this]() {
+        _context->setHasStartedNewGame(true);
         _context->changePage(std::make_shared<mario::pages::LevelsPage>(*_context, LevelState(1, 2, 0, 0, 0)));
     });
 
     p_levelButton[2]->Click.append([this]() {
+        _context->setHasStartedNewGame(true);
         _context->changePage(std::make_shared<mario::pages::LevelsPage>(*_context, LevelState(2, 2, 0, 0, 0)));
     });
 
     p_levelButton[3]->Click.append([this]() {
+        _context->setHasStartedNewGame(true);
         _context->changePage(std::make_shared<mario::pages::LevelsPage>(*_context, LevelState(3, 2, 0, 0, 0)));
     });
     

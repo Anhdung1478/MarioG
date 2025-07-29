@@ -14,6 +14,7 @@ b2WorldId mario::MainWindow::getWorldId() {
 }
 
 void mario::MainWindow::changePage(std::shared_ptr<Page> to) {
+    currentPage = to;
     content_to = to;
     _deferredStateChange = [this]() {
         content = content_to;
@@ -128,3 +129,15 @@ void mario::MainWindow::setPageMusic(std::shared_ptr<Page> page) {
         }
     }
 }
+
+mario::audio::SoundManager& mario::MainWindow::getSoundManager() { return soundManager; }
+
+void mario::MainWindow::saveCurrentState(const GameState& state) { currentState = std::make_unique<GameState>(state); }
+
+std::unique_ptr<mario::GameState> mario::MainWindow::getCurrentState() { return std::move(currentState); }
+
+bool mario::MainWindow::getHasStartedNewGame() const { return hasStartedNewGame; }
+
+void mario::MainWindow::setHasStartedNewGame(bool value) { hasStartedNewGame = value; }
+
+std::shared_ptr<mario::Page> mario::MainWindow::getCurrentPage() const { return currentPage; }

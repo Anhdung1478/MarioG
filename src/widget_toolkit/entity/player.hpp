@@ -40,7 +40,8 @@ namespace mario::entity {
             bool _isJumping = false;
             bool _isRunningForward;
 
-            bool hasPlayedJumpSound_ = false; // For sound effect
+            // For sound effect
+            bool hasPlayedJumpSound_ = false; 
         public:
             Player(b2WorldId worldId, sf::Vector2f spawnPoint, CharacterListType characterType) {
                 if(characterType == CharacterListType::Mario) {
@@ -197,6 +198,9 @@ namespace mario::entity {
             }
             bool hasPlayedJumpSound() const { return hasPlayedJumpSound_; }
             void setJumpSoundPlayed(bool played) { hasPlayedJumpSound_ = played; }
+
+            sf::Vector2f getPosition() const { return p_body->getPosition(); }
+            void setPosition(const sf::Vector2f& position) { p_body->setPosition(position); }
     };
 
     #undef FILE_PATH
