@@ -52,8 +52,8 @@ namespace mario::entity {
 
                 SpriteData data = p_textureResource.getSpriteData(sprites[0].id);
                 p_sprite = std::make_unique<sf::Sprite>(*(data.texture));
-                p_sprite->setTextureRect(sf::IntRect({data.x, data.y}, {data.z, data.t}));
-                p_sprite->setOrigin({data.z / 2.f, 1.f * data.t});
+
+                setSprite(data);
                 p_sprite->setScale(scale);
             }
 

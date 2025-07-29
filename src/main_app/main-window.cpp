@@ -28,7 +28,10 @@ void mario::MainWindow::closeWindow() {
 }
 
 void mario::MainWindow::run() {
-    window = new sf::RenderWindow(sf::VideoMode(sf::Vector2u(initScreenWidth, initScreenHeight)), title, sf::Style::Default);
+    sf::ContextSettings settings;
+    settings.antiAliasingLevel = 0.0f;
+
+    window = new sf::RenderWindow(sf::VideoMode(sf::Vector2u(initScreenWidth, initScreenHeight)), title, sf::Style::Default, sf::State::Windowed, settings);
     window->setFramerateLimit(fixedFPS);
 
     changePage(std::make_shared<pages::MainMenuPage>(*this)); // Initialize with main-menu page
@@ -36,10 +39,10 @@ void mario::MainWindow::run() {
 
     while (isRunning) {
         sf::Time deltaTime = clock.restart(); // Get the time elapsed since the last frame
-        while(deltaTime < timeStep) {
+        /*while(deltaTime < timeStep) {
             sf::sleep(timeStep - deltaTime);
             deltaTime += clock.restart();
-        }
+        }*/
 
         //std::cerr << deltaTime.asSeconds() << ' ' << timeStep.asSeconds() << '\n';
         while (const std::optional event = window->pollEvent()) {

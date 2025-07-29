@@ -8,24 +8,29 @@ namespace mario::entity {
 
     class DynamicBox : public Box {
         private:
-            static constexpr float MAX_FALL_SPEED = 1400.f;
+            static constexpr float MAX_FALL_SPEED = 800.f;
+            static constexpr sf::Time DELAY_TIME_BETWEEN_JUMP = sf::seconds(0.0001f);
             
             sf::Vector2f acceleration, velocity;
+            sf::Time timeUntilNextJump;
 
             float jumpForce, maxVelocityX;
             int jumpRemaining, maxJumps;
+
             
-            bool isJumpping, isMoveRight, onGround, hitCelling;
+            bool isJumpping, _isFaceForward, isMoveRight, onGround, hitCelling;
             bool isRunning;
 
         public:
-            DynamicBox(sf::Vector2f _pos, sf::Vector2f _size, float acc = 0.2f, float maxVX = 200.f, float _maxJump = 2, float _jumpForce = -900.f) 
+            DynamicBox(sf::Vector2f _pos, sf::Vector2f _size, float acc = 150.f, float maxVX = 200.f, float _jumpForce = -200.f, int _maxJump = 2) 
                 : Box(_pos, _size), maxVelocityX(maxVX), maxJumps(_maxJump), jumpForce(_jumpForce) 
             {
                 acceleration.x = acc;
-                acceleration.y = 98.f;
+                acceleration.y = 980.f;
                 jumpRemaining = 0;
                 velocity = sf::Vector2f(0, 0);
+
+                _isFaceForward = true;
                 isJumpping = isRunning = false;
             }
 
@@ -45,30 +50,65 @@ namespace mario::entity {
                     return;
                 }
 
-                jumpRemaining = maxJumps;
-                isJumpping = true;
+                if(isOnSurface()) {
+                    timeUntilNextJump = sf::seconds(0.f);
+                    velocity.y = 0.f;
+                    jumpRemaining = maxJumps;
+                    isJumpping = true;
+                }
+            }
+
+            bool isNotMoving() const override {
+                return (abs(velocity.x) <= 1.f);
+            }
+
+            bool isOnSurface() const override {
+                return (position.y >= 600.f);
+            }
+
+            bool isFaceForward() const override {
+                return _isFaceForward;
             }
 
             void update(float dt) override {
                 if(isRunning) {
-                    if(isMoveRight) {
-                        velocity.x = std::min(velocity.x + acceleration.x * dt, maxVelocityX);
+                    if(isMoveRight != (velocity.x > 0.f)) {
+                        if(isMoveRight) {
+                            velocity.x = std::min(velocity.x + 2 * acceleration.x * dt, maxVelocityX);
+                        } else {
+                            velocity.x = std::max(velocity.x - 2 * acceleration.x * dt, -maxVelocityX);
+                        }
                     } else {
-                        velocity.x = std::max(velocity.x - acceleration.x * dt, -maxVelocityX);
+                        if(isMoveRight) {
+                            velocity.x = std::min(velocity.x + acceleration.x * dt, maxVelocityX);
+                        } else {
+                            velocity.x = std::max(velocity.x - acceleration.x * dt, -maxVelocityX);
+                        }
                     }
+
+
+                    _isFaceForward = (velocity.x > 0.f);
                 } else
-                    if(abs(velocity.x) > 0)
-                        velocity.x += ((velocity.x > 0) ? -1 : +1) * std::min(acceleration.x * dt, abs(velocity.x));
+                    if(abs(velocity.x) > 0.f)
+                        velocity.x += ((velocity.x > 0.f) ? -1 : +1) * std::min(acceleration.x * 2 * dt, abs(velocity.x));
                 
                 if(isJumpping) {
-                    velocity.y += jumpForce;
-                    
-                    --jumpRemaining;
-                    if(jumpRemaining == 0)
-                        isJumpping = false;
-                } else {
-                    velocity.y = std::min(velocity.y + acceleration.y * dt, MAX_FALL_SPEED);
-                }
+                    timeUntilNextJump -= sf::seconds(dt);
+                    if(timeUntilNextJump <= sf::seconds(0.f)) {
+                        velocity.y += jumpForce;
+                        timeUntilNextJump = DELAY_TIME_BETWEEN_JUMP;
+
+                        --jumpRemaining;
+                        if(jumpRemaining == 0)
+                            isJumpping = false;
+                    }
+                } else 
+                    if(!isOnSurface()) {
+                        velocity.y = std::min(velocity.y + acceleration.y * dt, MAX_FALL_SPEED);
+                    } else {
+                        velocity.y = 0.f;
+                    }
+
 
                 position.x += velocity.x * dt;
                 position.y += velocity.y * dt;
