@@ -38,6 +38,12 @@ namespace mario::entity {
                 p_body->renderHitboxRect(window);
             }
 
+            void setPosition(sf::Vector2f pos) {
+                if (p_body) {
+                    p_body->setPosition(pos);
+                }
+            }
+
             sf::Vector2f getPosition() const {
                 return p_body->getPosition();
             }

@@ -309,10 +309,111 @@ void TileMap::findBlocksCollisions(int &L, int &R, const std::unique_ptr<mario::
     R = std::distance(blocks.begin(), itR);
 }
 
+SideCollision TileMap::findCollisionSide(const std::unique_ptr<mario::entity::Player> &EntityA, const std::unique_ptr<Block> &EntityB) {
+    sf::FloatRect hitBoxA = EntityA->getHitbox();
+    sf::FloatRect hitBoxB = EntityB->getHitbox();
+
+    sf::Vector2f centerA = hitBoxA.position + hitBoxA.size / 2.f;
+    sf::Vector2f centerB = hitBoxB.position + hitBoxB.size / 2.f;
+
+    float deltaX = centerB.x - centerA.x;
+    float deltaY = centerB.y - centerA.y;
+
+    float overlapX = (hitBoxA.size.x + hitBoxB.size.x) / 2.f - std::abs(deltaX);
+    float overlapY = (hitBoxA.size.y + hitBoxB.size.y) / 2.f - std::abs(deltaY);
+
+    if (overlapX >= 0 && overlapY >= 0) {
+        if (overlapX >= overlapY) {
+            return (deltaY > 0) ? SideCollision::Bottom : SideCollision::Top;
+        } 
+        else {
+            return (deltaX < 0) ? SideCollision::Left : SideCollision::Right;
+        }
+    }
+    return SideCollision::None; // No collision
+}
+
+void TileMap::fixPosition(const std::unique_ptr<mario::entity::Player> &player, const std::unique_ptr<Block> &block, SideCollision side) {
+    if(side == SideCollision::None) return;
+    switch (side) {
+        case SideCollision::Top:
+            player->setPosition(sf::Vector2f(player->getPosition().x, block->getPosition().y + player->getSize().y));
+            break;
+        case SideCollision::Bottom:
+            player->setPosition(sf::Vector2f(player->getPosition().x, block->getHitbox().position.y));
+            break;
+        case SideCollision::Left:
+            player->setPosition(sf::Vector2f(block->getHitbox().position.x + block->getSize().x + player->getSize().x / 2.0f, player->getPosition().y));
+            break;
+        case SideCollision::Right:
+            player->setPosition(sf::Vector2f(block->getHitbox().position.x - player->getSize().x / 2.0f, player->getPosition().y));
+            break;
+    }
+}
 
 void TileMap::checkCollision(const std::unique_ptr<mario::entity::Player> &player) {
     int L, R;
     findBlocksCollisions(L, R, player);
+
+    // player->setOnGround(false);
+    // player->setMoveLeft(true); 
+    // player->setMoveRight(true);
+
+    bool hasTopCollision = false;
+    bool hasBottomCollision = false;
+    bool hasLeftCollision = false;
+    bool hasRightCollision = false;
+
+    for(int i = 0; i < blocks.size(); ++i){
+        auto& block = blocks[i];
+        if (!block->getExist()) continue;
+
+        SideCollision side = findCollisionSide(player, block);
+        if(side != SideCollision::None) {
+            switch (side) {
+                case SideCollision::Top:
+                    hasTopCollision = true;
+                    break;
+                case SideCollision::Bottom:
+                    hasBottomCollision = true;
+                    break;
+                case SideCollision::Left:
+                    hasLeftCollision = true;
+                    break;
+                case SideCollision::Right:
+                    hasRightCollision = true;
+                    break;
+                default:
+                    break;
+            }
+            fixPosition(player, block, side);
+        }
+    }
+
+    if(hasBottomCollision){
+        player->setVelocity(sf::Vector2f(0.f, 0.f));
+        std::cout << "\nBottom Collision Detected\n";
+        // player->setOnGround(true);
+        // player->setVelocity(sf::Vector2f(player->getVelocity().x, 0.f));
+        // player->resetJump();
+    }
+    if(hasTopCollision){
+        player->setVelocity(sf::Vector2f(0.f, 0.f));
+        std::cout << "\nTop Collision Detected\n";
+        // player->setVelocity(sf::Vector2f(player->getVelocity().x, 0.f));
+    }
+    if(hasLeftCollision){
+        player->setVelocity(sf::Vector2f(0.f, 0.f));
+        std::cout << "\nLeft Collision Detected\n";
+        // player->setVelocity(sf::Vector2f(0.f, player->getVelocity().y));
+        // player->setMoveLeft(false);
+    }
+    if(hasRightCollision){
+        player->setVelocity(sf::Vector2f(0.f, 0.f));
+        std::cout << "\nRight Collision Detected\n";
+        // player->setVelocity(sf::Vector2f(0.f, player->getVelocity().y));
+        // player->setMoveRight(false);
+    }
 }
 
 
