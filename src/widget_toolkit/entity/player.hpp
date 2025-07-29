@@ -74,7 +74,7 @@ namespace mario::entity {
                         if(p_animation->getAnimationState() == false) {
                             // change to run animation
                             p_stateManager->setAnimation(p_animation, "idle[0]");
-                            p_animation->setAnimationState(true);   
+                            p_animation->setAnimationState(true);
                         }
 
                 // change state for debugging

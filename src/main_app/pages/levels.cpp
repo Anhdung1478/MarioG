@@ -2,7 +2,7 @@
 #include "levels.hpp"
 
 mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::LevelState state) : Page(context), camera({1280, 720}) {
-    p_player = std::make_unique<mario::entity::Player>(sf::Vector2f(15, 600), state.characterType, state.stateType);
+    p_player = new mario::entity::Player(sf::Vector2f(15, 10), state.characterType, state.stateType);
     p_inputManager = std::make_unique<mario::input::InputManager>();
 
     p_inputManager->bind(sf::Keyboard::Scancode::Left, std::make_unique<mario::input::MoveCommand>(0));
@@ -24,7 +24,7 @@ void mario::pages::LevelsPage::autoSave() {
 
 mario::pages::LevelsPage::~LevelsPage() {
     autoSave();
-    p_player.reset();
+    delete p_player;
 }
 
 void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) {
