@@ -6,7 +6,7 @@
 #include "../widget_toolkit/interfaces.hpp"
 #include "../widget_toolkit/entity/box/static-box.hpp"
 
-#define DEFAULT_FPS 120
+#define DEFAULT_FPS 60
 #define DEFAULT_WIN_WIDTH 1280
 #define DEFAULT_WIN_HEIGHT 720
 

@@ -45,7 +45,16 @@ namespace mario::entity {
                 sf::FloatRect hitbox = getHitbox();
                 sf::Vector2f _pos = hitbox.position;
                 sf::Vector2f _size = hitbox.size;
+
+                // sf::RectangleShape rectHitbox(sf::Vector2f(_size.x - 1, _size.y - 1));
+                // rectHitbox.setPosition(_pos);
+                // rectHitbox.setFillColor(sf::Color(0, 0, 0, 255));
+                // rectHitbox.setOutlineThickness(1.f);
+                // rectHitbox.setOutlineColor(sf::Color::White);
+                // window->draw(rectHitbox);
+
                 ++_pos.x, ++_pos.y;
+                --_size.x, --_size.y;
 
                 std::array line1 = {
                     sf::Vertex{_pos},
