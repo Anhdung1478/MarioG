@@ -7,17 +7,13 @@ public:
     QuestionBlock(){};
     QuestionBlock(sf::Vector2f pos);
     QuestionBlock(sf::Vector2f pos, sf::Vector2f size, std::string name);
+    ~QuestionBlock() = default;
+
     void InitSpritesSheet() override;
+    
     void update(const sf::RenderWindow *window, float dt) override;
     void handleEvent(const sf::RenderWindow *window, const sf::Event &event) override;
     void render(sf::RenderWindow *window) override;
-    ~QuestionBlock() = default;
-
 private:
-    // std::vector<SpriteData2> sprites = {
-    //     {"question-block[0]", 1, 52, 16, 16},
-    //     {"question-block[1]", 18, 52, 16, 16},
-    //     {"question-block[2]", 35, 52, 16, 16}
-    // };
     std::vector<SpriteData2> sprites;
 };

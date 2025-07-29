@@ -11,7 +11,6 @@ namespace mario::pages {
         private:
             std::unique_ptr<mario::entity::Player> p_player;
             std::unique_ptr<mario::input::InputManager> p_inputManager;
-            std::vector<std::unique_ptr<Block>> blocks;
             std::unique_ptr<TileMap> tileMap;
 
             std::unique_ptr<QuestionBlock> p_questionBlock;

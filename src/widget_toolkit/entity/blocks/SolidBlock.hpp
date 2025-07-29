@@ -4,10 +4,6 @@
 
 class SolidBlock : public Block {
 private:
-    sf::Texture* texture;
-    sf::Sprite* sprite;
-    std::unordered_map<std::string, sf::IntRect> spritesSheet;
-
     std::vector<SpriteData2> sprites;
 public:
     SolidBlock();
