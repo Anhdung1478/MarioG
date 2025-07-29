@@ -355,9 +355,8 @@ void TileMap::checkCollision(const std::unique_ptr<mario::entity::Player> &playe
     int L, R;
     findBlocksCollisions(L, R, player);
 
-    // player->setOnGround(false);
-    // player->setMoveLeft(true); 
-    // player->setMoveRight(true);
+    //player->setMoveLeft(true); 
+    //player->setMoveRight(true);
 
     bool hasTopCollision = false;
     bool hasBottomCollision = false;
@@ -390,30 +389,32 @@ void TileMap::checkCollision(const std::unique_ptr<mario::entity::Player> &playe
         }
     }
 
-    if(hasBottomCollision){
-        player->setVelocity(sf::Vector2f(0.f, 0.f));
-        std::cout << "\nBottom Collision Detected\n";
-        // player->setOnGround(true);
-        // player->setVelocity(sf::Vector2f(player->getVelocity().x, 0.f));
-        // player->resetJump();
+    sf::Vector2f vel = player->getVelocity();
+    if(hasBottomCollision) {
+        vel.y = 0.f;
+        player->resetJump();
+        player->setOnGround(true);
+        std::cerr << "\nBottom Collision Detected\n";
     }
-    if(hasTopCollision){
-        player->setVelocity(sf::Vector2f(0.f, 0.f));
-        std::cout << "\nTop Collision Detected\n";
-        // player->setVelocity(sf::Vector2f(player->getVelocity().x, 0.f));
+
+    if(hasTopCollision) {
+        vel.y = 0.f;
+        std::cerr << "\nTop Collision Detected\n";
     }
-    if(hasLeftCollision){
-        player->setVelocity(sf::Vector2f(0.f, 0.f));
-        std::cout << "\nLeft Collision Detected\n";
-        // player->setVelocity(sf::Vector2f(0.f, player->getVelocity().y));
-        // player->setMoveLeft(false);
+
+    if(hasLeftCollision) {
+        vel.x = 0.f;
+        //player->setMoveLeft(false);
+        std::cerr << "\nLeft Collision Detected\n";
     }
-    if(hasRightCollision){
-        player->setVelocity(sf::Vector2f(0.f, 0.f));
-        std::cout << "\nRight Collision Detected\n";
-        // player->setVelocity(sf::Vector2f(0.f, player->getVelocity().y));
-        // player->setMoveRight(false);
+
+    if(hasRightCollision) {
+        vel.x = 0.f;
+        //player->setMoveRight(false);
+        std::cerr << "\nRight Collision Detected\n";
     }
+
+    player->setVelocity(vel);
 }
 
 

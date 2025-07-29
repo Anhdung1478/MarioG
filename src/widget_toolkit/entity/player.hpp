@@ -23,7 +23,7 @@ namespace mario::entity {
             CharacterListType _characterType;
 
             float shootingDelayTime = 0.f;
-            bool _isRunningForward;
+            bool _isOnGround;
 
         public:
             Player(sf::Vector2f spawnPoint, CharacterListType characterType, player_state::PlayerStateType stateType) : _characterType(characterType) {
@@ -59,13 +59,9 @@ namespace mario::entity {
                 if(isReleased)
                     return;
             }
-
-            void setVelocity(sf::Vector2f vel) {
-                p_body->setVelocity(vel);
-            }
                 
             void update(const sf::RenderWindow *window, float dt) override {
-                if(!p_body->isOnSurface()) {
+                if(!p_body->isOnGround()) {
                     // change texture to jumping
                     p_stateManager->setAnimation(p_animation, "jump[0]");
                     p_animation->setAnimationState(false);
@@ -126,6 +122,22 @@ namespace mario::entity {
             
             void render(sf::RenderWindow *window) override {
                 Entity::render(window);
+            }
+
+            void setOnGround(bool isOnGround) {
+                p_body->setOnGround(isOnGround);
+            }
+
+            void resetJump() {
+                p_body->resetJump();
+            }
+
+            void setVelocity(sf::Vector2f vel) {
+                p_body->setVelocity(vel);
+            }
+
+            sf::Vector2f getVelocity() const {
+                return p_body->getVelocity();
             }
 
             CharacterListType getCharacterType() {

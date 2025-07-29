@@ -18,8 +18,8 @@ namespace mario::entity {
             int jumpRemaining, maxJumps;
 
             
-            bool isJumpping, _isFaceForward, isMoveRight, onGround, hitCelling;
-            bool isRunning;
+            bool _isJumpping, _isFaceForward, _isMoveRight, _isOnGround, hitCelling;
+            bool _isRunning;
 
         public:
             DynamicBox(sf::Vector2f _pos, sf::Vector2f _size, float acc = 150.f, float maxVX = 200.f, float _jumpForce = -200.f, int _maxJump = 2) 
@@ -31,55 +31,44 @@ namespace mario::entity {
                 velocity = sf::Vector2f(0, 0);
 
                 _isFaceForward = true;
-                isJumpping = isRunning = false;
+                _isJumpping = _isRunning = false;
             }
 
-            void move(bool _isMoveRight, bool _isReleased) override {
-                if(_isReleased) {
-                    isRunning = false;
+            void move(bool isMoveRight, bool isReleased) override {
+                if(isReleased) {
+                    _isRunning = false;
                     return;
                 }
 
-                isRunning = true;
-                isMoveRight = _isMoveRight;
+                _isRunning = true;
+                _isMoveRight = isMoveRight;
             }
 
             void jump(bool _isReleased) override {
                 if(_isReleased) {
-                    isJumpping = false;
+                    _isJumpping = false;
                     return;
                 }
 
-                if(isOnSurface()) {
-                    timeUntilNextJump = sf::seconds(0.f);
+                if(_isOnGround) {
                     velocity.y = 0.f;
                     jumpRemaining = maxJumps;
-                    isJumpping = true;
+                    timeUntilNextJump = sf::seconds(0.f);
+                    
+                    _isJumpping = true;
                 }
             }
 
-            bool isNotMoving() const override {
-                return (abs(velocity.x) <= 1.f);
-            }
-
-            bool isOnSurface() const override {
-                return (position.y >= 600.f);
-            }
-
-            bool isFaceForward() const override {
-                return _isFaceForward;
-            }
-
             void update(float dt) override {
-                if(isRunning) {
-                    if(isMoveRight != (velocity.x > 0.f)) {
-                        if(isMoveRight) {
+                if(_isRunning) {
+                    if(_isMoveRight != (velocity.x > 0.f)) {
+                        if(_isMoveRight) {
                             velocity.x = std::min(velocity.x + 2 * acceleration.x * dt, maxVelocityX);
                         } else {
                             velocity.x = std::max(velocity.x - 2 * acceleration.x * dt, -maxVelocityX);
                         }
                     } else {
-                        if(isMoveRight) {
+                        if(_isMoveRight) {
                             velocity.x = std::min(velocity.x + acceleration.x * dt, maxVelocityX);
                         } else {
                             velocity.x = std::max(velocity.x - acceleration.x * dt, -maxVelocityX);
@@ -92,7 +81,7 @@ namespace mario::entity {
                     if(abs(velocity.x) > 0.f)
                         velocity.x += ((velocity.x > 0.f) ? -1 : +1) * std::min(acceleration.x * 2 * dt, abs(velocity.x));
                 
-                if(isJumpping) {
+                if(_isJumpping) {
                     timeUntilNextJump -= sf::seconds(dt);
                     if(timeUntilNextJump <= sf::seconds(0.f)) {
                         velocity.y += jumpForce;
@@ -100,26 +89,47 @@ namespace mario::entity {
 
                         --jumpRemaining;
                         if(jumpRemaining == 0)
-                            isJumpping = false;
+                            _isJumpping = false;
                     }
                 } else 
-                    if(!isOnSurface()) {
+                    if(!_isOnGround) {
                         velocity.y = std::min(velocity.y + acceleration.y * dt, MAX_FALL_SPEED);
                     } else {
                         velocity.y = 0.f;
                     }
 
-
                 position.x += velocity.x * dt;
                 position.y += velocity.y * dt;
+                _isOnGround = false;
             }
 
-            sf::Vector2f getVelocity() const override {
-                return velocity;
+            void resetJump() override {
+                velocity.y = std::min(velocity.y, 0.f);
+                _isJumpping = 0;
+            }
+
+            bool isNotMoving() const override {
+                return (abs(velocity.x) <= 1.f);
+            }
+
+            void setOnGround(bool isOnGround) override {
+                _isOnGround = isOnGround;
+            }
+
+            bool isOnGround() const override {
+                return _isOnGround;
+            }
+
+            bool isFaceForward() const override {
+                return _isFaceForward;
             }
 
             void setVelocity(sf::Vector2f vel) {
                 velocity = vel;
+            }
+
+            sf::Vector2f getVelocity() const override {
+                return velocity;
             }
     };
 }

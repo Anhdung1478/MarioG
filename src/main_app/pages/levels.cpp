@@ -43,11 +43,7 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
     p_levelDataManager->update(dt, currLevelState);
     
     tileMap->update(window, dt);
-
     tileMap->checkCollision(p_player);
-
-    std::cerr << "!";
-
 }
 
 void mario::pages::LevelsPage::handleEvent(const sf::RenderWindow *window, const sf::Event &event) {
