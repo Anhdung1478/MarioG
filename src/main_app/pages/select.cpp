@@ -197,7 +197,7 @@ void mario::pages::SelectPage::handleEvent(const sf::RenderWindow *window, const
                 selectedChar = static_cast<int>(i);
                 _context->changePage(std::make_shared<mario::pages::LevelsPage>(
                     *_context,
-                    LevelState(selectedLevel, 2, selectedChar, 0, 0)
+                    mario::resource::LevelState(selectedLevel, 2, 0, 0, selectedChar, 0)
                 ));
                 break;
             }

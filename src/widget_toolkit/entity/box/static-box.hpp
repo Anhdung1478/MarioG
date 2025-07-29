@@ -19,6 +19,9 @@ namespace mario::entity {
             void update(float dt) override {
             }
 
+            void setVelocity(sf::Vector2f vel) override {
+            }
+
             sf::Vector2f getVelocity() const override {
                 return sf::Vector2f(0, 0);
             }
