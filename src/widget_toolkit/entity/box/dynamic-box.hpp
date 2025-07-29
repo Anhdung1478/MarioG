@@ -117,5 +117,9 @@ namespace mario::entity {
             sf::Vector2f getVelocity() const override {
                 return velocity;
             }
+
+            void setVelocity(sf::Vector2f vel) {
+                velocity = vel;
+            }
     };
 }

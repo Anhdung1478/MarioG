@@ -59,6 +59,10 @@ namespace mario::entity {
                 if(isReleased)
                     return;
             }
+
+            void setVelocity(sf::Vector2f vel) {
+                p_body->setVelocity(vel);
+            }
                 
             void update(const sf::RenderWindow *window, float dt) override {
                 if(!p_body->isOnSurface()) {

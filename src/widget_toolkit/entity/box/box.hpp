@@ -34,6 +34,7 @@ namespace mario::entity {
             }
 
             virtual sf::Vector2f getVelocity() const = 0;
+            virtual void setVelocity(sf::Vector2f vel) = 0;
             virtual void move(bool isMoveRight, bool isReleased) = 0;
             virtual void jump(bool isReleased) = 0;
             virtual void update(float dt) = 0;

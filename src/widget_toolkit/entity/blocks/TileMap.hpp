@@ -11,6 +11,14 @@
 #include "../../interfaces.hpp"
 
 
+enum class SideCollision : uint8_t{
+    Top    = 0,
+    Bottom = 1,
+    Left   = 2,
+    Right  = 3,
+    None   = 4
+};
+
 class TileMap : public mario::IScreenElement {
 private:
     sf::Texture tilesetTexture;
@@ -37,6 +45,10 @@ public:
     // Sort the blocks based on their position X first and Y second
     void sortBlocks(); // Sort blocks based on their X and Y positions - X first, Y second
     void findBlocksCollisions(int &L, int &R, const std::unique_ptr<mario::entity::Player> &player);
+
+    // SideCollision findCollisionSide(const std::unique_ptr<mario::entity::Entity> &EntityA, const std::unique_ptr<mario::entity::Entity> &EntityB);
+    SideCollision findCollisionSide(const std::unique_ptr<mario::entity::Player> &EntityA, const std::unique_ptr<Block> &EntityB);
+    void fixPosition(const std::unique_ptr<mario::entity::Player> &player, const std::unique_ptr<Block> &block, SideCollision side);
     void checkCollision(const std::unique_ptr<mario::entity::Player> &player);
 
     void update(const sf::RenderWindow *window, float dt) override;

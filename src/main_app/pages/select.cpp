@@ -169,24 +169,42 @@ void mario::pages::SelectPage::update(const sf::RenderWindow *window, float dt) 
 }
 
 void mario::pages::SelectPage::handleEvent(const sf::RenderWindow *window, const sf::Event &event) {
+    bool trigger = false;
+    sf::Vector2f clickPosition;
+
     if (event.is<sf::Event::MouseButtonPressed>()) {
         const auto* mouseEvent = event.getIf<sf::Event::MouseButtonPressed>();
         if (mouseEvent && mouseEvent->button == sf::Mouse::Button::Left) {
-            sf::Vector2f mousePos(static_cast<float>(mouseEvent->position.x), static_cast<float>(mouseEvent->position.y));
-            for (size_t i = 0; i < charFrameSprites.size(); i++) {
-                if (charFrameSprites[i].getGlobalBounds().contains(mousePos)) {
-                    selectedChar = static_cast<int>(i);
-                    _context->changePage(std::make_shared<mario::pages::LevelsPage>(
-                        *_context,
-                        mario::resource::LevelState(selectedLevel, DEFAULT_NUM_LIVES, 0, 0, mario::entity::CharacterListType(selectedChar), mario::entity::player_state::PlayerStateType::Small)
-                    ));
-                    
-                    break;
-                }
+            trigger = true;
+            clickPosition = sf::Vector2f(static_cast<float>(mouseEvent->position.x), static_cast<float>(mouseEvent->position.y));
+        }
+    } else if (event.is<sf::Event::KeyPressed>()) {
+        const auto* keyEvent = event.getIf<sf::Event::KeyPressed>();
+        if (keyEvent && keyEvent->scancode == sf::Keyboard::Scan::Enter) {
+            trigger = true;
+
+            // Simulate a click in the middle of the selectedChar frame
+            if (selectedChar >= 0 && selectedChar < static_cast<int>(charFrameSprites.size())) {
+                sf::FloatRect bounds = charFrameSprites[selectedChar].getGlobalBounds();
+                clickPosition = bounds.position + bounds.size / 2.f;
+            }
+        }
+    }
+
+    if (trigger) {
+        for (size_t i = 0; i < charFrameSprites.size(); i++) {
+            if (charFrameSprites[i].getGlobalBounds().contains(clickPosition)) {
+                selectedChar = static_cast<int>(i);
+                _context->changePage(std::make_shared<mario::pages::LevelsPage>(
+                    *_context,
+                    LevelState(selectedLevel, 2, selectedChar, 0, 0)
+                ));
+                break;
             }
         }
     }
 }
+
 
 
 void mario::pages::SelectPage::render(sf::RenderWindow *window) {
