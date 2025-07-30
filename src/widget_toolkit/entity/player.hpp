@@ -30,11 +30,15 @@ namespace mario::entity {
                 p_body = new DynamicBox(spawnPoint, sf::Vector2f(40.f, 40.f));
                 if(characterType == CharacterListType::Mario) {
                     p_animation = new Animation(FILE_PATH"mario.json", FILE_PATH"mario_sheets.png", PLAYER_SCALE, "mario-small.idle[0]");
+                    p_animation->loadSheet(FILE_PATH"mario-fire.json", FILE_PATH"mario-fire.png");
+
                     p_stateManager = new mario::entity::player_state::MarioStateManager(p_animation, p_body, stateType);
                 }
 
                 if(characterType == CharacterListType::Luigi) {
                     p_animation = new Animation(FILE_PATH"luigi.json", FILE_PATH"luigi_sheets.png", PLAYER_SCALE, "luigi-small.idle[0]");
+                    p_animation->loadSheet(FILE_PATH"luigi-fire.json", FILE_PATH"luigi-fire.png");
+
                     p_stateManager = new mario::entity::player_state::LuigiStateManager(p_animation, p_body, stateType);
                 }
             }

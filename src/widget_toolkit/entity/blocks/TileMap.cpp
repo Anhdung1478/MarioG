@@ -368,7 +368,7 @@ void TileMap::checkCollision(mario::entity::Player *player) {
 
     for(int i = 0; i < blocks.size(); ++i){
         auto& block = blocks[i];
-        if (!block->getExist()) continue;
+        if (!block->isExist()) continue;
 
         SideCollision side = findCollisionSide(player, block);
         if(side != SideCollision::None) {

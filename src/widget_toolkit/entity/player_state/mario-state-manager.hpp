@@ -10,28 +10,24 @@ namespace mario::entity::player_state {
             const std::string MARIO_TYPE_STR[3] = {
                 "mario-small",
                 "mario-super",
-                "mario-fire",
+                "mario-fire-super",
             };
 
         public:
             MarioStateManager(Animation *p_animation, Box *p_box, PlayerStateType stateType) {
-
-                player_small = new MarioSmallState();
-                player_super = new MarioSuperState();
-                player_fire = new MarioFireState();
+                player_small = new MarioSmallState(MARIO_TYPE_STR[0]);
+                player_super = new MarioSuperState(MARIO_TYPE_STR[1]);
+                player_fire = new MarioFireState(MARIO_TYPE_STR[2]);
 
                 currStateType = stateType;
-                if(stateType == PlayerStateType::Small) {
+                if(stateType == PlayerStateType::Small)
                     curr_state = player_small;
-                }
 
-                if(stateType == PlayerStateType::Super) {
+                if(stateType == PlayerStateType::Super)
                     curr_state = player_super;
-                }
 
-                if(stateType == PlayerStateType::Fire) {
+                if(stateType == PlayerStateType::Fire)
                     curr_state = player_fire;
-                }
 
                 curr_state->update(p_animation, p_box);
             }

@@ -10,16 +10,17 @@ namespace mario::entity {
         protected:
             Animation *p_animation;
             Box *p_body; // input position as middle at the bottom, it means if box has size (x, y) its origin will be (x / 2, y)
+            bool _exist;
 
         public:
-            Entity() : p_animation(nullptr), p_body(nullptr) {};
+            Entity() : p_animation(nullptr), p_body(nullptr), _exist(true) {};
             
-            Entity(std::string jsonPath, std::string texturePath, sf::Vector2f scale, const std::string& randomSpriteID) {
+            Entity(std::string jsonPath, std::string texturePath, sf::Vector2f scale, const std::string& randomSpriteID) : _exist(true) {
                 p_animation = new Animation(jsonPath, texturePath, scale, randomSpriteID);
                 p_body = nullptr;
             }
 
-            Entity(const std::string& imagePath, sf::Vector2f _scale, const std::vector<SpriteData2>& sprites) {
+            Entity(const std::string& imagePath, sf::Vector2f _scale, const std::vector<SpriteData2>& sprites) : _exist(true) {
                 p_animation = new Animation(imagePath, _scale, sprites);
                 p_body = nullptr;
             }
@@ -29,19 +30,13 @@ namespace mario::entity {
                 delete p_body;
             }
 
-            void update(const sf::RenderWindow *window, float dt) override {
-                
-            }
-
             void render(sf::RenderWindow *window) override {
                 p_animation->renderWithPosition(window, p_body->getPosition());
                 p_body->renderHitboxRect(window);
             }
 
             void setPosition(sf::Vector2f pos) {
-                if (p_body) {
-                    p_body->setPosition(pos);
-                }
+                p_body->setPosition(pos);
             }
 
             sf::Vector2f getPosition() const {
@@ -54,6 +49,10 @@ namespace mario::entity {
 
             sf::FloatRect getHitbox() const {
                 return p_body->getHitbox();
+            }
+
+            bool isExist() const {
+                return _exist;
             }
     };
 }

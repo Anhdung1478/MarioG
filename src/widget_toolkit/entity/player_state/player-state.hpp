@@ -12,11 +12,15 @@ namespace mario::entity::player_state {
         Fire = 2
     };
 
+
+
     class PlayerState {
         public:
             virtual ~PlayerState() = default;
             virtual void update(Animation *p_eAnimation, Box *p_eBox) = 0;
     };
+
+
 
     class PlayerStateManager {
         protected:
@@ -40,17 +44,14 @@ namespace mario::entity::player_state {
             }
 
             void changeState(PlayerStateType stateType, Animation *p_animation, Box *p_box) {
-                if(stateType == PlayerStateType::Small) {
+                if(stateType == PlayerStateType::Small)
                     changeToSmallState(p_animation, p_box);
-                }
 
-                if(stateType == PlayerStateType::Super) {
+                if(stateType == PlayerStateType::Super)
                     changeToSuperState(p_animation, p_box);
-                }
 
-                if(stateType == PlayerStateType::Fire) {
+                if(stateType == PlayerStateType::Fire)
                     changeToFireState(p_animation, p_box);
-                }
             }
 
             void changeToSmallState(Animation *p_animation, Box *p_box) {
@@ -72,7 +73,7 @@ namespace mario::entity::player_state {
             }
 
             void changeToFireState(Animation *p_animation, Box *p_box) {
-                if(currStateType != PlayerStateType::Fire)
+                if(currStateType == PlayerStateType::Fire)
                     return;
 
                 curr_state = player_fire;
@@ -80,7 +81,7 @@ namespace mario::entity::player_state {
                 curr_state->update(p_animation, p_box);
             }
 
-            PlayerStateType getCurrentState() {
+            PlayerStateType getCurrentState() const {
                 return currStateType;
             }
 
