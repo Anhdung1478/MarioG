@@ -23,7 +23,7 @@ namespace mario::pages {
             Camera camera;
 
             // for Sound Manager
-            mario::resource::LevelState currLevelState, levelState;
+            mario::resource::LevelState currLevelState;
 
             // Pause/Resume game
             bool _isPaused = false;

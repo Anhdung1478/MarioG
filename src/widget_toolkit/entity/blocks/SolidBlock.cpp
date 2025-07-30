@@ -1,7 +1,6 @@
 #include "SolidBlock.hpp"
 
-SolidBlock::SolidBlock() 
-    : Block()
+SolidBlock::SolidBlock() : Block()
 {
     // Default constructor
 }
@@ -17,8 +16,8 @@ SolidBlock::SolidBlock(const sf::Vector2f &pos, const sf::Vector2f &size, const 
 }
 
 SolidBlock::~SolidBlock() {
-    delete p_animation;
 }
+
 void SolidBlock::InitSpritesSheet() {
     sprites = {
         {"grass-ground[0]", 1, 1, 16, 16},

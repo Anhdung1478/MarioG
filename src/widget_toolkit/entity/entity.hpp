@@ -27,7 +27,8 @@ namespace mario::entity {
 
             virtual ~Entity() {
                 delete p_animation;
-                delete p_body;
+                if(p_body != nullptr)
+                    delete p_body;
             }
 
             void render(sf::RenderWindow *window) override {

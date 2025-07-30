@@ -56,6 +56,10 @@ namespace mario::entity {
                 setSprite(data);
             }
 
+            ~Animation() override {
+                delete p_sprite;
+            }
+
             void loadSheet(const std::string& jsonPath, const std::string& texturePath) {
                 p_textureResource.loadSheet(jsonPath, texturePath);
             }

@@ -12,6 +12,8 @@ namespace mario::entity {
         public:
             Box(sf::Vector2f _pos, sf::Vector2f _size) : position(_pos), size(_size) {};
 
+            virtual ~Box() = default;
+
             sf::Vector2f getPosition() const {
                 return position;
             }

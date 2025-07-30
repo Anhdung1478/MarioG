@@ -34,6 +34,8 @@ namespace mario::entity {
                 _isJumpping = _isRunning = false;
             }
 
+            ~DynamicBox() override = default;
+
             void move(bool isMoveRight, bool isReleased) override {
                 if(isReleased) {
                     _isRunning = false;

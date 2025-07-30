@@ -3,7 +3,7 @@
 #include "main-menu.hpp"
 #include "../../widget_toolkit/resource/SoundManager.hpp"
 
-mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::LevelState state) : Page(context), camera({1280, 720}), levelState(state) {
+mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::LevelState state) : Page(context), camera({1280, 720}), currLevelState(state) {
     p_player = new mario::entity::Player(sf::Vector2f(15, 10), state.characterType, state.stateType);
     p_inputManager = std::make_unique<mario::input::InputManager>(context);
 
@@ -91,8 +91,6 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
     tileMap = std::make_unique<TileMap>("../../asset/maps/tiles-8.json", "../../asset/maps/Map_1.json");
 
     p_levelDataManager = std::make_unique<mario::resource::LevelDataManager>();
-    currLevelState = state;
-
     camera.setMapBounds(tileMap->getWorldBounds());
 }
 
@@ -106,7 +104,7 @@ mario::pages::LevelsPage::~LevelsPage() {
 }
 
 // for Sound Manager
-mario::resource::LevelState mario::pages::LevelsPage::getLevelState() const { return levelState; }
+mario::resource::LevelState mario::pages::LevelsPage::getLevelState() const { return currLevelState; }
 
 // Pause Game
 bool mario::pages::LevelsPage::isPaused() const { return _isPaused; }
@@ -227,7 +225,6 @@ void mario::pages::LevelsPage::handleEvent(const sf::RenderWindow *window, const
 }
 
 void mario::pages::LevelsPage::render(sf::RenderWindow *window) {
-    std::cerr << "is Paused: " << _isPaused << '\n';
     camera.applyTo(*window);
     tileMap->render(window);
     p_player->render(window);

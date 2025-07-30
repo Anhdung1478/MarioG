@@ -10,6 +10,8 @@ namespace mario::entity {
         public:
             StaticBox(sf::Vector2f _pos, sf::Vector2f _size) : Box(_pos, _size) {};
 
+            ~StaticBox() override = default;
+
             void move(bool _isMoveRight, bool _isReleased) override {
             }
 
