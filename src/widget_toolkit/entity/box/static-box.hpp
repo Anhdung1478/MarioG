@@ -19,6 +19,9 @@ namespace mario::entity {
             void update(float dt) override {
             }
 
+            void resetJump() override {
+            }
+
             void setVelocity(sf::Vector2f vel) override {
             }
 
@@ -30,10 +33,13 @@ namespace mario::entity {
                 return true;
             }
 
-            bool isOnSurface() const override {
-                return true;
+            void setOnGround(bool isOnGround) override {
             }
 
+            bool isOnGround() const override {
+                return true;
+            }
+            
             bool isFaceForward() const override {
                 return true;
             }

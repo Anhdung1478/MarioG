@@ -12,7 +12,6 @@ protected:
 public:
     Block();
     Block(sf::Vector2f pos, sf::Vector2f size, const std::string &name);
-    bool getExist() const;
     virtual void InitSpritesSheet() = 0;
     virtual ~Block() = default;
 }; 

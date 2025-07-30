@@ -23,18 +23,22 @@ namespace mario::entity {
             CharacterListType _characterType;
 
             float shootingDelayTime = 0.f;
-            bool _isRunningForward;
+            bool _isOnGround;
 
         public:
             Player(sf::Vector2f spawnPoint, CharacterListType characterType, player_state::PlayerStateType stateType) : _characterType(characterType) {
                 p_body = new DynamicBox(spawnPoint, sf::Vector2f(40.f, 40.f));
                 if(characterType == CharacterListType::Mario) {
                     p_animation = new Animation(FILE_PATH"mario.json", FILE_PATH"mario_sheets.png", PLAYER_SCALE, "mario-small.idle[0]");
+                    p_animation->loadSheet(FILE_PATH"mario-fire.json", FILE_PATH"mario-fire.png");
+
                     p_stateManager = new mario::entity::player_state::MarioStateManager(p_animation, p_body, stateType);
                 }
 
                 if(characterType == CharacterListType::Luigi) {
                     p_animation = new Animation(FILE_PATH"luigi.json", FILE_PATH"luigi_sheets.png", PLAYER_SCALE, "luigi-small.idle[0]");
+                    p_animation->loadSheet(FILE_PATH"luigi-fire.json", FILE_PATH"luigi-fire.png");
+
                     p_stateManager = new mario::entity::player_state::LuigiStateManager(p_animation, p_body, stateType);
                 }
             }
@@ -59,13 +63,9 @@ namespace mario::entity {
                 if(isReleased)
                     return;
             }
-
-            void setVelocity(sf::Vector2f vel) {
-                p_body->setVelocity(vel);
-            }
                 
             void update(const sf::RenderWindow *window, float dt) override {
-                if(!p_body->isOnSurface()) {
+                if(!p_body->isOnGround()) {
                     // change texture to jumping
                     p_stateManager->setAnimation(p_animation, "jump[0]");
                     p_animation->setAnimationState(false);
@@ -78,7 +78,7 @@ namespace mario::entity {
                         if(p_animation->getAnimationState() == false) {
                             // change to run animation
                             p_stateManager->setAnimation(p_animation, "idle[0]");
-                            p_animation->setAnimationState(true);   
+                            p_animation->setAnimationState(true);
                         }
 
                 // change state for debugging
@@ -126,6 +126,22 @@ namespace mario::entity {
             
             void render(sf::RenderWindow *window) override {
                 Entity::render(window);
+            }
+
+            void setOnGround(bool isOnGround) {
+                p_body->setOnGround(isOnGround);
+            }
+
+            void resetJump() {
+                p_body->resetJump();
+            }
+
+            void setVelocity(sf::Vector2f vel) {
+                p_body->setVelocity(vel);
+            }
+
+            sf::Vector2f getVelocity() const {
+                return p_body->getVelocity();
             }
 
             CharacterListType getCharacterType() {

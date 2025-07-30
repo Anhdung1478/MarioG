@@ -10,13 +10,11 @@
 namespace mario::pages {
     class LevelsPage : public Page {
         private:
-            std::unique_ptr<mario::entity::Player> p_player;
             std::unique_ptr<mario::input::InputManager> p_inputManager;
-            std::unique_ptr<TileMap> tileMap;
-
-            std::unique_ptr<QuestionBlock> p_questionBlock;
-
             std::unique_ptr<mario::resource::LevelDataManager> p_levelDataManager;
+
+            std::unique_ptr<TileMap> tileMap;
+            mario::entity::Player *p_player;
 
             mario::resource::LevelState currLevelState;
             sf::Time timeRemaining;
