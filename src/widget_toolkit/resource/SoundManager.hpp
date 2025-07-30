@@ -40,5 +40,9 @@ namespace mario::audio{
         void resumeBackgroundMusic();
         void adjustBackgroundMusicVolume(float volume);
         void adjustSoundEffectsVolume(float volume);
+        bool isMusicEnable();
+        bool isSoundEnable();
+        float getMusicVolume();
+        float getSoundVolume();
     };
 }

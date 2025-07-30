@@ -1,6 +1,8 @@
 #include <bits/stdc++.h>
 #include "pages/main-menu.hpp"
 #include "main-window.hpp"
+#include "pages/settings.hpp"
+#include "pages/levels.hpp"
 
 mario::MainWindow::~MainWindow() {
 }
@@ -10,6 +12,7 @@ void mario::MainWindow::changePage(std::shared_ptr<Page> to) {
     _deferredStateChange = [this]() {
         content = content_to;
         content_to->setContext(this);
+        setPageMusic(content);
     };
 }
 
@@ -26,6 +29,13 @@ void mario::MainWindow::render(sf::RenderWindow *window) {
 void mario::MainWindow::closeWindow() {
     isRunning = false;
 }
+
+void mario::MainWindow::stepWorld(float dt) {
+    if (content && !content->getPaused()) {
+        b2World_Step(worldId, dt, 4);
+    }
+}
+
 
 void mario::MainWindow::run() {
     sf::ContextSettings settings;
@@ -72,4 +82,28 @@ void mario::MainWindow::run() {
 
     window->close();
     delete window;
+}
+
+void mario::MainWindow::setPageMusic(std::shared_ptr<Page> page) {
+    if (dynamic_cast<pages::MainMenuPage*>(page.get())) {
+        soundManager.setBackgroundMusic(mario::event::BackgroundMusicState::MAIN_MENU);
+    } else if (dynamic_cast<pages::SettingsPage*>(page.get())) {
+        soundManager.setBackgroundMusic(mario::event::BackgroundMusicState::SETTING_SCREEN);
+    } else if (auto* levelsPage = dynamic_cast<pages::LevelsPage*>(page.get())) {
+        int level = levelsPage->getLevelState().level;
+        switch (level) {
+            case 1:
+                soundManager.setBackgroundMusic(mario::event::BackgroundMusicState::LEVEL_1);
+                break;
+            case 2:
+                soundManager.setBackgroundMusic(mario::event::BackgroundMusicState::LEVEL_2);
+                break;
+            case 3:
+                soundManager.setBackgroundMusic(mario::event::BackgroundMusicState::LEVEL_3);
+                break;
+            default:
+                soundManager.setBackgroundMusic(mario::event::BackgroundMusicState::LEVEL_SCREEN);
+                break;
+        }
+    }
 }

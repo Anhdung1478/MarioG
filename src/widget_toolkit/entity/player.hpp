@@ -25,6 +25,7 @@ namespace mario::entity {
             float shootingDelayTime = 0.f;
             bool _isOnGround;
 
+            bool hasPlayedJumpSound_ = false; // For sound effect
         public:
             Player(sf::Vector2f spawnPoint, CharacterListType characterType, player_state::PlayerStateType stateType) : _characterType(characterType) {
                 p_body = new DynamicBox(spawnPoint, sf::Vector2f(40.f, 40.f));
@@ -80,6 +81,9 @@ namespace mario::entity {
                             p_stateManager->setAnimation(p_animation, "idle[0]");
                             p_animation->setAnimationState(true);
                         }
+                    
+                    hasPlayedJumpSound_ = false;
+                }
 
                 // change state for debugging
                 if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Num1)) {
@@ -151,7 +155,8 @@ namespace mario::entity {
             player_state::PlayerStateType getPlayerStateType() {
                 return p_stateManager->getCurrentState();
             }
-
+            bool hasPlayedJumpSound() const { return hasPlayedJumpSound_; }
+            void setJumpSoundPlayed(bool played) { hasPlayedJumpSound_ = played; }
     };
 
     #undef FILE_PATH

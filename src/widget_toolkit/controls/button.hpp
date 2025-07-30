@@ -29,6 +29,13 @@ namespace mario {
             int fontSize;
             bool enabled, selected;
 
+            // New Constructor: add by vql
+            Button(sf::Font& fontRef, const std::string& buttText)
+                : fontSize(20), enabled(true), selected(false), buttonText(buttText) {
+                font = std::make_unique<sf::Font>(fontRef);
+                p_nodeOnButton = nullptr;
+            }
+
             Button(std::string buttText = "") : fontSize(20), enabled(true), selected(false), buttonText(buttText) {
                 font = std::make_unique<sf::Font>("../../asset/fonts/Cascadia.ttf");
                 p_nodeOnButton = nullptr;
@@ -48,7 +55,7 @@ namespace mario {
                 handleMouseInput(window);
             }
 
-            void handleMouseInput(const sf::RenderWindow *window) {
+            virtual void handleMouseInput(const sf::RenderWindow *window) {
                 if(!enabled) {
                     state = ButtonState::Inactive;
                     return;

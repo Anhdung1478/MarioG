@@ -5,7 +5,7 @@ using namespace std;
 namespace mario::audio {
     SoundManager::SoundManager() :
         isMusicEnabled(true), isSoundEffectsEnabled(true),
-        musicVolume(100.0f), soundEffectsVolume(100.0f),
+        musicVolume(50.0f), soundEffectsVolume(50.0f),
         currentMusicState(mario::event::BackgroundMusicState::MAIN_MENU),
         currentMusic(nullptr)
         {
@@ -21,35 +21,35 @@ namespace mario::audio {
 
     void SoundManager::loadSounds() {
         // Sound effects
-        soundFiles[mario::event::SoundEvent::ONE_UP] = "asset/sounds/sound/1_up.wav";
-        soundFiles[mario::event::SoundEvent::BLOCK_BREAK] = "asset/sounds/sound/break_brick_block.wav";
-        soundFiles[mario::event::SoundEvent::BLOCK_BUMP] = "asset/sounds/sound/bump.wav";
-        soundFiles[mario::event::SoundEvent::COIN_COLLECT] = "asset/sounds/sound/coin.wav";
-        soundFiles[mario::event::SoundEvent::LEVEL_ENTER] = "asset/sounds/sound/enter_level.wav";
-        soundFiles[mario::event::SoundEvent::FIREBALL_THROW] = "asset/sounds/sound/fireball.wav";
-        soundFiles[mario::event::SoundEvent::GAME_OVER] = "asset/sounds/sound/game_over.wav";
-        soundFiles[mario::event::SoundEvent::PLAYER_JUMP] = "asset/sounds/sound/jump.wav";
-        soundFiles[mario::event::SoundEvent::SHELL_KICK] = "asset/sounds/sound/kick.wav";
-        soundFiles[mario::event::SoundEvent::LEVEL_CLEAR] = "asset/sounds/sound/level_clear.wav";
-        soundFiles[mario::event::SoundEvent::PLAYER_DIE] = "asset/sounds/sound/lost_life.wav";
-        soundFiles[mario::event::SoundEvent::POWER_DOWN] = "asset/sounds/sound/lost_suit.wav";
-        soundFiles[mario::event::SoundEvent::POWERUP_APPEARS] = "asset/sounds/sound/mushroom_appears.wav";
-        soundFiles[mario::event::SoundEvent::GAME_PAUSE] = "asset/sounds/sound/pause.wav";
-        soundFiles[mario::event::SoundEvent::PMETER_FULL] = "asset/sounds/sound/pmeter.wav";
-        soundFiles[mario::event::SoundEvent::POWER_UP] = "asset/sounds/sound/power_up.wav";
-        soundFiles[mario::event::SoundEvent::CANNON_SHOT] = "asset/sounds/sound/shot.wav";
-        soundFiles[mario::event::SoundEvent::PLAYER_SKID] = "asset/sounds/sound/skid.wav";
-        soundFiles[mario::event::SoundEvent::ENEMY_STOMP] = "asset/sounds/sound/stomp.wav";
-        soundFiles[mario::event::SoundEvent::TIME_WARNING] = "asset/sounds/sound/time_up.wav";
+        soundFiles[mario::event::SoundEvent::ONE_UP] = "../../asset/sounds/sound/1_up.wav";
+        soundFiles[mario::event::SoundEvent::BLOCK_BREAK] = "../../asset/sounds/sound/break_brick_block.wav";
+        soundFiles[mario::event::SoundEvent::BLOCK_BUMP] = "../../asset/sounds/sound/bump.wav";
+        soundFiles[mario::event::SoundEvent::COIN_COLLECT] = "../../asset/sounds/sound/coin.wav";
+        soundFiles[mario::event::SoundEvent::LEVEL_ENTER] = "../../asset/sounds/sound/enter_level.wav";
+        soundFiles[mario::event::SoundEvent::FIREBALL_THROW] = "../../asset/sounds/sound/fireball.wav";
+        soundFiles[mario::event::SoundEvent::GAME_OVER] = "../../asset/sounds/sound/game_over.wav";
+        soundFiles[mario::event::SoundEvent::PLAYER_JUMP] = "../../asset/sounds/sound/jump.wav";
+        soundFiles[mario::event::SoundEvent::SHELL_KICK] = "../../asset/sounds/sound/kick.wav";
+        soundFiles[mario::event::SoundEvent::LEVEL_CLEAR] = "../../asset/sounds/sound/level_clear.wav";
+        soundFiles[mario::event::SoundEvent::PLAYER_DIE] = "../../asset/sounds/sound/lost_life.wav";
+        soundFiles[mario::event::SoundEvent::POWER_DOWN] = "../../asset/sounds/sound/lost_suit.wav";
+        soundFiles[mario::event::SoundEvent::POWERUP_APPEARS] = "../../asset/sounds/sound/mushroom_appears.wav";
+        soundFiles[mario::event::SoundEvent::GAME_PAUSE] = "../../asset/sounds/sound/pause.wav";
+        soundFiles[mario::event::SoundEvent::PMETER_FULL] = "../../asset/sounds/sound/pmeter.wav";
+        soundFiles[mario::event::SoundEvent::POWER_UP] = "../../asset/sounds/sound/power_up.wav";
+        soundFiles[mario::event::SoundEvent::CANNON_SHOT] = "../../asset/sounds/sound/shot.wav";
+        soundFiles[mario::event::SoundEvent::PLAYER_SKID] = "../../asset/sounds/sound/skid.wav";
+        soundFiles[mario::event::SoundEvent::ENEMY_STOMP] = "../../asset/sounds/sound/stomp.wav";
+        soundFiles[mario::event::SoundEvent::TIME_WARNING] = "../../asset/sounds/sound/time_up.wav";
 
         // Background Music
-        backgroundMusicFiles[mario::event::BackgroundMusicState::MAIN_MENU] = "asset/sounds/music/MainMenu.mp3";
-        backgroundMusicFiles[mario::event::BackgroundMusicState::LEVEL_1] = "asset/sounds/music/World1.mp3";
-        backgroundMusicFiles[mario::event::BackgroundMusicState::LEVEL_2] = "asset/sounds/music/World2.mp3";
-        backgroundMusicFiles[mario::event::BackgroundMusicState::LEVEL_3] = "asset/sounds/music/World3.mp3";
-        backgroundMusicFiles[mario::event::BackgroundMusicState::GAME_OVER_SCREEN] = "asset/sounds/music/MainMenu.mp3";
-        backgroundMusicFiles[mario::event::BackgroundMusicState::SETTING_SCREEN] = "asset/sounds/music/Athletic.mp3";
-        backgroundMusicFiles[mario::event::BackgroundMusicState::LEVEL_SCREEN] = "asset/sounds/music/Coin Heaven.mp3";
+        backgroundMusicFiles[mario::event::BackgroundMusicState::MAIN_MENU] = "../../asset/sounds/music/MainMenu.mp3";
+        backgroundMusicFiles[mario::event::BackgroundMusicState::LEVEL_1] = "../../asset/sounds/music/World1.mp3";
+        backgroundMusicFiles[mario::event::BackgroundMusicState::LEVEL_2] = "../../asset/sounds/music/World2.mp3";
+        backgroundMusicFiles[mario::event::BackgroundMusicState::LEVEL_3] = "../../asset/sounds/music/World3.mp3";
+        backgroundMusicFiles[mario::event::BackgroundMusicState::GAME_OVER_SCREEN] = "../../asset/sounds/music/MainMenu.mp3";
+        backgroundMusicFiles[mario::event::BackgroundMusicState::SETTING_SCREEN] = "../../asset/sounds/music/Athletic.mp3";
+        backgroundMusicFiles[mario::event::BackgroundMusicState::LEVEL_SCREEN] = "../../asset/sounds/music/Coin Heaven.mp3";
 
         // Load file sound effect
         for (const auto& pair : soundFiles) {
@@ -60,9 +60,6 @@ namespace mario::audio {
         for (const auto& pair : backgroundMusicFiles) {
             loadBackgroundMusicFile(pair.first, pair.second);
         }
-
-        // Play BackgroundMusic
-        setBackgroundMusic(currentMusicState);
     }
 
     void SoundManager::loadSoundFile(mario::event::SoundEvent event, const string& filePath) {
@@ -88,7 +85,7 @@ namespace mario::audio {
             delete music;
             return;
         }
-        //music->setLoop(true);
+        music->setLooping(true);
         music->setVolume(musicVolume);
         backgroundMusics[state] = music;
     }
@@ -161,6 +158,22 @@ namespace mario::audio {
         for (auto& pair : sounds) {
             pair.second.setVolume(soundEffectsVolume);
         }
+    }
+
+    bool SoundManager::isMusicEnable() {
+        return isMusicEnabled;
+    }
+
+    bool SoundManager::isSoundEnable() {
+        return isSoundEffectsEnabled;
+    }
+
+    float SoundManager::getMusicVolume() {
+        return musicVolume;
+    }
+
+    float SoundManager::getSoundVolume() {
+        return soundEffectsVolume;
     }
 
 }

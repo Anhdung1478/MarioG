@@ -1,0 +1,8 @@
+{
+    "keybindings": {
+        "fire": 25,
+        "jump": 22,
+        "move_left": 0,
+        "move_right": 3
+    }
+}

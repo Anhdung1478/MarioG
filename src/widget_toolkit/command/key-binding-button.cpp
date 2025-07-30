@@ -1,0 +1,108 @@
+#include "key-binding-button.hpp"
+
+namespace mario::pages {
+    // Định nghĩa hàm initKeyNames
+    const std::unordered_map<sf::Keyboard::Scan, std::string> KeyBindingButton::initKeyNames() {
+        std::unordered_map<sf::Keyboard::Scan, std::string> names;
+        names[sf::Keyboard::Scan::Unknown] = "Unknown";
+        names[sf::Keyboard::Scan::A] = "A";
+        names[sf::Keyboard::Scan::B] = "B";
+        names[sf::Keyboard::Scan::C] = "C";
+        names[sf::Keyboard::Scan::D] = "D";
+        names[sf::Keyboard::Scan::E] = "E";
+        names[sf::Keyboard::Scan::F] = "F";
+        names[sf::Keyboard::Scan::G] = "G";
+        names[sf::Keyboard::Scan::H] = "H";
+        names[sf::Keyboard::Scan::I] = "I";
+        names[sf::Keyboard::Scan::J] = "J";
+        names[sf::Keyboard::Scan::K] = "K";
+        names[sf::Keyboard::Scan::L] = "L";
+        names[sf::Keyboard::Scan::M] = "M";
+        names[sf::Keyboard::Scan::N] = "N";
+        names[sf::Keyboard::Scan::O] = "O";
+        names[sf::Keyboard::Scan::P] = "P";
+        names[sf::Keyboard::Scan::Q] = "Q";
+        names[sf::Keyboard::Scan::R] = "R";
+        names[sf::Keyboard::Scan::S] = "S";
+        names[sf::Keyboard::Scan::T] = "T";
+        names[sf::Keyboard::Scan::U] = "U";
+        names[sf::Keyboard::Scan::V] = "V";
+        names[sf::Keyboard::Scan::W] = "W";
+        names[sf::Keyboard::Scan::X] = "X";
+        names[sf::Keyboard::Scan::Y] = "Y";
+        names[sf::Keyboard::Scan::Z] = "Z";
+        names[sf::Keyboard::Scan::Num0] = "0";
+        names[sf::Keyboard::Scan::Num1] = "1";
+        names[sf::Keyboard::Scan::Num2] = "2";
+        names[sf::Keyboard::Scan::Num3] = "3";
+        names[sf::Keyboard::Scan::Num4] = "4";
+        names[sf::Keyboard::Scan::Num5] = "5";
+        names[sf::Keyboard::Scan::Num6] = "6";
+        names[sf::Keyboard::Scan::Num7] = "7";
+        names[sf::Keyboard::Scan::Num8] = "8";
+        names[sf::Keyboard::Scan::Num9] = "9";
+        names[sf::Keyboard::Scan::Escape] = "Escape";
+        names[sf::Keyboard::Scan::LControl] = "Left Control";
+        names[sf::Keyboard::Scan::LShift] = "Left Shift";
+        names[sf::Keyboard::Scan::LAlt] = "Left Alt";
+        names[sf::Keyboard::Scan::LSystem] = "Left System";
+        names[sf::Keyboard::Scan::RControl] = "Right Control";
+        names[sf::Keyboard::Scan::RShift] = "Right Shift";
+        names[sf::Keyboard::Scan::RAlt] = "Right Alt";
+        names[sf::Keyboard::Scan::RSystem] = "Right System";
+        names[sf::Keyboard::Scan::Menu] = "Menu";
+        names[sf::Keyboard::Scan::LBracket] = "Left Bracket";
+        names[sf::Keyboard::Scan::RBracket] = "Right Bracket";
+        names[sf::Keyboard::Scan::Semicolon] = "Semicolon";
+        names[sf::Keyboard::Scan::Comma] = "Comma";
+        names[sf::Keyboard::Scan::Period] = "Period";
+        names[sf::Keyboard::Scan::Slash] = "Slash";
+        names[sf::Keyboard::Scan::Backslash] = "Backslash";
+        names[sf::Keyboard::Scan::Equal] = "Equal";
+        names[sf::Keyboard::Scan::Hyphen] = "Hyphen";
+        names[sf::Keyboard::Scan::Space] = "Space";
+        names[sf::Keyboard::Scan::Enter] = "Enter";
+        names[sf::Keyboard::Scan::Backspace] = "Backspace";
+        names[sf::Keyboard::Scan::Tab] = "Tab";
+        names[sf::Keyboard::Scan::PageUp] = "Page Up";
+        names[sf::Keyboard::Scan::PageDown] = "Page Down";
+        names[sf::Keyboard::Scan::End] = "End";
+        names[sf::Keyboard::Scan::Home] = "Home";
+        names[sf::Keyboard::Scan::Insert] = "Insert";
+        names[sf::Keyboard::Scan::Delete] = "Delete";
+        names[sf::Keyboard::Scan::Left] = "Left";
+        names[sf::Keyboard::Scan::Right] = "Right";
+        names[sf::Keyboard::Scan::Up] = "Up";
+        names[sf::Keyboard::Scan::Down] = "Down";
+        names[sf::Keyboard::Scan::Numpad0] = "Numpad 0";
+        names[sf::Keyboard::Scan::Numpad1] = "Numpad 1";
+        names[sf::Keyboard::Scan::Numpad2] = "Numpad 2";
+        names[sf::Keyboard::Scan::Numpad3] = "Numpad 3";
+        names[sf::Keyboard::Scan::Numpad4] = "Numpad 4";
+        names[sf::Keyboard::Scan::Numpad5] = "Numpad 5";
+        names[sf::Keyboard::Scan::Numpad6] = "Numpad 6";
+        names[sf::Keyboard::Scan::Numpad7] = "Numpad 7";
+        names[sf::Keyboard::Scan::Numpad8] = "Numpad 8";
+        names[sf::Keyboard::Scan::Numpad9] = "Numpad 9";
+        names[sf::Keyboard::Scan::F1] = "F1";
+        names[sf::Keyboard::Scan::F2] = "F2";
+        names[sf::Keyboard::Scan::F3] = "F3";
+        names[sf::Keyboard::Scan::F4] = "F4";
+        names[sf::Keyboard::Scan::F5] = "F5";
+        names[sf::Keyboard::Scan::F6] = "F6";
+        names[sf::Keyboard::Scan::F7] = "F7";
+        names[sf::Keyboard::Scan::F8] = "F8";
+        names[sf::Keyboard::Scan::F9] = "F9";
+        names[sf::Keyboard::Scan::F10] = "F10";
+        names[sf::Keyboard::Scan::F11] = "F11";
+        names[sf::Keyboard::Scan::F12] = "F12";
+        names[sf::Keyboard::Scan::F13] = "F13";
+        names[sf::Keyboard::Scan::F14] = "F14";
+        names[sf::Keyboard::Scan::F15] = "F15";
+        names[sf::Keyboard::Scan::Pause] = "Pause";
+        return names;
+    }
+
+    // Định nghĩa keyNames
+    const std::unordered_map<sf::Keyboard::Scan, std::string> KeyBindingButton::keyNames = KeyBindingButton::initKeyNames();
+}

@@ -5,6 +5,7 @@
 #include <SFML/Graphics.hpp>
 #include "../widget_toolkit/interfaces.hpp"
 #include "../widget_toolkit/entity/box/static-box.hpp"
+#include "../widget_toolkit/resource/SoundManager.hpp"
 
 #define DEFAULT_FPS 60
 #define DEFAULT_WIN_WIDTH 1280
@@ -24,12 +25,22 @@ namespace mario {
             const sf::Time timeStep = sf::seconds(1.0f / fixedFPS);
             sf::Clock clock;
             bool isRunning = true;
-        
+            
+            // SoundManager
+            mario::audio::SoundManager soundManager;
+            
         public:
             ~MainWindow() override;
             void changePage(std::shared_ptr<Page> to);
             void render(sf::RenderWindow *window) override;
             void closeWindow();
             void run();
+
+            // Use for pause game
+            void stepWorld(float dt);
+
+            // Use for sound manager
+            void setPageMusic(std::shared_ptr<Page> page);
+            mario::audio::SoundManager& getSoundManager() const;
     };
 }

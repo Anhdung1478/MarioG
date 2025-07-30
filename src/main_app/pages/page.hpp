@@ -18,6 +18,8 @@ namespace mario {
                     _context->closeWindow();
                 }
             }
+            
+            virtual bool getPaused() const { return false; }
 
             virtual ~Page() { }
     };
