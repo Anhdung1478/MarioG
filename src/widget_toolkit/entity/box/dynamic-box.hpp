@@ -2,42 +2,134 @@
 
 #include <bits/stdc++.h>
 #include <SFML/Graphics.hpp>
-#include <box2d/box2d.h>
 #include "box.hpp"
 
 namespace mario::entity {
 
     class DynamicBox : public Box {
-        public:
-            DynamicBox(b2WorldId worldId, sf::Vector2f position, sf::Vector2f _dimension, float density = 1.0f, float friction = 0.0f) : Box(worldId, position, _dimension, density, friction, 1) {
-                b2Body_SetGravityScale(bodyId, 1.f);
-            }
-
-            ~DynamicBox() override {}
-
-            void applyLinearImpulseToCenter(sf::Vector2f force) {
-                b2Vec2 forceVec = {force.x, force.y};
-                b2Body_ApplyLinearImpulseToCenter(bodyId, forceVec, true);
-            }
-
-            void applyForce(sf::Vector2f force) {
-                b2Vec2 forceVec = {force.x, force.y}; 
-                b2Body_ApplyForceToCenter(bodyId, forceVec, true);
-            }
-
-            sf::Vector2f getVelocity() {
-                b2Vec2 vel = b2Body_GetLinearVelocity(bodyId);
-                return convertUnitToPixel(sf::Vector2f(vel.x, vel.y));
-            }
+        private:
+            static constexpr float MAX_FALL_SPEED = 800.f;
+            static constexpr sf::Time DELAY_TIME_BETWEEN_JUMP = sf::seconds(0.0001f);
             
-            void setVelocity(sf::Vector2f vel) { 
-                vel = convertPixelToUnit(vel);
-                b2Vec2 b2Vel = b2Vec2({vel.x, vel.y});
-                b2Body_SetLinearVelocity(bodyId, b2Vel);
+            sf::Vector2f acceleration, velocity;
+            sf::Time timeUntilNextJump;
+
+            float jumpForce, maxVelocityX;
+            int jumpRemaining, maxJumps;
+
+            
+            bool _isJumpping, _isFaceForward, _isMoveRight, _isOnGround, hitCelling;
+            bool _isRunning;
+
+        public:
+            DynamicBox(sf::Vector2f _pos, sf::Vector2f _size, float acc = 150.f, float maxVX = 200.f, float _jumpForce = -200.f, int _maxJump = 2) 
+                : Box(_pos, _size), maxVelocityX(maxVX), maxJumps(_maxJump), jumpForce(_jumpForce) 
+            {
+                acceleration.x = acc;
+                acceleration.y = 980.f;
+                jumpRemaining = 0;
+                velocity = sf::Vector2f(0, 0);
+
+                _isFaceForward = true;
+                _isJumpping = _isRunning = false;
             }
 
-            void setDamping(float damp) {
-                b2Body_SetLinearDamping(bodyId, damp);
+            void move(bool isMoveRight, bool isReleased) override {
+                if(isReleased) {
+                    _isRunning = false;
+                    return;
+                }
+
+                _isRunning = true;
+                _isMoveRight = isMoveRight;
+            }
+
+            void jump(bool _isReleased) override {
+                if(_isReleased) {
+                    _isJumpping = false;
+                    return;
+                }
+
+                if(_isOnGround) {
+                    velocity.y = 0.f;
+                    jumpRemaining = maxJumps;
+                    timeUntilNextJump = sf::seconds(0.f);
+                    
+                    _isJumpping = true;
+                }
+            }
+
+            void update(float dt) override {
+                if(_isRunning) {
+                    if(_isMoveRight != (velocity.x > 0.f)) {
+                        if(_isMoveRight) {
+                            velocity.x = std::min(velocity.x + 2 * acceleration.x * dt, maxVelocityX);
+                        } else {
+                            velocity.x = std::max(velocity.x - 2 * acceleration.x * dt, -maxVelocityX);
+                        }
+                    } else {
+                        if(_isMoveRight) {
+                            velocity.x = std::min(velocity.x + acceleration.x * dt, maxVelocityX);
+                        } else {
+                            velocity.x = std::max(velocity.x - acceleration.x * dt, -maxVelocityX);
+                        }
+                    }
+
+
+                    _isFaceForward = (velocity.x > 0.f);
+                } else
+                    if(abs(velocity.x) > 0.f)
+                        velocity.x += ((velocity.x > 0.f) ? -1 : +1) * std::min(acceleration.x * 2 * dt, abs(velocity.x));
+                
+                if(_isJumpping) {
+                    timeUntilNextJump -= sf::seconds(dt);
+                    if(timeUntilNextJump <= sf::seconds(0.f)) {
+                        velocity.y += jumpForce;
+                        timeUntilNextJump = DELAY_TIME_BETWEEN_JUMP;
+
+                        --jumpRemaining;
+                        if(jumpRemaining == 0)
+                            _isJumpping = false;
+                    }
+                } else 
+                    if(!_isOnGround) {
+                        velocity.y = std::min(velocity.y + acceleration.y * dt, MAX_FALL_SPEED);
+                    } else {
+                        velocity.y = 0.f;
+                    }
+
+                position.x += velocity.x * dt;
+                position.y += velocity.y * dt;
+                _isOnGround = false;
+            }
+
+            void resetJump() override {
+                velocity.y = std::min(velocity.y, 0.f);
+                _isJumpping = 0;
+            }
+
+            bool isNotMoving() const override {
+                return (abs(velocity.x) <= 1.f);
+            }
+
+            void setOnGround(bool isOnGround) override {
+                _isOnGround = isOnGround;
+            }
+
+            bool isOnGround() const override {
+                return _isOnGround;
+            }
+
+            bool isFaceForward() const override {
+                return _isFaceForward;
+            }
+
+            void setVelocity(sf::Vector2f vel) {
+                velocity = vel;
+            }
+
+            sf::Vector2f getVelocity() const override {
+                return velocity;
             }
     };
 }

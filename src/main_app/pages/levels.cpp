@@ -3,8 +3,8 @@
 #include "main-menu.hpp"
 #include "../../widget_toolkit/resource/SoundManager.hpp"
 
-mario::pages::LevelsPage::LevelsPage(MainWindow &context, LevelState state) : Page(context), levelState(state) {
-    p_player = std::make_unique<mario::entity::Player>(_context->getWorldId(), sf::Vector2f(15, 10), mario::entity::CharacterListType::Luigi);
+mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::LevelState state) : Page(context), camera({1280, 720}), levelState(state) {
+    p_player = new mario::entity::Player(sf::Vector2f(15, 10), state.characterType, state.stateType);
     p_inputManager = std::make_unique<mario::input::InputManager>(context);
 
     // p_inputManager->bind(sf::Keyboard::Scancode::Left, std::make_unique<mario::input::RunCommand>(0));
@@ -93,17 +93,47 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, LevelState state) : Pa
         _context->getSoundManager().adjustSoundEffectsVolume(value);
     });
 
-    p_questionBlock = std::make_unique<QuestionBlock>(_context->getWorldId(), sf::Vector2f(100, 600));
+    tileMap = std::make_unique<TileMap>("../../asset/maps/tiles-8.json", "../../asset/maps/Map_1.json");
+
+    p_levelDataManager = std::make_unique<mario::resource::LevelDataManager>();
+    currLevelState = state;
+
+    camera.setMapBounds(tileMap->getWorldBounds());
+}
+
+void mario::pages::LevelsPage::autoSave() {
+    p_levelDataManager->autoSave(currLevelState);
 }
 
 mario::pages::LevelsPage::~LevelsPage() {
-    p_player.reset();
+    autoSave();
+    delete p_player;
 }
 
+// for Sound Manager
+mario::resource::LevelState mario::pages::LevelsPage::getLevelState() const { return levelState; }
+
+// Pause Game
+bool mario::pages::LevelsPage::getPaused() const { return isPaused; }
+
 void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) {
+    timeRemaining -= sf::seconds(dt);
+
+    if(timeRemaining <= sf::seconds(0.f)) {
+        // failed !!
+    }
+
     if(!isPaused) {
         p_player->update(window, dt);
-        p_questionBlock->update(window, dt);
+    
+    camera.followEntity(*p_player, dt);
+    camera.update(dt);
+
+    currLevelState.stateType = p_player->getPlayerStateType();
+    p_levelDataManager->update(dt, currLevelState);
+    
+    tileMap->update(window, dt);
+    tileMap->checkCollision(p_player);
     }
 
     // Check for hover state
@@ -195,14 +225,15 @@ void mario::pages::LevelsPage::handleEvent(const sf::RenderWindow *window, const
 
     if(!isPaused) {
         p_player->handleEvent(window, event);
-        p_inputManager->handleEvent(*p_player, event);
-        p_questionBlock->handleEvent(window, event);
+        p_inputManager->handleEvent(*p_player, event);   
+        tileMap->handleEvent(window, event);
     }
 }
 
 void mario::pages::LevelsPage::render(sf::RenderWindow *window) {
+    camera.applyTo(*window);
+    tileMap->render(window);
     p_player->render(window);
-    p_questionBlock->render(window);
     window->draw(*pauseSprite);
     window->draw(*homeSprite);
     window->draw(*settingsSprite);

@@ -1,10 +1,13 @@
 #include <bits/stdc++.h>
 #include "main-menu.hpp"
 #include "levels.hpp"
+#include "select.hpp"
 #include "settings.hpp"
 
 mario::pages::MainMenuPage::MainMenuPage(mario::MainWindow &context) : Page(context) {
     p_font = std::make_unique<sf::Font>("../../asset/fonts/Cascadia.ttf");
+
+    p_levelDataManager = std::make_unique<mario::resource::LevelDataManager>();
     
     p_title = std::make_unique<sf::Text>(*p_font, "Super Mario Bros", 50);
     p_title->setPosition({400, 50});
@@ -29,7 +32,7 @@ mario::pages::MainMenuPage::MainMenuPage(mario::MainWindow &context) : Page(cont
     p_button->buttonRect = sf::FloatRect(sf::Vector2f(540, 540), sf::Vector2f(200, 30));
     p_button->p_nodeOnButton = nullptr;
     p_button->Click.append([this]() {
-        
+        _context->changePage(std::make_shared<mario::pages::LevelsPage>(*_context, p_levelDataManager->loadAutoSaveLevelData()));
     });
 
     p_menuButtonListNode->buttonList.push_back(p_button);
@@ -59,18 +62,12 @@ mario::pages::MainMenuPage::MainMenuPage(mario::MainWindow &context) : Page(cont
         p_levelButton[i]->p_nodeOnButton = nullptr;
     }
 
-    p_levelButton[1]->Click.append([this]() {
-        _context->changePage(std::make_shared<mario::pages::LevelsPage>(*_context, LevelState(1, 2, 0, 0, 0)));
-    });
+    for (int i = 1; i <= NUM_LEVELS; i++) {
+        p_levelButton[i]->Click.append([this, i]() {
+            _context->changePage(std::make_shared<mario::pages::SelectPage>(*_context, i));
+        });
+    }
 
-    p_levelButton[2]->Click.append([this]() {
-        _context->changePage(std::make_shared<mario::pages::LevelsPage>(*_context, LevelState(2, 2, 0, 0, 0)));
-    });
-
-    p_levelButton[3]->Click.append([this]() {
-        _context->changePage(std::make_shared<mario::pages::LevelsPage>(*_context, LevelState(3, 2, 0, 0, 0)));
-    });
-    
     for (int i = 1; i <= NUM_LEVELS; ++i) {
         p_newGameButtonListNode->buttonList.push_back(p_levelButton[i]);
     }

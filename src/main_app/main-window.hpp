@@ -3,13 +3,11 @@
 #include <bits/stdc++.h>
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
-#include <box2d/box2d.h>
 #include "../widget_toolkit/interfaces.hpp"
 #include "../widget_toolkit/entity/box/static-box.hpp"
-
 #include "../widget_toolkit/resource/SoundManager.hpp"
 
-#define DEFAULT_FPS 120
+#define DEFAULT_FPS 60
 #define DEFAULT_WIN_WIDTH 1280
 #define DEFAULT_WIN_HEIGHT 720
 
@@ -27,14 +25,12 @@ namespace mario {
             const sf::Time timeStep = sf::seconds(1.0f / fixedFPS);
             sf::Clock clock;
             bool isRunning = true;
-            b2WorldId worldId;
-
+            
             // SoundManager
             mario::audio::SoundManager soundManager;
             
         public:
             ~MainWindow() override;
-            b2WorldId getWorldId();
             void changePage(std::shared_ptr<Page> to);
             void render(sf::RenderWindow *window) override;
             void closeWindow();
@@ -44,7 +40,7 @@ namespace mario {
             void stepWorld(float dt);
 
             // Use for sound manager
-            mario::audio::SoundManager& getSoundManager() { return soundManager; }
             void setPageMusic(std::shared_ptr<Page> page);
+            mario::audio::SoundManager& getSoundManager() const;
     };
 }

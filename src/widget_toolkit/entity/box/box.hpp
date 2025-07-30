@@ -2,82 +2,80 @@
 
 #include <bits/stdc++.h>
 #include <SFML/Graphics.hpp>
-#include <box2d/box2d.h>
 
 namespace mario::entity {
 
     class Box {
-        private:
-            constexpr static float PIXEL_PER_UNIT = 40.f;
-        
         protected:
-            b2BodyId bodyId = {0};
-            b2ShapeId shapeId = {0};
-            sf::Vector2f dimension;
-
-            sf::Vector2f convertPixelToUnit(sf::Vector2f vec) { // Convert vector2D from pixels to Box2D units
-                vec.x /= PIXEL_PER_UNIT;
-                vec.y /= PIXEL_PER_UNIT;
-                return vec;
-            }
-
-            sf::Vector2f convertUnitToPixel(sf::Vector2f vec) { // Convert vector2D from Box2D units to pixels
-                vec.x *= PIXEL_PER_UNIT;
-                vec.y *= PIXEL_PER_UNIT;
-                return vec;
-            }
-    
-        public:
-            Box(b2WorldId worldId, sf::Vector2f position, sf::Vector2f _dimension, float density, float friction, bool isDynamicBody) {
-                position = convertPixelToUnit(position);
-                _dimension = convertPixelToUnit(_dimension);
-                
-                dimension = _dimension; // Store the dimensions of the dynamic box
-                b2BodyDef bodyDef = b2DefaultBodyDef();
-                bodyDef.type = (isDynamicBody) ? b2_dynamicBody : b2_staticBody;
-                bodyDef.position = b2Vec2({position.x, position.y - _dimension.y / 2.f});
-                bodyId = b2CreateBody(worldId, &bodyDef);
-
-                b2Polygon box = b2MakeBox(_dimension.x / 2.f, _dimension.y / 2.f); // Create a box shape with the given dimensions
-                b2ShapeDef shapeDef = b2DefaultShapeDef(); // Create a default shape definition
-                shapeDef.density = density;
-                shapeDef.material.friction = friction;
-                
-                shapeId = b2CreatePolygonShape(bodyId, &shapeDef, &box); // Create a polygon shape for the ground body
-            }
-
-            virtual ~Box() {
-                if(b2Body_IsValid(bodyId)) {
-                    b2DestroyBody(bodyId);
-                }
-            }
+            sf::Vector2f position, size;
             
-            void enable() {
-                b2Body_Enable(bodyId);
-                b2Body_SetAwake(bodyId, true);
+        public:
+            Box(sf::Vector2f _pos, sf::Vector2f _size) : position(_pos), size(_size) {};
+
+            sf::Vector2f getPosition() const {
+                return position;
             }
 
-            void disable() {
-                b2Body_Disable(bodyId);
+            sf::Vector2f getSize() const {
+                return size;
             }
 
-            sf::Vector2f getPosition() {
-                b2Vec2 pos = b2Body_GetPosition(bodyId);
-                return convertUnitToPixel(sf::Vector2f(pos.x, pos.y + dimension.y / 2.f));
+            sf::FloatRect getHitbox() const {
+                sf::Vector2f left_most_pos(position.x - size.x / 2.f, position.y - size.y);
+                return sf::FloatRect(left_most_pos, size);
             }
 
-            sf::Vector2f getDimension() {
-                return convertUnitToPixel(sf::Vector2f(dimension.x, dimension.y));
+            void setPosition(sf::Vector2f _pos) {
+                position = _pos;
             }
 
-            float getMass() {
-                return b2Body_GetMass(bodyId);
+            void reSize(sf::Vector2f _size) {
+                size = _size;
             }
 
-            virtual void applyLinearImpulseToCenter(sf::Vector2f force) = 0;
-            virtual void applyForce(sf::Vector2f force) = 0;
-            virtual sf::Vector2f getVelocity() = 0;
+            virtual sf::Vector2f getVelocity() const = 0;
             virtual void setVelocity(sf::Vector2f vel) = 0;
-            virtual void setDamping(float damp) = 0;
+            virtual void move(bool isMoveRight, bool isReleased) = 0;
+            virtual void jump(bool isReleased) = 0;
+            virtual void setOnGround(bool isOnGround) = 0;
+            virtual void update(float dt) = 0;
+            virtual bool isNotMoving() const = 0;
+            virtual bool isFaceForward() const = 0;
+            virtual bool isOnGround() const = 0;
+            virtual void resetJump() = 0;
+
+            void renderHitboxRect(sf::RenderWindow *window) {
+                sf::FloatRect hitbox = getHitbox();
+                sf::Vector2f _pos = hitbox.position;
+                sf::Vector2f _size = hitbox.size;
+
+                ++_pos.x, ++_pos.y;
+                --_size.x, --_size.y;
+
+                std::array line1 = {
+                    sf::Vertex{_pos},
+                    sf::Vertex{sf::Vector2f(_pos.x + _size.x, _pos.y)}
+                };
+                
+                std::array line2 = {
+                    sf::Vertex{sf::Vector2f(_pos.x + _size.x, _pos.y)},
+                    sf::Vertex{sf::Vector2f(_pos.x + _size.x, _pos.y + _size.y)}
+                };
+                
+                std::array line3 = {
+                    sf::Vertex{sf::Vector2f(_pos.x + _size.x, _pos.y + _size.y)},
+                    sf::Vertex{sf::Vector2f(_pos.x, _pos.y + _size.y)}
+                };
+                
+                std::array line4 = {
+                    sf::Vertex{sf::Vector2f(_pos.x, _pos.y + _size.y)},
+                    sf::Vertex{_pos}
+                };
+
+                window->draw(line1.data(), line1.size(), sf::PrimitiveType::Lines);
+                window->draw(line2.data(), line2.size(), sf::PrimitiveType::Lines);
+                window->draw(line3.data(), line3.size(), sf::PrimitiveType::Lines);
+                window->draw(line4.data(), line4.size(), sf::PrimitiveType::Lines);
+            }
     };
 }

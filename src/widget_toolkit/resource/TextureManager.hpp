@@ -47,12 +47,14 @@ public:
     }
 
     const SpriteData& getSpriteData(const std::string& name) const;
+    static TextureManager& getInstance();
 
 private:
     void loadFromJson(const std::string& jsonPath, sf::Texture& texture);
 
     std::unordered_map<std::string, sf::Texture> textureMap;
     std::unordered_map<std::string, SpriteData> spriteMap; 
+    TextureManager() = default;
 };
 
 #endif

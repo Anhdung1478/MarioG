@@ -1,9 +1,11 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.16)
 
 # Tên project và ngôn ngữ
 project(MARIOG LANGUAGES CXX)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(FetchContent)
 FetchContent_Declare(SFML
@@ -22,21 +24,9 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(eventpp)
 
-FetchContent_Declare(
-	box2d
-	GIT_REPOSITORY https://github.com/erincatto/box2d.git
-	GIT_TAG main
-	GIT_SHALLOW TRUE
-	GIT_PROGRESS TRUE
-)
-FetchContent_MakeAvailable(box2d)
-
-# Cài đặt chuẩn C++ (ví dụ C++17)
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
 # Thêm file nguồn
-add_executable(MARIOG src/main_app/main.cpp src/main_app/main-window.cpp src/main_app/pages/main-menu.cpp src/main_app/pages/levels.cpp src/widget_toolkit/resource/TextureManager.cpp src/widget_toolkit/resource/SoundManager.cpp src/widget_toolkit/entity/blocks/Block.cpp src/widget_toolkit/entity/blocks/QuestionBlock.cpp src/main_app/pages/settings.cpp src/widget_toolkit/controls/slider.cpp src/widget_toolkit/command/key-binding-button.cpp)
+file(GLOB_RECURSE SOURCE_FILES "src/*.cpp")
+add_executable(MARIOG ${SOURCE_FILES})
 
-# target_link_directories(MARIOG PRIVATE ${CMAKE_SOURCE_DIR}/extern/include/SFML/ ${CMAKE_SOURCE_DIR}/extern/include/BOX2D/ ${CMAKE_SOURCE_DIR}/extern/include/)
-target_link_libraries(MARIOG PRIVATE SFML::Graphics SFML::Window SFML::System SFML::Audio box2d eventpp::eventpp)
+# Link libraries
+target_link_libraries(MARIOG PRIVATE SFML::Graphics SFML::Window SFML::System SFML::Audio eventpp::eventpp)
