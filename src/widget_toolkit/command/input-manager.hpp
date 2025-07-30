@@ -57,10 +57,10 @@ namespace mario::input {
                 if (config.contains("keybindings")) {
                     const auto& bindings = config["keybindings"];
                     if (bindings.contains("move_left")) {
-                        bind(static_cast<sf::Keyboard::Scan>(bindings["move_left"].get<int>()), std::make_unique<mario::input::RunCommand>(0));
+                        bind(static_cast<sf::Keyboard::Scan>(bindings["move_left"].get<int>()), std::make_unique<mario::input::MoveCommand>(0));
                     }
                     if (bindings.contains("move_right")) {
-                        bind(static_cast<sf::Keyboard::Scan>(bindings["move_right"].get<int>()), std::make_unique<mario::input::RunCommand>(1));
+                        bind(static_cast<sf::Keyboard::Scan>(bindings["move_right"].get<int>()), std::make_unique<mario::input::MoveCommand>(1));
                     }
                     if (bindings.contains("jump")) {
                         bind(static_cast<sf::Keyboard::Scan>(bindings["jump"].get<int>()), std::make_unique<mario::input::JumpCommand>(*context));
@@ -75,8 +75,8 @@ namespace mario::input {
 
             // Load default bindings
             void loadDefaultBindings() {
-                bind(sf::Keyboard::Scan::Left, std::make_unique<mario::input::RunCommand>(0));
-                bind(sf::Keyboard::Scan::Right, std::make_unique<mario::input::RunCommand>(1));
+                bind(sf::Keyboard::Scan::Left, std::make_unique<mario::input::MoveCommand>(0));
+                bind(sf::Keyboard::Scan::Right, std::make_unique<mario::input::MoveCommand>(1));
                 bind(sf::Keyboard::Scan::Up, std::make_unique<mario::input::JumpCommand>(*context));
                 bind(sf::Keyboard::Scan::Z, std::make_unique<mario::input::FireCommand>());
             }

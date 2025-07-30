@@ -26,6 +26,7 @@ namespace mario::entity {
             bool _isOnGround;
 
             bool hasPlayedJumpSound_ = false; // For sound effect
+
         public:
             Player(sf::Vector2f spawnPoint, CharacterListType characterType, player_state::PlayerStateType stateType) : _characterType(characterType) {
                 p_body = new DynamicBox(spawnPoint, sf::Vector2f(40.f, 40.f));
@@ -70,7 +71,7 @@ namespace mario::entity {
                     // change texture to jumping
                     p_stateManager->setAnimation(p_animation, "jump[0]");
                     p_animation->setAnimationState(false);
-                } else 
+                } else {
                     if(p_body->isNotMoving()) {
                         // change texture to idle
                         p_stateManager->setAnimation(p_animation, "idle[0]");
@@ -155,8 +156,14 @@ namespace mario::entity {
             player_state::PlayerStateType getPlayerStateType() {
                 return p_stateManager->getCurrentState();
             }
-            bool hasPlayedJumpSound() const { return hasPlayedJumpSound_; }
-            void setJumpSoundPlayed(bool played) { hasPlayedJumpSound_ = played; }
+
+            bool hasPlayedJumpSound() const { 
+                return hasPlayedJumpSound_; 
+            }
+            
+            void setJumpSoundPlayed(bool played) { 
+                hasPlayedJumpSound_ = played; 
+            }
     };
 
     #undef FILE_PATH

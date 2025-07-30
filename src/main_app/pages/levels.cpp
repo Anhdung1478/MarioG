@@ -7,11 +7,6 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
     p_player = new mario::entity::Player(sf::Vector2f(15, 10), state.characterType, state.stateType);
     p_inputManager = std::make_unique<mario::input::InputManager>(context);
 
-    // p_inputManager->bind(sf::Keyboard::Scancode::Left, std::make_unique<mario::input::RunCommand>(0));
-    // p_inputManager->bind(sf::Keyboard::Scancode::Right, std::make_unique<mario::input::RunCommand>(1));
-    // p_inputManager->bind(sf::Keyboard::Scancode::Up, std::make_unique<mario::input::JumpCommand>(*_context));
-    // p_inputManager->bind(sf::Keyboard::Scancode::Z, std::make_unique<mario::input::FireCommand>());
-
     // Pause/Resume game
     pauseTexture = std::make_unique<sf::Texture>("../../asset/textures/pause-button.png");
     pauseSprite = std::make_unique<sf::Sprite>(*pauseTexture);
@@ -114,26 +109,25 @@ mario::pages::LevelsPage::~LevelsPage() {
 mario::resource::LevelState mario::pages::LevelsPage::getLevelState() const { return levelState; }
 
 // Pause Game
-bool mario::pages::LevelsPage::getPaused() const { return isPaused; }
+bool mario::pages::LevelsPage::isPaused() const { return _isPaused; }
 
 void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) {
     timeRemaining -= sf::seconds(dt);
-
     if(timeRemaining <= sf::seconds(0.f)) {
         // failed !!
     }
 
-    if(!isPaused) {
+    if(!_isPaused) {
         p_player->update(window, dt);
     
-    camera.followEntity(*p_player, dt);
-    camera.update(dt);
+        camera.followEntity(*p_player, dt);
+        camera.update(dt);
 
-    currLevelState.stateType = p_player->getPlayerStateType();
-    p_levelDataManager->update(dt, currLevelState);
-    
-    tileMap->update(window, dt);
-    tileMap->checkCollision(p_player);
+        currLevelState.stateType = p_player->getPlayerStateType();
+        p_levelDataManager->update(dt, currLevelState);
+        
+        tileMap->update(window, dt);
+        tileMap->checkCollision(p_player);
     }
 
     // Check for hover state
@@ -150,7 +144,7 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
         sf::Vector2f(settingsTexture->getSize().x * settingsSprite->getScale().x, 
                      settingsTexture->getSize().y * settingsSprite->getScale().y));
 
-    if (pauseRect.contains(sf::Vector2f(mousePos)) || isPaused) {
+    if (pauseRect.contains(sf::Vector2f(mousePos)) || _isPaused) {
         pauseSprite->setTexture(*pauseHoverTexture);
     } else {
         pauseSprite->setTexture(*pauseTexture);
@@ -177,14 +171,14 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
 
 void mario::pages::LevelsPage::handleEvent(const sf::RenderWindow *window, const sf::Event &event) {
     if (const auto key = event.getIf<sf::Event::KeyPressed>(); key && key->code == sf::Keyboard::Key::Escape) {
-        isPaused = !isPaused;
-        if(isPaused) {
+        _isPaused = !_isPaused;
+        if(_isPaused) {
             _context->getSoundManager().playSound(mario::event::SoundEvent::GAME_PAUSE);
             _context->getSoundManager().pauseBackgroundMusic();
         } else {
             _context->getSoundManager().resumeBackgroundMusic();
             if(p_player) {
-                p_player->run(false, true);
+                p_player->move(false, true);
             }
         }
     }
@@ -196,34 +190,36 @@ void mario::pages::LevelsPage::handleEvent(const sf::RenderWindow *window, const
             sf::FloatRect homeRectF = sf::FloatRect(homeSprite->getPosition(), sf::Vector2f(homeTexture->getSize().x * homeSprite->getScale().x, homeTexture->getSize().y * homeSprite->getScale().y));
             sf::FloatRect settingsRectF = sf::FloatRect(settingsSprite->getPosition(), sf::Vector2f(settingsTexture->getSize().x * settingsSprite->getScale().x, settingsTexture->getSize().y * settingsSprite->getScale().y));
 
-            if (pauseRectF.contains(sf::Vector2f(mousePos))) {
-                isPaused = !isPaused;
-                if (isPaused) {
+            if(pauseRectF.contains(sf::Vector2f(mousePos))) {
+                _isPaused = !_isPaused;
+                if(_isPaused) {
                     _context->getSoundManager().playSound(mario::event::SoundEvent::GAME_PAUSE);
                     _context->getSoundManager().pauseBackgroundMusic();
                 } else {
                     _context->getSoundManager().resumeBackgroundMusic();
                     if (p_player) {
-                        p_player->run(false, true);
+                        p_player->move(false, true);
                     }
                 }
-            } else if (homeRectF.contains(sf::Vector2f(mousePos))) {
-                _context->changePage(std::make_shared<mario::pages::MainMenuPage>(*_context));
-            } else if (settingsRectF.contains(sf::Vector2f(mousePos))) {
-                isSettingsOpen = !isSettingsOpen;
-                if(isSettingsOpen) {
-                    _context->getSoundManager().playSound(mario::event::SoundEvent::GAME_PAUSE);
-                }
-            }
+            } else 
+                if(homeRectF.contains(sf::Vector2f(mousePos))) {
+                    _context->changePage(std::make_shared<mario::pages::MainMenuPage>(*_context));
+                } else 
+                    if(settingsRectF.contains(sf::Vector2f(mousePos))) {
+                        isSettingsOpen = !isSettingsOpen;
+                        if(isSettingsOpen) {
+                            _context->getSoundManager().playSound(mario::event::SoundEvent::GAME_PAUSE);
+                        }
+                    }
         } 
     }
 
-    if (isSettingsOpen) {
+    if(isSettingsOpen) {
         musicSlider->handleEvent(event, *window);
         sfxSlider->handleEvent(event, *window);
     }
 
-    if(!isPaused) {
+    if(!_isPaused) {
         p_player->handleEvent(window, event);
         p_inputManager->handleEvent(*p_player, event);   
         tileMap->handleEvent(window, event);
@@ -231,13 +227,16 @@ void mario::pages::LevelsPage::handleEvent(const sf::RenderWindow *window, const
 }
 
 void mario::pages::LevelsPage::render(sf::RenderWindow *window) {
+    std::cerr << "is Paused: " << _isPaused << '\n';
     camera.applyTo(*window);
     tileMap->render(window);
     p_player->render(window);
+
     window->draw(*pauseSprite);
     window->draw(*homeSprite);
     window->draw(*settingsSprite);
-    if(isPaused && panelSprite) {
+
+    if(_isPaused && panelSprite) {
         window->draw(*panelSprite);
     }
 

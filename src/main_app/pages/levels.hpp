@@ -15,13 +15,18 @@ namespace mario::pages {
     class LevelsPage : public Page {
         private:
             std::unique_ptr<mario::input::InputManager> p_inputManager;
-            std::unique_ptr<QuestionBlock> p_questionBlock;
+            std::unique_ptr<mario::resource::LevelDataManager> p_levelDataManager;
+            std::unique_ptr<TileMap> tileMap;
+
+            mario::entity::Player *p_player;
+            sf::Time timeRemaining;
+            Camera camera;
 
             // for Sound Manager
-            LevelState levelState;
+            mario::resource::LevelState currLevelState, levelState;
 
             // Pause/Resume game
-            bool isPaused = false;
+            bool _isPaused = false;
             std::unique_ptr<sf::Texture> pauseTexture;
             std::unique_ptr<sf::Sprite> pauseSprite;
             std::unique_ptr<sf::Texture> pauseHoverTexture;
@@ -50,6 +55,7 @@ namespace mario::pages {
 
             std::unique_ptr<Slider> musicSlider;
             std::unique_ptr<Slider> sfxSlider;
+
         public:
             LevelsPage(MainWindow &context, mario::resource::LevelState state);
             ~LevelsPage();
@@ -59,9 +65,9 @@ namespace mario::pages {
             void autoSave();
 
             // for Sound Manager
-            LevelState getLevelState() const;
+            mario::resource::LevelState getLevelState() const;
 
             // Pause Game
-            bool getPaused() const override;
+            bool isPaused() const;
     };
 }

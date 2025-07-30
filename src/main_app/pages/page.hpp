@@ -14,12 +14,11 @@ namespace mario {
             void setContext(MainWindow *context) { _context = context; }
 
             void closeWindow() {
-                if(_context) {
+                if(_context) 
                     _context->closeWindow();
-                }
             }
             
-            virtual bool getPaused() const { return false; }
+            bool getPaused() const { return false; }
 
             virtual ~Page() { }
     };

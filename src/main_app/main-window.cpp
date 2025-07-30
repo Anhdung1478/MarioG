@@ -30,12 +30,9 @@ void mario::MainWindow::closeWindow() {
     isRunning = false;
 }
 
-void mario::MainWindow::stepWorld(float dt) {
-    if (content && !content->getPaused()) {
-        b2World_Step(worldId, dt, 4);
-    }
+mario::audio::SoundManager& mario::MainWindow::getSoundManager() { 
+    return soundManager;
 }
-
 
 void mario::MainWindow::run() {
     sf::ContextSettings settings;
@@ -70,7 +67,8 @@ void mario::MainWindow::run() {
         }
 
         if (content) {
-            content->update(window, deltaTime.asSeconds()); // Update with a delta time
+            //content->updateWithStyle(window, deltaTime.asSeconds(), content->getPaused()); // Update with a delta time
+            content->update(window, deltaTime.asSeconds());
         }
 
         render(window);

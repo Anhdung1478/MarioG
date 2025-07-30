@@ -36,11 +36,8 @@ namespace mario {
             void closeWindow();
             void run();
 
-            // Use for pause game
-            void stepWorld(float dt);
-
             // Use for sound manager
             void setPageMusic(std::shared_ptr<Page> page);
-            mario::audio::SoundManager& getSoundManager() const;
+            mario::audio::SoundManager& getSoundManager();
     };
 }
