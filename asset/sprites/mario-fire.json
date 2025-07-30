@@ -1,79 +1,79 @@
 {
-  "mario-small": {
+  "mario-fire-small": {
     "idle": [
-      { "x": 130, "y": 94, "width": 17, "height": 19 }
+      { "x": 130, "y": 94, "width": 17, "height": 16 }
     ],
     "walk": [
-      { "x": 146, "y": 94, "width": 17, "height": 19 },
-      { "x": 162, "y": 94, "width": 17, "height": 19 }
+      { "x": 145, "y": 95, "width": 17, "height": 16 },
+      { "x": 161, "y": 95, "width": 17, "height": 16 }
     ],
     "jump": [
-      { "x": 180, "y": 94, "width": 17, "height": 19 }
+      { "x": 179, "y": 95, "width": 17, "height": 16 }
     ],
     "get-ready": [
-      { "x": 115, "y": 112, "width": 17, "height": 19 }
+      { "x": 115, "y": 111, "width": 17, "height": 16 }
     ],
     "fly-with-arms-in-front": [
-      { "x": 115, "y": 130, "width": 17, "height": 19 }
+      { "x": 115, "y": 131, "width": 17, "height": 16 }
     ],
     "fly-with-arms-level": [
-      { "x": 134, "y": 130, "width": 17, "height": 19 }
+      { "x": 134, "y": 130, "width": 17, "height": 16 }
     ],
     "fly-with-arms-behind": [
-      { "x": 151, "y": 130, "width": 17, "height": 19 }
+      { "x": 152, "y": 130, "width": 17, "height": 16 }
     ],
     "backing": [
-      { "x": 166, "y": 112, "width": 17, "height": 19 }
+      { "x": 167, "y": 113, "width": 17, "height": 16 }
     ],
     "idle-with-hands-in-front": [
-      { "x": 150, "y": 112, "width": 17, "height": 19 }
+      { "x": 151, "y": 112, "width": 17, "height": 16 }
     ],
     "cheering": [
-      { "x": 98, "y": 94, "width": 17, "height": 19 }
+      { "x": 97, "y": 95, "width": 17, "height": 16 }
     ],
     "saying-hi": [
-      { "x": 132, "y": 112, "width": 17, "height": 19 }
+      { "x": 81, "y": 112, "width": 17, "height": 16 }
     ]
   },
 
-  "mario-super": {
+  "mario-fire-super": {
     "idle": [
-      { "x": 116, "y": 0, "width": 20, "height": 31 }
+      { "x": 115, "y": 0, "width": 17, "height": 30 }
     ],
     "walk": [
-      { "x": 153, "y": 0, "width": 20, "height": 31 },
-      { "x": 133, "y": 0, "width": 20, "height": 31 }
+      { "x": 136, "y": 0, "width": 17, "height": 30 },
+      { "x": 155, "y": 0, "width": 17, "height": 30 }
     ],
     "jump": [
-      { "x": 173, "y": 0, "width": 20, "height": 31 }
+      { "x": 175, "y": 1, "width": 17, "height": 29 }
     ],
     "sit": [
-      { "x": 193, "y": 2, "width": 20, "height": 31 }
+      { "x": 193, "y": 9, "width": 16, "height": 21 }
     ],
     "get-ready": [
-      { "x": 114, "y": 32, "width": 20, "height": 31 }
+      { "x": 115, "y": 32, "width": 17, "height": 30 }
     ],
     "fly-with-arms-in-front": [
-      { "x": 191, "y": 63, "width": 20, "height": 31 }
+      { "x": 191, "y": 64, "width": 17, "height": 28 }
     ],
     "fly-with-arms-level": [
-      { "x": 169, "y": 63, "width": 20, "height": 31 }
+      { "x": 171, "y": 67, "width": 17, "height": 28 }
     ],
     "fly-with-arms-behind": [
-      { "x": 145, "y": 63, "width": 20, "height": 31 }
+      { "x": 147, "y": 66, "width": 17, "height": 30 }
     ],
     "backing": [
-      { "x": 173, "y": 32, "width": 20, "height": 31 },
-      { "x": 153, "y": 32, "width": 20, "height": 31 }
+      { "x": 173, "y": 36, "width": 17, "height": 28 },
+      { "x": 155, "y": 36, "width": 17, "height": 28 }
     ],
     "cheering": [
-      { "x": 98, "y": 94, "width": 17, "height": 19 }
+      { "x": 97, "y": 95, "width": 17, "height": 16 }
     ],
     "saying-hi": [
-      { "x": 125, "y": 63, "width": 20, "height": 31 }
+      { "x": 126, "y": 64, "width": 17, "height": 28 }
     ],
     "stand-with-hands-on-nose": [
-      { "x": 133, "y": 33, "width": 20, "height": 31 }
+      { "x": 135, "y": 33, "width": 17, "height": 30 }
     ]
   }
 }
