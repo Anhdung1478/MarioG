@@ -159,7 +159,6 @@ public:
                                          std::min(mapBounds.position.y + mapBounds.size.y - halfViewHeight, desiredCameraCenter.y));
 
         setTarget(desiredCameraCenter);
-        update(deltaTime);
     }
 
     template<typename PlayerType>
