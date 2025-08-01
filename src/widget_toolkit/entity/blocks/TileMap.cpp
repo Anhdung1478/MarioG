@@ -12,6 +12,9 @@ TileMap::TileMap(const std::string &tilesetPath, const std::string &mapPath) {
 }
 
 TileMap::~TileMap(){
+    for (Block *block : blocks) {
+        delete block;
+    }
 }
 
 bool TileMap::loadTileset(const std::string& tilesetPath) {
@@ -131,101 +134,101 @@ void TileMap::createBlock() {
             switch (tileId) {
                 // Grass ground tiles
                 case 0:
-                    blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "grass-ground[0]"));
+                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "grass-ground[0]"));
                     break;
                 case 1:
-                    blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "grass-ground[1]"));
+                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "grass-ground[1]"));
                     break;
                 case 2:
-                    blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "grass-ground[2]"));
+                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "grass-ground[2]"));
                     break;
                 case 39:
-                    blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "grass-ground[3]"));
+                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "grass-ground[3]"));
                     break;
                 case 40:
-                    blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "grass-ground[4]"));
+                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "grass-ground[4]"));
                     break;
                 case 41:
-                    blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "grass-ground[5]"));
+                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "grass-ground[5]"));
                     break;
                     
                 // Stone ground tiles
                 case 4:
-                    blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "stone-ground[0]"));
+                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "stone-ground[0]"));
                     break;
                 case 5:
-                    blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "stone-ground[1]"));
+                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "stone-ground[1]"));
                     break;
                 case 6:
-                    blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "stone-ground[2]"));
+                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "stone-ground[2]"));
                     break;
                 case 43:
-                    blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "stone-ground[3]"));
+                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "stone-ground[3]"));
                     break;
                 case 44:
-                    blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "stone-ground[4]"));
+                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "stone-ground[4]"));
                     break;
                 case 45:
-                    blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "stone-ground[5]"));
+                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "stone-ground[5]"));
                     break;
                 
                 // Snow ground tiles
                 case 8:
-                    blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "snow-ground[0]"));
+                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "snow-ground[0]"));
                     break;
                 case 9:
-                    blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "snow-ground[1]"));
+                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "snow-ground[1]"));
                     break;
                 case 10:
-                    blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "snow-ground[2]"));
+                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "snow-ground[2]"));
                     break;
                 case 47:
-                    blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "snow-ground[3]"));
+                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "snow-ground[3]"));
                     break;
                 case 48:
-                    blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "snow-ground[4]"));
+                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "snow-ground[4]"));
                     break;
                 case 49:
-                    blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "snow-ground[5]"));
+                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "snow-ground[5]"));
                     break;
 
                 // Green pipe tiles
                 case 123:
-                    blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "green-pipe[0]"));
+                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "green-pipe[0]"));
                     break;
                 case 124:
-                    blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "green-pipe[1]"));
+                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "green-pipe[1]"));
                     break;
                 case 162:
-                    blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "green-pipe[2]"));
+                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "green-pipe[2]"));
                     break;
                 case 163:
-                    blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "green-pipe[3]"));
+                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "green-pipe[3]"));
                     break;
                 
                 // Gray pipe tiles
                 case 128:
-                    blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "gray-pipe[0]"));
+                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "gray-pipe[0]"));
                     break;
                 case 129:
-                    blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "gray-pipe[1]"));
+                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "gray-pipe[1]"));
                     break;
                 case 167:
-                    blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "gray-pipe[2]"));
+                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "gray-pipe[2]"));
                     break;
                 case 168:
-                    blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "gray-pipe[3]"));
+                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "gray-pipe[3]"));
                     break;
 
                 // Stair blocks
                 case 351:
-                    blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "stair-block[0]"));
+                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "stair-block[0]"));
                     break;
                 case 352:
-                    blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "stair-block[1]"));
+                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "stair-block[1]"));
                     break;
                 case 353:
-                    blocks.push_back(std::make_unique<SolidBlock>(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "stair-block[2]"));
+                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "stair-block[2]"));
                     break;
 
                 default:
@@ -237,7 +240,7 @@ void TileMap::createBlock() {
             // else if (tileType == "Question") 
             //     block = std::make_unique<QuestionBlock>(x * tileWidth, y * tileHeight);
             // else if (tileType == "Solid")
-            //     block = std::make_unique<SolidBlock>(x * tileWidth, y * tileHeight);
+            //     block = new SolidBlock(x * tileWidth, y * tileHeight);
 
             // if (block) {
             //     blocks.push_back(std::move(block));
@@ -285,7 +288,7 @@ void TileMap::createBlock() {
 }
 
 void TileMap::sortBlocks() {
-    std::sort(blocks.begin(), blocks.end(), [](const std::unique_ptr<Block>& a, const std::unique_ptr<Block>& b){
+    std::sort(blocks.begin(), blocks.end(), [](const Block *a, const Block *b){
         if (a->getPosition().x == b->getPosition().x){
             return a->getPosition().y < b->getPosition().y; // Sort by Y if X is the same
         }
@@ -293,14 +296,14 @@ void TileMap::sortBlocks() {
     });
 }
 
-void TileMap::findBlocksCollisions(int &L, int &R, const std::unique_ptr<mario::entity::Player> &player){
-    //using lower_bound and upper_bound to find the range of blocks that might collide with the player
-    auto itL = std::lower_bound(blocks.begin(), blocks.end(), player->getPosition().x - player->getSize().x / 2, 
-        [](const std::unique_ptr<Block>& block, float posX) {
+void TileMap::findBlocksCollisions(int &L, int &R, const mario::entity::Entity *entity){
+    //using lower_bound and upper_bound to find the range of blocks that might collide with the entity
+    auto itL = std::lower_bound(blocks.begin(), blocks.end(), entity->getPosition().x - entity->getSize().x / 2, 
+        [](const Block *block, float posX) {
             return block->getPosition().x < posX;
         });
-    auto itR = std::upper_bound(blocks.begin(), blocks.end(), player->getPosition().x + player->getSize().x / 2, 
-        [](float posX, const std::unique_ptr<Block>& block) {
+    auto itR = std::upper_bound(blocks.begin(), blocks.end(), entity->getPosition().x + entity->getSize().x / 2, 
+        [](float posX, const Block *block) {
             return posX < block->getPosition().x;
         });
 
@@ -309,9 +312,9 @@ void TileMap::findBlocksCollisions(int &L, int &R, const std::unique_ptr<mario::
     R = std::distance(blocks.begin(), itR);
 }
 
-SideCollision TileMap::findCollisionSide(const std::unique_ptr<mario::entity::Player> &EntityA, const std::unique_ptr<Block> &EntityB) {
-    sf::FloatRect hitBoxA = EntityA->getHitbox();
-    sf::FloatRect hitBoxB = EntityB->getHitbox();
+SideCollision TileMap::findCollisionSide(const mario::entity::Entity *entityA, const mario::entity::Entity *entityB) {
+    sf::FloatRect hitBoxA = entityA->getHitbox();
+    sf::FloatRect hitBoxB = entityB->getHitbox();
 
     sf::Vector2f centerA = hitBoxA.position + hitBoxA.size / 2.f;
     sf::Vector2f centerB = hitBoxB.position + hitBoxB.size / 2.f;
@@ -333,31 +336,30 @@ SideCollision TileMap::findCollisionSide(const std::unique_ptr<mario::entity::Pl
     return SideCollision::None; // No collision
 }
 
-void TileMap::fixPosition(const std::unique_ptr<mario::entity::Player> &player, const std::unique_ptr<Block> &block, SideCollision side) {
+void TileMap::fixPosition(mario::entity::Entity *entity, const Block *block, SideCollision side) {
     if(side == SideCollision::None) return;
     switch (side) {
         case SideCollision::Top:
-            player->setPosition(sf::Vector2f(player->getPosition().x, block->getPosition().y + player->getSize().y));
+            entity->setPosition(sf::Vector2f(entity->getPosition().x, block->getPosition().y + entity->getSize().y));
             break;
         case SideCollision::Bottom:
-            player->setPosition(sf::Vector2f(player->getPosition().x, block->getHitbox().position.y));
+            entity->setPosition(sf::Vector2f(entity->getPosition().x, block->getHitbox().position.y));
             break;
         case SideCollision::Left:
-            player->setPosition(sf::Vector2f(block->getHitbox().position.x + block->getSize().x + player->getSize().x / 2.0f, player->getPosition().y));
+            entity->setPosition(sf::Vector2f(block->getHitbox().position.x + block->getSize().x + entity->getSize().x / 2.0f, entity->getPosition().y));
             break;
         case SideCollision::Right:
-            player->setPosition(sf::Vector2f(block->getHitbox().position.x - player->getSize().x / 2.0f, player->getPosition().y));
+            entity->setPosition(sf::Vector2f(block->getHitbox().position.x - entity->getSize().x / 2.0f, entity->getPosition().y));
             break;
     }
 }
 
-void TileMap::checkCollision(const std::unique_ptr<mario::entity::Player> &player) {
+void TileMap::checkCollision(mario::entity::Player *player) {
     int L, R;
     findBlocksCollisions(L, R, player);
 
-    // player->setOnGround(false);
-    // player->setMoveLeft(true); 
-    // player->setMoveRight(true);
+    //player->setMoveLeft(true); 
+    //player->setMoveRight(true);
 
     bool hasTopCollision = false;
     bool hasBottomCollision = false;
@@ -366,7 +368,7 @@ void TileMap::checkCollision(const std::unique_ptr<mario::entity::Player> &playe
 
     for(int i = 0; i < blocks.size(); ++i){
         auto& block = blocks[i];
-        if (!block->getExist()) continue;
+        if (!block->isExist()) continue;
 
         SideCollision side = findCollisionSide(player, block);
         if(side != SideCollision::None) {
@@ -386,34 +388,37 @@ void TileMap::checkCollision(const std::unique_ptr<mario::entity::Player> &playe
                 default:
                     break;
             }
+            
             fixPosition(player, block, side);
         }
     }
 
-    if(hasBottomCollision){
-        player->setVelocity(sf::Vector2f(0.f, 0.f));
-        std::cout << "\nBottom Collision Detected\n";
-        // player->setOnGround(true);
-        // player->setVelocity(sf::Vector2f(player->getVelocity().x, 0.f));
-        // player->resetJump();
+    sf::Vector2f vel = player->getVelocity();
+    if(hasBottomCollision) {
+        vel.y = 0.f;
+        player->resetJump();
+        player->setOnGround(true);
+        std::cerr << "\nBottom Collision Detected\n";
     }
-    if(hasTopCollision){
-        player->setVelocity(sf::Vector2f(0.f, 0.f));
-        std::cout << "\nTop Collision Detected\n";
-        // player->setVelocity(sf::Vector2f(player->getVelocity().x, 0.f));
+
+    if(hasTopCollision) {
+        vel.y = 0.f;
+        std::cerr << "\nTop Collision Detected\n";
     }
-    if(hasLeftCollision){
-        player->setVelocity(sf::Vector2f(0.f, 0.f));
-        std::cout << "\nLeft Collision Detected\n";
-        // player->setVelocity(sf::Vector2f(0.f, player->getVelocity().y));
-        // player->setMoveLeft(false);
+
+    if(hasLeftCollision) {
+        vel.x = 0.f;
+        //player->setMoveLeft(false);
+        std::cerr << "\nLeft Collision Detected\n";
     }
-    if(hasRightCollision){
-        player->setVelocity(sf::Vector2f(0.f, 0.f));
-        std::cout << "\nRight Collision Detected\n";
-        // player->setVelocity(sf::Vector2f(0.f, player->getVelocity().y));
-        // player->setMoveRight(false);
+
+    if(hasRightCollision) {
+        vel.x = 0.f;
+        //player->setMoveRight(false);
+        std::cerr << "\nRight Collision Detected\n";
     }
+
+    player->setVelocity(vel);
 }
 
 

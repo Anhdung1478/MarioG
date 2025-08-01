@@ -12,6 +12,8 @@ namespace mario::entity {
         public:
             Box(sf::Vector2f _pos, sf::Vector2f _size) : position(_pos), size(_size) {};
 
+            virtual ~Box() = default;
+
             sf::Vector2f getPosition() const {
                 return position;
             }
@@ -37,22 +39,17 @@ namespace mario::entity {
             virtual void setVelocity(sf::Vector2f vel) = 0;
             virtual void move(bool isMoveRight, bool isReleased) = 0;
             virtual void jump(bool isReleased) = 0;
+            virtual void setOnGround(bool isOnGround) = 0;
             virtual void update(float dt) = 0;
             virtual bool isNotMoving() const = 0;
-            virtual bool isOnSurface() const = 0;
             virtual bool isFaceForward() const = 0;
+            virtual bool isOnGround() const = 0;
+            virtual void resetJump() = 0;
 
             void renderHitboxRect(sf::RenderWindow *window) {
                 sf::FloatRect hitbox = getHitbox();
                 sf::Vector2f _pos = hitbox.position;
                 sf::Vector2f _size = hitbox.size;
-
-                // sf::RectangleShape rectHitbox(sf::Vector2f(_size.x - 1, _size.y - 1));
-                // rectHitbox.setPosition(_pos);
-                // rectHitbox.setFillColor(sf::Color(0, 0, 0, 255));
-                // rectHitbox.setOutlineThickness(1.f);
-                // rectHitbox.setOutlineColor(sf::Color::White);
-                // window->draw(rectHitbox);
 
                 ++_pos.x, ++_pos.y;
                 --_size.x, --_size.y;

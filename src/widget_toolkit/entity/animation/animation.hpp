@@ -11,8 +11,8 @@ namespace mario::entity {
     class Animation : public IScreenElement {
         private:
             TextureManager& p_textureResource = TextureManager::getInstance();
-            std::unique_ptr<sf::Sprite> p_sprite;
             std::vector<SpriteData> animationSteps;
+            sf::Sprite *p_sprite;
             sf::Vector2f scale;
             
             sf::Time animationTimer;
@@ -26,6 +26,7 @@ namespace mario::entity {
             }
 
             void setSprite(const SpriteData &data) {
+                p_sprite->setTexture(*data.texture);
                 p_sprite->setTextureRect(sf::IntRect({data.x, data.y}, {data.z, data.t}));
                 p_sprite->setOrigin({data.z / 2.f, 1.f * data.t});
             }
@@ -41,20 +42,26 @@ namespace mario::entity {
                 p_textureResource.loadSheet(jsonPath, texturePath);
 
                 SpriteData data = p_textureResource.getSpriteData(randomSpriteID);
-                p_sprite = std::make_unique<sf::Sprite>(*(data.texture));
-                
-                setSprite(data);
+                p_sprite = new sf::Sprite(*(data.texture));
                 p_sprite->setScale(scale);
+                setSprite(data);
             }
 
             Animation(const std::string& imagePath, sf::Vector2f _scale, const std::vector<SpriteData2>& sprites) : scale(_scale) {
                 p_textureResource.loadSheet(imagePath, sprites);
 
                 SpriteData data = p_textureResource.getSpriteData(sprites[0].id);
-                p_sprite = std::make_unique<sf::Sprite>(*(data.texture));
-
-                setSprite(data);
+                p_sprite = new sf::Sprite(*(data.texture));
                 p_sprite->setScale(scale);
+                setSprite(data);
+            }
+
+            ~Animation() override {
+                delete p_sprite;
+            }
+
+            void loadSheet(const std::string& jsonPath, const std::string& texturePath) {
+                p_textureResource.loadSheet(jsonPath, texturePath);
             }
 
             void addAnimationStep(const std::string& spriteID) {

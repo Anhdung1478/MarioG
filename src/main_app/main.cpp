@@ -1,10 +1,10 @@
 #include <bits/stdc++.h>
 #include "main-window.hpp"
-#include <windows.h>
-#include <psapi.h>
+/*#include <windows.h>
+#include <psapi.h>*/
 
 void printMemoryUsage() {
-    PROCESS_MEMORY_COUNTERS_EX pmc;
+    /*PROCESS_MEMORY_COUNTERS_EX pmc;
     if (GetProcessMemoryInfo(GetCurrentProcess(), (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc))) {
         // WorkingSetSize is the physical memory (RAM) currently in use by the process.
         // It's a good indicator of actual RAM consumption.
@@ -19,7 +19,7 @@ void printMemoryUsage() {
         std::cout << "  Private Bytes (Virtual): " << privateUsageMB << " MB" << std::endl;
     } else {
         std::cerr << "Failed to get process memory info. Error code: " << GetLastError() << std::endl;
-    }
+    }*/
 }
 
 int main() {

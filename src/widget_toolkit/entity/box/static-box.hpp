@@ -10,6 +10,8 @@ namespace mario::entity {
         public:
             StaticBox(sf::Vector2f _pos, sf::Vector2f _size) : Box(_pos, _size) {};
 
+            ~StaticBox() override = default;
+
             void move(bool _isMoveRight, bool _isReleased) override {
             }
 
@@ -17,6 +19,9 @@ namespace mario::entity {
             }
 
             void update(float dt) override {
+            }
+
+            void resetJump() override {
             }
 
             void setVelocity(sf::Vector2f vel) override {
@@ -30,10 +35,13 @@ namespace mario::entity {
                 return true;
             }
 
-            bool isOnSurface() const override {
-                return true;
+            void setOnGround(bool isOnGround) override {
             }
 
+            bool isOnGround() const override {
+                return true;
+            }
+            
             bool isFaceForward() const override {
                 return true;
             }

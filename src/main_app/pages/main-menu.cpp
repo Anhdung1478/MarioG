@@ -2,6 +2,7 @@
 #include "main-menu.hpp"
 #include "levels.hpp"
 #include "select.hpp"
+#include "settings.hpp"
 
 mario::pages::MainMenuPage::MainMenuPage(mario::MainWindow &context) : Page(context) {
     p_font = std::make_unique<sf::Font>("../../asset/fonts/Cascadia.ttf");
@@ -40,7 +41,7 @@ mario::pages::MainMenuPage::MainMenuPage(mario::MainWindow &context) : Page(cont
     p_button->buttonRect = sf::FloatRect(sf::Vector2f(540, 590), sf::Vector2f(200, 30));
     p_button->p_nodeOnButton = nullptr;
     p_button->Click.append([this]() {
-
+        _context->changePage(std::make_shared<mario::pages::SettingsPage>(*_context));
     });
 
     p_menuButtonListNode->buttonList.push_back(p_button);
