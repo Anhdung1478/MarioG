@@ -7,7 +7,6 @@ private:
     std::vector<SpriteData2> sprites;
 public:
     SolidBlock();
-    // SolidBlock(const sf::Vector2f &pos, const sf::Vector2f &size, const std::string &name);
     SolidBlock(const sf::Vector2f &pos, const sf::Vector2f &size, const std::string &name);
     ~SolidBlock();
 

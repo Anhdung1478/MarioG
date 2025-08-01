@@ -8,8 +8,6 @@ TileMap::TileMap(){
 TileMap::TileMap(const std::string &tilesetPath, const std::string &mapPath) {
     loadTileset(tilesetPath);
     loadMap(mapPath);
-    createBlock();
-    sortBlocks();
 }
 
 TileMap::~TileMap(){
@@ -119,7 +117,7 @@ bool TileMap::loadMap(const std::string& mapPath) {
     return true;
 }
 
-void TileMap::createBlock() {
+void TileMap::createBlock(std::vector<Block*> &blocks) {
     blocks.clear();
     for (int y = 0; y < mapHeight; ++y) {
         for (int x = 0; x < mapWidth; ++x) {
@@ -237,6 +235,17 @@ void TileMap::createBlock() {
                     blocks.push_back(new QuestionBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "question-block[0]"));
                     break;
 
+                // Brick blocks
+                case 195:
+                    blocks.push_back(new Brick(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "brick-block[0]"));
+                    break;
+                case 197:
+                    blocks.push_back(new Brick(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "brick-block[1]"));
+                    break;
+                case 199:
+                    blocks.push_back(new Brick(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "brick-block[2]"));
+                    break;
+
                 default:
                     break;
             }
@@ -291,9 +300,11 @@ void TileMap::createBlock() {
         
     //     tiles.push_back(sprite);
     // }
+
+    sortBlocks(blocks);
 }
 
-void TileMap::sortBlocks() {
+void TileMap::sortBlocks(std::vector<Block*> &blocks) {
     std::sort(blocks.begin(), blocks.end(), [](const Block *a, const Block *b){
         if (a->getPosition().x == b->getPosition().x){
             return a->getPosition().y < b->getPosition().y; // Sort by Y if X is the same
@@ -450,5 +461,5 @@ void TileMap::render(sf::RenderWindow *window){
 }
 
 sf::FloatRect TileMap::getWorldBounds() const {
-    return sf::FloatRect(sf::Vector2f(0.f, 0.f), sf::Vector2f(mapWidth * tileWidth * BLOCK_SCALE.x, mapHeight * tileHeight * BLOCK_SCALE.y));
+    return sf::FloatRect(sf::Vector2f(0.f, 0.f), sf::Vector2f(mapWidth * 16 * BLOCK_SCALE.x, mapHeight * 16 * BLOCK_SCALE.y));
 }

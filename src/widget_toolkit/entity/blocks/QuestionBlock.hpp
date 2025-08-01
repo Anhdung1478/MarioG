@@ -5,9 +5,8 @@
 class QuestionBlock : public Block {
 public:
     QuestionBlock(){};
-    QuestionBlock(sf::Vector2f pos);
     QuestionBlock(sf::Vector2f pos, sf::Vector2f size, std::string name);
-    ~QuestionBlock() = default;
+    ~QuestionBlock();
 
     void InitSpritesSheet() override;
     void reactToCollision(int side) override;

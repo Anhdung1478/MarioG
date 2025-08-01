@@ -6,10 +6,10 @@
 #include "../../resource/TextureManager.hpp"
 
 namespace mario::entity {
-    constexpr static float TIME_BETWEEN_STEP = 1.0f / 10.0f;
-
+    
     class Animation : public IScreenElement {
         private:
+            float TIME_BETWEEN_STEP = 1.0f / 10.0f;
             TextureManager& p_textureResource = TextureManager::getInstance();
             std::vector<SpriteData> animationSteps;
             sf::Sprite *p_sprite;
@@ -99,6 +99,10 @@ namespace mario::entity {
 
             int getStep() const {
                 return step;
+            }
+            
+            void setTimeBetweenStep(float time) {
+                TIME_BETWEEN_STEP = time;
             }
 
             void setPosition(sf::Vector2f pos) {

@@ -88,8 +88,11 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
         _context->getSoundManager().adjustSoundEffectsVolume(value);
     });
 
+    // Load Map
     tileMap = std::make_unique<TileMap>("../../asset/maps/tiles-8.json", "../../asset/maps/Map_1.json");
+    tileMap->createBlock(blocks);
 
+    
     p_levelDataManager = std::make_unique<mario::resource::LevelDataManager>();
     camera.setMapBounds(tileMap->getWorldBounds());
 }
@@ -117,6 +120,10 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
 
     if(!_isPaused) {
         p_player->update(window, dt);
+        for(auto &block : blocks) {
+            block->update(window, dt);
+        }
+        collisionManager.checkCollisionPlayerWithBlocks(p_player, blocks);
     
         camera.followEntity(*p_player, dt);
         camera.update(dt);
@@ -124,8 +131,8 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
         currLevelState.stateType = p_player->getPlayerStateType();
         p_levelDataManager->update(dt, currLevelState);
         
-        tileMap->update(window, dt);
-        tileMap->checkCollision(p_player);
+        // tileMap->update(window, dt);
+        // tileMap->checkCollision(p_player);
     }
 
     // Check for hover state
@@ -220,13 +227,18 @@ void mario::pages::LevelsPage::handleEvent(const sf::RenderWindow *window, const
     if(!_isPaused) {
         p_player->handleEvent(window, event);
         p_inputManager->handleEvent(*p_player, event);   
-        tileMap->handleEvent(window, event);
+        for(auto &block : blocks) {
+            block->handleEvent(window, event);
+        }
+        // tileMap->handleEvent(window, event);
     }
 }
 
 void mario::pages::LevelsPage::render(sf::RenderWindow *window) {
     camera.applyTo(*window);
-    tileMap->render(window);
+    for(auto &block : blocks) {
+        block->render(window);
+    }
     p_player->render(window);
 
     window->draw(*pauseSprite);

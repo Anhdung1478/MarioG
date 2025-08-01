@@ -31,10 +31,10 @@ public:
 
     bool loadTileset(const std::string &tilesetPath);
     bool loadMap(const std::string &mapPath);
-    void createBlock();
+    void createBlock(std::vector<Block*> &blocks);
 
     // Sort the blocks based on their position X first and Y second
-    void sortBlocks(); // Sort blocks based on their X and Y positions - X first, Y second
+    void sortBlocks(std::vector<Block*> &blocks); // Sort blocks based on their X and Y positions - X first, Y second
     void findBlocksCollisions(int &L, int &R, const mario::entity::Entity *player);
 
     // SideCollision findCollisionSide(const std::unique_ptr<mario::entity::Entity> &EntityA, const std::unique_ptr<mario::entity::Entity> &EntityB);

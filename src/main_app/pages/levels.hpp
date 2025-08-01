@@ -6,6 +6,7 @@
 #include "../../widget_toolkit/resource/LevelState.hpp"
 #include "../../widget_toolkit/resource/LevelDataManager.hpp"
 #include "../../widget_toolkit/camera/camera.hpp"
+#include "../../widget_toolkit/collision/CollisionManager.hpp"
 
 #include "../../widget_toolkit/controls/button.hpp"
 #include "../../widget_toolkit/controls/button-list.hpp"
@@ -17,10 +18,12 @@ namespace mario::pages {
             std::unique_ptr<mario::input::InputManager> p_inputManager;
             std::unique_ptr<mario::resource::LevelDataManager> p_levelDataManager;
             std::unique_ptr<TileMap> tileMap;
-
+            std::vector<Block*> blocks;
+            
             mario::entity::Player *p_player;
             sf::Time timeRemaining;
             Camera camera;
+            CollisionManager collisionManager;
 
             // for Sound Manager
             mario::resource::LevelState currLevelState;
