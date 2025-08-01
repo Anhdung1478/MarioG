@@ -10,7 +10,7 @@ SolidBlock::SolidBlock(const sf::Vector2f &pos, const sf::Vector2f &size, const 
 {
     InitSpritesSheet();
 
-    p_animation = new mario::entity::Animation("../../asset/maps/Image/tiles-8.png", sf::Vector2f(2.5f, 2.5f), sprites);
+    p_animation = new mario::entity::Animation("../../asset/maps/Image/tiles-8.png", BLOCK_SCALE, sprites);
     p_animation->setSpriteAnimation(name);
     p_animation->setAnimationState(true);
 }
@@ -57,7 +57,12 @@ void SolidBlock::InitSpritesSheet() {
     };
 }
 
+void SolidBlock::reactToCollision(int side) {
+
+}
+
 void SolidBlock::update(const sf::RenderWindow *window, float dt) {
+
 }
 
 void SolidBlock::handleEvent(const sf::RenderWindow *window, const sf::Event &event) {

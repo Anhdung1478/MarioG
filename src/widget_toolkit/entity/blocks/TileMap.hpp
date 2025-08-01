@@ -10,15 +10,6 @@
 #include "../../resource/json.hpp"
 #include "../../interfaces.hpp"
 
-
-enum class SideCollision : uint8_t{
-    Top    = 0,
-    Bottom = 1,
-    Left   = 2,
-    Right  = 3,
-    None   = 4
-};
-
 class TileMap : public mario::IScreenElement {
 private:
     sf::Texture tilesetTexture;

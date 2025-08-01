@@ -22,7 +22,7 @@ namespace mario::entity {
             bool _isRunning;
 
         public:
-            DynamicBox(sf::Vector2f _pos, sf::Vector2f _size, float acc = 150.f, float maxVX = 200.f, float _jumpForce = -200.f, int _maxJump = 2) 
+            DynamicBox(sf::Vector2f _pos, sf::Vector2f _size, float acc = 250.f, float maxVX = 250.f, float _jumpForce = -200.f, int _maxJump = 2) 
                 : Box(_pos, _size), maxVelocityX(maxVX), maxJumps(_maxJump), jumpForce(_jumpForce) 
             {
                 acceleration.x = acc;

@@ -9,6 +9,7 @@ TileMap::TileMap(const std::string &tilesetPath, const std::string &mapPath) {
     loadTileset(tilesetPath);
     loadMap(mapPath);
     createBlock();
+    sortBlocks();
 }
 
 TileMap::~TileMap(){
@@ -231,6 +232,11 @@ void TileMap::createBlock() {
                     blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "stair-block[2]"));
                     break;
 
+                // Question blocks
+                case 117:
+                    blocks.push_back(new QuestionBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "question-block[0]"));
+                    break;
+
                 default:
                     break;
             }
@@ -298,11 +304,11 @@ void TileMap::sortBlocks() {
 
 void TileMap::findBlocksCollisions(int &L, int &R, const mario::entity::Entity *entity){
     //using lower_bound and upper_bound to find the range of blocks that might collide with the entity
-    auto itL = std::lower_bound(blocks.begin(), blocks.end(), entity->getPosition().x - entity->getSize().x / 2, 
+    auto itL = std::lower_bound(blocks.begin(), blocks.end(), entity->getPosition().x - entity->getSize().x, 
         [](const Block *block, float posX) {
             return block->getPosition().x < posX;
         });
-    auto itR = std::upper_bound(blocks.begin(), blocks.end(), entity->getPosition().x + entity->getSize().x / 2, 
+    auto itR = std::upper_bound(blocks.begin(), blocks.end(), entity->getPosition().x + entity->getSize().x, 
         [](float posX, const Block *block) {
             return posX < block->getPosition().x;
         });
@@ -357,6 +363,7 @@ void TileMap::fixPosition(mario::entity::Entity *entity, const Block *block, Sid
 void TileMap::checkCollision(mario::entity::Player *player) {
     int L, R;
     findBlocksCollisions(L, R, player);
+    // std::cout << L << " " << R << "\n";
 
     //player->setMoveLeft(true); 
     //player->setMoveRight(true);
@@ -366,12 +373,14 @@ void TileMap::checkCollision(mario::entity::Player *player) {
     bool hasLeftCollision = false;
     bool hasRightCollision = false;
 
-    for(int i = 0; i < blocks.size(); ++i){
+    // for(int i = 0; i < blocks.size(); ++i){
+    for(int i = L; i <= R; ++i){
         auto& block = blocks[i];
         if (!block->isExist()) continue;
 
         SideCollision side = findCollisionSide(player, block);
         if(side != SideCollision::None) {
+            block->reactToCollision(side ^ 1);
             switch (side) {
                 case SideCollision::Top:
                     hasTopCollision = true;
@@ -395,7 +404,7 @@ void TileMap::checkCollision(mario::entity::Player *player) {
 
     sf::Vector2f vel = player->getVelocity();
     if(hasBottomCollision) {
-        vel.y = 0.f;
+        vel.y = -10.f;
         player->resetJump();
         player->setOnGround(true);
         std::cerr << "\nBottom Collision Detected\n";
@@ -441,5 +450,5 @@ void TileMap::render(sf::RenderWindow *window){
 }
 
 sf::FloatRect TileMap::getWorldBounds() const {
-    return sf::FloatRect(sf::Vector2f(0.f, 0.f), sf::Vector2f(3424.f, 288.f));
+    return sf::FloatRect(sf::Vector2f(0.f, 0.f), sf::Vector2f(mapWidth * tileWidth * BLOCK_SCALE.x, mapHeight * tileHeight * BLOCK_SCALE.y));
 }
