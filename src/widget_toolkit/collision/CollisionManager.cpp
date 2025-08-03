@@ -2,6 +2,7 @@
 
 #include <algorithm>
 
+
 void CollisionManager::sortEntitiesByX(std::vector<Block*> &Entities) {
     std::sort(Entities.begin(), Entities.end(), [](const Block *a, const Block *b){
         if (a->getPosition().x == b->getPosition().x){
@@ -132,4 +133,59 @@ void CollisionManager::checkCollisionPlayerWithBlocks(mario::entity::Player *&pl
     }
 
     player->setVelocity(vel);
+}
+
+void CollisionManager::checkCollisionEnemyWithBlocks(std::vector<mario::entity::Enemy*> &enemies, std::vector<Block*> &blocks){
+    for (auto& enemy : enemies) {
+        int L, R;
+        findBlocksCollisions(L, R, enemy, blocks);
+
+        bool hasTopCollision = false;
+        bool hasBottomCollision = false;
+        bool hasLeftCollision = false;
+        bool hasRightCollision = false;
+
+        for (int i = 0; i < blocks.size(); ++i) {
+            auto& block = blocks[i];
+            if (!block->isExist()) continue;
+
+            SideCollision side = findCollisionSide(enemy, block);
+            if (side != SideCollision::None) {
+                switch (side) {
+                    case SideCollision::Top:
+                        hasTopCollision = true;
+                        break;
+                    case SideCollision::Bottom:
+                        hasBottomCollision = true;
+                        break;
+                    case SideCollision::Left:
+                        hasLeftCollision = true;
+                        break;
+                    case SideCollision::Right:
+                        hasRightCollision = true;
+                        break;
+                    default:
+                        break;
+                }
+                
+                fixPosition(enemy, block, side);
+            }
+        }
+
+        sf::Vector2f vel = enemy->getVelocity();
+        if (hasBottomCollision) {
+            vel.y = 0.f;
+            enemy->setOnGround(true); // Đặt trạng thái trên mặt đất
+        }
+
+        if (hasTopCollision) {
+            vel.y = 0.f;
+        }
+
+        if (hasLeftCollision || hasRightCollision) {
+            vel.x = 0.f;
+        }
+
+        enemy->setVelocity(vel);
+    }
 }

@@ -20,11 +20,12 @@ namespace mario::pages {
         private:
             std::unique_ptr<mario::input::InputManager> p_inputManager;
             std::unique_ptr<mario::resource::LevelDataManager> p_levelDataManager;
+            
             std::unique_ptr<TileMap> tileMap;
             std::vector<Block*> blocks;
+            std::vector<mario::entity::Enemy*> enemies;
             
             mario::entity::Player *p_player;
-            std::vector<mario::entity::Entity*> enemies;
             sf::Time timeRemaining;
             Camera camera;
             CollisionManager collisionManager;
