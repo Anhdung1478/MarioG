@@ -9,6 +9,7 @@
 #include "../player.hpp"
 #include "../../resource/json.hpp"
 #include "../../interfaces.hpp"
+#include "../enemy/enemy.hpp"
 
 class TileMap : public mario::IScreenElement {
 private:
@@ -30,6 +31,8 @@ public:
 
     bool loadTileset(const std::string &tilesetPath);
     bool loadMap(const std::string &mapPath);
+
+    void checkCollisionEn(mario::entity::Enemy* enemy);
     void createBlock(std::vector<Block*> &blocks);
     void sortBlocks(std::vector<Block*> &blocks);
 

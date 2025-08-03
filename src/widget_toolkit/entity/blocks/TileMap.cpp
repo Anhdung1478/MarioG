@@ -310,6 +310,59 @@ void TileMap::sortBlocks(std::vector<Block*> &blocks) {
     });
 }
 
+void TileMap::checkCollisionEn(mario::entity::Enemy* enemy) {
+    int L, R;
+    findBlocksCollisions(L, R, enemy);
+
+    bool hasTopCollision = false;
+    bool hasBottomCollision = false;
+    bool hasLeftCollision = false;
+    bool hasRightCollision = false;
+
+    for (int i = 0; i < blocks.size(); ++i) {
+        auto& block = blocks[i];
+        if (!block->isExist()) continue;
+
+        SideCollision side = findCollisionSide(enemy, block);
+        if (side != SideCollision::None) {
+            switch (side) {
+                case SideCollision::Top:
+                    hasTopCollision = true;
+                    break;
+                case SideCollision::Bottom:
+                    hasBottomCollision = true;
+                    break;
+                case SideCollision::Left:
+                    hasLeftCollision = true;
+                    break;
+                case SideCollision::Right:
+                    hasRightCollision = true;
+                    break;
+                default:
+                    break;
+            }
+            
+            fixPosition(enemy, block, side);
+        }
+    }
+
+    sf::Vector2f vel = enemy->getVelocity();
+    if (hasBottomCollision) {
+        vel.y = 0.f;
+        enemy->setOnGround(true); // Đặt trạng thái trên mặt đất
+    }
+
+    if (hasTopCollision) {
+        vel.y = 0.f;
+    }
+
+    if (hasLeftCollision || hasRightCollision) {
+        vel.x = 0.f;
+    }
+
+    enemy->setVelocity(vel);
+}
+
 void TileMap::update(const sf::RenderWindow *window, float dt){
 
 }
