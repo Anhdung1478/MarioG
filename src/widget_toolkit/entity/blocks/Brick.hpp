@@ -1,12 +1,14 @@
 #pragma once
 #include "Block.hpp"
 
+namespace mario {
+namespace entity {
+
 class Brick : public Block {
 public:
     Brick(){};
     Brick(sf::Vector2f pos, sf::Vector2f size, std::string name);
     ~Brick() = default;
-
     void InitSpritesSheet() override;
     void reactToCollision(int side) override;
 
@@ -17,3 +19,6 @@ private:
     // mario::entity::Animation *fragment_animation;
     std::vector<SpriteData2> sprites;
 };
+
+} // namespace entity
+} // namespace mario

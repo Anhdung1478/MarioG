@@ -2,6 +2,9 @@
 
 using json = nlohmann::json;
 
+namespace mario {
+namespace entity {
+
 TileMap::TileMap(){
 }
 
@@ -97,20 +100,33 @@ bool TileMap::loadMap(const std::string& mapPath) {
     }
     
     // Load objects
-    // for (const auto& layerJson : mapJson["layers"]) {
-    //     if (layerJson["type"] == "objectgroup") {
-    //         for (const auto& obj : layerJson["objects"]) {
-    //             ObjectData objData;
-    //             objData.gid = obj["gid"];
-    //             objData.x = obj["x"];
-    //             objData.y = obj["y"];
-    //             objData.width = obj["width"];
-    //             objData.height = obj["height"];
-    //             objects.push_back(objData);
-    //         }
-    //         break;
-    //     }
-    // }
+    for (const auto& layerJson : mapJson["layers"]) {
+        if (layerJson["type"] == "objectgroup") {
+            for (const auto& obj : layerJson["objects"]) {
+                ObjectData objData;
+                objData.gid = obj["gid"];
+                objData.x = obj["x"];
+                objData.y = obj["y"];
+                objData.width = obj["width"];
+                objData.height = obj["height"];
+
+                if (obj.contains("properties")) {
+                    for (const auto& prop : obj["properties"]) {
+                        if (prop["name"] == "item_type") {
+                            objData.itemType = prop["value"];
+                        } else if (prop["name"] == "trigger_type") {
+                            objData.triggerType = prop["value"];
+                        } else if (prop["name"] == "trigger_id") {
+                            objData.triggerID = prop["value"];
+                        } 
+                    }
+                }
+
+                objects.push_back(objData);
+            }
+            break;
+        }
+    }
     
     return true;
 }
@@ -378,3 +394,37 @@ void TileMap::render(sf::RenderWindow *window){
 sf::FloatRect TileMap::getWorldBounds() const {
     return sf::FloatRect(sf::Vector2f(0.f, 0.f), sf::Vector2f(mapWidth * 16 * BLOCK_SCALE.x, mapHeight * 16 * BLOCK_SCALE.y));
 }
+
+SideCollision TileMap::checkItemCollision(Item* item) {
+    int L, R;
+    //findItemBlockCollisions(L, R, item);
+    
+    for (int i = L; i < R; ++i) {
+        auto& block = blocks[i];
+        if (!block->isExist()) continue;
+        
+        SideCollision side = findCollisionSide(item, block);
+        if (side != SideCollision::None) {
+            fixPosition(item, block, side);
+            return side;
+        }
+    }
+    return SideCollision::None;
+}
+
+bool TileMap::hasGroundAt(sf::Vector2f position) {
+    // Check if there's a solid block at the given position
+    // Used for edge detection for walking items
+    for (const auto& block : blocks) {
+        if (!block->isExist()) continue;
+        
+        sf::FloatRect blockBounds = block->getHitbox();
+        if (blockBounds.contains(position)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+} // namespace entity
+} // namespace mario

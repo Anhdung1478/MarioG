@@ -11,6 +11,7 @@
 #include "../../widget_toolkit/controls/button.hpp"
 #include "../../widget_toolkit/controls/button-list.hpp"
 #include "../../widget_toolkit/controls/slider.hpp"
+#include "../../widget_toolkit/entity/item/ItemManager.hpp"
 
 #include "../../widget_toolkit/entity/enemy/goomba.hpp"
 #include "../../widget_toolkit/entity/enemy/koopa.hpp"
@@ -20,9 +21,10 @@ namespace mario::pages {
         private:
             std::unique_ptr<mario::input::InputManager> p_inputManager;
             std::unique_ptr<mario::resource::LevelDataManager> p_levelDataManager;
-            std::unique_ptr<TileMap> tileMap;
-            std::vector<Block*> blocks;
-            
+      
+            std::unique_ptr<mario::entity::TileMap> tileMap;
+            std::vector<mario::entity::Block*> blocks;
+      
             mario::entity::Player *p_player;
             std::vector<mario::entity::Entity*> enemies;
             sf::Time timeRemaining;
@@ -63,6 +65,7 @@ namespace mario::pages {
             std::unique_ptr<Slider> musicSlider;
             std::unique_ptr<Slider> sfxSlider;
 
+            std::unique_ptr<mario::entity::ItemManager> itemManager;
         public:
             LevelsPage(MainWindow &context, mario::resource::LevelState state);
             ~LevelsPage();
