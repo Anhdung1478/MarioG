@@ -1,4 +1,8 @@
 #include "QuestionBlock.hpp"
+#include "../item/ItemManager.hpp"
+
+namespace mario {
+namespace entity {
 
 QuestionBlock::QuestionBlock(sf::Vector2f pos) 
     : Block(pos, sf::Vector2f(16, 16), "question-block") 
@@ -29,6 +33,7 @@ void QuestionBlock::InitSpritesSheet(){
         {"question-block[2]", 35, 52, 16, 16}
     };
 }
+
 void QuestionBlock::update(const sf::RenderWindow *window, float dt) {
     p_animation->update(window, dt);
 }
@@ -39,3 +44,19 @@ void QuestionBlock::handleEvent(const sf::RenderWindow *window, const sf::Event 
 void QuestionBlock::render(sf::RenderWindow *window) {
     p_animation->renderWithPosition(window, p_body->getPosition());
 }
+
+void QuestionBlock::onHit(Player* player, ItemManager* itemManager) {
+    if (!hasBeenHit) {
+        hasBeenHit = true;
+
+        // We can change to empty box sprite (lemme find :))
+        // Play sound effect? (if we have)
+        
+        if (itemManager) {
+            itemManager->triggerSpawn(blockID, SpawnTrigger::BlockHit);
+        }
+    }
+}
+
+} // namespace entity
+} // namespace mario

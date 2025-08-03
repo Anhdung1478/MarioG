@@ -5,7 +5,7 @@
 #include "box/dynamic-box.hpp"
 #include "player_state/mario-state-manager.hpp"
 #include "player_state/luigi-state-manager.hpp"
-//#include "item/item.hpp"
+#include "item/item.hpp"
 
 namespace mario::entity {
     #define FILE_PATH "../../asset/sprites/"
@@ -26,6 +26,10 @@ namespace mario::entity {
             bool _isOnGround;
 
             bool hasPlayedJumpSound_ = false; // For sound effect
+
+            int score = 0;
+            int lives = 2;
+            int coinCount = 0;
 
         public:
             Player(sf::Vector2f spawnPoint, CharacterListType characterType, player_state::PlayerStateType stateType) : _characterType(characterType) {
@@ -163,6 +167,49 @@ namespace mario::entity {
             
             void setJumpSoundPlayed(bool played) { 
                 hasPlayedJumpSound_ = played; 
+            }
+
+            void collectCoin() {
+                coinCount++;
+                score += 200;
+                
+                // 1-up at 100 coins
+                if (coinCount >= 100) {
+                    coinCount = 0;
+                    lives++;
+                    // Play 1-up sound
+                }
+                
+                // Play coin sound
+            }
+            
+            void collectRedMushroom() {
+                if (getPlayerStateType() == player_state::PlayerStateType::Small) {
+                    score += 1000;
+                    p_stateManager->changeToSuperState(p_animation, p_body);
+                    // Play power-up sound
+                } else {
+                    // Already super or fire, give points instead
+                    score += 1000;
+                }
+            }
+            
+            void collectFireFlower() {
+                if (getPlayerStateType() != player_state::PlayerStateType::Small) {
+                    score += 1000;
+                    p_stateManager->changeToFireState(p_animation, p_body);
+                    // Play power-up sound
+                } else {
+                    // Small Mario gets super first then fire
+                    p_stateManager->changeToSuperState(p_animation, p_body);
+                    // Delay fire transformation or store for next frame?
+                }
+            }
+            
+            void collect1UpMushroom() {
+                lives++;
+                score += 1000;
+                // Play 1-up sound
             }
     };
 

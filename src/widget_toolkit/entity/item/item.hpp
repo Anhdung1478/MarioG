@@ -13,14 +13,30 @@ namespace mario::entity {
         OneupMushroom,
         FireFlower
     };
-    class Item : public Entity { 
+    class Item : public Entity {
+    friend class ItemManager; 
+        public:
+            enum class MovementType {
+                Static, // Fireflower
+                Floating,
+                Walking,
+                Bouncing // Bounces off surfaces
+            };
+
+            virtual ~Item() = default;
+
         protected:
             bool isMoving = true;
             ItemType type;
             bool isCollectedFlag = false;
+            MovementType movementType;
+
+            float floatAmptitude = 5.0f;
+            float floatSpeed = 2.0f;
+            float OriginalY;
 
             void collect() { isCollectedFlag = true; }
-        public:
+
             Item(ItemType itemType,
                 const std::string& jsonPath, const std::string& texturePath, 
                 sf::Vector2f scale, const std::string& spriteID, 
@@ -32,8 +48,6 @@ namespace mario::entity {
                     p_body->setVelocity(startVelocity);
             }
             
-            virtual ~Item() = default;
-
             virtual void onCollect(Entity* collector) = 0;
 
             // Update logic (animation, physics)
@@ -57,5 +71,15 @@ namespace mario::entity {
 
             // Check if collected
             bool isCollected() const { return isCollectedFlag; }
+
+            MovementType getMovementType() const { return movementType; }
+    
+            sf::Vector2f getVelocity() const { 
+                return p_body ? p_body->getVelocity() : sf::Vector2f(0, 0); 
+            }
+    
+            void setVelocity(sf::Vector2f velocity) { 
+                if (p_body) p_body->setVelocity(velocity); 
+            }
     };
 }

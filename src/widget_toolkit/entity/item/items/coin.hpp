@@ -4,23 +4,35 @@
 
 namespace mario::entity {
     class Coin : public Item {
+    private:
+        float floatTimer = 0.0f;
     public:
-        Coin(sf::Vector2f startPosition)
-            : Item(ItemType::Coin,
-                   "../../../asset/sprites/10-coin.json", "../../../asset/sprites/coins_sheet.png",
-                   {2.f, 2.f}, "10-coin",
-                   startPosition, {16.f, 16.f}, {0.f, 0.f}) {}
+        Coin(const std::string& jsonPath, const std::string& texturePath, 
+             sf::Vector2f scale, const std::string& spriteID, 
+             sf::Vector2f position, sf::Vector2f size)
+            : Item(ItemType::Coin, jsonPath, texturePath, scale, spriteID, position, size, {0.f, 0.f}) {}
 
         void onCollect(Entity* collector) override {
-            // Add player's logic for adding coins here
-            collect();
+            if (Player* player = dynamic_cast<Player*>(collector)) {
+                player->collectCoin(); // do we need to add scores?
+                collect();
+            }
         }
 
         void update(const sf::RenderWindow* window, float dt) override {
             if (!isCollected()) {
-                if (p_body) p_body->update(dt);  // Optional, since coins usually don't move
+                floatTimer += dt * floatSpeed;
+                float offsetY = std::sin(floatTimer) * floatAmptitude;
+
+                sf::Vector2f currentPos = p_body->getPosition();
+                p_body->setPosition({currentPos.x, currentPos.y + offsetY});
                 if (p_animation) p_animation->update(window, dt);
             }
+        }
+
+        void handleEvent(const sf::RenderWindow* window, const sf::Event& event) override {
+            // Coins typically don't need to handle events
+            // This method is implemented to satisfy the IUpdateable interface
         }
     };
 }

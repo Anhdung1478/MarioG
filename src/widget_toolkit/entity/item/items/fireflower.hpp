@@ -5,15 +5,16 @@
 namespace mario::entity {
     class FireFlower : public Item {
     public:
-        FireFlower(sf::Vector2f startPosition)
-            : Item(ItemType::FireFlower,
-                   "../../../asset/sprites/fireflower.json", "../../../asset/sprites/mario_sheets.png",
-                   {2.f, 2.f}, "fireflower",
-                   startPosition, {16.f, 16.f}, {0.f, 0.f}) {}
+        FireFlower(const std::string& jsonPath, const std::string& texturePath, 
+                   sf::Vector2f scale, const std::string& spriteID, 
+                   sf::Vector2f position, sf::Vector2f size, sf::Vector2f velocity)
+            : Item(ItemType::FireFlower, jsonPath, texturePath, scale, spriteID, position, size, velocity) {}
 
         void onCollect(Entity* collector) override {
-            // Add player's logic for turning into fire mode
-            collect();
+            if (Player* player = dynamic_cast<Player*>(collector)) {
+                player->collectFireFlower();               
+                collect();
+            }
         }
 
         void update(const sf::RenderWindow* window, float dt) override {
@@ -21,6 +22,11 @@ namespace mario::entity {
                 if (p_body) p_body->update(dt); // Might be static, but physics can still apply
                 if (p_animation) p_animation->update(window, dt);
             }
+        }
+
+        void handleEvent(const sf::RenderWindow* window, const sf::Event& event) override {
+            // Fire flowers typically don't need to handle events
+            // This method is implemented to satisfy the IUpdateable interface
         }
     };
 }

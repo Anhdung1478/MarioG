@@ -1,5 +1,8 @@
 #include "SolidBlock.hpp"
 
+namespace mario {
+namespace entity {
+
 SolidBlock::SolidBlock() : Block()
 {
     // Default constructor
@@ -67,3 +70,6 @@ void SolidBlock::handleEvent(const sf::RenderWindow *window, const sf::Event &ev
 void SolidBlock::render(sf::RenderWindow *window) {
     Entity::render(window);
 }
+
+} // namespace entity
+} // namespace mario

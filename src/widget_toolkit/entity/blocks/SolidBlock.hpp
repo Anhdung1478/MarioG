@@ -2,6 +2,9 @@
 
 #include "Block.hpp"
 
+namespace mario {
+namespace entity {
+
 class SolidBlock : public Block {
 private:
     std::vector<SpriteData2> sprites;
@@ -17,3 +20,6 @@ public:
     void handleEvent(const sf::RenderWindow *window, const sf::Event &event) override;
     void render(sf::RenderWindow *window) override;
 };
+
+} // namespace entity
+} // namespace mario

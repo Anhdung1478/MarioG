@@ -2,6 +2,7 @@
 #include "levels.hpp"
 #include "main-menu.hpp"
 #include "../../widget_toolkit/resource/SoundManager.hpp"
+#
 
 mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::LevelState state) : Page(context), camera({1280, 720}), currLevelState(state) {
     p_player = new mario::entity::Player(sf::Vector2f(15, 10), state.characterType, state.stateType);
@@ -88,10 +89,15 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
         _context->getSoundManager().adjustSoundEffectsVolume(value);
     });
 
-    tileMap = std::make_unique<TileMap>("../../asset/maps/tiles-8.json", "../../asset/maps/Map_1.json");
+    tileMap = std::make_unique<mario::entity::TileMap>("../../asset/maps/tiles-8.json", "../../asset/maps/Map_1.json");
 
     p_levelDataManager = std::make_unique<mario::resource::LevelDataManager>();
     camera.setMapBounds(tileMap->getWorldBounds());
+
+    itemManager = std::make_unique<mario::entity::ItemManager>();
+    itemManager->setPlayerReference(p_player);
+    itemManager->setTileMapRef(tileMap.get());
+    itemManager->loadSpawnPoints(tileMap->getObjects());
 }
 
 void mario::pages::LevelsPage::autoSave() {
@@ -165,6 +171,9 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
         musicSlider->update(*window);
         sfxSlider->update(*window);
     }
+
+    itemManager->update(window, dt);
+    itemManager->processSpawnTriggers(p_player, dt);
 }
 
 void mario::pages::LevelsPage::handleEvent(const sf::RenderWindow *window, const sf::Event &event) {
@@ -242,4 +251,6 @@ void mario::pages::LevelsPage::render(sf::RenderWindow *window) {
         musicSlider->render(*window);
         sfxSlider->render(*window);
     }
+
+    itemManager->render(window);
 }
