@@ -9,7 +9,7 @@ namespace mario::entity {
     class DynamicBox : public Box {
         private:
             static constexpr float MAX_FALL_SPEED = 800.f;
-            static constexpr sf::Time DELAY_TIME_BETWEEN_JUMP = sf::seconds(0.0001f);
+            //static constexpr sf::Time DELAY_TIME_BETWEEN_JUMP = sf::seconds(0.0001f);
             
             sf::Vector2f acceleration, velocity;
             sf::Time timeUntilNextJump;
@@ -22,7 +22,7 @@ namespace mario::entity {
             bool _isRunning;
 
         public:
-            DynamicBox(sf::Vector2f _pos, sf::Vector2f _size, float acc = 150.f, float maxVX = 200.f, float _jumpForce = -200.f, int _maxJump = 2) 
+            DynamicBox(sf::Vector2f _pos, sf::Vector2f _size, float acc = 1000.f, float maxVX = 300.f, float _jumpForce = -275.f, int _maxJump = 2) 
                 : Box(_pos, _size), maxVelocityX(maxVX), maxJumps(_maxJump), jumpForce(_jumpForce) 
             {
                 acceleration.x = acc;
@@ -87,7 +87,7 @@ namespace mario::entity {
                     timeUntilNextJump -= sf::seconds(dt);
                     if(timeUntilNextJump <= sf::seconds(0.f)) {
                         velocity.y += jumpForce;
-                        timeUntilNextJump = DELAY_TIME_BETWEEN_JUMP;
+                        timeUntilNextJump = sf::seconds(0.0001f);
 
                         --jumpRemaining;
                         if(jumpRemaining == 0)

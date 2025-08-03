@@ -6,15 +6,17 @@
 #include "../../resource/TextureManager.hpp"
 
 namespace mario::entity {
-    constexpr static float TIME_BETWEEN_STEP = 1.0f / 10.0f;
-
+    
     class Animation : public IScreenElement {
         private:
+            float TIME_BETWEEN_STEP = 1.0f / 10.0f;
             TextureManager& p_textureResource = TextureManager::getInstance();
             std::vector<SpriteData> animationSteps;
             sf::Sprite *p_sprite;
             sf::Vector2f scale;
-            
+            sf::Vector2f velocity;
+            bool loop = true;
+
             sf::Time animationTimer;
             
             int step = 0;
@@ -33,12 +35,18 @@ namespace mario::entity {
 
             void performNextAnimation() {
                 setSprite(animationSteps[step]);
-                if(++step >= int(animationSteps.size()))
+                p_sprite->move(sf::Vector2f(velocity.x * step, velocity.y * step));
+                if(++step >= int(animationSteps.size())){
                     step = 0;
+                    if(!loop) {
+                        _isRunning = false;
+                        animationTimer = sf::seconds(0.f);
+                    }
+                }
             }
     
         public:
-            Animation(const std::string& jsonPath, const std::string& texturePath, sf::Vector2f _scale, const std::string& randomSpriteID) : scale(_scale) {
+            Animation(const std::string& jsonPath, const std::string& texturePath, sf::Vector2f _scale, const std::string& randomSpriteID) : scale(_scale), velocity(sf::Vector2f(0.f, 0.f)) {
                 p_textureResource.loadSheet(jsonPath, texturePath);
 
                 SpriteData data = p_textureResource.getSpriteData(randomSpriteID);
@@ -47,7 +55,7 @@ namespace mario::entity {
                 setSprite(data);
             }
 
-            Animation(const std::string& imagePath, sf::Vector2f _scale, const std::vector<SpriteData2>& sprites) : scale(_scale) {
+            Animation(const std::string& imagePath, sf::Vector2f _scale, const std::vector<SpriteData2>& sprites) : scale(_scale), velocity(sf::Vector2f(0.f, 0.f)) {
                 p_textureResource.loadSheet(imagePath, sprites);
 
                 SpriteData data = p_textureResource.getSpriteData(sprites[0].id);
@@ -87,6 +95,30 @@ namespace mario::entity {
 
             bool getAnimationState() {
                 return _isRunning;
+            }
+
+            int getStep() const {
+                return step;
+            }
+
+            void move(sf::Vector2f offset) {
+                p_sprite->move(offset);
+            }
+            
+            void setTimeBetweenStep(float time) {
+                TIME_BETWEEN_STEP = time;
+            }
+
+            void setPosition(sf::Vector2f pos) {
+                p_sprite->setPosition(pos);
+            }
+
+            void setVelocity(sf::Vector2f v) {
+                velocity = v;
+            }
+
+            void setLoop(bool value) {
+                loop = value;
             }
 
             void rotate() {
