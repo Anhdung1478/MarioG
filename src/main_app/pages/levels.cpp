@@ -120,16 +120,17 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
 
     if(!_isPaused) {
         p_player->update(window, dt);
+        
+        camera.followEntity(*p_player, dt);
+        camera.update(dt);
+        
+        currLevelState.stateType = p_player->getPlayerStateType();
+        p_levelDataManager->update(dt, currLevelState);
+        
         for(auto &block : blocks) {
             block->update(window, dt);
         }
         collisionManager.checkCollisionPlayerWithBlocks(p_player, blocks);
-    
-        camera.followEntity(*p_player, dt);
-        camera.update(dt);
-
-        currLevelState.stateType = p_player->getPlayerStateType();
-        p_levelDataManager->update(dt, currLevelState);
         
         // tileMap->update(window, dt);
         // tileMap->checkCollision(p_player);

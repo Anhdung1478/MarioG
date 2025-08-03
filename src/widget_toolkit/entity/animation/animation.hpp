@@ -100,6 +100,10 @@ namespace mario::entity {
             int getStep() const {
                 return step;
             }
+
+            void move(sf::Vector2f offset) {
+                p_sprite->move(offset);
+            }
             
             void setTimeBetweenStep(float time) {
                 TIME_BETWEEN_STEP = time;

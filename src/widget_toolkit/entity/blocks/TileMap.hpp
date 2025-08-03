@@ -16,7 +16,6 @@ private:
     std::unordered_map<int, std::string> tileProperties;
     std::vector<int> tileIds; // Store tile IDs for rendering
     std::vector<int> objectIds; // Store object IDs for rendering
-    std::vector<Block*> blocks;
     int mapWidth;
     int mapHeight;
     float tileWidth;  // Original tile size
@@ -32,15 +31,7 @@ public:
     bool loadTileset(const std::string &tilesetPath);
     bool loadMap(const std::string &mapPath);
     void createBlock(std::vector<Block*> &blocks);
-
-    // Sort the blocks based on their position X first and Y second
-    void sortBlocks(std::vector<Block*> &blocks); // Sort blocks based on their X and Y positions - X first, Y second
-    void findBlocksCollisions(int &L, int &R, const mario::entity::Entity *player);
-
-    // SideCollision findCollisionSide(const std::unique_ptr<mario::entity::Entity> &EntityA, const std::unique_ptr<mario::entity::Entity> &EntityB);
-    SideCollision findCollisionSide(const mario::entity::Entity *EntityA, const mario::entity::Entity *EntityB);
-    void fixPosition(mario::entity::Entity *entity, const Block *block, SideCollision side);
-    void checkCollision(mario::entity::Player *player);
+    void sortBlocks(std::vector<Block*> &blocks);
 
     void update(const sf::RenderWindow *window, float dt) override;
     void handleEvent(const sf::RenderWindow *window, const sf::Event &event) override;
