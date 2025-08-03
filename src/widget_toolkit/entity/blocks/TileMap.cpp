@@ -8,13 +8,10 @@ TileMap::TileMap(){
 TileMap::TileMap(const std::string &tilesetPath, const std::string &mapPath) {
     loadTileset(tilesetPath);
     loadMap(mapPath);
-    createBlock();
 }
 
 TileMap::~TileMap(){
-    for (Block *block : blocks) {
-        delete block;
-    }
+
 }
 
 bool TileMap::loadTileset(const std::string& tilesetPath) {
@@ -118,7 +115,7 @@ bool TileMap::loadMap(const std::string& mapPath) {
     return true;
 }
 
-void TileMap::createBlock() {
+void TileMap::createBlock(std::vector<Block*> &blocks) {
     blocks.clear();
     for (int y = 0; y < mapHeight; ++y) {
         for (int x = 0; x < mapWidth; ++x) {
@@ -231,6 +228,22 @@ void TileMap::createBlock() {
                     blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "stair-block[2]"));
                     break;
 
+                // Question blocks
+                case 117:
+                    blocks.push_back(new QuestionBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "question-block[0]"));
+                    break;
+
+                // Brick blocks
+                case 195:
+                    blocks.push_back(new Brick(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "brick-block[0]"));
+                    break;
+                case 197:
+                    blocks.push_back(new Brick(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "brick-block[1]"));
+                    break;
+                case 199:
+                    blocks.push_back(new Brick(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "brick-block[2]"));
+                    break;
+
                 default:
                     break;
             }
@@ -285,140 +298,16 @@ void TileMap::createBlock() {
         
     //     tiles.push_back(sprite);
     // }
+    sortBlocks(blocks);
 }
 
-void TileMap::sortBlocks() {
+void TileMap::sortBlocks(std::vector<Block*> &blocks) {
     std::sort(blocks.begin(), blocks.end(), [](const Block *a, const Block *b){
         if (a->getPosition().x == b->getPosition().x){
             return a->getPosition().y < b->getPosition().y; // Sort by Y if X is the same
         }
         return a->getPosition().x < b->getPosition().x; // Sort by X first
     });
-}
-
-void TileMap::findBlocksCollisions(int &L, int &R, const mario::entity::Entity *entity){
-    //using lower_bound and upper_bound to find the range of blocks that might collide with the entity
-    auto itL = std::lower_bound(blocks.begin(), blocks.end(), entity->getPosition().x - entity->getSize().x / 2, 
-        [](const Block *block, float posX) {
-            return block->getPosition().x < posX;
-        });
-    auto itR = std::upper_bound(blocks.begin(), blocks.end(), entity->getPosition().x + entity->getSize().x / 2, 
-        [](float posX, const Block *block) {
-            return posX < block->getPosition().x;
-        });
-
-    // Set the collision bounds
-    L = std::distance(blocks.begin(), itL);
-    R = std::distance(blocks.begin(), itR);
-}
-
-SideCollision TileMap::findCollisionSide(const mario::entity::Entity *entityA, const mario::entity::Entity *entityB) {
-    sf::FloatRect hitBoxA = entityA->getHitbox();
-    sf::FloatRect hitBoxB = entityB->getHitbox();
-
-    sf::Vector2f centerA = hitBoxA.position + hitBoxA.size / 2.f;
-    sf::Vector2f centerB = hitBoxB.position + hitBoxB.size / 2.f;
-
-    float deltaX = centerB.x - centerA.x;
-    float deltaY = centerB.y - centerA.y;
-
-    float overlapX = (hitBoxA.size.x + hitBoxB.size.x) / 2.f - std::abs(deltaX);
-    float overlapY = (hitBoxA.size.y + hitBoxB.size.y) / 2.f - std::abs(deltaY);
-
-    if (overlapX >= 0 && overlapY >= 0) {
-        if (overlapX >= overlapY) {
-            return (deltaY > 0) ? SideCollision::Bottom : SideCollision::Top;
-        } 
-        else {
-            return (deltaX < 0) ? SideCollision::Left : SideCollision::Right;
-        }
-    }
-    return SideCollision::None; // No collision
-}
-
-void TileMap::fixPosition(mario::entity::Entity *entity, const Block *block, SideCollision side) {
-    if(side == SideCollision::None) return;
-    switch (side) {
-        case SideCollision::Top:
-            entity->setPosition(sf::Vector2f(entity->getPosition().x, block->getPosition().y + entity->getSize().y));
-            break;
-        case SideCollision::Bottom:
-            entity->setPosition(sf::Vector2f(entity->getPosition().x, block->getHitbox().position.y));
-            break;
-        case SideCollision::Left:
-            entity->setPosition(sf::Vector2f(block->getHitbox().position.x + block->getSize().x + entity->getSize().x / 2.0f, entity->getPosition().y));
-            break;
-        case SideCollision::Right:
-            entity->setPosition(sf::Vector2f(block->getHitbox().position.x - entity->getSize().x / 2.0f, entity->getPosition().y));
-            break;
-    }
-}
-
-void TileMap::checkCollision(mario::entity::Player *player) {
-    int L, R;
-    findBlocksCollisions(L, R, player);
-
-    //player->setMoveLeft(true); 
-    //player->setMoveRight(true);
-
-    bool hasTopCollision = false;
-    bool hasBottomCollision = false;
-    bool hasLeftCollision = false;
-    bool hasRightCollision = false;
-
-    for(int i = 0; i < blocks.size(); ++i){
-        auto& block = blocks[i];
-        if (!block->isExist()) continue;
-
-        SideCollision side = findCollisionSide(player, block);
-        if(side != SideCollision::None) {
-            switch (side) {
-                case SideCollision::Top:
-                    hasTopCollision = true;
-                    break;
-                case SideCollision::Bottom:
-                    hasBottomCollision = true;
-                    break;
-                case SideCollision::Left:
-                    hasLeftCollision = true;
-                    break;
-                case SideCollision::Right:
-                    hasRightCollision = true;
-                    break;
-                default:
-                    break;
-            }
-            
-            fixPosition(player, block, side);
-        }
-    }
-
-    sf::Vector2f vel = player->getVelocity();
-    if(hasBottomCollision) {
-        vel.y = 0.f;
-        player->resetJump();
-        player->setOnGround(true);
-        //std::cerr << "\nBottom Collision Detected\n";
-    }
-
-    if(hasTopCollision) {
-        vel.y = 0.f;
-        //std::cerr << "\nTop Collision Detected\n";
-    }
-
-    if(hasLeftCollision) {
-        vel.x = 0.f;
-        //player->setMoveLeft(false);
-        //std::cerr << "\nLeft Collision Detected\n";
-    }
-
-    if(hasRightCollision) {
-        vel.x = 0.f;
-        //player->setMoveRight(false);
-        //std::cerr << "\nRight Collision Detected\n";
-    }
-
-    player->setVelocity(vel);
 }
 
 void TileMap::checkCollisionEn(mario::entity::Enemy* enemy) {
@@ -474,25 +363,18 @@ void TileMap::checkCollisionEn(mario::entity::Enemy* enemy) {
     enemy->setVelocity(vel);
 }
 
-
 void TileMap::update(const sf::RenderWindow *window, float dt){
-    for (const auto& block : blocks){
-        block->update(window, dt);
-    }
+
 }
 
 void TileMap::handleEvent(const sf::RenderWindow *window, const sf::Event &event){
-    for (const auto& block : blocks){
-        block->handleEvent(window, event);
-    }
+
 }
 
 void TileMap::render(sf::RenderWindow *window){
-    for (const auto& block : blocks){
-        block->render(window);
-    }
+
 }
 
 sf::FloatRect TileMap::getWorldBounds() const {
-    return sf::FloatRect(sf::Vector2f(0.f, 0.f), sf::Vector2f(1280.f, 720.f));
+    return sf::FloatRect(sf::Vector2f(0.f, 0.f), sf::Vector2f(mapWidth * 16 * BLOCK_SCALE.x, mapHeight * 16 * BLOCK_SCALE.y));
 }
