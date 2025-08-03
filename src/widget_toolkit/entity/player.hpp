@@ -82,10 +82,9 @@ namespace mario::entity {
                             p_stateManager->setAnimation(p_animation, "idle[0]");
                             p_animation->setAnimationState(true);
                         }
-                    
+                        
                     hasPlayedJumpSound_ = false;
                 }
-
                 // change state for debugging
                 if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Num1)) {
                     std::cerr << "CHANGE TO SMALL STATE\n";
@@ -112,7 +111,7 @@ namespace mario::entity {
                     rotateDirection();
 
                 sf::Vector2f vel = p_body->getVelocity();
-                std::cerr << "PLAYER: POSITION: " << p_body->getPosition().x << ' ' << p_body->getPosition().y << " VELOCITY: " << vel.x << ' ' << vel.y << '\n';
+                //std::cerr << "PLAYER: POSITION: " << p_body->getPosition().x << ' ' << p_body->getPosition().y << " VELOCITY: " << vel.x << ' ' << vel.y << '\n';
             }
             
             void handleEvent(const sf::RenderWindow *window, const sf::Event &event) override {

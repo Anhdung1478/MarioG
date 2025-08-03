@@ -7,7 +7,7 @@ namespace mario::entity {
     class EntityFactory { // Factory pattern
         public:
             Entity* create(std::string entityType, float x, float y) {
-
+                
             }
 
             ~EntityFactory() {}

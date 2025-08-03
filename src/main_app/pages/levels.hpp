@@ -11,6 +11,9 @@
 #include "../../widget_toolkit/controls/button-list.hpp"
 #include "../../widget_toolkit/controls/slider.hpp"
 
+#include "../../widget_toolkit/entity/enemy/goomba.hpp"
+#include "../../widget_toolkit/entity/enemy/koopa.hpp"
+
 namespace mario::pages {
     class LevelsPage : public Page {
         private:
@@ -19,6 +22,7 @@ namespace mario::pages {
             std::unique_ptr<TileMap> tileMap;
 
             mario::entity::Player *p_player;
+            std::vector<mario::entity::Entity*> enemies;
             sf::Time timeRemaining;
             Camera camera;
 

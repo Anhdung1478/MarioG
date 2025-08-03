@@ -7,6 +7,11 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
     p_player = new mario::entity::Player(sf::Vector2f(15, 10), state.characterType, state.stateType);
     p_inputManager = std::make_unique<mario::input::InputManager>(context);
 
+    // Load enemies
+    enemies.push_back(new mario::entity::Goomba(sf::Vector2f(300.f, 80.f)));
+    enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(800.f, 80.f), mario::entity::KoopaType::Red, false));
+    enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(350.f, 80.f), mario::entity::KoopaType::Green, true));
+
     // Pause/Resume game
     pauseTexture = std::make_unique<sf::Texture>("../../asset/textures/pause-button.png");
     pauseSprite = std::make_unique<sf::Sprite>(*pauseTexture);
@@ -101,6 +106,9 @@ void mario::pages::LevelsPage::autoSave() {
 mario::pages::LevelsPage::~LevelsPage() {
     autoSave();
     delete p_player;
+    for (auto* enemy : enemies) {
+        delete enemy;
+    }
 }
 
 // for Sound Manager
@@ -117,7 +125,18 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
 
     if(!_isPaused) {
         p_player->update(window, dt);
-    
+        
+        for (auto* enemy : enemies) {
+            mario::entity::Enemy* enemyPtr = dynamic_cast<mario::entity::Enemy*>(enemy);
+            if (enemyPtr) {
+                enemyPtr->updateBehavior(dt, p_player);
+                enemyPtr->update(window, dt);
+                tileMap->checkCollisionEn(enemyPtr); // Sử dụng enemyPtr (Enemy*)
+            } else {
+                enemy->update(window, dt); // Xử lý các Entity không phải Enemy (nếu có)
+            }
+        }
+
         camera.followEntity(*p_player, dt);
         camera.update(dt);
 
@@ -178,6 +197,12 @@ void mario::pages::LevelsPage::handleEvent(const sf::RenderWindow *window, const
             if(p_player) {
                 p_player->move(false, true);
             }
+            for (auto* enemy : enemies) {
+                mario::entity::Enemy* enemyPtr = dynamic_cast<mario::entity::Enemy*>(enemy);
+                if (enemyPtr && !enemyPtr->getActive()) {
+                    enemyPtr->setActive(true); // Resume enemy activity
+                }
+            }
         }
     }
     
@@ -197,6 +222,12 @@ void mario::pages::LevelsPage::handleEvent(const sf::RenderWindow *window, const
                     _context->getSoundManager().resumeBackgroundMusic();
                     if (p_player) {
                         p_player->move(false, true);
+                    }
+                    for (auto* enemy : enemies) {
+                        mario::entity::Enemy* enemyPtr = dynamic_cast<mario::entity::Enemy*>(enemy);
+                        if (enemyPtr && !enemyPtr->getActive()) {
+                            enemyPtr->setActive(true); // Resume enemy activity
+                        }
                     }
                 }
             } else 
@@ -221,6 +252,9 @@ void mario::pages::LevelsPage::handleEvent(const sf::RenderWindow *window, const
         p_player->handleEvent(window, event);
         p_inputManager->handleEvent(*p_player, event);   
         tileMap->handleEvent(window, event);
+        for (auto* enemy : enemies) {
+            enemy->handleEvent(window, event);
+        }
     }
 }
 
@@ -228,6 +262,11 @@ void mario::pages::LevelsPage::render(sf::RenderWindow *window) {
     camera.applyTo(*window);
     tileMap->render(window);
     p_player->render(window);
+
+    // Render enemies
+    for (auto* enemy : enemies) {
+        enemy->render(window);
+    }
 
     window->draw(*pauseSprite);
     window->draw(*homeSprite);

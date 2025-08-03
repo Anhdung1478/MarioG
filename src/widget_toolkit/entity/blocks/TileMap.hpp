@@ -9,7 +9,7 @@
 #include "../player.hpp"
 #include "../../resource/json.hpp"
 #include "../../interfaces.hpp"
-
+#include "../enemy/enemy.hpp"
 
 enum class SideCollision : uint8_t{
     Top    = 0,
@@ -50,6 +50,7 @@ public:
     SideCollision findCollisionSide(const mario::entity::Entity *EntityA, const mario::entity::Entity *EntityB);
     void fixPosition(mario::entity::Entity *entity, const Block *block, SideCollision side);
     void checkCollision(mario::entity::Player *player);
+    void checkCollisionEn(mario::entity::Enemy* enemy);
 
     void update(const sf::RenderWindow *window, float dt) override;
     void handleEvent(const sf::RenderWindow *window, const sf::Event &event) override;
