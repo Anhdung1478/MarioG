@@ -133,30 +133,23 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
     if(!_isPaused) {
         p_player->update(window, dt);
         
-        for (auto* enemy : enemies) {
-            mario::entity::Enemy* enemyPtr = dynamic_cast<mario::entity::Enemy*>(enemy);
-            if (enemyPtr) {
-                enemyPtr->updateBehavior(dt, p_player);
-                enemyPtr->update(window, dt);
-                tileMap->checkCollisionEn(enemyPtr); // Sử dụng enemyPtr (Enemy*)
-            } else {
-                enemy->update(window, dt); // Xử lý các Entity không phải Enemy (nếu có)
-            }
+        for(auto &enemy : enemies) {
+            enemy->updateBehavior(dt, p_player);
+            enemy->update(window, dt);
         }
+
+        for(auto &block : blocks) {
+            block->update(window, dt);
+        }
+
+        collisionManager.checkCollisionPlayerWithBlocks(p_player, blocks);
+        collisionManager.checkCollisionEnemyWithBlocks(enemies, blocks);
 
         camera.followEntity(*p_player, dt);
         camera.update(dt);
         
         currLevelState.stateType = p_player->getPlayerStateType();
         p_levelDataManager->update(dt, currLevelState);
-        
-        for(auto &block : blocks) {
-            block->update(window, dt);
-        }
-        collisionManager.checkCollisionPlayerWithBlocks(p_player, blocks);
-        
-        // tileMap->update(window, dt);
-        // tileMap->checkCollision(p_player);
     }
 
     // Check for hover state
