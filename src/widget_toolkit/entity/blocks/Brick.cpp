@@ -1,5 +1,8 @@
 #include "Brick.hpp"
 
+namespace mario {
+namespace entity {
+
 Brick::Brick(sf::Vector2f pos, sf::Vector2f size, std::string name) 
     : Block(pos, size, name) 
 {
@@ -31,3 +34,6 @@ void Brick::handleEvent(const sf::RenderWindow *window, const sf::Event &event) 
 void Brick::render(sf::RenderWindow *window) {
     Entity::render(window);
 }
+
+} // namespace entity
+} // namespace mario

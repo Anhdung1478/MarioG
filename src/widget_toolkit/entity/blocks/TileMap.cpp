@@ -100,33 +100,33 @@ bool TileMap::loadMap(const std::string& mapPath) {
     }
     
     // Load objects
-    for (const auto& layerJson : mapJson["layers"]) {
-        if (layerJson["type"] == "objectgroup") {
-            for (const auto& obj : layerJson["objects"]) {
-                ObjectData objData;
-                objData.gid = obj["gid"];
-                objData.x = obj["x"];
-                objData.y = obj["y"];
-                objData.width = obj["width"];
-                objData.height = obj["height"];
+    // for (const auto& layerJson : mapJson["layers"]) {
+    //     if (layerJson["type"] == "objectgroup") {
+    //         for (const auto& obj : layerJson["objects"]) {
+    //             ObjectData objData;
+    //             objData.gid = obj["gid"];
+    //             objData.x = obj["x"];
+    //             objData.y = obj["y"];
+    //             objData.width = obj["width"];
+    //             objData.height = obj["height"];
 
-                if (obj.contains("properties")) {
-                    for (const auto& prop : obj["properties"]) {
-                        if (prop["name"] == "item_type") {
-                            objData.itemType = prop["value"];
-                        } else if (prop["name"] == "trigger_type") {
-                            objData.triggerType = prop["value"];
-                        } else if (prop["name"] == "trigger_id") {
-                            objData.triggerID = prop["value"];
-                        } 
-                    }
-                }
+    //             if (obj.contains("properties")) {
+    //                 for (const auto& prop : obj["properties"]) {
+    //                     if (prop["name"] == "item_type") {
+    //                         objData.itemType = prop["value"];
+    //                     } else if (prop["name"] == "trigger_type") {
+    //                         objData.triggerType = prop["value"];
+    //                     } else if (prop["name"] == "trigger_id") {
+    //                         objData.triggerID = prop["value"];
+    //                     } 
+    //                 }
+    //             }
 
-                objects.push_back(objData);
-            }
-            break;
-        }
-    }
+    //             objects.push_back(objData);
+    //         }
+    //         break;
+    //     }
+    // }
     
     return true;
 }
@@ -326,58 +326,58 @@ void TileMap::sortBlocks(std::vector<Block*> &blocks) {
     });
 }
 
-void TileMap::checkCollisionEn(mario::entity::Enemy* enemy) {
-    int L, R;
-    findBlocksCollisions(L, R, enemy);
+// void TileMap::checkCollisionEn(mario::entity::Enemy* enemy) {
+//     int L, R;
+//     findBlocksCollisions(L, R, enemy);
 
-    bool hasTopCollision = false;
-    bool hasBottomCollision = false;
-    bool hasLeftCollision = false;
-    bool hasRightCollision = false;
+//     bool hasTopCollision = false;
+//     bool hasBottomCollision = false;
+//     bool hasLeftCollision = false;
+//     bool hasRightCollision = false;
 
-    for (int i = 0; i < blocks.size(); ++i) {
-        auto& block = blocks[i];
-        if (!block->isExist()) continue;
+//     for (int i = 0; i < blocks.size(); ++i) {
+//         auto& block = blocks[i];
+//         if (!block->isExist()) continue;
 
-        SideCollision side = findCollisionSide(enemy, block);
-        if (side != SideCollision::None) {
-            switch (side) {
-                case SideCollision::Top:
-                    hasTopCollision = true;
-                    break;
-                case SideCollision::Bottom:
-                    hasBottomCollision = true;
-                    break;
-                case SideCollision::Left:
-                    hasLeftCollision = true;
-                    break;
-                case SideCollision::Right:
-                    hasRightCollision = true;
-                    break;
-                default:
-                    break;
-            }
+//         SideCollision side = findCollisionSide(enemy, block);
+//         if (side != SideCollision::None) {
+//             switch (side) {
+//                 case SideCollision::Top:
+//                     hasTopCollision = true;
+//                     break;
+//                 case SideCollision::Bottom:
+//                     hasBottomCollision = true;
+//                     break;
+//                 case SideCollision::Left:
+//                     hasLeftCollision = true;
+//                     break;
+//                 case SideCollision::Right:
+//                     hasRightCollision = true;
+//                     break;
+//                 default:
+//                     break;
+//             }
             
-            fixPosition(enemy, block, side);
-        }
-    }
+//             fixPosition(enemy, block, side);
+//         }
+//     }
 
-    sf::Vector2f vel = enemy->getVelocity();
-    if (hasBottomCollision) {
-        vel.y = 0.f;
-        enemy->setOnGround(true); // Đặt trạng thái trên mặt đất
-    }
+//     sf::Vector2f vel = enemy->getVelocity();
+//     if (hasBottomCollision) {
+//         vel.y = 0.f;
+//         enemy->setOnGround(true); // Đặt trạng thái trên mặt đất
+//     }
 
-    if (hasTopCollision) {
-        vel.y = 0.f;
-    }
+//     if (hasTopCollision) {
+//         vel.y = 0.f;
+//     }
 
-    if (hasLeftCollision || hasRightCollision) {
-        vel.x = 0.f;
-    }
+//     if (hasLeftCollision || hasRightCollision) {
+//         vel.x = 0.f;
+//     }
 
-    enemy->setVelocity(vel);
-}
+//     enemy->setVelocity(vel);
+// }
 
 void TileMap::update(const sf::RenderWindow *window, float dt){
 
@@ -395,36 +395,36 @@ sf::FloatRect TileMap::getWorldBounds() const {
     return sf::FloatRect(sf::Vector2f(0.f, 0.f), sf::Vector2f(mapWidth * 16 * BLOCK_SCALE.x, mapHeight * 16 * BLOCK_SCALE.y));
 }
 
-SideCollision TileMap::checkItemCollision(Item* item) {
-    int L, R;
-    //findItemBlockCollisions(L, R, item);
+// SideCollision TileMap::checkItemCollision(Item* item) {
+//     int L, R;
+//     //findItemBlockCollisions(L, R, item);
     
-    for (int i = L; i < R; ++i) {
-        auto& block = blocks[i];
-        if (!block->isExist()) continue;
+//     for (int i = L; i < R; ++i) {
+//         auto& block = blocks[i];
+//         if (!block->isExist()) continue;
         
-        SideCollision side = findCollisionSide(item, block);
-        if (side != SideCollision::None) {
-            fixPosition(item, block, side);
-            return side;
-        }
-    }
-    return SideCollision::None;
-}
+//         SideCollision side = findCollisionSide(item, block);
+//         if (side != SideCollision::None) {
+//             fixPosition(item, block, side);
+//             return side;
+//         }
+//     }
+//     return SideCollision::None;
+// }
 
-bool TileMap::hasGroundAt(sf::Vector2f position) {
-    // Check if there's a solid block at the given position
-    // Used for edge detection for walking items
-    for (const auto& block : blocks) {
-        if (!block->isExist()) continue;
+// bool TileMap::hasGroundAt(sf::Vector2f position) {
+//     // Check if there's a solid block at the given position
+//     // Used for edge detection for walking items
+//     for (const auto& block : blocks) {
+//         if (!block->isExist()) continue;
         
-        sf::FloatRect blockBounds = block->getHitbox();
-        if (blockBounds.contains(position)) {
-            return true;
-        }
-    }
-    return false;
-}
+//         sf::FloatRect blockBounds = block->getHitbox();
+//         if (blockBounds.contains(position)) {
+//             return true;
+//         }
+//     }
+//     return false;
+// }
 
 } // namespace entity
 } // namespace mario

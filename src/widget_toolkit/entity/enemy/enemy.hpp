@@ -5,20 +5,10 @@
 #include "../entity.hpp"
 #include "../box/dynamic-box.hpp"
 #include "../player.hpp"
+#include "../blocks/Block.hpp"
 
 namespace mario::entity {
     #define FILE_PATH "../../asset/sprites/"
-
-    struct Collision {
-        enum class Type { Player, Wall, Bullet, Brick };
-        Type type;
-        sf::Vector2f direction; // x: -1 (left), 1 (right); y: -1 (up), 1 (down)
-        Collision(Type t, sf::Vector2f dir) : type(t), direction(dir) {}
-        bool isWithPlayer() const { return type == Type::Player; }
-        bool isWithWall() const { return type == Type::Wall; }
-        bool isWithBullet() const { return type == Type::Bullet; }
-        bool isWithBrick() const { return type == Type::Brick; }
-    };
 
     enum class EnemyBehavior {
         Patrol,
@@ -37,13 +27,17 @@ namespace mario::entity {
             DynamicBox* body = dynamic_cast<DynamicBox*>(p_body);
             if(body) {
                 float currentX = body->getPosition().x;
-                if(currentX < initialPosition.x - patrolRange) {
+                if((currentX < initialPosition.x - patrolRange)) {
                     body->move(true, false); // move right
-                } else if (currentX > initialPosition.x + patrolRange) {
+                    // std::cout << "Moving right\n";
+                } else if ((currentX > initialPosition.x + patrolRange)) {
                     body->move(false, false); // move left
-                } else {
-                    body->move(body->isFaceForward(), false); // continue
+                    // std::cout << "Moving left\n";
                 }
+                // else {
+                //     body->move(body->isFaceForward(), false); // continue
+                //     std::cout << "Moving left\n";
+                // }
 
                 if (p_animation->isFaceForward() == body->isFaceForward()) {
                     p_animation->rotate();
@@ -89,8 +83,20 @@ namespace mario::entity {
             
         virtual ~Enemy() = default;
 
-        virtual void reactCollision(const Collision& collision) {
-            if(collision.isWithWall()) {
+        // virtual void reactCollision(const Collision& collision) {
+        //     if(collision.isWithWall()) {
+        //         DynamicBox* body = dynamic_cast<DynamicBox*>(p_body);
+        //         if(body) {
+        //             body->setVelocity({-body->getVelocity().x, body->getVelocity().y});
+        //             if(p_animation->isFaceForward() == body->isFaceForward()) {
+        //                 p_animation->rotate();
+        //             }
+        //         } 
+        //     }
+        // }
+
+        virtual void reactCollision(int side, const Collision& collision) {
+            if(collision.isWithWall() && (side == SideCollision::Left || side == SideCollision::Right)) {
                 DynamicBox* body = dynamic_cast<DynamicBox*>(p_body);
                 if(body) {
                     body->setVelocity({-body->getVelocity().x, body->getVelocity().y});

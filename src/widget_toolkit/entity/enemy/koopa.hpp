@@ -135,14 +135,24 @@ namespace mario::entity {
             }
         }
 
-        void reactCollision(const Collision& collision) override {
-            if(collision.isWithPlayer()) {
+        void reactCollision(int side, const Collision& collision) override {
+            if(collision.isWithPlayer() && (side == SideCollision::Top)) {
                 hitByPlayer();
-            } else if(collision.isWithWall()) {
+            } else if(collision.isWithWall() && (side == SideCollision::Left || side == SideCollision::Right)) {
                 DynamicBox* body = dynamic_cast<DynamicBox*>(p_body);
                 if(body) {
-                    body->setVelocity({-body->getVelocity().x, body->getVelocity().y});
-                    if(p_animation->isFaceForward() == body->isFaceForward()) {
+                    if(side == SideCollision::Left) {
+                        body->move(true, false); // Move right if hit from left
+                        body->setIsFaceForward(true);
+                        // std::cout << "RIGHT\n";
+                    }
+                    else if(side == SideCollision::Right) {
+                        body->move(false, false); // Move left if hit from right
+                        body->setIsFaceForward(false);
+                        // std::cout << "LEFT\n";
+                    }
+                    if(p_animation->isFaceForward() != body->isFaceForward()) {
+                        // std::cout << 1 << '\n';
                         p_animation->rotate();
                     }
                 }
@@ -161,6 +171,8 @@ namespace mario::entity {
                         p_animation->rotate();
                     }
                 }
+            } else {
+                p_body->move(p_body->isFaceForward(), false); // continue
             }
         }
 

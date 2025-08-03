@@ -3,14 +3,6 @@
 #include "../entity.hpp"
 #include "../../interfaces.hpp"
 
-namespace mario {
-namespace entity {
-
-class Player;
-class ItemManager;
-
-inline const sf::Vector2f BLOCK_SCALE = sf::Vector2f(2.5f, 2.5f);
-
 enum SideCollision{
     Top    = 0,
     Bottom = 1,
@@ -18,6 +10,24 @@ enum SideCollision{
     Right  = 3,
     None   = 4
 };
+
+struct Collision {
+    enum class Type { Player, Wall, Bullet, Brick };
+    Type type;
+    Collision(Type t) : type(t) {}
+    bool isWithPlayer() const { return type == Type::Player; }
+    bool isWithWall() const { return type == Type::Wall; }
+    bool isWithBullet() const { return type == Type::Bullet; }
+    bool isWithBrick() const { return type == Type::Brick; }
+};
+
+namespace mario {
+namespace entity {
+
+class Player;
+class ItemManager;
+
+inline const sf::Vector2f BLOCK_SCALE = sf::Vector2f(2.5f, 2.5f);
 
 class Block : public mario::entity::Entity {
 protected:

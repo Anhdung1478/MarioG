@@ -2,6 +2,10 @@
 
 #include <algorithm>
 
+namespace mario {
+namespace entity {
+
+
 void CollisionManager::sortEntitiesByX(std::vector<Block*> &Entities) {
     std::sort(Entities.begin(), Entities.end(), [](const Block *a, const Block *b){
         if (a->getPosition().x == b->getPosition().x){
@@ -51,20 +55,20 @@ SideCollision CollisionManager::findCollisionSide(const mario::entity::Entity *e
     return SideCollision::None; // No collision
 }
 
-void CollisionManager::fixPosition(mario::entity::Entity *entity, const Block *block, SideCollision side) {
+void CollisionManager::fixPosition(Entity *entityA, Entity *entityB, SideCollision side) {
     if(side == SideCollision::None) return;
     switch (side) {
         case SideCollision::Top:
-            entity->setPosition(sf::Vector2f(entity->getPosition().x, block->getPosition().y + entity->getSize().y));
+            entityA->setPosition(sf::Vector2f(entityA->getPosition().x, entityB->getPosition().y + entityA->getSize().y));
             break;
         case SideCollision::Bottom:
-            entity->setPosition(sf::Vector2f(entity->getPosition().x, block->getHitbox().position.y));
+            entityA->setPosition(sf::Vector2f(entityA->getPosition().x, entityB->getHitbox().position.y));
             break;
         case SideCollision::Left:
-            entity->setPosition(sf::Vector2f(block->getHitbox().position.x + block->getSize().x + entity->getSize().x / 2.0f, entity->getPosition().y));
+            entityA->setPosition(sf::Vector2f(entityB->getHitbox().position.x + entityB->getSize().x + entityA->getSize().x / 2.0f, entityA->getPosition().y));
             break;
         case SideCollision::Right:
-            entity->setPosition(sf::Vector2f(block->getHitbox().position.x - entity->getSize().x / 2.0f, entity->getPosition().y));
+            entityA->setPosition(sf::Vector2f(entityB->getHitbox().position.x - entityA->getSize().x / 2.0f, entityA->getPosition().y));
             break;
     }
 }
@@ -133,3 +137,137 @@ void CollisionManager::checkCollisionPlayerWithBlocks(mario::entity::Player *&pl
 
     player->setVelocity(vel);
 }
+
+void CollisionManager::checkCollisionEnemyWithBlocks(std::vector<Enemy*> &enemies, std::vector<Block*> &blocks){
+    for (auto& enemy : enemies) {
+        int L, R;
+        findBlocksCollisions(L, R, enemy, blocks);
+
+        bool hasTopCollision = false;
+        bool hasBottomCollision = false;
+        bool hasLeftCollision = false;
+        bool hasRightCollision = false;
+
+        for (int i = 0; i < blocks.size(); ++i) {
+            auto& block = blocks[i];
+            if (!block->isExist()) continue;
+
+            SideCollision side = findCollisionSide(enemy, block);
+            if (side != SideCollision::None) {
+                enemy->reactCollision(side, Collision(Collision::Type::Wall));
+                switch (side) {
+                    case SideCollision::Top:
+                        hasTopCollision = true;
+                        break;
+                    case SideCollision::Bottom:
+                        hasBottomCollision = true;
+                        break;
+                    case SideCollision::Left:
+                        hasLeftCollision = true;
+                        break;
+                    case SideCollision::Right:
+                        hasRightCollision = true;
+                        break;
+                    default:
+                        break;
+                }
+                
+                fixPosition(enemy, block, side);
+            }
+        }
+
+        sf::Vector2f vel = enemy->getVelocity();
+        if (hasBottomCollision) {
+            vel.y = 0.f;
+            enemy->setOnGround(true); // Đặt trạng thái trên mặt đất
+        }
+
+        if (hasTopCollision) {
+            vel.y = 0.f;
+        }
+
+        if (hasLeftCollision || hasRightCollision) {
+            vel.x = 0.f;
+        }
+
+        enemy->setVelocity(vel);
+    }
+}
+
+void CollisionManager::checkCollisionPlayerWithEnemies(Player *&player, std::vector<Enemy*> &enemies){
+    for (auto& enemy : enemies) {
+        SideCollision side = findCollisionSide(player, enemy);
+        if (side != SideCollision::None) {
+            enemy->reactCollision(side ^ 1, Collision(Collision::Type::Player));
+            switch (side) {
+                case SideCollision::Top:
+                    player->resetJump();
+                    player->setOnGround(true);
+                    break;
+                case SideCollision::Bottom:
+                    // Player die
+                    break;
+                case SideCollision::Left:
+                    // Player die
+                    break;
+                case SideCollision::Right:
+                    // Player die
+                    break;
+                default:
+                    break;
+            }
+            // fixPosition(player, enemy, side);
+        }
+    }
+
+        // bool hasTopCollision = false;
+        // bool hasBottomCollision = false;
+        // bool hasLeftCollision = false;
+        // bool hasRightCollision = false;
+
+        // for (int i = 0; i < blocks.size(); ++i) {
+        //     auto& block = blocks[i];
+        //     if (!block->isExist()) continue;
+
+        //     SideCollision side = findCollisionSide(enemy, block);
+        //     if (side != SideCollision::None) {
+        //         switch (side) {
+        //             case SideCollision::Top:
+        //                 hasTopCollision = true;
+        //                 break;
+        //             case SideCollision::Bottom:
+        //                 hasBottomCollision = true;
+        //                 break;
+        //             case SideCollision::Left:
+        //                 hasLeftCollision = true;
+        //                 break;
+        //             case SideCollision::Right:
+        //                 hasRightCollision = true;
+        //                 break;
+        //             default:
+        //                 break;
+        //         }
+                
+        //         fixPosition(enemy, block, side);
+        //     }
+        // }
+
+        // sf::Vector2f vel = enemy->getVelocity();
+        // if (hasBottomCollision) {
+        //     vel.y = 0.f;
+        //     enemy->setOnGround(true); // Đặt trạng thái trên mặt đất
+        // }
+
+        // if (hasTopCollision) {
+        //     vel.y = 0.f;
+        // }
+
+        // if (hasLeftCollision || hasRightCollision) {
+        //     vel.x = 0.f;
+        // }
+
+        // enemy->setVelocity(vel);
+}
+
+} // namespace entity
+} // namespace mario

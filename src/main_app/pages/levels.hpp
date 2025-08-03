@@ -24,12 +24,12 @@ namespace mario::pages {
       
             std::unique_ptr<mario::entity::TileMap> tileMap;
             std::vector<mario::entity::Block*> blocks;
+            std::vector<mario::entity::Enemy*> enemies;
       
             mario::entity::Player *p_player;
-            std::vector<mario::entity::Entity*> enemies;
             sf::Time timeRemaining;
             Camera camera;
-            CollisionManager collisionManager;
+            mario::entity::CollisionManager collisionManager;
 
             // for Sound Manager
             mario::resource::LevelState currLevelState;
