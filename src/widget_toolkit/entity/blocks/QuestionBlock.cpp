@@ -1,4 +1,8 @@
 #include "QuestionBlock.hpp"
+#include "../item/ItemManager.hpp"
+
+namespace mario {
+namespace entity {
 
 QuestionBlock::QuestionBlock(sf::Vector2f pos, sf::Vector2f size, std::string name) 
     : numberOfCoins(1), Block(pos, size, name) 
@@ -76,7 +80,7 @@ void QuestionBlock::reactToCollision(int side) {
         }
     }
 }
-
+  
 void QuestionBlock::update(const sf::RenderWindow *window, float dt) {
     p_animation->update(window, dt);
     coins_animation->update(window, dt);
@@ -86,7 +90,6 @@ void QuestionBlock::handleEvent(const sf::RenderWindow *window, const sf::Event 
 }
 
 void QuestionBlock::render(sf::RenderWindow *window) {
-    // p_animation->renderWithPosition(window, p_body->getPosition());
     Entity::render(window);
     // coins_animation->setSpriteAnimation("coin[6]");
     // coins_animation->render(window);
@@ -95,3 +98,19 @@ void QuestionBlock::render(sf::RenderWindow *window) {
         coins_animation->render(window);
     }
 }
+
+void QuestionBlock::onHit(Player* player, ItemManager* itemManager) {
+    if (!hasBeenHit) {
+        hasBeenHit = true;
+
+        // We can change to empty box sprite (lemme find :))
+        // Play sound effect? (if we have)
+        
+        if (itemManager) {
+            itemManager->triggerSpawn(blockID, SpawnTrigger::BlockHit);
+        }
+    }
+}
+
+} // namespace entity
+} // namespace mario

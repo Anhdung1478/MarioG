@@ -44,6 +44,7 @@
       { "x": 219, "y": 38, "width": 22, "height": 35 },
       { "x": 245, "y": 38, "width": 22, "height": 35 }
     ],
+
     "jumping": [
       { "x": 8, "y": 126, "width": 30, "height": 49 },
       { "x": 8, "y": 126, "width": 30, "height": 49 },
@@ -103,6 +104,7 @@
       { "x": 219, "y": 219, "width": 22, "height": 35 },
       { "x": 245, "y": 219, "width": 22, "height": 35 }
     ],
+
     "jumping": [
       { "x": 8, "y": 308, "width": 30, "height": 49 },
       { "x": 8, "y": 308, "width": 30, "height": 49 },

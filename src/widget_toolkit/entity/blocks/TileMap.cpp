@@ -2,6 +2,9 @@
 
 using json = nlohmann::json;
 
+namespace mario {
+namespace entity {
+
 TileMap::TileMap(){
 }
 
@@ -95,7 +98,7 @@ bool TileMap::loadMap(const std::string& mapPath) {
             break;
         }
     }
-    
+   
     // // Load objects
     // for (const auto& layerJson : mapJson["layers"]) {
     //     if (layerJson["type"] == "objectgroup") {
@@ -423,3 +426,5 @@ sf::FloatRect TileMap::getWorldBounds() const {
 //     return false;
 // }
 
+} // namespace entity
+} // namespace mario

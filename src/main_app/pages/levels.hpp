@@ -11,6 +11,7 @@
 #include "../../widget_toolkit/controls/button.hpp"
 #include "../../widget_toolkit/controls/button-list.hpp"
 #include "../../widget_toolkit/controls/slider.hpp"
+#include "../../widget_toolkit/entity/item/ItemManager.hpp"
 
 #include "../../widget_toolkit/entity/enemy/goomba.hpp"
 #include "../../widget_toolkit/entity/enemy/koopa.hpp"
@@ -25,6 +26,7 @@ namespace mario::pages {
             std::vector<Block*> blocks;
             std::vector<mario::entity::Enemy*> enemies;
             
+
             mario::entity::Player *p_player;
             sf::Time timeRemaining;
             Camera camera;
@@ -64,6 +66,7 @@ namespace mario::pages {
             std::unique_ptr<Slider> musicSlider;
             std::unique_ptr<Slider> sfxSlider;
 
+            std::unique_ptr<mario::entity::ItemManager> itemManager;
         public:
             LevelsPage(MainWindow &context, mario::resource::LevelState state);
             ~LevelsPage();
