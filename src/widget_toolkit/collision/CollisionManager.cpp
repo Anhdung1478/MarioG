@@ -69,7 +69,7 @@ void CollisionManager::fixPosition(mario::entity::Entity *entity, const Block *b
     }
 }
 
-void CollisionManager::checkCollisionPlayerWithBlocks(mario::entity::Player *player, std::vector<Block*> &blocks) {
+void CollisionManager::checkCollisionPlayerWithBlocks(mario::entity::Player *&player, std::vector<Block*> &blocks) {
     int L, R;
     findBlocksCollisions(L, R, player, blocks);
 
@@ -108,21 +108,27 @@ void CollisionManager::checkCollisionPlayerWithBlocks(mario::entity::Player *pla
 
     sf::Vector2f vel = player->getVelocity();
     if(hasBottomCollision) {
-        vel.y = -10.f; // Adjust this value as needed
+        vel.y = -10.f;
         player->resetJump();
         player->setOnGround(true);
+        // std::cerr << "\nBottom Collision Detected\n";
     }
 
     if(hasTopCollision) {
-        vel.y = 0.f; // Adjust this value as needed
+        vel.y = 0.f;
+        // std::cerr << "\nTop Collision Detected\n";
     }
 
     if(hasLeftCollision) {
-        vel.x = 0.f; // Adjust this value as needed
+        vel.x = 0.f;
+        //player->setMoveLeft(false);
+        // std::cerr << "\nLeft Collision Detected\n";
     }
 
     if(hasRightCollision) {
-        vel.x = 0.f; // Adjust this value as needed
+        vel.x = 0.f;
+        //player->setMoveRight(false);
+        // std::cerr << "\nRight Collision Detected\n";
     }
 
     player->setVelocity(vel);
