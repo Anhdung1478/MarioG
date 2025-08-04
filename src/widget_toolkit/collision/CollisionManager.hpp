@@ -16,6 +16,7 @@ public:
     void checkCollisionPlayerWithBlocks(Player *&player, std::vector<Block*> &blocks);
     void checkCollisionEnemyWithBlocks(std::vector<Enemy*> &enemies, std::vector<Block*> &blocks);
     void checkCollisionPlayerWithEnemies(Player *&player, std::vector<Enemy*> &enemies);
+    void checkCollisionPlayerWithItems(Player *&player, std::vector<mario::entity::Item*> &items);
 };
 
 } // namespace entity

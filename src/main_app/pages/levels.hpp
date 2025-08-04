@@ -12,6 +12,8 @@
 #include "../../widget_toolkit/controls/button-list.hpp"
 #include "../../widget_toolkit/controls/slider.hpp"
 #include "../../widget_toolkit/entity/item/ItemManager.hpp"
+#include "../../widget_toolkit/entity/item/item.hpp"
+#include "../../widget_toolkit/entity/item/ItemFactory.hpp"
 
 #include "../../widget_toolkit/entity/enemy/goomba.hpp"
 #include "../../widget_toolkit/entity/enemy/koopa.hpp"
@@ -25,6 +27,7 @@ namespace mario::pages {
             std::unique_ptr<mario::entity::TileMap> tileMap;
             std::vector<mario::entity::Block*> blocks;
             std::vector<mario::entity::Enemy*> enemies;
+            std::vector<mario::entity::Item*> items;  // Direct item management
       
             mario::entity::Player *p_player;
             sf::Time timeRemaining;
