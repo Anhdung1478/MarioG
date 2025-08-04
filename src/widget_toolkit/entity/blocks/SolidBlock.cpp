@@ -60,7 +60,7 @@ void SolidBlock::InitSpritesSheet() {
     };
 }
 
-void SolidBlock::reactToCollision(int side) {
+void SolidBlock::reactToCollision(int side, Player* player) {
 
 }
 

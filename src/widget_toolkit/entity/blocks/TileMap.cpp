@@ -8,7 +8,7 @@ namespace entity {
 TileMap::TileMap(){
 }
 
-TileMap::TileMap(const std::string &tilesetPath, const std::string &mapPath) {
+TileMap::TileMap(const std::string &tilesetPath, const std::string &mapPath, int _themeID) : themeID(_themeID) {
     loadTileset(tilesetPath);
     loadMap(mapPath);
 }
@@ -89,6 +89,7 @@ bool TileMap::loadMap(const std::string& mapPath) {
     file >> mapJson;
     file.close();
     
+    sprites.clear();
     // Load tile layer
     for (const auto& layerJson : mapJson["layers"]) {
         if (layerJson["type"] == "tilelayer") {
@@ -96,6 +97,26 @@ bool TileMap::loadMap(const std::string& mapPath) {
             mapWidth = layerJson["width"];
             mapHeight = layerJson["height"];
             break;
+        }
+    }
+
+    for (int y = 0; y < mapHeight; ++y) {
+        for (int x = 0; x < mapWidth; ++x) {
+            int tileId = tileIds[y * mapWidth + x];
+            
+            if (tileId == 0) continue; // Empty tile
+            
+            // Adjust for 1-based indexing in Tiled
+            tileId -= 1;
+
+            // std::cout << "Tile ID: " << tileId << " at (" << x << ", " << y << ")" << std::endl;
+            SpriteData2 spriteData;
+            spriteData.id = std::to_string(tileId);
+            spriteData.x = x * 16 + margin + x * spacing;
+            spriteData.y = y * 16 + margin + y * spacing;
+            spriteData.z = 16;
+            spriteData.t = 16;
+            tileSprites[tileId] = spriteData;
         }
     }
     
@@ -131,8 +152,9 @@ bool TileMap::loadMap(const std::string& mapPath) {
     return true;
 }
 
-void TileMap::createBlock(std::vector<Block*> &blocks) {
+void TileMap::createBlock(std::vector<Block*> &blocks, std::vector<Block*> &backgroundBlocks) {
     blocks.clear();
+    backgroundBlocks.clear();
     for (int y = 0; y < mapHeight; ++y) {
         for (int x = 0; x < mapWidth; ++x) {
             int tileId = tileIds[y * mapWidth + x];
@@ -246,21 +268,31 @@ void TileMap::createBlock(std::vector<Block*> &blocks) {
 
                 // Question blocks
                 case 117:
-                    blocks.push_back(new QuestionBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "question-block[0]"));
+                    blocks.push_back(new QuestionBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "question-block[0]", 0, themeID));
                     break;
 
                 // Brick blocks
                 case 195:
-                    blocks.push_back(new Brick(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "brick-block[0]"));
+                    blocks.push_back(new Brick(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "brick-block[0]", 0, -1));
                     break;
                 case 197:
-                    blocks.push_back(new Brick(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "brick-block[1]"));
+                    blocks.push_back(new Brick(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "brick-block[1]", 1));
                     break;
                 case 199:
-                    blocks.push_back(new Brick(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "brick-block[2]"));
+                    blocks.push_back(new Brick(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "brick-block[2]", 2));
                     break;
 
                 default:
+                    int _x = tileId % tilesetColumns;
+                    int _y = tileId / tilesetColumns;
+                    backgroundBlocks.push_back(new BackgroundBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), std::to_string(tileId), {
+                        std::to_string(tileId), 
+                        _x * 16 + margin + _x * spacing, 
+                        _y * 16 + margin + _y * spacing, 
+                        16, 
+                        16
+                    }));
+                    std::cout << "Unknown tile ID: " << tileId << "with x = " << x << ", y = " << y << " at [(" << _x * 16 + margin + _x * spacing << ", " << _y * 16 + margin + _y * spacing << "), 16x16] with type: " << tileType << std::endl;
                     break;
             }
 

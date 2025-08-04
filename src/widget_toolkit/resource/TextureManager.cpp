@@ -19,6 +19,50 @@ void TextureManager::loadSheet(const std::string& jsonPath, const std::string& i
     loadFromJson(jsonPath, textureMap[imagePath]);
 }
 
+void TextureManager::loadSheet(const std::string& imagePath, const std::vector<SpriteData2>& sprites) {
+    // Load texture without JSON metadata
+    if (textureMap.find(imagePath) == textureMap.end()) {
+        sf::Texture texture;
+        if (!texture.loadFromFile(imagePath)) {
+            throw std::runtime_error("Failed to load texture: " + imagePath);
+        }
+        textureMap[imagePath] = std::move(texture);
+    }
+
+    for (auto &spr : sprites) {
+        SpriteData data;
+        data.x = spr.x;
+        data.y = spr.y;
+        data.z = spr.z;
+        data.t = spr.t;
+        data.texture = &textureMap[imagePath];
+
+        // Use the sprite ID as the key
+        spriteMap[spr.id] = data;
+    }
+}
+
+void TextureManager::loadSheet(const std::string& imagePath, const SpriteData2& sprite) {
+    // Load texture without JSON metadata
+    if (textureMap.find(imagePath) == textureMap.end()) {
+        sf::Texture texture;
+        if (!texture.loadFromFile(imagePath)) {
+            throw std::runtime_error("Failed to load texture: " + imagePath);
+        }
+        textureMap[imagePath] = std::move(texture);
+    }
+
+    SpriteData data;
+    data.x = sprite.x;
+    data.y = sprite.y;
+    data.z = sprite.z;
+    data.t = sprite.t;
+    data.texture = &textureMap[imagePath];
+
+    // Use the sprite ID as the key
+    spriteMap[sprite.id] = data;
+}
+
 void TextureManager::loadFromJson(const std::string& jsonPath, sf::Texture& texture) {
     std::ifstream file(jsonPath);
     if (!file.is_open()) {

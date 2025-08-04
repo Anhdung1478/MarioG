@@ -4,8 +4,8 @@
 namespace mario {
 namespace entity {
 
-QuestionBlock::QuestionBlock(sf::Vector2f pos, sf::Vector2f size, std::string name) 
-    : numberOfCoins(1), Block(pos, size, name) 
+QuestionBlock::QuestionBlock(sf::Vector2f pos, sf::Vector2f size, std::string name, int _typeOfItem, int _themeID) 
+    : numberOfCoins(1), Block(pos, size, name), typeOfItem(_typeOfItem), themeID(_themeID) 
 {
     InitSpritesSheet();
     p_animation = new mario::entity::Animation("../../asset/maps/Image/tiles-8.png", BLOCK_SCALE, sprites);
@@ -40,7 +40,9 @@ void QuestionBlock::InitSpritesSheet(){
         {"question-block[0]", 1, 52, 16, 16},
         {"question-block[1]", 18, 52, 16, 16},
         {"question-block[2]", 35, 52, 16, 16},
-        {"empty-question-block", 1, 69, 16, 16}
+        {"empty-question-block[0]", 1, 69, 16, 16},
+        {"empty-question-block[1]", 35, 69, 16, 16},
+        {"empty-question-block[2]", 69, 69, 16, 16}
     };
     // coins_animation = new mario::entity::Animation("../../asset/maps/Image/items-coins.png", BLOCK_SCALE, {
     //     {"coin[0]", 12, 74, 2, 14},
@@ -66,18 +68,30 @@ void QuestionBlock::InitSpritesSheet(){
     });
 }
 
-void QuestionBlock::reactToCollision(int side) {
-    if (side == SideCollision::Bottom) {
-        if(numberOfCoins == 0) return;
-        
+void QuestionBlock::reactToCollision(int side, Player* player) {
+    if (side != SideCollision::Bottom) return; 
+    // Coin
+    if (typeOfItem == 0) { 
+        if (numberOfCoins == 0) return;
+
         numberOfCoins--;
 
         coins_animation->setAnimationState(true);
 
         if(numberOfCoins == 0){
             p_animation->setAnimationState(false);
-            p_animation->setSpriteAnimation("empty-question-block");
+            p_animation->setSpriteAnimation("empty-question-block[" + std::to_string(themeID) + "]");
         }
+    }
+    else if (typeOfItem == 1) { // Red-mushroom or Fire-flower
+        if (player->getPlayerStateType() == player_state::PlayerStateType::Small) {
+            // Spawn Red mushroom
+        } else if (player->getPlayerStateType() == player_state::PlayerStateType::Super) {
+            // Spawn Fire flower
+        }
+    }
+    else if (typeOfItem == 2) { // One-up mushroom
+        // Spawn one-up mushroom
     }
 }
   

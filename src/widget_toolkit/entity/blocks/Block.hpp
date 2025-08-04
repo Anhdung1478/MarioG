@@ -2,6 +2,7 @@
 
 #include "../entity.hpp"
 #include "../../interfaces.hpp"
+#include "../player.hpp"
 
 enum SideCollision{
     Top    = 0,
@@ -41,7 +42,7 @@ public:
     virtual ~Block() = default;
     
     virtual void InitSpritesSheet() = 0;
-    virtual void reactToCollision(int side) = 0;
+    virtual void reactToCollision(int side, Player* player = nullptr) = 0;
   
     virtual void onHit(Player* player, ItemManager* itemManager);
     int getBlockID() const { return blockID; }

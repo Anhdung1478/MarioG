@@ -26,8 +26,11 @@ namespace mario::pages {
       
             std::unique_ptr<mario::entity::TileMap> tileMap;
             std::vector<mario::entity::Block*> blocks;
+            std::vector<mario::entity::Block*> backgroundBlocks;
             std::vector<mario::entity::Enemy*> enemies;
             std::vector<mario::entity::Item*> items;  // Direct item management
+
+            mario::entity::Block* testBlock;
       
             mario::entity::Player *p_player;
             sf::Time timeRemaining;
@@ -68,7 +71,7 @@ namespace mario::pages {
             std::unique_ptr<Slider> musicSlider;
             std::unique_ptr<Slider> sfxSlider;
 
-            std::unique_ptr<mario::entity::ItemManager> itemManager;
+            // std::unique_ptr<mario::entity::ItemManager> itemManager;
         public:
             LevelsPage(MainWindow &context, mario::resource::LevelState state);
             ~LevelsPage();

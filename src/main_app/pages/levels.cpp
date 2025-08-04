@@ -14,36 +14,36 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
 
     // Initialize items vector 
     // Sample items for testing (these would be loaded by TileMap using ItemFactory)
-    items.push_back(mario::entity::ItemFactory::createItem(
-        mario::entity::ItemType::Coin,
-        "../../asset/sprites/10-coin.json",
-        "../../asset/sprites/coins_sheet.png",
-        sf::Vector2f(1.0f, 1.0f),
-        "coin",
-        sf::Vector2f(500.f, 100.f),
-        sf::Vector2f(32.f, 32.f)
-    ));
+    // items.push_back(mario::entity::ItemFactory::createItem(
+    //     mario::entity::ItemType::Coin,
+    //     "../../asset/sprites/10-coin.json",
+    //     "../../asset/sprites/coins_sheet.png",
+    //     sf::Vector2f(1.0f, 1.0f),
+    //     "coin",
+    //     sf::Vector2f(500.f, 100.f),
+    //     sf::Vector2f(32.f, 32.f)
+    // ));
     
-    items.push_back(mario::entity::ItemFactory::createItem(
-        mario::entity::ItemType::RedMushroom,
-        "../../asset/sprites/red_mushroom.json",
-        "../../asset/textures/red_mushroom.png", // placeholder
-        sf::Vector2f(1.0f, 1.0f),
-        "red_mushroom",
-        sf::Vector2f(800.f, 100.f),
-        sf::Vector2f(32.f, 32.f),
-        sf::Vector2f(50.f, 0.f)  // Initial velocity for mushroom
-    ));
+    // items.push_back(mario::entity::ItemFactory::createItem(
+    //     mario::entity::ItemType::RedMushroom,
+    //     "../../asset/sprites/red_mushroom.json",
+    //     "../../asset/textures/red_mushroom.png", // placeholder
+    //     sf::Vector2f(1.0f, 1.0f),
+    //     "red_mushroom",
+    //     sf::Vector2f(800.f, 100.f),
+    //     sf::Vector2f(32.f, 32.f),
+    //     sf::Vector2f(50.f, 0.f)  // Initial velocity for mushroom
+    // ));
     
-    items.push_back(mario::entity::ItemFactory::createItem(
-        mario::entity::ItemType::FireFlower,
-        "../../asset/sprites/fireflower.json",
-        "../../asset/sprites/fireflower.png", // placeholder
-        sf::Vector2f(1.0f, 1.0f),
-        "fireflower",
-        sf::Vector2f(1200.f, 100.f),
-        sf::Vector2f(32.f, 32.f)
-    ));
+    // items.push_back(mario::entity::ItemFactory::createItem(
+    //     mario::entity::ItemType::FireFlower,
+    //     "../../asset/sprites/fireflower.json",
+    //     "../../asset/sprites/fireflower.png", // placeholder
+    //     sf::Vector2f(1.0f, 1.0f),
+    //     "fireflower",
+    //     sf::Vector2f(1200.f, 100.f),
+    //     sf::Vector2f(32.f, 32.f)
+    // ));
 
     // Pause/Resume game
     pauseTexture = std::make_unique<sf::Texture>("../../asset/textures/pause-button.png");
@@ -126,16 +126,18 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
         _context->getSoundManager().adjustSoundEffectsVolume(value);
     });
 
-    tileMap = std::make_unique<mario::entity::TileMap>("../../asset/maps/tiles-8.json", "../../asset/maps/Map_1.json");
-    tileMap->createBlock(blocks);
+    tileMap = std::make_unique<mario::entity::TileMap>("../../asset/maps/tiles-8.json", "../../asset/maps/Map_1.json", 0);
+    tileMap->createBlock(blocks, backgroundBlocks);
+
+    testBlock = new mario::entity::BackgroundBlock(sf::Vector2f(100, 500), sf::Vector2f(16, 16), std::to_string(390), {"390", 1, 171, 16, 16});
   
     p_levelDataManager = std::make_unique<mario::resource::LevelDataManager>();
     camera.setMapBounds(tileMap->getWorldBounds());
 
-    itemManager = std::make_unique<mario::entity::ItemManager>();
-    itemManager->setPlayerReference(p_player);
-    itemManager->setTileMapRef(tileMap.get());
-    itemManager->loadSpawnPoints(tileMap->getObjects());
+    // itemManager = std::make_unique<mario::entity::ItemManager>();
+    // itemManager->setPlayerReference(p_player);
+    // itemManager->setTileMapRef(tileMap.get());
+    // itemManager->loadSpawnPoints(tileMap->getObjects());
 }
 
 void mario::pages::LevelsPage::autoSave() {
@@ -250,8 +252,8 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
         sfxSlider->update(*window);
     }
 
-    itemManager->update(window, dt);
-    itemManager->processSpawnTriggers(p_player, dt);
+    // itemManager->update(window, dt);
+    // itemManager->processSpawnTriggers(p_player, dt);
 }
 
 void mario::pages::LevelsPage::handleEvent(const sf::RenderWindow *window, const sf::Event &event) {
@@ -332,6 +334,10 @@ void mario::pages::LevelsPage::handleEvent(const sf::RenderWindow *window, const
 
 void mario::pages::LevelsPage::render(sf::RenderWindow *window) {
     camera.applyTo(*window);
+    testBlock->render(window);
+    for(auto &backgroundBlock : backgroundBlocks) {
+        backgroundBlock->render(window);
+    }
     for(auto &block : blocks) {
         block->render(window);
     }
@@ -363,5 +369,5 @@ void mario::pages::LevelsPage::render(sf::RenderWindow *window) {
         sfxSlider->render(*window);
     }
 
-    itemManager->render(window);
+    // itemManager->render(window);
 }

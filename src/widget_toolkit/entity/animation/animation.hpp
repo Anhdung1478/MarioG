@@ -64,6 +64,15 @@ namespace mario::entity {
                 setSprite(data);
             }
 
+            Animation(const std::string& imagePath, sf::Vector2f _scale, const SpriteData2& sprite) : scale(_scale), velocity(sf::Vector2f(0.f, 0.f)) {
+                p_textureResource.loadSheet(imagePath, sprite);
+
+                SpriteData data = p_textureResource.getSpriteData(sprite.id);
+                p_sprite = new sf::Sprite(*(data.texture));
+                p_sprite->setScale(scale);
+                setSprite(data);
+            }
+
             ~Animation() override {
                 delete p_sprite;
             }
