@@ -269,5 +269,15 @@ void CollisionManager::checkCollisionPlayerWithEnemies(Player *&player, std::vec
         // enemy->setVelocity(vel);
 }
 
+
+void CollisionManager::checkCollisionPlayerWithItems(Player *&player, std::vector<mario::entity::Item*>& items) {
+    for (auto* item : items) {
+        SideCollision side = findCollisionSide(player, item);
+        if (side != SideCollision::None) {
+            item->onCollect(player);
+        }
+    }
+}
+
 } // namespace entity
 } // namespace mario

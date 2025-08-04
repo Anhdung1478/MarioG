@@ -187,7 +187,7 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
         collisionManager.checkCollisionPlayerWithBlocks(p_player, blocks);
         collisionManager.checkCollisionEnemyWithBlocks(enemies, blocks);
         // TODO: Add collision detection for items with player
-        // collisionManager.checkCollisionPlayerWithItems(p_player, items);
+        collisionManager.checkCollisionPlayerWithItems(p_player, items);
         // collisionManager.checkCollisionPlayerWithEnemies(p_player, enemies);
         // collisionManager.checkCollisionPlayerWithItems(p_player, enemies);
 
