@@ -14,6 +14,7 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
 
     // Initialize items vector 
     // Sample items for testing (these would be loaded by TileMap using ItemFactory)
+    /*
     items.push_back(mario::entity::ItemFactory::createItem(
         mario::entity::ItemType::Coin,
         "../../asset/sprites/10-coin.json",
@@ -44,7 +45,8 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
         sf::Vector2f(1200.f, 100.f),
         sf::Vector2f(32.f, 32.f)
     ));
-
+    */
+   
     // Pause/Resume game
     pauseTexture = std::make_unique<sf::Texture>("../../asset/textures/pause-button.png");
     pauseSprite = std::make_unique<sf::Sprite>(*pauseTexture);

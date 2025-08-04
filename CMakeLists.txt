@@ -15,8 +15,8 @@ set(SFML_STATIC_LIBRARIES ON)
 
 find_package(SFML 3.0 REQUIRED COMPONENTS System Window Graphics Audio)
 
-set(BOX2D_DIR "C:/BOX2D")
-set(BOX2D_LIBRARY "C:/BOX2D/build/src/libbox2d.a")
+#set(BOX2D_DIR "C:/BOX2D")
+#set(BOX2D_LIBRARY "C:/BOX2D/build/src/libbox2d.a")
 
 set(EVENTPP_DIR "C:/eventpp")
 
@@ -25,11 +25,11 @@ file(GLOB_RECURSE SOURCE_FILES "src/*.cpp")
 add_executable(MARIOG ${SOURCE_FILES})
 
 # Set include directories after target creation
-target_include_directories(MARIOG PRIVATE "${BOX2D_DIR}/include")
+#target_include_directories(MARIOG PRIVATE "${BOX2D_DIR}/include")
 target_include_directories(MARIOG PRIVATE "${EVENTPP_DIR}/include")
 
 # Link libraries
 target_link_libraries(MARIOG PRIVATE SFML::Graphics SFML::Window SFML::System SFML::Audio)
 
 # Link Box2D library
-target_link_libraries(MARIOG PRIVATE ${BOX2D_LIBRARY})
+#target_link_libraries(MARIOG PRIVATE ${BOX2D_LIBRARY})
