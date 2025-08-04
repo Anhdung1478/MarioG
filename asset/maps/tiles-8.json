@@ -172,39 +172,12 @@
                 }]
         }, 
         {
-         "id":78,
-         "properties":[
-                {
-                 "name":"Type",
-                 "type":"string",
-                 "value":"grass[0]"
-                }]
-        }, 
-        {
-         "id":79,
-         "properties":[
-                {
-                 "name":"Type",
-                 "type":"string",
-                 "value":"grass[1]"
-                }]
-        }, 
-        {
-         "id":80,
-         "properties":[
-                {
-                 "name":"Type",
-                 "type":"string",
-                 "value":"grass[2]"
-                }]
-        }, 
-        {
          "id":117,
          "properties":[
                 {
                  "name":"Type",
                  "type":"string",
-                 "value":"question-block"
+                 "value":"Question"
                 }]
         }, 
         {
@@ -253,15 +226,6 @@
                 }]
         }, 
         {
-         "id":156,
-         "properties":[
-                {
-                 "name":"Type",
-                 "type":"string",
-                 "value":"empty-question-block"
-                }]
-        }, 
-        {
          "id":162,
          "properties":[
                 {
@@ -303,7 +267,7 @@
                 {
                  "name":"Type",
                  "type":"string",
-                 "value":"brick-block[0]"
+                 "value":"BrickBlock"
                 }]
         }, 
         {
@@ -312,7 +276,7 @@
                 {
                  "name":"Type",
                  "type":"string",
-                 "value":"brick-block[1]"
+                 "value":"BrickBlock"
                 }]
         }, 
         {
@@ -321,7 +285,7 @@
                 {
                  "name":"Type",
                  "type":"string",
-                 "value":"brick-block[2]"
+                 "value":"BrickBlock"
                 }]
         }, 
         {
