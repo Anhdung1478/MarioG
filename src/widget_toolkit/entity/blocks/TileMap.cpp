@@ -8,7 +8,7 @@ namespace entity {
 TileMap::TileMap(){
 }
 
-TileMap::TileMap(const std::string &tilesetPath, const std::string &mapPath, int _themeID) : themeID(_themeID) {
+TileMap::TileMap(const std::string &_tilesetPath, const std::string &_mapPath, int _themeID) : tilesetPath(_tilesetPath), mapPath(_mapPath), themeID(_themeID) {
     loadTileset(tilesetPath);
     loadMap(mapPath);
 }
@@ -121,40 +121,80 @@ bool TileMap::loadMap(const std::string& mapPath) {
     }
     
     // Load objects
-    // for (const auto& layerJson : mapJson["layers"]) {
-    //     if (layerJson["type"] == "objectgroup") {
-    //         for (const auto& obj : layerJson["objects"]) {
-    //             ObjectData objData;
-    //             objData.gid = obj["gid"];
-    //             objData.x = obj["x"];
-    //             objData.y = obj["y"];
-    //             objData.width = obj["width"];
-    //             objData.height = obj["height"];
+    for (const auto& layerJson : mapJson["layers"]) {
+        if (layerJson["type"] == "objectgroup") {
+            std::string layerName = layerJson["name"];
+            for (const auto& obj : layerJson["objects"]) {
+                std::string objName = obj["name"];
+                float x = obj["x"];
+                float y = obj["y"];
+                float width = obj["width"];
+                float height = obj["height"];
 
-    //             if (obj.contains("properties")) {
-    //                 for (const auto& prop : obj["properties"]) {
-    //                     if (prop["name"] == "item_type") {
-    //                         objData.itemType = prop["value"];
-    //                     } else if (prop["name"] == "trigger_type") {
-    //                         objData.triggerType = prop["value"];
-    //                     } else if (prop["name"] == "trigger_id") {
-    //                         objData.triggerID = prop["value"];
-    //                     } 
-    //                 }
-    //             }
+                if(layerName == "Items"){
 
-    //             objects.push_back(objData);
-    //         }
-    //         break;
-    //     }
-    // }
+                }
+                else if(layerName == "Enemies"){
+
+                }
+                else if(layerName == "Background"){
+
+                }
+            }
+            break;
+        }
+    }
+    
+    return true;
+}
+
+bool TileMap::loadObjects(std::vector<mario::entity::Block*>& backgroundBlocks) {
+    std::ifstream file(mapPath);
+    if (!file.is_open()) {
+        std::cerr << "Failed to open map file: " << mapPath << std::endl;
+        return false;
+    }
+    
+    json mapJson;
+    file >> mapJson;
+    file.close();
+    
+    // Load objects
+    for (const auto& layerJson : mapJson["layers"]) {
+        if (layerJson["type"] == "objectgroup") {
+            std::string layerName = layerJson["name"];
+            // std::cout << "Loading objects from layer: " << layerName << "\n";
+            for (const auto& obj : layerJson["objects"]) {
+                std::string objName = obj["name"];
+                float x = obj["x"];
+                float y = obj["y"];
+                float width = obj["width"];
+                float height = obj["height"];
+                
+                y -= 1 * 16;
+                x = x * BLOCK_SCALE.x;
+                y = y * BLOCK_SCALE.y;
+
+                if(layerName == "Items"){
+
+                }
+                else if(layerName == "Enemies"){
+
+                }
+                else if(layerName == "Background"){
+                    // std::cout << "Object: " << objName << " at (" << x << ", " << y << ") with size (" << width << ", " << height << ")\n";
+                    backgroundBlocks.push_back(new BackgroundBlock(sf::Vector2f(x, y), sf::Vector2f(16, 16), objName));
+                }
+            }
+            // std::cout << '\n';
+        }
+    }
     
     return true;
 }
 
 void TileMap::createBlock(std::vector<Block*> &blocks, std::vector<Block*> &backgroundBlocks) {
     blocks.clear();
-    backgroundBlocks.clear();
     for (int y = 0; y < mapHeight; ++y) {
         for (int x = 0; x < mapWidth; ++x) {
             int tileId = tileIds[y * mapWidth + x];
@@ -273,13 +313,24 @@ void TileMap::createBlock(std::vector<Block*> &blocks, std::vector<Block*> &back
 
                 // Brick blocks
                 case 195:
-                    blocks.push_back(new Brick(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "brick-block[0]", 0, -1));
+                    blocks.push_back(new Brick(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "brick-block[0]", -1, themeID));
                     break;
                 case 197:
-                    blocks.push_back(new Brick(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "brick-block[1]", 1));
+                    blocks.push_back(new Brick(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "brick-block[1]", -1, themeID));
                     break;
                 case 199:
-                    blocks.push_back(new Brick(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "brick-block[2]", 2));
+                    blocks.push_back(new Brick(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "brick-block[2]", -1, themeID));
+                    break;
+
+                // Background blocks
+                case 78:
+                    backgroundBlocks.push_back(new BackgroundBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "grass[0][0]"));
+                    break;
+                case 79:
+                    backgroundBlocks.push_back(new BackgroundBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "grass[1][0]"));
+                    break;
+                case 80:
+                    backgroundBlocks.push_back(new BackgroundBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "grass[2][0]"));
                     break;
 
                 default:
@@ -292,7 +343,7 @@ void TileMap::createBlock(std::vector<Block*> &blocks, std::vector<Block*> &back
                         16, 
                         16
                     }));
-                    std::cout << "Unknown tile ID: " << tileId << "with x = " << x << ", y = " << y << " at [(" << _x * 16 + margin + _x * spacing << ", " << _y * 16 + margin + _y * spacing << "), 16x16] with type: " << tileType << std::endl;
+                    // std::cout << "Unknown tile ID: " << tileId << "with x = " << x << ", y = " << y << " at [(" << _x * 16 + margin + _x * spacing << ", " << _y * 16 + margin + _y * spacing << "), 16x16] with type: " << tileType << std::endl;
                     break;
             }
 
