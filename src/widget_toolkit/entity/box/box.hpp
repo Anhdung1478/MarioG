@@ -2,6 +2,7 @@
 
 #include <bits/stdc++.h>
 #include <SFML/Graphics.hpp>
+#include "../animation/animation.hpp"
 
 namespace mario::entity {
 
@@ -33,6 +34,10 @@ namespace mario::entity {
 
             void reSize(sf::Vector2f _size) {
                 size = _size;
+            }
+
+            void updateSize(const mario::entity::Animation *p_animation) {
+                reSize(p_animation->getSize());
             }
 
             virtual sf::Vector2f getVelocity() const = 0;

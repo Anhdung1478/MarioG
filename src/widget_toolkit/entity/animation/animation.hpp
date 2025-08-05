@@ -137,15 +137,15 @@ namespace mario::entity {
                 p_sprite->setScale(scale);
             }
 
-            bool isFaceForward() {
+            bool isFaceForward() const {
                 return _isFaceForward;
             }
 
-            sf::Vector2f getScale() {
+            sf::Vector2f getScale() const {
                 return scale;
             }
 
-            sf::Vector2f getSize() {
+            sf::Vector2f getSize() const {
                 return p_sprite->getGlobalBounds().size;
             }
 

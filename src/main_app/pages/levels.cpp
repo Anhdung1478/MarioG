@@ -369,5 +369,6 @@ void mario::pages::LevelsPage::render(sf::RenderWindow *window) {
         sfxSlider->render(*window);
     }
 
+
     // itemManager->render(window);
 }
