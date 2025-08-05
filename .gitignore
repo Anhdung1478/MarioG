@@ -1,4 +1,4 @@
 .vscode/
 build/
-asset/save_data/
-CMakeLists.txt
+asset/save_data/*
+/CMakeLists.txt
