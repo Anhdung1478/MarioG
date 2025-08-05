@@ -99,6 +99,25 @@ bool TileMap::loadMap(const std::string& mapPath) {
         }
     }
     
+    /*
+    for (const auto& layerJson : mapJson["layers"]) {
+        if (layerJson["type"] == "objectgroup" && layerJson["name"] == "Items") {
+            for (const auto& obj : layerJson["objects"]) {
+                ObjectData objData;
+                objData.gid = obj["gid"];
+                objData.x = obj["x"];
+                objData.y = obj["y"];
+                objData.width = obj["width"];
+                objData.height = obj["height"];
+                objData.name = obj["name"];
+
+                objects.push_back(objData);
+            }
+            break;
+        }
+    }
+    */
+   
     // Load objects
     // for (const auto& layerJson : mapJson["layers"]) {
     //     if (layerJson["type"] == "objectgroup") {

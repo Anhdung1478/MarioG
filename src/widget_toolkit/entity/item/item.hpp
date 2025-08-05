@@ -12,7 +12,7 @@ namespace mario::entity {
         RedMushroom,
         OneupMushroom,
         FireFlower,
-        //Add Starmen --> make mario sparkling
+        Starman 
     };
     class Item : public Entity {
     friend class ItemManager; 

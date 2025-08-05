@@ -14,9 +14,8 @@ Block::Block(sf::Vector2f pos, sf::Vector2f size, const std::string &name) : nam
 }
 
 void Block::onHit(Player* player, ItemManager* itemManager) {
-    if (itemManager) {
-        itemManager->triggerSpawn(blockID, SpawnTrigger::BlockHit);
-    }
+    // Default implementation - does nothing
+    // Derived classes should override this method for specific behavior
 }
 
 } // namespace entity

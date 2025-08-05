@@ -31,6 +31,9 @@ namespace mario::entity {
             int lives = 2;
             int coinCount = 0;
 
+            bool isInvincible = false;
+            float invincibleTimer = 0.f;
+
         public:
             Player(sf::Vector2f spawnPoint, CharacterListType characterType, player_state::PlayerStateType stateType) : _characterType(characterType) {
                 p_body = new DynamicBox(spawnPoint, sf::Vector2f(40.f, 40.f));
@@ -116,6 +119,14 @@ namespace mario::entity {
                     std::cerr << "SUCCESFULLY\n";
                 }
                 
+                if(isInvincible) {
+                    invincibleTimer -= dt;
+                    if(invincibleTimer <= 0.0f) {
+                        isInvincible = false;
+                        invincibleTimer = 0.f;
+                        // change to normal appearance
+                    }
+                }
                 p_animation->update(window, dt);
                 p_body->update(dt);
 
@@ -208,6 +219,12 @@ namespace mario::entity {
                 lives++;
                 score += 1000;
                 // Play 1-up sound
+            }
+
+            void collectStarman() {
+                isInvincible = true;
+                invincibleTimer = 10.f; // 10 seconds of invincibility
+                // p_stateManager->changeToStarmanState(p_animation, p_body);
             }
     };
 

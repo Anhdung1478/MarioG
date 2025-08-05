@@ -24,7 +24,7 @@ private:
     std::unordered_map<int, std::string> tileProperties;
     std::vector<int> tileIds; // Store tile IDs for rendering
     std::vector<int> objectIds; // Store object IDs for rendering
-    std::vector<ObjectData> objects; // Store object data for item spawning
+    //std::vector<ObjectData> objects; // Store object data for item spawning
 
     int mapWidth;
     int mapHeight;
@@ -39,7 +39,7 @@ public:
     TileMap(const std::string &tilesetPath, const std::string &mapPath);
     ~TileMap();
 
-    const std::vector<ObjectData>& getObjects() const { return objects; }
+    //const std::vector<ObjectData>& getObjects() const { return objects; }
 
     bool loadTileset(const std::string &tilesetPath);
     bool loadMap(const std::string &mapPath);
