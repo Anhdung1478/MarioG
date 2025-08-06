@@ -32,10 +32,11 @@ namespace mario::pages {
 
             mario::entity::Block* testBlock;
       
-            mario::entity::Player *p_player;
-            sf::Time timeRemaining;
             Camera camera;
+            mario::entity::Player *p_player;
             mario::entity::CollisionManager collisionManager;
+
+            std::unique_ptr<sf::Font> marioFont;
 
             // for Sound Manager
             mario::resource::LevelState currLevelState;
@@ -79,6 +80,8 @@ namespace mario::pages {
             void handleEvent(const sf::RenderWindow *window, const sf::Event &event) override;
             void render(sf::RenderWindow *window) override;
             void autoSave();
+            void rePositionTextToMiddle(sf::Text &text, int rectX, int rectY);
+            void renderLevelState(sf::RenderWindow *window, mario::resource::LevelState levelState);
 
             // for Sound Manager
             mario::resource::LevelState getLevelState() const;

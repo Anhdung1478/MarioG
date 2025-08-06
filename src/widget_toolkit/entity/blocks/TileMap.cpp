@@ -11,6 +11,8 @@ TileMap::TileMap(){
 TileMap::TileMap(const std::string &tilesetPath, const std::string &mapPath, int _themeID) : themeID(_themeID) {
     loadTileset(tilesetPath);
     loadMap(mapPath);
+
+    blockFactory = std::make_unique<mario::entity::BlockFactory>();
 }
 
 TileMap::~TileMap(){
@@ -165,137 +167,16 @@ void TileMap::createBlock(std::vector<Block*> &blocks, std::vector<Block*> &back
             tileId -= 1;
 
             // Create the block based on the tile type
-            std::string tileType = tileProperties[tileId];            
-            switch (tileId) {
-                // Grass ground tiles
-                case 0:
-                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "grass-ground[0]"));
-                    break;
-                case 1:
-                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "grass-ground[1]"));
-                    break;
-                case 2:
-                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "grass-ground[2]"));
-                    break;
-                case 39:
-                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "grass-ground[3]"));
-                    break;
-                case 40:
-                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "grass-ground[4]"));
-                    break;
-                case 41:
-                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "grass-ground[5]"));
-                    break;
-                    
-                // Stone ground tiles
-                case 4:
-                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "stone-ground[0]"));
-                    break;
-                case 5:
-                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "stone-ground[1]"));
-                    break;
-                case 6:
-                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "stone-ground[2]"));
-                    break;
-                case 43:
-                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "stone-ground[3]"));
-                    break;
-                case 44:
-                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "stone-ground[4]"));
-                    break;
-                case 45:
-                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "stone-ground[5]"));
-                    break;
+            std::string tileType = tileProperties[tileId];
+            Block* new_block = blockFactory->createBlock(tileId, sf::Vector2f(x * tileWidth, y * tileHeight), themeID);
+            if(new_block == nullptr) {
+                new_block = blockFactory->createBackgroundBlock(tileId, sf::Vector2f(x * tileWidth, y * tileHeight), themeID, tilesetColumns, tileWidth, tileHeight, margin, spacing);
                 
-                // Snow ground tiles
-                case 8:
-                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "snow-ground[0]"));
-                    break;
-                case 9:
-                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "snow-ground[1]"));
-                    break;
-                case 10:
-                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "snow-ground[2]"));
-                    break;
-                case 47:
-                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "snow-ground[3]"));
-                    break;
-                case 48:
-                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "snow-ground[4]"));
-                    break;
-                case 49:
-                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "snow-ground[5]"));
-                    break;
-
-                // Green pipe tiles
-                case 123:
-                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "green-pipe[0]"));
-                    break;
-                case 124:
-                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "green-pipe[1]"));
-                    break;
-                case 162:
-                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "green-pipe[2]"));
-                    break;
-                case 163:
-                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "green-pipe[3]"));
-                    break;
-                
-                // Gray pipe tiles
-                case 128:
-                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "gray-pipe[0]"));
-                    break;
-                case 129:
-                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "gray-pipe[1]"));
-                    break;
-                case 167:
-                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "gray-pipe[2]"));
-                    break;
-                case 168:
-                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "gray-pipe[3]"));
-                    break;
-
-                // Stair blocks
-                case 351:
-                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "stair-block[0]"));
-                    break;
-                case 352:
-                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "stair-block[1]"));
-                    break;
-                case 353:
-                    blocks.push_back(new SolidBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "stair-block[2]"));
-                    break;
-
-                // Question blocks
-                case 117:
-                    blocks.push_back(new QuestionBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "question-block[0]", 0, themeID));
-                    break;
-
-                // Brick blocks
-                case 195:
-                    blocks.push_back(new Brick(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "brick-block[0]", 0, -1));
-                    break;
-                case 197:
-                    blocks.push_back(new Brick(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "brick-block[1]", 1));
-                    break;
-                case 199:
-                    blocks.push_back(new Brick(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), "brick-block[2]", 2));
-                    break;
-
-                default:
-                    int _x = tileId % tilesetColumns;
-                    int _y = tileId / tilesetColumns;
-                    backgroundBlocks.push_back(new BackgroundBlock(sf::Vector2f(x * tileWidth, y * tileHeight), sf::Vector2f(16, 16), std::to_string(tileId), {
-                        std::to_string(tileId), 
-                        _x * 16 + margin + _x * spacing, 
-                        _y * 16 + margin + _y * spacing, 
-                        16, 
-                        16
-                    }));
-                    std::cout << "Unknown tile ID: " << tileId << "with x = " << x << ", y = " << y << " at [(" << _x * 16 + margin + _x * spacing << ", " << _y * 16 + margin + _y * spacing << "), 16x16] with type: " << tileType << std::endl;
-                    break;
+                assert(new_block != nullptr);
+                backgroundBlocks.push_back(new_block);
+            } else {
+                blocks.push_back(new_block);
             }
-
 
             //     block = std::make_unique<Brick>(x * tileWidth, y * tileHeight);
             // else if (tileType == "Question") 

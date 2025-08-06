@@ -13,6 +13,7 @@
 #include "../item/item.hpp"
 #include "../item/ItemManager.hpp"
 #include "../enemy/enemy.hpp"
+#include "../blockfactory.hpp"
   
 namespace mario {
 namespace entity {
@@ -21,6 +22,8 @@ namespace entity {
 
 class TileMap : public mario::IScreenElement {
 private:
+    std::unique_ptr<mario::entity::BlockFactory> blockFactory;
+
     sf::Texture tilesetTexture;
     std::unordered_map<int, std::string> tileProperties;
     std::vector<int> tileIds; // Store tile IDs for rendering
