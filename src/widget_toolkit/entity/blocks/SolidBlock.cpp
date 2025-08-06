@@ -1,7 +1,6 @@
 #include "SolidBlock.hpp"
 
-namespace mario {
-namespace entity {
+namespace mario::entity {
 
 SolidBlock::SolidBlock() : Block()
 {
@@ -76,5 +75,4 @@ void SolidBlock::render(sf::RenderWindow *window) {
     Entity::render(window);
 }
 
-} // namespace entity
-} // namespace mario
+} // namespace mario::entity

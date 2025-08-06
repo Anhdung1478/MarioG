@@ -1,8 +1,7 @@
 #include "QuestionBlock.hpp"
 #include "../item/ItemManager.hpp"
 
-namespace mario {
-namespace entity {
+namespace mario::entity {
 
 QuestionBlock::QuestionBlock(sf::Vector2f pos, sf::Vector2f size, std::string name, int _typeOfItem, int _themeID) 
     : numberOfCoins(1), Block(pos, size, name), typeOfItem(_typeOfItem), themeID(_themeID) 
@@ -151,5 +150,4 @@ void QuestionBlock::onHit(Player* player, ItemManager* itemManager) {
     }
 }
 
-} // namespace entity
-} // namespace mario
+} // namespace mario::entity

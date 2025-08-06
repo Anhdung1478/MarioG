@@ -2,8 +2,7 @@
 #include "Block.hpp"
 #include "../animation/animation.hpp"
 
-namespace mario {
-namespace entity {
+namespace mario::entity {
 
 class Player;
 class ItemManager;
@@ -36,5 +35,4 @@ private:
     void bouncingAnimation(float dt);
 };
 
-} // namespace entity
-} // namespace mario
+} // namespace mario::entity

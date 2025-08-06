@@ -1,8 +1,7 @@
 #pragma once
 #include "Block.hpp"
 
-namespace mario {
-namespace entity {
+namespace mario::entity {
 
 struct BrickFragment;
 
@@ -37,11 +36,10 @@ private:
     void bouncingAnimation(float dt);
 };
 
-} // namespace entity
-} // namespace mario
+} // namespace mario::entity
 
 
-struct mario::entity::BrickFragment{
+struct mario::entity::BrickFragment {
     sf::Sprite sprite;
     sf::Vector2f velocity;
     float rotation;

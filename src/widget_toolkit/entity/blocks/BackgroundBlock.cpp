@@ -1,7 +1,6 @@
 #include "BackgroundBlock.hpp"
 
-namespace mario {
-namespace entity {
+namespace mario::entity {
 
 BackgroundBlock::BackgroundBlock() : Block()
 {
@@ -119,5 +118,4 @@ void BackgroundBlock::render(sf::RenderWindow *window) {
     Entity::render(window);
 }
 
-} // namespace entity
-} // namespace mario
+} // namespace mario::entity

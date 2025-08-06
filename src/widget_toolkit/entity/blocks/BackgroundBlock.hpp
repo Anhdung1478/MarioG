@@ -2,8 +2,7 @@
 
 #include "Block.hpp"
 
-namespace mario {
-namespace entity {
+namespace mario::entity {
 
 class BackgroundBlock : public Block {
 private:
@@ -23,5 +22,4 @@ public:
     void render(sf::RenderWindow *window) override;
 };
 
-} // namespace entity
-} // namespace mario
+} // namespace mario::entity
