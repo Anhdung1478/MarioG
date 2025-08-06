@@ -14,14 +14,14 @@ public:
     ~QuestionBlock();
 
     void InitSpritesSheet() override;
-    void reactToCollision(int side, Player* player = nullptr) override;
+    int reactToCollision(int side, Player* player = nullptr) override;
 
     void update(const sf::RenderWindow *window, float dt) override;
     void handleEvent(const sf::RenderWindow *window, const sf::Event &event) override;
     void render(sf::RenderWindow *window) override;
     void onHit(Player* player, ItemManager* itemManager) override;
 private:
-    int typeOfItem = 0; // 0 - coin, 1 - red-mushroom or fire-flower, 2 - one-up-mushroom
+    int typeOfItem = 0; // 0: coin, 1: red-mushroom, 2: fire-flower, 3: one-up-mushroom, 4: starman
     int themeID;
     int numberOfCoins;
     mario::entity::Animation *coins_animation;

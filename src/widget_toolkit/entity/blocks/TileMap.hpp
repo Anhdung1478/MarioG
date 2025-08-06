@@ -54,7 +54,7 @@ public:
 
     bool loadTileset(const std::string &tilesetPath);
     bool loadMap(const std::string &mapPath);
-    bool loadObjects(std::vector<mario::entity::Enemy*> &enemies, std::vector<mario::entity::Item*> &items, std::vector<mario::entity::Block*> &backgroundBlocks);
+    bool loadObjects(std::vector<mario::entity::Enemy*> &enemies, std::vector<mario::entity::Block*> &blocks, std::vector<mario::entity::Block*> &backgroundBlocks);
 
     void createBlock(std::vector<Block*> &blocks, std::vector<Block*> &backgroundBlocks);
     void sortBlocks(std::vector<Block*> &blocks);

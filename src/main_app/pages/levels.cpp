@@ -4,14 +4,14 @@
 #include "../../widget_toolkit/resource/SoundManager.hpp"
 
 mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::LevelState state) : Page(context), camera({1280, 720}), currLevelState(state) {
-    p_player = new mario::entity::Player(sf::Vector2f(700, 200), state.characterType, state.stateType);
+    p_player = new mario::entity::Player(sf::Vector2f(500, 200), state.characterType, state.stateType);
 
     p_inputManager = std::make_unique<mario::input::InputManager>(context);
     
     tileMap = std::make_unique<mario::entity::TileMap>("../../asset/maps/tiles-8.json", "../../asset/maps/Map_1.json", 0);
-    tileMap->loadObjects(enemies, items, backgroundBlocks);
-    tileMap->createBlock(blocks, backgroundBlocks);
-    testBlock = new mario::entity::BackgroundBlock(sf::Vector2f(100, 500), sf::Vector2f(16, 16), "enemies-flag[0]");
+    tileMap->loadObjects(enemies, blocks, backgroundBlocks);
+    // tileMap->createBlock(blocks, backgroundBlocks);
+    // testBlock = new mario::entity::BackgroundBlock(sf::Vector2f(100, 500), sf::Vector2f(16, 16), "enemies-flag[0]");
     // testBlock = new mario::entity::BackgroundBlock(sf::Vector2f(100, 500), sf::Vector2f(16, 16), std::to_string(390), {"390", 1, 171, 16, 16});
 
     // Mario font initalize
@@ -26,37 +26,6 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
         sf::Vector2f(16.f, 16.f),
         sf::Vector2f(0.f, 0.f)
     );
-
-    // Load items
-    items.push_back(new mario::entity::FireFlower(
-        "../../asset/sprites/fireflower.json",
-        "../../asset/maps/Image/tiles-8.png",
-        sf::Vector2f(2.5f, 2.5f),
-        "fireflower[0]",
-        sf::Vector2f(500.f, 500.f),
-        sf::Vector2f(16.f, 16.f),
-        sf::Vector2f(0.f, 0.f)
-    ));
-
-    items.push_back(new mario::entity::RedMushroom(
-        "../../asset/sprites/red-mushroom.json",
-        "../../asset/maps/Image/tiles-8.png",
-        sf::Vector2f(2.5f, 2.5f),
-        "red-mushroom[0]",
-        sf::Vector2f(700.f, 200.f),
-        sf::Vector2f(16.f, 16.f),
-        sf::Vector2f(0.f, 0.f)
-    ));
-
-    items.push_back(new mario::entity::OneupMushroom(
-        "../../asset/sprites/1up-mushroom.json",
-        "../../asset/maps/Image/tiles-8.png",
-        sf::Vector2f(2.5f, 2.5f),
-        "1up-mushroom[0]",
-        sf::Vector2f(900.f, 200.f),
-        sf::Vector2f(16.f, 16.f),
-        sf::Vector2f(0.f, 0.f)
-    ));
 
     // Pause/Resume game
     pauseTexture = std::make_unique<sf::Texture>("../../asset/textures/pause-button.png");
@@ -195,7 +164,7 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
 
         p_player->update(window, dt);
 
-        testBlock->update(window, dt);
+        // testBlock->update(window, dt);
         
         for(auto &backgroundBlock : backgroundBlocks) {
             backgroundBlock->update(window, dt);
@@ -224,11 +193,11 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
             }
         }
 
-        collisionManager.checkCollisionPlayerWithBlocks(p_player, blocks);
+        collisionManager.checkCollisionPlayerWithBlocks(p_player, blocks, items);
         collisionManager.checkCollisionEnemyWithBlocks(enemies, blocks);
         collisionManager.checkCollisionPlayerWithEnemies(p_player, enemies);
         collisionManager.checkCollisionPlayerWithItems(p_player, items);
-        // collisionManager.checkCollisionItemsWithBlocks(items, blocks);
+        collisionManager.checkCollisionItemsWithBlocks(items, blocks);
         // collisionManager.checkCollisionPlayerWithEnemies(p_player, enemies);
         // collisionManager.checkCollisionPlayerWithItems(p_player, enemies);
 
@@ -442,30 +411,27 @@ void mario::pages::LevelsPage::renderLevelState(sf::RenderWindow *window, mario:
 
 void mario::pages::LevelsPage::render(sf::RenderWindow *window) {
     camera.applyTo(*window);
-    testBlock->render(window);
+    // testBlock->render(window);
     for (auto &backgroundBlock : backgroundBlocks) {
         backgroundBlock->render(window);
     }
     
-    for (auto &block : blocks) {
-        block->render(window);
-    }
-
-    p_player->render(window);
-
-    // Render enemies
     for (auto* enemy : enemies) {
         if (!enemy->shouldDelete()) {
             enemy->render(window);
         }
     }
 
-    // Render items directly from vector
-    for (auto &item : items) {
-        // if (item && !item->isCollected()) {
-            item->render(window);
-        // }
+    for (auto &block : blocks) {
+        block->render(window);
     }
+
+    for (auto &item : items) {
+        item->render(window);
+    }
+
+    p_player->render(window);
+
     //testItem->render(window);
 
     window->draw(*pauseSprite);

@@ -169,7 +169,7 @@ bool TileMap::loadMap(const std::string& mapPath) {
     return true;
 }
 
-bool TileMap::loadObjects(std::vector<mario::entity::Enemy*> &enemies, std::vector<mario::entity::Item*> &items, std::vector<mario::entity::Block*>& backgroundBlocks) {
+bool TileMap::loadObjects(std::vector<mario::entity::Enemy*> &enemies, std::vector<mario::entity::Block*> &blocks, std::vector<mario::entity::Block*>& backgroundBlocks) {
     std::ifstream file(mapPath);
     if (!file.is_open()) {
         std::cerr << "Failed to open map file: " << mapPath << std::endl;
@@ -196,12 +196,51 @@ bool TileMap::loadObjects(std::vector<mario::entity::Enemy*> &enemies, std::vect
                 y -= 1 * 16;
                 x = x * BLOCK_SCALE.x;
                 y = y * BLOCK_SCALE.y;
+                
+                // std::cout << "Object: " << objName << " at (" << x << ", " << y << ") with size (" << width << ", " << height << ")\n";
 
+                // -1 - None, 0 - coin, 1 - Red-mushroom, 2 - Fire-flower, 3 - One-up-mushroom, 4 - Starman
                 if(layerName == "Items"){
-
+                    if(objName == "coin"){
+                        if(objType == "brick"){
+                            blocks.push_back(new Brick(sf::Vector2f(x, y), sf::Vector2f(16, 16), "brick-block", 0, themeID, 10));
+                        }
+                    }
+                    if (objName == "red_mushroom"){
+                        if(objType == "brick"){
+                            blocks.push_back(new Brick(sf::Vector2f(x, y), sf::Vector2f(16, 16), "brick-block", 1, themeID));
+                        }
+                        if(objType == "question"){
+                            blocks.push_back(new QuestionBlock(sf::Vector2f(x, y), sf::Vector2f(16, 16), "question-block[0]", 1, themeID));
+                        }
+                        if(objType == "invisible"){
+                            // blocks.push_back(new InvisibleBlock(sf::Vector2f(x, y), sf::Vector2f(16, 16), "invisible-block[0]", 1, themeID));
+                        }
+                    }
+                    else if (objName == "oneup_mushroom"){
+                        if(objType == "brick"){
+                            blocks.push_back(new Brick(sf::Vector2f(x, y), sf::Vector2f(16, 16), "brick-block", 3, themeID));
+                        }
+                        if(objType == "question"){
+                            blocks.push_back(new QuestionBlock(sf::Vector2f(x, y), sf::Vector2f(16, 16), "question-block[0]", 3, themeID));
+                        }
+                        if(objType == "invisible"){
+                            // blocks.push_back(new InvisibleBlock(sf::Vector2f(x, y), sf::Vector2f(16, 16), "invisible-block[0]", 3, themeID));
+                        }
+                    }
+                    else if (objName == "starman"){
+                        if(objType == "brick"){
+                            // blocks.push_back(new Brick(sf::Vector2f(x, y), sf::Vector2f(16, 16), "brick-block", 4, themeID));
+                        }
+                        if(objType == "question"){
+                            // blocks.push_back(new QuestionBlock(sf::Vector2f(x, y), sf::Vector2f(16, 16), "question-block[0]", 4, themeID));
+                        }
+                        if(objType == "invisible"){
+                            // blocks.push_back(new InvisibleBlock(sf::Vector2f(x, y), sf::Vector2f(16, 16), "invisible-block[0]", 4, themeID));
+                        }
+                    }
                 }
                 else if(layerName == "Background"){
-                    // std::cout << "Object: " << objName << " at (" << x << ", " << y << ") with size (" << width << ", " << height << ")\n";
                     backgroundBlocks.push_back(new BackgroundBlock(sf::Vector2f(x, y), sf::Vector2f(16, 16), objName));
                 }
                 
@@ -221,7 +260,7 @@ bool TileMap::loadObjects(std::vector<mario::entity::Enemy*> &enemies, std::vect
                     enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(x, y-100), mario::entity::KoopaType::Green, true));
                 }
                 else if (objType == "piranha-plant"){
-                    enemies.push_back(new mario::entity::PiranhaGreen(sf::Vector2f(x, y-100)));
+                    enemies.push_back(new mario::entity::PiranhaGreen(sf::Vector2f(x, y)));
                 }
                 else if (objType == "lakitu"){
                     // enemies.push_back(new mario::entity::Lakitu(sf::Vector2f(x, y)));
@@ -230,12 +269,7 @@ bool TileMap::loadObjects(std::vector<mario::entity::Enemy*> &enemies, std::vect
             // std::cout << '\n';
         }
     }
-    
-    return true;
-}
 
-void TileMap::createBlock(std::vector<Block*> &blocks, std::vector<Block*> &backgroundBlocks) {
-    blocks.clear();
     for (int y = 0; y < mapHeight; ++y) {
         for (int x = 0; x < mapWidth; ++x) {
             int tileId = tileIds[y * mapWidth + x];
@@ -259,6 +293,12 @@ void TileMap::createBlock(std::vector<Block*> &blocks, std::vector<Block*> &back
         }
     }
     sortBlocks(blocks);
+    
+    return true;
+}
+
+void TileMap::createBlock(std::vector<Block*> &blocks, std::vector<Block*> &backgroundBlocks) {
+    
 }
 
 void TileMap::sortBlocks(std::vector<Block*> &blocks) {

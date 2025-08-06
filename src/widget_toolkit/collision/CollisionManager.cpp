@@ -73,7 +73,7 @@ namespace entity {
         }
     }
 
-    void CollisionManager::checkCollisionPlayerWithBlocks(mario::entity::Player *&player, std::vector<Block*> &blocks) {
+    void CollisionManager::checkCollisionPlayerWithBlocks(mario::entity::Player *&player, std::vector<Block*> &blocks, std::vector<Item*> &items) {
         int L, R;
         findBlocksCollisions(L, R, player, blocks);
 
@@ -88,7 +88,7 @@ namespace entity {
 
             SideCollision side = findCollisionSide(player, block);
             if(side != SideCollision::None) {
-                block->reactToCollision(side ^ 1, player);
+                int typeOfItem = block->reactToCollision(side ^ 1, player);
                 switch (side) {
                     case SideCollision::Top:
                         hasTopCollision = true;
@@ -107,6 +107,51 @@ namespace entity {
                 }
                 
                 fixPosition(player, block, side);
+                
+                if(typeOfItem == 1) { // Red-mushroom
+                    items.push_back(new RedMushroom(
+                        "../../asset/sprites/red-mushroom.json",
+                        "../../asset/maps/Image/tiles-8.png",
+                        sf::Vector2f(2.5f, 2.5f),
+                        "red-mushroom[0]",
+                        sf::Vector2f(block->getPosition().x, block->getPosition().y - block->getSize().y/2.0f),
+                        sf::Vector2f(16.f, 16.f),
+                        sf::Vector2f(80.f, 0.f)
+                    ));
+                } 
+                else if(typeOfItem == 2) { // Fire flower
+                    items.push_back(new FireFlower(
+                        "../../asset/sprites/fireflower.json",
+                        "../../asset/maps/Image/tiles-8.png",
+                        sf::Vector2f(2.5f, 2.5f),
+                        "fireflower[0]",
+                        sf::Vector2f(block->getPosition().x, block->getPosition().y - block->getSize().y/2.0f),
+                        sf::Vector2f(16.f, 16.f),
+                        sf::Vector2f(0.f, 0.f)
+                    ));
+                } 
+                else if(typeOfItem == 3) { // One-up mushroom
+                    items.push_back(new OneupMushroom(
+                        "../../asset/sprites/1up-mushroom.json",
+                        "../../asset/maps/Image/tiles-8.png",
+                        sf::Vector2f(2.5f, 2.5f),
+                        "1up-mushroom[0]",
+                        sf::Vector2f(block->getPosition().x, block->getPosition().y - block->getSize().y/2.0f),
+                        sf::Vector2f(16.f, 16.f),
+                        sf::Vector2f(0.f, 0.f)
+                    ));
+                } 
+                else if(typeOfItem == 4) { // Starman
+                    // items.push_back(new Starman(
+                    //     "../../asset/sprites/starman.json",
+                    //     "../../asset/maps/Image/tiles-8.png",
+                    //     sf::Vector2f(2.5f, 2.5f),
+                    //     "starman[0]",
+                    //     sf::Vector2f(500.f, 500.f),
+                    //     sf::Vector2f(16.f, 16.f),
+                    //     sf::Vector2f(0.f, 0.f)
+                    // ));
+                } 
             }
         }
 

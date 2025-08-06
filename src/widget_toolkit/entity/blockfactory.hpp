@@ -87,11 +87,11 @@ namespace mario::entity {
 
                     // Brick blocks
                     case 195:
-                        return new Brick(spawnPoint, sf::Vector2f(16, 16), "brick-block[0]", -1, themeID);
+                        return new Brick(spawnPoint, sf::Vector2f(16, 16), "brick-block", -1, themeID);
                     case 197:
-                        return new Brick(spawnPoint, sf::Vector2f(16, 16), "brick-block[1]", -1, themeID);
+                        return new Brick(spawnPoint, sf::Vector2f(16, 16), "brick-block", -1, themeID);
                     case 199:
-                        return new Brick(spawnPoint, sf::Vector2f(16, 16), "brick-block[2]", -1, themeID);
+                        return new Brick(spawnPoint, sf::Vector2f(16, 16), "brick-block", -1, themeID);
                     default:
                         return nullptr;
                 }

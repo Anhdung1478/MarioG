@@ -70,11 +70,11 @@ void QuestionBlock::InitSpritesSheet(){
     });
 }
 
-void QuestionBlock::reactToCollision(int side, Player* player) {
-    if (side != SideCollision::Bottom) return; 
+int QuestionBlock::reactToCollision(int side, Player* player) {
+    if (side != SideCollision::Bottom) return -1; 
     // Coin
     if (typeOfItem == 0) { 
-        if (numberOfCoins == 0) return;
+        if (numberOfCoins == 0) return -1;
 
         numberOfCoins--;
 
@@ -88,15 +88,26 @@ void QuestionBlock::reactToCollision(int side, Player* player) {
         }
     }
     else if (typeOfItem == 1) { // Red-mushroom or Fire-flower
-        if (player->getPlayerStateType() == player_state::PlayerStateType::Small) {
-            // Spawn Red mushroom
-        } else if (player->getPlayerStateType() == player_state::PlayerStateType::Super) {
-            // Spawn Fire flower
+        if (player->getPlayerStateType() == player_state::PlayerStateType::Small) {// Spawn Red mushroom
+            p_animation->setAnimationState(false);
+            p_animation->setSpriteAnimation("empty-question-block[" + std::to_string(themeID) + "]");
+            typeOfItem = -1; // Mark as empty
+            return 1; 
+        } else if (player->getPlayerStateType() == player_state::PlayerStateType::Super) {// Spawn Fire flower
+            p_animation->setAnimationState(false);
+            p_animation->setSpriteAnimation("empty-question-block[" + std::to_string(themeID) + "]");
+            typeOfItem = -1; // Mark as empty
+            return 2;
         }
+        
     }
-    else if (typeOfItem == 2) { // One-up mushroom
-        // Spawn one-up mushroom
+    else if (typeOfItem == 3) {// Spawn one-up mushroom
+        p_animation->setAnimationState(false);
+        p_animation->setSpriteAnimation("empty-question-block[" + std::to_string(themeID) + "]");
+        typeOfItem = -1; // Mark as empty
+        return 3;
     }
+    return -1;
 }
   
 void QuestionBlock::bouncingAnimation(float dt) {

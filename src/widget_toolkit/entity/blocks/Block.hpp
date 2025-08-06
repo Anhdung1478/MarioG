@@ -28,7 +28,7 @@ namespace mario {
     class Player;
     class ItemManager;
 
-    inline const sf::Vector2f BLOCK_SCALE = sf::Vector2f(2.5f, 2.5f);
+    inline const sf::Vector2f BLOCK_SCALE = sf::Vector2f(2.5, 2.5);
 
     class Block : public mario::entity::Entity {
     protected:
@@ -43,7 +43,7 @@ namespace mario {
         virtual ~Block() = default;
         
         virtual void InitSpritesSheet() = 0;
-        virtual void reactToCollision(int side, Player* player = nullptr) = 0;
+        virtual int reactToCollision(int side, Player* player = nullptr) = 0;
     
         virtual void onHit(Player* player, ItemManager* itemManager);
         int getBlockID() const { return blockID; }
