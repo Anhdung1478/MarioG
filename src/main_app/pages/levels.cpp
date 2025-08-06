@@ -17,9 +17,13 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
     marioFont = std::make_unique<sf::Font>("../../asset/fonts/SuperMario256.ttf");
 
     // Load enemies
-    // enemies.push_back(new mario::entity::Goomba(sf::Vector2f(300.f, 80.f)));
-    enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(1400.f, 80.f), mario::entity::KoopaType::Red, false));
-    // enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(350.f, 80.f), mario::entity::KoopaType::Green, true));
+    enemies.push_back(new mario::entity::Goomba(sf::Vector2f(1750.f, 80.f)));
+    enemies.push_back(new mario::entity::Goomba(sf::Vector2f(5539.f, 80.f)));
+    enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(1340.f, 600.f), mario::entity::KoopaType::Red, false));
+    enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(2077.f, 600.f), mario::entity::KoopaType::Green, true));
+    enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(5820.f, 600.f), mario::entity::KoopaType::Green, false));
+    enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(6951.f, 600.f), mario::entity::KoopaType::Red, true));
+    enemies.push_back(new mario::entity::PiranhaGreen(sf::Vector2f(1540.f, 545.f)));
 
     // Initialize items vector 
     // Sample items for testing (these would be loaded by TileMap using ItemFactory)
@@ -167,6 +171,19 @@ mario::resource::LevelState mario::pages::LevelsPage::getLevelState() const { re
 bool mario::pages::LevelsPage::isPaused() const { return _isPaused; }
 
 void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) {
+    timeRemaining -= sf::seconds(dt);
+    if(timeRemaining <= sf::seconds(0.f)) {
+        // failed !!
+    }
+    for (auto it = enemies.begin(); it != enemies.end();) {
+        if ((*it)->shouldDelete()) {
+            delete *it;
+            it = enemies.erase(it); 
+        } else {
+            ++it;
+        }
+    }
+
     if(!_isPaused) {
         currLevelState.update(dt);
         if(currLevelState.times <= sf::seconds(0.f)) {
@@ -182,7 +199,14 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
         }
 
         for(auto &enemy : enemies) {
-            enemy->update(window, dt);
+            if (!enemy->shouldDelete()) {
+                mario::entity::Piranha* piranha = dynamic_cast<mario::entity::Piranha*>(enemy);
+                if (piranha) {
+                    piranha->updateWithPlayer(window, dt, p_player);
+                } else {
+                    enemy->update(window, dt);
+                }
+            }
         }
 
         for(auto &block : blocks) {
@@ -198,7 +222,7 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
 
         collisionManager.checkCollisionPlayerWithBlocks(p_player, blocks);
         collisionManager.checkCollisionEnemyWithBlocks(enemies, blocks);
-        // TODO: Add collision detection for items with player
+        collisionManager.checkCollisionPlayerWithEnemies(p_player, enemies);
         collisionManager.checkCollisionPlayerWithItems(p_player, items);
         // collisionManager.checkCollisionPlayerWithEnemies(p_player, enemies);
         // collisionManager.checkCollisionPlayerWithItems(p_player, enemies);
@@ -427,8 +451,10 @@ void mario::pages::LevelsPage::render(sf::RenderWindow *window) {
     p_player->render(window);
 
     // Render enemies
-    for (auto &enemy : enemies) {
-        enemy->render(window);
+    for (auto* enemy : enemies) {
+        if (!enemy->shouldDelete()) {
+            enemy->render(window);
+        }
     }
 
     // Render items directly from vector

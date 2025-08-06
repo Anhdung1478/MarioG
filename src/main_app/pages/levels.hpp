@@ -17,6 +17,7 @@
 
 #include "../../widget_toolkit/entity/enemy/goomba.hpp"
 #include "../../widget_toolkit/entity/enemy/koopa.hpp"
+#include "../../widget_toolkit/entity/enemy/piranha.hpp"
 
 namespace mario::pages {
     class LevelsPage : public Page {

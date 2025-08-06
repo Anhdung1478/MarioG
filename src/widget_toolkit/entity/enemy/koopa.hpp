@@ -27,7 +27,10 @@ namespace mario::entity {
         KoopaState lastState;
         bool canJump;
         float stateTimer;
-        static constexpr float TRANSITION_DURATION = 0.4f;
+        bool checkShell = false;
+        float hitCooldown = 0.f;
+        static constexpr float HIT_COOLDOWN_DURATION = 1.0f;
+        static constexpr float TRANSITION_DURATION = 0.35f;
 
         void loadRunningAnimations() {
             p_animation->clearAnimationStep();
@@ -53,9 +56,22 @@ namespace mario::entity {
             }
         }
 
+        void loadTransitionToShellAnimations() {
+            p_animation->clearAnimationStep();
+            for (int i = 0; i < 4; ++i) {
+                std::string spriteID = typePrefix + "jumping-back-into-shell[" + std::to_string(i) + "]";
+                try {
+                    p_animation->addAnimationStep(spriteID);
+                } catch (const std::out_of_range& e) {
+                    std::cerr << "Error loading sprite: " << spriteID << " - " << e.what() << "\n";
+                }
+            }
+            p_animation->setLoop(false);
+        }
+
         void loadShellAnimations() {
             p_animation->clearAnimationStep();
-            for (int i = 0; i < 2; ++i) {
+            for (int i = 0; i < 1; ++i) {
                 std::string spriteID = typePrefix + "knocked-out[" + std::to_string(i) + "]";
                 try {
                     p_animation->addAnimationStep(spriteID);
@@ -105,6 +121,8 @@ namespace mario::entity {
         virtual ~Koopa() = default;
 
         void hitByPlayer() {
+            if (hitCooldown > 0.f) return;
+
             if (currentState == KoopaState::Jumping) {
                 currentState = KoopaState::Running;
                 p_animation->setAnimationState(true);
@@ -114,45 +132,46 @@ namespace mario::entity {
                 } catch (const std::out_of_range& e) {
                     std::cerr << "Error setting sprite: " << typePrefix + "running[0]" << " - " << e.what() << "\n";
                 }
-                lastState = KoopaState::Running;
+                lastState = KoopaState::Jumping;
+                canJump = !canJump;
+                hitCooldown = HIT_COOLDOWN_DURATION;
             } else if (currentState == KoopaState::Running) {
                 currentState = KoopaState::TransitionToShell;
                 stateTimer = TRANSITION_DURATION;
                 p_animation->setAnimationState(true);
-                loadJumpingAnimations(); // Use jumping animations for transition
+                loadTransitionToShellAnimations();
                 try {
-                    p_animation->setSpriteAnimation(typePrefix + "jumping[0]");
+                    p_animation->setSpriteAnimation(typePrefix + "jumping-back-into-shell[0]");
                 } catch (const std::out_of_range& e) {
-                    std::cerr << "Error setting sprite: " << typePrefix + "jumping[0]" << " - " << e.what() << "\n";
+                    std::cerr << "Error setting sprite: " << typePrefix + "jumping-back-into-shell[0]" << " - " << e.what() << "\n";
                 }
-                lastState = KoopaState::TransitionToShell;
-            } else if (currentState == KoopaState::Shell) {
-                DynamicBox* body = dynamic_cast<DynamicBox*>(p_body);
-                if(body) {
-                    float pushSpeed = 300.f;
-                    body->setVelocity({body->isFaceForward() ? pushSpeed : -pushSpeed, body->getVelocity().y});
-                }
+                lastState = KoopaState::Running;
+                hitCooldown = HIT_COOLDOWN_DURATION;
             }
         }
 
         void reactCollision(int side, const Collision& collision) override {
             if(collision.isWithPlayer() && (side == SideCollision::Top)) {
                 hitByPlayer();
+            // } else if(collision.isWithPlayer() && (side == SideCollision::Right || side == SideCollision::Left)) {
+            //     DynamicBox* body = dynamic_cast<DynamicBox*>(p_body);
+            //     if(body) {
+            //         checkShell = true;
+            //         float pushSpeed = 2000.f;
+            //         body->setVelocity({body->isFaceForward() ? pushSpeed : -pushSpeed, body->getVelocity().y});
+            //     }
             } else if(collision.isWithWall() && (side == SideCollision::Left || side == SideCollision::Right)) {
                 DynamicBox* body = dynamic_cast<DynamicBox*>(p_body);
                 if(body) {
                     if(side == SideCollision::Left) {
                         body->move(true, false); // Move right if hit from left
                         body->setIsFaceForward(true);
-                        // std::cout << "RIGHT\n";
                     }
                     else if(side == SideCollision::Right) {
                         body->move(false, false); // Move left if hit from right
                         body->setIsFaceForward(false);
-                        // std::cout << "LEFT\n";
                     }
                     if(p_animation->isFaceForward() != body->isFaceForward()) {
-                        // std::cout << 1 << '\n';
                         p_animation->rotate();
                     }
                 }
@@ -177,6 +196,11 @@ namespace mario::entity {
         }
 
         void update(const sf::RenderWindow* window, float dt) override {
+            if (hitCooldown > 0.f) {
+                hitCooldown -= dt;
+                if (hitCooldown < 0.f) hitCooldown = 0.f;
+            }
+
             if (p_body->getPosition().y > 1000.f) {
                 if (currentState != KoopaState::Shell) {
                     currentState = KoopaState::Shell;
@@ -210,11 +234,11 @@ namespace mario::entity {
                     p_animation->setAnimationState(true);
                     lastState = KoopaState::Jumping;
                 } else if (currentState == KoopaState::TransitionToShell && lastState != KoopaState::TransitionToShell) {
-                    loadJumpingAnimations(); // Use jumping animations for transition
+                    loadTransitionToShellAnimations(); // Use jumping animations for transition
                     try {
-                        p_animation->setSpriteAnimation(typePrefix + "jumping[0]");
+                        p_animation->setSpriteAnimation(typePrefix + "jumping-back-into-shell[0]");
                     } catch (const std::out_of_range& e) {
-                        std::cerr << "Error setting sprite: " << typePrefix + "jumping[0]" << " - " << e.what() << "\n";
+                        std::cerr << "Error setting sprite: " << typePrefix + "jumping-back-into-shell[0]" << " - " << e.what() << "\n";
                     }
                     p_animation->setAnimationState(true);
                     lastState = KoopaState::TransitionToShell;
@@ -257,7 +281,7 @@ namespace mario::entity {
                         p_body->jump(false);
                         lastState = KoopaState::Jumping;
                     }
-                } else if (currentState == KoopaState::TransitionToShell) {
+                } else if (currentState == KoopaState::TransitionToShell && lastState == KoopaState::TransitionToShell) {
                     stateTimer -= dt;
                     if (stateTimer <= 0.f) {
                         currentState = KoopaState::Shell;
@@ -268,9 +292,9 @@ namespace mario::entity {
                             std::cerr << "Error setting sprite: " << typePrefix + "knocked-out[0]" << " - " << e.what() << "\n";
                         }
                         p_animation->setAnimationState(true);
-                        lastState = KoopaState::Shell;
+                        lastState = KoopaState::TransitionToShell;
                     }
-                } else if (currentState == KoopaState::Shell) {
+                } else if (currentState == KoopaState::Shell && lastState == KoopaState::Shell && !checkShell) {
                     p_body->setVelocity({0.f, p_body->getVelocity().y});
                 }
             }
@@ -283,7 +307,7 @@ namespace mario::entity {
     class KoopaChase : public Koopa {
     public:
         KoopaChase(sf::Vector2f startPosition, KoopaType type, bool canJump = false)
-            : Koopa(FILE_PATH"koopa-troopa.json", FILE_PATH"koopa_troopa_sheets.png", {2.f, 2.f},
+            : Koopa(FILE_PATH"koopa-troopa.json", FILE_PATH"koopa_troopa_sheets.png", {1.8f, 1.8f},
                     (type == KoopaType::Red ? "koopa-troopa-red.running[0]" : "koopa-troopa-green.running[0]"),
                     startPosition, {50.f, 72.f}, "Chase", canJump) {
             koopaType = type;
@@ -293,7 +317,7 @@ namespace mario::entity {
     class KoopaPatrol : public Koopa {
     public:
         KoopaPatrol(sf::Vector2f startPosition, KoopaType type, bool canJump = false)
-            : Koopa(FILE_PATH"koopa-troopa.json", FILE_PATH"koopa_troopa_sheets.png", {2.f, 2.f},
+            : Koopa(FILE_PATH"koopa-troopa.json", FILE_PATH"koopa_troopa_sheets.png", {1.8f, 1.8f},
                     (type == KoopaType::Red ? "koopa-troopa-red.running[0]" : "koopa-troopa-green.running[0]"),
                     startPosition, {50.f, 72.f}, "Patrol", canJump) {
             koopaType = type;
