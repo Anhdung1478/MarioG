@@ -11,7 +11,8 @@ namespace mario::entity {
         Coin,
         RedMushroom,
         OneupMushroom,
-        FireFlower
+        FireFlower,
+        //Add Starmen --> make mario sparkling
     };
     class Item : public Entity {
     friend class ItemManager; 
@@ -25,7 +26,6 @@ namespace mario::entity {
 
             virtual ~Item() = default;
 
-        protected:
             bool isMoving = true;
             ItemType type;
             bool isCollectedFlag = false;

@@ -6,10 +6,18 @@
 namespace mario::entity {
     class EntityFactory { // Factory pattern
         public:
-            Entity* create(std::string entityType, float x, float y) {
+            Entity* create(std::string entityID, sf::Vector2f spawnPoint) {
                 
             }
 
             ~EntityFactory() {}
     };
+
+    class EnemyFactory {
+        public:
+            
+            ~EnemyFactory() {}
+    };
+
+    
 }

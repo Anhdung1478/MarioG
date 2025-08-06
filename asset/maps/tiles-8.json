@@ -177,7 +177,7 @@
                 {
                  "name":"Type",
                  "type":"string",
-                 "value":"grass[0]"
+                 "value":"grass[0][0]"
                 }]
         }, 
         {
@@ -186,7 +186,7 @@
                 {
                  "name":"Type",
                  "type":"string",
-                 "value":"grass[1]"
+                 "value":"grass[1][0]"
                 }]
         }, 
         {
@@ -195,7 +195,7 @@
                 {
                  "name":"Type",
                  "type":"string",
-                 "value":"grass[2]"
+                 "value":"grass[2][0]"
                 }]
         }, 
         {
@@ -204,7 +204,25 @@
                 {
                  "name":"Type",
                  "type":"string",
-                 "value":"question-block"
+                 "value":"question-block[0]"
+                }]
+        }, 
+        {
+         "id":118,
+         "properties":[
+                {
+                 "name":"Type",
+                 "type":"string",
+                 "value":"question-block[0]"
+                }]
+        }, 
+        {
+         "id":119,
+         "properties":[
+                {
+                 "name":"Type",
+                 "type":"string",
+                 "value":"question-block[0]"
                 }]
         }, 
         {
@@ -253,15 +271,6 @@
                 }]
         }, 
         {
-         "id":156,
-         "properties":[
-                {
-                 "name":"Type",
-                 "type":"string",
-                 "value":"empty-question-block"
-                }]
-        }, 
-        {
          "id":162,
          "properties":[
                 {
@@ -307,6 +316,15 @@
                 }]
         }, 
         {
+         "id":196,
+         "properties":[
+                {
+                 "name":"Type",
+                 "type":"string",
+                 "value":"brick-block-move[0]"
+                }]
+        }, 
+        {
          "id":197,
          "properties":[
                 {
@@ -316,12 +334,75 @@
                 }]
         }, 
         {
+         "id":198,
+         "properties":[
+                {
+                 "name":"Type",
+                 "type":"string",
+                 "value":"brick-block-move[1]"
+                }]
+        }, 
+        {
          "id":199,
          "properties":[
                 {
                  "name":"Type",
                  "type":"string",
                  "value":"brick-block[2]"
+                }]
+        }, 
+        {
+         "id":200,
+         "properties":[
+                {
+                 "name":"Type",
+                 "type":"string",
+                 "value":"brick-block-move[2]"
+                }]
+        }, 
+        {
+         "id":273,
+         "properties":[
+                {
+                 "name":"Type",
+                 "type":"string",
+                 "value":"flag-pole[3]"
+                }]
+        }, 
+        {
+         "id":274,
+         "properties":[
+                {
+                 "name":"Type",
+                 "type":"string",
+                 "value":"flag-pole[4]"
+                }]
+        }, 
+        {
+         "id":312,
+         "properties":[
+                {
+                 "name":"Type",
+                 "type":"string",
+                 "value":"flag-pole[0]"
+                }]
+        }, 
+        {
+         "id":313,
+         "properties":[
+                {
+                 "name":"Type",
+                 "type":"string",
+                 "value":"flag-pole[1]"
+                }]
+        }, 
+        {
+         "id":314,
+         "properties":[
+                {
+                 "name":"Type",
+                 "type":"string",
+                 "value":"flag-pole[2]"
                 }]
         }, 
         {
@@ -357,7 +438,25 @@
                 {
                  "name":"Type",
                  "type":"string",
-                 "value":"FlagEnemy"
+                 "value":"flag-enemies[0]"
+                }]
+        }, 
+        {
+         "id":391,
+         "properties":[
+                {
+                 "name":"Type",
+                 "type":"string",
+                 "value":"flag-enemies[1]"
+                }]
+        }, 
+        {
+         "id":392,
+         "properties":[
+                {
+                 "name":"Type",
+                 "type":"string",
+                 "value":"flag-enemies[2]"
                 }]
         }, 
         {
@@ -366,7 +465,43 @@
                 {
                  "name":"Type",
                  "type":"string",
-                 "value":"FlagWin"
+                 "value":"win-flag[0]"
+                }]
+        }, 
+        {
+         "id":430,
+         "properties":[
+                {
+                 "name":"Type",
+                 "type":"string",
+                 "value":"win-flag[1]"
+                }]
+        }, 
+        {
+         "id":431,
+         "properties":[
+                {
+                 "name":"Type",
+                 "type":"string",
+                 "value":"win-flag[2]"
+                }]
+        }, 
+        {
+         "id":432,
+         "properties":[
+                {
+                 "name":"Type",
+                 "type":"string",
+                 "value":"win-flag[3]"
+                }]
+        }, 
+        {
+         "id":666,
+         "properties":[
+                {
+                 "name":"Type",
+                 "type":"string",
+                 "value":"castle-block[0]"
                 }]
         }, 
         {
@@ -375,7 +510,25 @@
                 {
                  "name":"Type",
                  "type":"string",
-                 "value":"FlagCastle"
+                 "value":"castle-flag[0]"
+                }]
+        }, 
+        {
+         "id":781,
+         "properties":[
+                {
+                 "name":"Type",
+                 "type":"string",
+                 "value":"castle-flag[1]"
+                }]
+        }, 
+        {
+         "id":819,
+         "properties":[
+                {
+                 "name":"Type",
+                 "type":"string",
+                 "value":"castle-flag[2]"
                 }]
         }],
  "tilewidth":16,

@@ -88,7 +88,7 @@ void CollisionManager::checkCollisionPlayerWithBlocks(mario::entity::Player *&pl
 
         SideCollision side = findCollisionSide(player, block);
         if(side != SideCollision::None) {
-            block->reactToCollision(side ^ 1);
+            block->reactToCollision(side ^ 1, player);
             switch (side) {
                 case SideCollision::Top:
                     hasTopCollision = true;
@@ -270,6 +270,16 @@ void CollisionManager::checkCollisionPlayerWithEnemies(Player *&player, std::vec
         // }
 
         // enemy->setVelocity(vel);
+}
+
+
+void CollisionManager::checkCollisionPlayerWithItems(Player *&player, std::vector<mario::entity::Item*>& items) {
+    for (auto* item : items) {
+        SideCollision side = findCollisionSide(player, item);
+        if (side != SideCollision::None) {
+            item->onCollect(player);
+        }
+    }
 }
 
 } // namespace entity

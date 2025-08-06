@@ -1,0 +1,24 @@
+{ "columns":0,
+ "grid":
+    {
+     "height":1,
+     "orientation":"orthogonal",
+     "width":1
+    },
+ "margin":0,
+ "name":"koopa_troopa_sheets",
+ "spacing":0,
+ "tilecount":1,
+ "tiledversion":"1.11.2",
+ "tileheight":364,
+ "tiles":[
+        {
+         "id":0,
+         "image":"..\/sprites\/koopa_troopa_sheets.png",
+         "imageheight":364,
+         "imagewidth":385
+        }],
+ "tilewidth":385,
+ "type":"tileset",
+ "version":"1.10"
+}

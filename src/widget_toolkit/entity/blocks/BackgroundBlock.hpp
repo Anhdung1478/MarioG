@@ -4,13 +4,15 @@
 
 namespace mario::entity {
 
-class SolidBlock : public Block {
+class BackgroundBlock : public Block {
 private:
     std::vector<SpriteData2> sprites;
 public:
-    SolidBlock();
-    SolidBlock(const sf::Vector2f &pos, const sf::Vector2f &size, const std::string &name);
-    ~SolidBlock();
+    BackgroundBlock();
+    BackgroundBlock(const sf::Vector2f &pos, const sf::Vector2f &size, const std::string &name);
+    BackgroundBlock(const sf::Vector2f &pos, const sf::Vector2f &size, const std::string &name, const SpriteData2& sprite);
+
+    ~BackgroundBlock();
 
     void InitSpritesSheet() override;
     void reactToCollision(int side, Player* player = nullptr) override;
