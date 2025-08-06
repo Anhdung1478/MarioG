@@ -30,6 +30,12 @@ void mario::MainWindow::closeWindow() {
     isRunning = false;
 }
 
+sf::Vector2f mario::MainWindow::getWindowSize() const {
+    sf::Vector2u windowSize = window->getSize();
+    sf::Vector2f wSize(windowSize.x, windowSize.y);
+    return wSize;
+}
+
 mario::audio::SoundManager& mario::MainWindow::getSoundManager() { 
     return soundManager;
 }

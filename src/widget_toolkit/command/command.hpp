@@ -2,7 +2,7 @@
 
 #include<bits/stdc++.h>
 #include<SFML/Graphics.hpp>
-#include "../entity/player.hpp"
+#include "../entity/player/player.hpp"
 
 namespace mario::input { // Command pattern
     class Command {

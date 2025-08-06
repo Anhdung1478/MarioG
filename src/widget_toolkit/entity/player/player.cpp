@@ -3,7 +3,8 @@
 
 #define FILE_PATH "../../asset/sprites/"
 
-mario::entity::Player::Player(sf::Vector2f spawnPoint, CharacterListType characterType, player_state::PlayerStateType stateType) : _characterType(characterType) {
+mario::entity::Player::Player(sf::Vector2f spawnPoint, CharacterListType characterType, player_state::PlayerStateType stateType) : _characterType(characterType), _isAlive(true) {
+    _isStartedDeadAnimation = _isFinishedDeadAnimation = false;
     p_body = new DynamicBox(spawnPoint, sf::Vector2f(40.f, 40.f));
     if(characterType == CharacterListType::Mario) {
         p_animation = new Animation(FILE_PATH"mario.json", FILE_PATH"mario_sheets.png", PLAYER_SCALE, "mario-small.idle[0]");
@@ -50,51 +51,70 @@ void mario::entity::Player::rotateDirection() {
 }
 
 void mario::entity::Player::update(const sf::RenderWindow *window, float dt) {
-    if(!p_body->isOnGround()) {
-        // change texture to jumping
-        p_stateManager->setAnimation(p_animation, "jump[0]");
-        p_animation->setAnimationState(false);
-    } else {
-        if(p_body->isNotMoving()) {
-            // change texture to idle
-            p_stateManager->setAnimation(p_animation, "idle[0]");
-            p_animation->setAnimationState(false);
-        } else 
-            if(p_animation->getAnimationState() == false) {
-                // change to run animation
-                p_stateManager->setAnimation(p_animation, "idle[0]");
-                p_animation->setAnimationState(true);
-            }
-            
-        hasPlayedJumpSound_ = false;
-    }
-    // change state for debugging
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Num1)) {
-        std::cerr << "CHANGE TO SMALL STATE\n";
-        p_stateManager->changeToSmallState(p_animation, p_body);
-        std::cerr << "SUCCESFULLY\n";
-    }
+    if(p_body->getPosition().y >= 720.f)
+        _isAlive = false;
 
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Num2)) {
-        std::cerr << "CHANGE TO SUPER STATE\n";
-        p_stateManager->changeToSuperState(p_animation, p_body);
-        std::cerr << "SUCCESFULLY\n";
-    }
-
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Num3)) {
-        std::cerr << "CHANGE TO FIRE STATE\n";
-        p_stateManager->changeToFireState(p_animation, p_body);
-        std::cerr << "SUCCESFULLY\n";
-    }
-    
     p_animation->update(window, dt);
-    p_body->updateSize(p_animation);
-    p_body->update(dt);
+    if(_isAlive) {
+        if(!p_body->isOnGround()) {
+            // change texture to jumping
+            p_stateManager->setAnimation(p_animation, "jump[0]");
+            p_animation->setAnimationState(false);
+        } else {
+            if(p_body->isNotMoving()) {
+                // change texture to idle
+                p_stateManager->setAnimation(p_animation, "idle[0]");
+                p_animation->setAnimationState(false);
+            } else 
+                if(p_animation->getAnimationState() == false) {
+                    // change to run animation
+                    p_stateManager->setAnimation(p_animation, "idle[0]");
+                    p_animation->setAnimationState(true);
+                }
+                
+            hasPlayedJumpSound_ = false;
+        }
+        // change state for debugging
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Num1)) {
+            std::cerr << "CHANGE TO SMALL STATE\n";
+            p_stateManager->changeToSmallState(p_animation, p_body);
+            std::cerr << "SUCCESFULLY\n";
+        }
+    
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Num2)) {
+            std::cerr << "CHANGE TO SUPER STATE\n";
+            p_stateManager->changeToSuperState(p_animation, p_body);
+            std::cerr << "SUCCESFULLY\n";
+        }
+    
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Num3)) {
+            std::cerr << "CHANGE TO FIRE STATE\n";
+            p_stateManager->changeToFireState(p_animation, p_body);
+            std::cerr << "SUCCESFULLY\n";
+        }
+        
+        p_body->updateSize(p_animation);
+        p_body->update(dt);
+        
+        if(p_animation->isFaceForward() != p_body->isFaceForward())
+            rotateDirection();
+    }
 
-    if(p_animation->isFaceForward() != p_body->isFaceForward())
-        rotateDirection();
+    if(!_isAlive) {
+        if(!_isStartedDeadAnimation) {
+            _isStartedDeadAnimation = true;
+            p_animation->clearAnimationStep();
+            p_body->setPosition(sf::Vector2f(p_body->getPosition().x, 2000));
+            
+            p_animation->addAnimationStep("mario-small.idle[0]");
 
-    sf::Vector2f vel = p_body->getVelocity();
+            p_animation->setLoop(false);
+            p_animation->setAnimationState(true);
+        } else
+            if(!_isFinishedDeadAnimation) {
+                _isFinishedDeadAnimation = (p_animation->getAnimationState() == false);
+            }
+    }
 }
 
 void mario::entity::Player::updateToLevelState(mario::resource::LevelState &levelState) {
@@ -119,6 +139,18 @@ void mario::entity::Player::setOnGround(bool isOnGround) {
 
 void mario::entity::Player::resetJump() {
     p_body->resetJump();
+}
+
+void mario::entity::Player::beingHit() {
+    if(getPlayerStateType() == player_state::PlayerStateType::Small) {
+        _isAlive = false;
+    } else {
+        p_stateManager->changeToSmallState(p_animation, p_body);
+    }
+}
+
+bool mario::entity::Player::isDead() const {
+    return _isFinishedDeadAnimation;
 }
 
 void mario::entity::Player::collectCoin() {

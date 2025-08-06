@@ -222,6 +222,15 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
         
         currLevelState.stateType = p_player->getPlayerStateType();
         p_levelDataManager->update(dt, currLevelState);
+
+        if(p_player->isDead()) {
+            if(currLevelState.num_lives > 0) {
+                currLevelState = mario::resource::LevelState(currLevelState.level, currLevelState.num_lives - 1, currLevelState.score, currLevelState.coins, currLevelState.characterType);
+                _context->changePage(std::make_shared<mario::pages::LevelsPage>(*_context, currLevelState));
+            } else {
+                _context->changePage(std::make_shared<mario::pages::GameOverPage>(*_context));
+            }
+        }
     }
 
     // Check for hover state

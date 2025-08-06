@@ -4,7 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include "../entity.hpp"
 #include "../box/dynamic-box.hpp"
-#include "../player.hpp"
+#include "../player/player.hpp"
 #include "../blocks/Block.hpp"
 
 namespace mario::entity {

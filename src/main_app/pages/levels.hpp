@@ -1,6 +1,9 @@
 #include<bits/stdc++.h>
+
 #include "page.hpp"
-#include "../../widget_toolkit/entity/player.hpp"
+#include "gameover-page.hpp"
+
+#include "../../widget_toolkit/entity/player/player.hpp"
 #include "../../widget_toolkit/command/input-manager.hpp"
 #include "../../widget_toolkit/entity/blocks/TileMap.hpp"
 #include "../../widget_toolkit/resource/LevelState.hpp"

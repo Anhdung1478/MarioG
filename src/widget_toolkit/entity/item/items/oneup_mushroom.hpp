@@ -1,6 +1,6 @@
 #pragma once
 #include "../item.hpp"
-#include "../../player.hpp"
+#include "../../player/player.hpp"
 
 namespace mario::entity {
     class OneupMushroom : public Item {

@@ -36,6 +36,8 @@ namespace mario {
             void closeWindow();
             void run();
 
+            sf::Vector2f getWindowSize() const;
+
             // Use for sound manager
             void setPageMusic(std::shared_ptr<Page> page);
             mario::audio::SoundManager& getSoundManager();
