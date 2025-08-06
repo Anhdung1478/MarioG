@@ -29,6 +29,9 @@ QuestionBlock::QuestionBlock(sf::Vector2f pos, sf::Vector2f size, std::string na
     coins_animation->setTimeBetweenStep(1/17.0f);
     coins_animation->setLoop(false);
     coins_animation->setAnimationState(false);
+
+    originalPosition = p_body->getPosition();
+    bouncingDistance = p_body->getSize().y / 10.0f; // Set bouncing distance to 1/10 of the block height
 }
 
 QuestionBlock::~QuestionBlock() {
@@ -78,6 +81,8 @@ void QuestionBlock::reactToCollision(int side, Player* player) {
 
         coins_animation->setAnimationState(true);
 
+        isBouncing = true;
+
         if(numberOfCoins == 0){
             p_animation->setAnimationState(false);
             p_animation->setSpriteAnimation("empty-question-block[" + std::to_string(themeID) + "]");
@@ -95,7 +100,27 @@ void QuestionBlock::reactToCollision(int side, Player* player) {
     }
 }
   
+void QuestionBlock::bouncingAnimation(float dt) {
+    // std::cout << "Bouncing animation: " << bouncingTimer << "\n";
+    if (bouncingTimer < 0.1f) {
+        p_animation->move(sf::Vector2f(0.f, -bouncingDistance));
+        p_body->move(sf::Vector2f(0.f, -bouncingDistance));
+    } 
+    else if (bouncingTimer < 0.2f) {
+        p_animation->move(sf::Vector2f(0.f, +bouncingDistance));
+        p_body->move(sf::Vector2f(0.f, +bouncingDistance));
+    }
+    else {
+        bouncingTimer = 0.0f;
+        isBouncing = false;
+        p_animation->setPosition(originalPosition);
+        p_body->setPosition(originalPosition);
+    }
+    bouncingTimer += dt;
+}
+
 void QuestionBlock::update(const sf::RenderWindow *window, float dt) {
+    if (isBouncing) bouncingAnimation(dt);
     p_animation->update(window, dt);
     coins_animation->update(window, dt);
 }

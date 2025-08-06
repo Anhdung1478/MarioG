@@ -4,8 +4,14 @@
 #include "../../widget_toolkit/resource/SoundManager.hpp"
 
 mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::LevelState state) : Page(context), camera({1280, 720}), currLevelState(state) {
-    p_player = new mario::entity::Player(sf::Vector2f(1000, 100), state.characterType, state.stateType);
+    p_player = new mario::entity::Player(sf::Vector2f(500, 200), state.characterType, state.stateType);
     p_inputManager = std::make_unique<mario::input::InputManager>(context);
+    
+    tileMap = std::make_unique<mario::entity::TileMap>("../../asset/maps/tiles-8.json", "../../asset/maps/Map_1.json", 0);
+    tileMap->loadObjects(backgroundBlocks);
+    tileMap->createBlock(blocks, backgroundBlocks);
+    testBlock = new mario::entity::BackgroundBlock(sf::Vector2f(100, 500), sf::Vector2f(16, 16), "enemies-flag[0]");
+    // testBlock = new mario::entity::BackgroundBlock(sf::Vector2f(100, 500), sf::Vector2f(16, 16), std::to_string(390), {"390", 1, 171, 16, 16});
 
     // Mario font initalize
     marioFont = std::make_unique<sf::Font>("../../asset/fonts/SuperMario256.ttf");
@@ -128,11 +134,6 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
     sfxSlider->setOnValueChanged([this](float value) {
         _context->getSoundManager().adjustSoundEffectsVolume(value);
     });
-
-    tileMap = std::make_unique<mario::entity::TileMap>("../../asset/maps/tiles-8.json", "../../asset/maps/Map_1.json", 0);
-    tileMap->createBlock(blocks, backgroundBlocks);
-
-    testBlock = new mario::entity::BackgroundBlock(sf::Vector2f(100, 500), sf::Vector2f(16, 16), std::to_string(390), {"390", 1, 171, 16, 16});
   
     p_levelDataManager = std::make_unique<mario::resource::LevelDataManager>();
     camera.setMapBounds(tileMap->getWorldBounds());
@@ -173,7 +174,13 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
         }
 
         p_player->update(window, dt);
+
+        testBlock->update(window, dt);
         
+        for(auto &backgroundBlock : backgroundBlocks) {
+            backgroundBlock->update(window, dt);
+        }
+
         for(auto &enemy : enemies) {
             enemy->update(window, dt);
         }

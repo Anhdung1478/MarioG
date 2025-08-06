@@ -110,6 +110,10 @@ namespace mario::entity {
                 return step;
             }
 
+            const sf::Texture& getTexture() const {
+                return p_sprite->getTexture();
+            }
+
             void move(sf::Vector2f offset) {
                 p_sprite->move(offset);
             }

@@ -39,6 +39,10 @@ namespace mario::entity {
             void updateSize(const mario::entity::Animation *p_animation) {
                 reSize(p_animation->getSize());
             }
+            
+            void move(sf::Vector2f offset) {
+                position += offset;
+            }
 
             virtual sf::Vector2f getVelocity() const = 0;
             virtual void setVelocity(sf::Vector2f vel) = 0;

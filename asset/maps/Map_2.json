@@ -111,7 +111,7 @@
                  "gid":391,
                  "height":16,
                  "id":3,
-                 "name":"flag-enemies",
+                 "name":"enemies-flag[0]",
                  "rotation":0,
                  "type":"",
                  "visible":true,

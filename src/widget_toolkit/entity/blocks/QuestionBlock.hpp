@@ -28,6 +28,12 @@ private:
     mario::entity::Animation *coins_animation;
     std::vector<SpriteData2> sprites;
     bool hasBeenHit = false;
+
+    sf::Vector2f originalPosition;
+    bool isBouncing = false;
+    float bouncingTimer = 0.0f;
+    float bouncingDistance = 0.0f;
+    void bouncingAnimation(float dt);
 };
 
 } // namespace entity

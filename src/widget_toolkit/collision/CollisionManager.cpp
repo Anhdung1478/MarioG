@@ -88,7 +88,7 @@ void CollisionManager::checkCollisionPlayerWithBlocks(mario::entity::Player *&pl
 
         SideCollision side = findCollisionSide(player, block);
         if(side != SideCollision::None) {
-            block->reactToCollision(side ^ 1);
+            block->reactToCollision(side ^ 1, player);
             switch (side) {
                 case SideCollision::Top:
                     hasTopCollision = true;

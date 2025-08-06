@@ -31,6 +31,8 @@ private:
     std::vector<ObjectData> objects; // Store object data for item spawning
     std::vector<SpriteData2> sprites; // Store sprite data for rendering
     std::unordered_map<int, SpriteData2> tileSprites; // Store sprites for each tile ID
+    std::string mapPath;
+    std::string tilesetPath;
 
     int themeID = 0;
     int mapWidth;
@@ -50,9 +52,9 @@ public:
 
     bool loadTileset(const std::string &tilesetPath);
     bool loadMap(const std::string &mapPath);
+    bool loadObjects(std::vector<mario::entity::Block*> &backgroundBlocks);
 
     void createBlock(std::vector<Block*> &blocks, std::vector<Block*> &backgroundBlocks);
-    void createBlock(std::vector<Block*> &blocks);
     void sortBlocks(std::vector<Block*> &blocks);
 
     void update(const sf::RenderWindow *window, float dt) override;
