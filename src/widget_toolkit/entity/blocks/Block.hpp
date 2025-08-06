@@ -34,6 +34,7 @@ namespace mario {
     protected:
         std::string name;
         bool exist;
+        bool shouldBeDeleted = false;
         int blockID;
 
     public:
@@ -47,6 +48,7 @@ namespace mario {
         virtual void onHit(Player* player, ItemManager* itemManager);
         int getBlockID() const { return blockID; }
         void setBlockID(int id) { blockID = id; }
+        bool shouldDelete() const { return shouldBeDeleted; }
     };
 
     } // namespace entity

@@ -19,7 +19,8 @@ public:
     void checkCollisionPlayerWithBlocks(Player *&player, std::vector<Block*> &blocks);
     void checkCollisionEnemyWithBlocks(std::vector<Enemy*> &enemies, std::vector<Block*> &blocks);
     void checkCollisionPlayerWithEnemies(Player *&player, std::vector<Enemy*> &enemies);
-    void checkCollisionPlayerWithItems(Player *&player, std::vector<mario::entity::Item*> &items);
+    void checkCollisionPlayerWithItems(Player *&player, std::vector<Item*> &items);
+    void checkCollisionItemsWithBlocks(std::vector<Item*> &items, std::vector<Block*> &blocks);
 private:
     ItemManager* itemManager;
 };

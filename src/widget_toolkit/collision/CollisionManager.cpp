@@ -34,9 +34,9 @@ namespace entity {
     SideCollision CollisionManager::findCollisionSide(const mario::entity::Entity *entityA, const mario::entity::Entity *entityB) {
         sf::FloatRect hitBoxA = entityA->getHitbox();
         sf::FloatRect hitBoxB = entityB->getHitbox();
-
-        sf::Vector2f centerA = hitBoxA.position + hitBoxA.size / 2.f;
-        sf::Vector2f centerB = hitBoxB.position + hitBoxB.size / 2.f;
+    
+        sf::Vector2f centerA = hitBoxA.getCenter();
+        sf::Vector2f centerB = hitBoxB.getCenter();
 
         float deltaX = centerB.x - centerA.x;
         float deltaY = centerB.y - centerA.y;
@@ -95,7 +95,6 @@ namespace entity {
                         break;
                     case SideCollision::Bottom:
                         hasBottomCollision = true;
-                        block->onHit(player, itemManager);
                         break;
                     case SideCollision::Left:
                         hasLeftCollision = true;
@@ -205,11 +204,12 @@ namespace entity {
                 enemy->reactCollision(side ^ 1, Collision(Collision::Type::Player));
                 switch (side) {
                     case SideCollision::Top:
-                        player->resetJump();
-                        player->setOnGround(true);
+                        // Player die
                         break;
                     case SideCollision::Bottom:
-                        // Player die
+                        player->resetJump();
+                        player->setOnGround(true);
+                        player->jump(false);
                         break;
                     case SideCollision::Left:
                         // Player die
@@ -223,63 +223,33 @@ namespace entity {
                 fixPosition(player, enemy, side);
             }
         }
-
-            // bool hasTopCollision = false;
-            // bool hasBottomCollision = false;
-            // bool hasLeftCollision = false;
-            // bool hasRightCollision = false;
-
-            // for (int i = 0; i < blocks.size(); ++i) {
-            //     auto& block = blocks[i];
-            //     if (!block->isExist()) continue;
-
-            //     SideCollision side = findCollisionSide(enemy, block);
-            //     if (side != SideCollision::None) {
-            //         switch (side) {
-            //             case SideCollision::Top:
-            //                 hasTopCollision = true;
-            //                 break;
-            //             case SideCollision::Bottom:
-            //                 hasBottomCollision = true;
-            //                 break;
-            //             case SideCollision::Left:
-            //                 hasLeftCollision = true;
-            //                 break;
-            //             case SideCollision::Right:
-            //                 hasRightCollision = true;
-            //                 break;
-            //             default:
-            //                 break;
-            //         }
-                    
-            //         fixPosition(enemy, block, side);
-            //     }
-            // }
-
-            // sf::Vector2f vel = enemy->getVelocity();
-            // if (hasBottomCollision) {
-            //     vel.y = 0.f;
-            //     enemy->setOnGround(true); // Đặt trạng thái trên mặt đất
-            // }
-
-            // if (hasTopCollision) {
-            //     vel.y = 0.f;
-            // }
-
-            // if (hasLeftCollision || hasRightCollision) {
-            //     vel.x = 0.f;
-            // }
-
-            // enemy->setVelocity(vel);
     }
 
 
     void CollisionManager::checkCollisionPlayerWithItems(Player *&player, std::vector<mario::entity::Item*>& items) {
-        for (auto* item : items) {
+        for (auto& item : items) {
             if (!item->isCollected()) {
                 SideCollision side = findCollisionSide(player, item);
                 if (side != SideCollision::None) {
                     item->onCollect(player);
+                }
+            }
+        }
+    }
+
+    void CollisionManager::checkCollisionItemsWithBlocks(std::vector<mario::entity::Item*>& items, std::vector<mario::entity::Block*>& blocks) {
+        for (auto& item : items) {
+            if (!item->isCollected()) {
+                int L, R;
+                findBlocksCollisions(L, R, item, blocks);
+                for (int i = L; i <= R; ++i) {
+                    auto& block = blocks[i];
+                    if (!block->isExist()) continue;
+
+                    SideCollision side = findCollisionSide(item, block);
+                    if (side != SideCollision::None) {
+                        fixPosition(item, block, side);
+                    }
                 }
             }
         }

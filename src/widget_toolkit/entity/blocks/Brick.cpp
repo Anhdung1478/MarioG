@@ -180,15 +180,24 @@ namespace mario::entity {
         if (!fragments.empty()) {
             for (auto &fragment : fragments) {
                 fragment.update(dt);
+                if(fragment.sprite.getPosition().y > window->getSize().y) {
+                    // Remove fragment if it goes out of bounds
+                    fragment = fragments.back();
+                    fragments.pop_back();
+                }
             }
         }
+        shouldBeDeleted = fragments.empty() && !isExist();
     }
 
     void Brick::handleEvent(const sf::RenderWindow *window, const sf::Event &event) {
     }
 
     void Brick::render(sf::RenderWindow *window) {
-        Entity::render(window);
+        if(isExist()){
+            p_animation->renderWithPosition(window, p_body->getPosition());
+            p_body->renderHitboxRect(window);
+        }
         if (!fragments.empty()) {
             for (const auto &fragment : fragments) {
                 window->draw(fragment.sprite);

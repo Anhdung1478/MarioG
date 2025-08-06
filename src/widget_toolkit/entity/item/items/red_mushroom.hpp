@@ -53,14 +53,14 @@ namespace mario::entity {
 
         void update(const sf::RenderWindow* window, float dt) override {
             if (!isCollected()) {
-                if (!hasEmerged) {
-                    handleEmergence(dt);
-                } else {
-                    handleWalkingMovement(dt);
-                }
+                // if (!hasEmerged) {
+                //     handleEmergence(dt);
+                // } else {
+                //     handleWalkingMovement(dt);
+                // }
 
-                if (p_body) p_body->update(dt);
-                if (p_animation) p_animation->update(window, dt);
+                // if (p_body) p_body->update(dt);
+            //     if (p_animation) p_animation->update(window, dt);
             }
         }
 

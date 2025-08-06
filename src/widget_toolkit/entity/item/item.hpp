@@ -44,7 +44,7 @@ namespace mario::entity {
                 sf::Vector2f dimension,
                 sf::Vector2f startVelocity) : Entity(jsonPath, texturePath, scale, spriteID),
                 type(itemType) {
-                    p_body = new DynamicBox(startPosition, dimension);
+                    p_body = new DynamicBox(startPosition, dimension * 2.5f);
                     p_body->setVelocity(startVelocity);
             }
             

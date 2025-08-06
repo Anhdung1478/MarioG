@@ -13,6 +13,9 @@
 #include "../item/item.hpp"
 #include "../item/ItemManager.hpp"
 #include "../enemy/enemy.hpp"
+#include "../enemy/goomba.hpp"
+#include "../enemy/koopa.hpp"
+#include "../enemy/piranha.hpp"
 #include "../blockfactory.hpp"
   
 namespace mario {
@@ -42,7 +45,6 @@ private:
     int tilesetColumns;
     int margin;  // Margin around the tileset
     int spacing; // Spacing between tiles
-    void findItemBlockCollisions(int& L, int& R, const Item* item);
 public:
     TileMap();
     TileMap(const std::string &tilesetPath, const std::string &mapPathm, int themeID);
@@ -52,7 +54,7 @@ public:
 
     bool loadTileset(const std::string &tilesetPath);
     bool loadMap(const std::string &mapPath);
-    bool loadObjects(std::vector<mario::entity::Block*> &backgroundBlocks);
+    bool loadObjects(std::vector<mario::entity::Enemy*> &enemies, std::vector<mario::entity::Item*> &items, std::vector<mario::entity::Block*> &backgroundBlocks);
 
     void createBlock(std::vector<Block*> &blocks, std::vector<Block*> &backgroundBlocks);
     void sortBlocks(std::vector<Block*> &blocks);
