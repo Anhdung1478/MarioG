@@ -24,7 +24,11 @@ namespace mario::entity {
             bool _isRunning = true;
             
             void setAnimationStep(int x) {
-                step = x % int(animationSteps.size());
+                if(animationSteps.size() == 0) {
+                    step = 0;
+                } else {
+                    step = x % int(animationSteps.size());
+                }
             }
 
             void setSprite(const SpriteData &data) {

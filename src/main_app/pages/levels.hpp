@@ -79,9 +79,12 @@ namespace mario::pages {
         public:
             LevelsPage(MainWindow &context, mario::resource::LevelState state);
             ~LevelsPage();
+
             void update(const sf::RenderWindow *window, float dt) override;
             void handleEvent(const sf::RenderWindow *window, const sf::Event &event) override;
             void render(sf::RenderWindow *window) override;
+            sf::Vector2f getPositionRelativeToCamera(sf::Vector2f pos);
+
             void autoSave();
             void rePositionTextToMiddle(sf::Text &text, int rectX, int rectY);
             void renderLevelState(sf::RenderWindow *window, mario::resource::LevelState levelState);

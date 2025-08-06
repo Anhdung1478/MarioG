@@ -38,5 +38,9 @@ namespace mario::entity::player_state {
             void setAnimation(Animation *p_animation, const std::string &ID) override {
                 p_animation->setSpriteAnimation(LUIGI_TYPE_STR[(int) currStateType] + "." + ID);
             }
+            
+            void setDeadAnimation(Animation *p_animation) override {
+                p_animation->setSpriteAnimation(LUIGI_TYPE_STR[0] + ".backing[0]");
+            }
     };
 }

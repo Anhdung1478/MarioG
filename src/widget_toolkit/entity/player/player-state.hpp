@@ -86,5 +86,6 @@ namespace mario::entity::player_state {
             }
 
             virtual void setAnimation(Animation *p_animation, const std::string &ID) = 0;
+            virtual void setDeadAnimation(Animation *p_animation) = 0;
     };
 }

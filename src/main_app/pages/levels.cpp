@@ -215,8 +215,6 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
         //     }
         // }
 
-
-
         camera.followEntity(*p_player, dt);
         camera.update(dt);
         
@@ -351,6 +349,13 @@ void mario::pages::LevelsPage::handleEvent(const sf::RenderWindow *window, const
     }
 }
 
+sf::Vector2f mario::pages::LevelsPage::getPositionRelativeToCamera(sf::Vector2f pos) {
+    sf::FloatRect rect = camera.getCameraBounds();
+    sf::Vector2f cameraPos = rect.position;
+
+    return sf::Vector2f(pos.x + cameraPos.x, pos.y + cameraPos.y);
+}
+
 void mario::pages::LevelsPage::rePositionTextToMiddle(sf::Text &text, int rectX, int rectY) {
     float textLenX = text.getGlobalBounds().size.x;
     float textLenY = text.getGlobalBounds().size.y;
@@ -360,64 +365,74 @@ void mario::pages::LevelsPage::rePositionTextToMiddle(sf::Text &text, int rectX,
 }
 
 void mario::pages::LevelsPage::renderLevelState(sf::RenderWindow *window, mario::resource::LevelState levelState) {
-    sf::FloatRect rect = camera.getCameraBounds();
-    sf::Vector2f rectMove = rect.position;
-    int rectX = rect.size.x / 5.f;
+    sf::Vector2f windowSize = _context->getWindowSize();
+    sf::Vector2f rectMove(0.f, 0.f);
+    int rectX = windowSize.x / 5.f;
     int rectY1 = 2, rectY2 = 35;
 
     sf::Text text(*marioFont, "", 30);
 
     text.setString("SCORE");
     rePositionTextToMiddle(text, rectX, rectY1);
+    text.setPosition(getPositionRelativeToCamera(text.getPosition()));
     text.move(rectMove);
     window->draw(text);
 
     text.setString(to_string(levelState.score));
     rePositionTextToMiddle(text, rectX, rectY2);
+    text.setPosition(getPositionRelativeToCamera(text.getPosition()));
     text.move(rectMove);
     window->draw(text);
 
     rectMove.x += rectX;
     text.setString("COINS");
     rePositionTextToMiddle(text, rectX, rectY1);
+    text.setPosition(getPositionRelativeToCamera(text.getPosition()));
     text.move(rectMove);
     window->draw(text);
 
     text.setString(to_string(levelState.coins));
     rePositionTextToMiddle(text, rectX, rectY2);
+    text.setPosition(getPositionRelativeToCamera(text.getPosition()));
     text.move(rectMove);
     window->draw(text);
 
     rectMove.x += rectX;
     text.setString("WORLD");
     rePositionTextToMiddle(text, rectX, rectY1);
+    text.setPosition(getPositionRelativeToCamera(text.getPosition()));
     text.move(rectMove);
     window->draw(text);
 
     text.setString(to_string(levelState.level));
     rePositionTextToMiddle(text, rectX, rectY2);
+    text.setPosition(getPositionRelativeToCamera(text.getPosition()));
     text.move(rectMove);
     window->draw(text);
 
     rectMove.x += rectX;
     text.setString("TIME");
     rePositionTextToMiddle(text, rectX, rectY1);
+    text.setPosition(getPositionRelativeToCamera(text.getPosition()));
     text.move(rectMove);
     window->draw(text);
 
     text.setString(to_string(int(levelState.times.asSeconds())));
     rePositionTextToMiddle(text, rectX, rectY2);
+    text.setPosition(getPositionRelativeToCamera(text.getPosition()));
     text.move(rectMove);
     window->draw(text);
 
     rectMove.x += rectX;
     text.setString("LIVES");
     rePositionTextToMiddle(text, rectX, rectY1);
+    text.setPosition(getPositionRelativeToCamera(text.getPosition()));
     text.move(rectMove);
     window->draw(text);
 
     text.setString(to_string(levelState.num_lives));
     rePositionTextToMiddle(text, rectX, rectY2);
+    text.setPosition(getPositionRelativeToCamera(text.getPosition()));
     text.move(rectMove);
     window->draw(text);
 }

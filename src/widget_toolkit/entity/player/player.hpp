@@ -17,7 +17,8 @@ namespace mario::entity {
             mario::entity::player_state::PlayerStateManager *p_stateManager;
             CharacterListType _characterType;
 
-            float shootingDelayTime = 0.f;
+            sf::Time deadAnimationTime = sf::seconds(3);
+            sf::Time shootingDelayTime;
             bool _isOnGround;
 
             bool hasPlayedJumpSound_ = false; // For sound effect
@@ -49,6 +50,7 @@ namespace mario::entity {
 
             void beingHit(); // being hit by enemy or entity like level trap
             bool isDead() const;
+            bool canCollisionWithBlock() const;
 
             void collectCoin();
             void collectRedMushroom();

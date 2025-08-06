@@ -15,12 +15,13 @@ void CollisionManager::sortEntitiesByX(std::vector<Block*> &Entities) {
     });
 }
 
-void CollisionManager::findBlocksCollisions(int &L, int &R, const mario::entity::Entity *EntityA, std::vector<Block*> &blocks){
+void CollisionManager::findBlocksCollisions(int &L, int &R, const mario::entity::Entity *EntityA, std::vector<Block*> &blocks) {
     //using lower_bound and upper_bound to find the range of blocks that might collide with the entity
     auto itL = std::lower_bound(blocks.begin(), blocks.end(), EntityA->getPosition().x - EntityA->getSize().x, 
         [](const Block *block, float posX) {
             return block->getPosition().x < posX;
         });
+
     auto itR = std::upper_bound(blocks.begin(), blocks.end(), EntityA->getPosition().x + EntityA->getSize().x, 
         [](float posX, const Block *block) {
             return posX < block->getPosition().x;
@@ -74,6 +75,9 @@ void CollisionManager::fixPosition(Entity *entityA, Entity *entityB, SideCollisi
 }
 
 void CollisionManager::checkCollisionPlayerWithBlocks(mario::entity::Player *&player, std::vector<Block*> &blocks) {
+    if(player->canCollisionWithBlock() == false)
+        return;
+
     int L, R;
     findBlocksCollisions(L, R, player, blocks);
 
