@@ -73,7 +73,8 @@ namespace mario::pages {
             std::unique_ptr<Slider> musicSlider;
             std::unique_ptr<Slider> sfxSlider;
 
-            // std::unique_ptr<mario::entity::ItemManager> itemManager;
+            std::unique_ptr<mario::entity::ItemManager> itemManager;
+            void removeCollectedItems();
         public:
             LevelsPage(MainWindow &context, mario::resource::LevelState state);
             ~LevelsPage();

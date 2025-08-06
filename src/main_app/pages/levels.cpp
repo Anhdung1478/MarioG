@@ -4,7 +4,8 @@
 #include "../../widget_toolkit/resource/SoundManager.hpp"
 
 mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::LevelState state) : Page(context), camera({1280, 720}), currLevelState(state) {
-    p_player = new mario::entity::Player(sf::Vector2f(500, 200), state.characterType, state.stateType);
+    p_player = new mario::entity::Player(sf::Vector2f(30, 30), state.characterType, state.stateType);
+
     p_inputManager = std::make_unique<mario::input::InputManager>(context);
     
     tileMap = std::make_unique<mario::entity::TileMap>("../../asset/maps/tiles-8.json", "../../asset/maps/Map_1.json", 0);
@@ -15,7 +16,38 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
 
     // Mario font initalize
     marioFont = std::make_unique<sf::Font>("../../asset/fonts/SuperMario256.ttf");
+  
+    // Load items
+    items.push_back(new mario::entity::FireFlower(
+        "../../asset/sprites/fireflower.json",
+        "../../asset/sprites/mario_sheets.png",
+        sf::Vector2f(1.f, 1.f),
+        "fireflower[0]",
+        sf::Vector2f(500.f, 500.f),
+        sf::Vector2f(16.f, 16.f),
+        sf::Vector2f(0.f, 0.f)
+    ));
 
+    items.push_back(new mario::entity::RedMushroom(
+        "../../asset/sprites/red-mushroom.json",
+        "../../asset/sprites/enemies-2.png",
+        sf::Vector2f(1.f, 1.f),
+        "red-mushroom[0]",
+        sf::Vector2f(700.f, 200.f),
+        sf::Vector2f(16.f, 16.f),
+        sf::Vector2f(0.f, 0.f)
+    ));
+
+    items.push_back(new mario::entity::OneupMushroom(
+        "../../asset/sprites/1up-mushroom.json",
+        "../../asset/sprites/enemies-2.png",
+        sf::Vector2f(1.f, 1.f),
+        "1up-mushroom[0]",
+        sf::Vector2f(900.f, 200.f),
+        sf::Vector2f(16.f, 16.f),
+        sf::Vector2f(0.f, 0.f)
+    ));
+  
     // Load enemies
     enemies.push_back(new mario::entity::Goomba(sf::Vector2f(1750.f, 80.f)));
     enemies.push_back(new mario::entity::Goomba(sf::Vector2f(5539.f, 80.f)));
@@ -24,39 +56,6 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
     enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(5820.f, 600.f), mario::entity::KoopaType::Green, false));
     enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(6951.f, 600.f), mario::entity::KoopaType::Red, true));
     enemies.push_back(new mario::entity::PiranhaGreen(sf::Vector2f(1540.f, 545.f)));
-
-    // Initialize items vector 
-    // Sample items for testing (these would be loaded by TileMap using ItemFactory)
-    // items.push_back(mario::entity::ItemFactory::createItem(
-    //     mario::entity::ItemType::Coin,
-    //     "../../asset/sprites/10-coin.json",
-    //     "../../asset/sprites/coins_sheet.png",
-    //     sf::Vector2f(1.0f, 1.0f),
-    //     "coin",
-    //     sf::Vector2f(500.f, 100.f),
-    //     sf::Vector2f(32.f, 32.f)
-    // ));
-    
-    // items.push_back(mario::entity::ItemFactory::createItem(
-    //     mario::entity::ItemType::RedMushroom,
-    //     "../../asset/sprites/red_mushroom.json",
-    //     "../../asset/textures/red_mushroom.png", // placeholder
-    //     sf::Vector2f(1.0f, 1.0f),
-    //     "red_mushroom",
-    //     sf::Vector2f(800.f, 100.f),
-    //     sf::Vector2f(32.f, 32.f),
-    //     sf::Vector2f(50.f, 0.f)  // Initial velocity for mushroom
-    // ));
-    
-    // items.push_back(mario::entity::ItemFactory::createItem(
-    //     mario::entity::ItemType::FireFlower,
-    //     "../../asset/sprites/fireflower.json",
-    //     "../../asset/sprites/fireflower.png", // placeholder
-    //     sf::Vector2f(1.0f, 1.0f),
-    //     "fireflower",
-    //     sf::Vector2f(1200.f, 100.f),
-    //     sf::Vector2f(32.f, 32.f)
-    // ));
 
     // Pause/Resume game
     pauseTexture = std::make_unique<sf::Texture>("../../asset/textures/pause-button.png");
@@ -141,11 +140,6 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
   
     p_levelDataManager = std::make_unique<mario::resource::LevelDataManager>();
     camera.setMapBounds(tileMap->getWorldBounds());
-
-    // itemManager = std::make_unique<mario::entity::ItemManager>();
-    // itemManager->setPlayerReference(p_player);
-    // itemManager->setTileMapRef(tileMap.get());
-    // itemManager->loadSpawnPoints(tileMap->getObjects());
 }
 
 void mario::pages::LevelsPage::autoSave() {
@@ -210,11 +204,11 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
         }
 
         // Update items directly from vector
-        for(auto &item : items) {
-            if (item && !item->isCollected()) {
-                item->update(window, dt);
-            }
-        }
+        // for(auto &item : items) {
+        //     if (item && !item->isCollected()) {
+        //         item->update(window, dt);
+        //     }
+        // }
 
         collisionManager.checkCollisionPlayerWithBlocks(p_player, blocks);
         collisionManager.checkCollisionEnemyWithBlocks(enemies, blocks);
@@ -242,6 +236,7 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
         
         currLevelState.stateType = p_player->getPlayerStateType();
         p_levelDataManager->update(dt, currLevelState);
+        removeCollectedItems();
     }
 
     // Check for hover state
@@ -281,9 +276,6 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
         musicSlider->update(*window);
         sfxSlider->update(*window);
     }
-
-    // itemManager->update(window, dt);
-    // itemManager->processSpawnTriggers(p_player, dt);
 }
 
 void mario::pages::LevelsPage::handleEvent(const sf::RenderWindow *window, const sf::Event &event) {
@@ -455,9 +447,9 @@ void mario::pages::LevelsPage::render(sf::RenderWindow *window) {
 
     // Render items directly from vector
     for (auto &item : items) {
-        if (item && !item->isCollected()) {
+        // if (item && !item->isCollected()) {
             item->render(window);
-        }
+        // }
     }
 
     window->draw(*pauseSprite);
@@ -473,8 +465,19 @@ void mario::pages::LevelsPage::render(sf::RenderWindow *window) {
         musicSlider->render(*window);
         sfxSlider->render(*window);
     }
+  
+    renderLevelState(window, currLevelState);   
+}
 
-    renderLevelState(window, currLevelState);
-
-    // itemManager->render(window);
+void mario::pages::LevelsPage::removeCollectedItems() {
+    items.erase(
+        std::remove_if(
+            items.begin(), 
+            items.end(),
+            [](const auto& item) {
+                return item->isCollected();
+            }
+        ),
+        items.end()
+    );
 }

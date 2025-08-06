@@ -3,7 +3,9 @@
 #include "../entity/enemy/enemy.hpp"
 #include "../entity/player.hpp"
 #include "../entity/item/item.hpp"
+#include "../entity/item/ItemManager.hpp"
 #include "../entity/enemy/piranha.hpp"
+
 
 namespace mario {
 namespace entity {
@@ -18,6 +20,8 @@ public:
     void checkCollisionEnemyWithBlocks(std::vector<Enemy*> &enemies, std::vector<Block*> &blocks);
     void checkCollisionPlayerWithEnemies(Player *&player, std::vector<Enemy*> &enemies);
     void checkCollisionPlayerWithItems(Player *&player, std::vector<mario::entity::Item*> &items);
+private:
+    ItemManager* itemManager;
 };
 
 } // namespace entity

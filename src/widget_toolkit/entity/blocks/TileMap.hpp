@@ -48,7 +48,7 @@ public:
     TileMap(const std::string &tilesetPath, const std::string &mapPathm, int themeID);
     ~TileMap();
 
-    const std::vector<ObjectData>& getObjects() const { return objects; }
+    //const std::vector<ObjectData>& getObjects() const { return objects; }
 
     bool loadTileset(const std::string &tilesetPath);
     bool loadMap(const std::string &mapPath);

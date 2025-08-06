@@ -14,10 +14,9 @@ namespace mario {
     }
 
     void Block::onHit(Player* player, ItemManager* itemManager) {
-        if (itemManager) {
-            itemManager->triggerSpawn(blockID, SpawnTrigger::BlockHit);
-        }
+        // Default implementation - does nothing
+        // Derived classes should override this method for specific behavior
     }
 
-    } // namespace entity
+} // namespace entity
 } // namespace mario

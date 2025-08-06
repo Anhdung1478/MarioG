@@ -137,16 +137,10 @@ void QuestionBlock::render(sf::RenderWindow *window) {
     }
 }
 
-void QuestionBlock::onHit(Player* player, ItemManager* itemManager) {
-    if (!hasBeenHit) {
-        hasBeenHit = true;
 
-        // We can change to empty box sprite (lemme find :))
-        // Play sound effect? (if we have)
-        
-        if (itemManager) {
-            itemManager->triggerSpawn(blockID, SpawnTrigger::BlockHit);
-        }
+void QuestionBlock::onHit(Player* player, ItemManager* itemManager) {
+    if (!hasBeenHit && itemManager) {
+        hasBeenHit = true;
     }
 }
 
