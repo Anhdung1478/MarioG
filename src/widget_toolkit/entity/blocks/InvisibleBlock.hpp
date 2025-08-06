@@ -7,11 +7,11 @@ namespace mario::entity {
 class Player;
 class ItemManager;
 
-class QuestionBlock : public Block {
+class InvisibleBlock : public Block {
 public:
-    QuestionBlock(){};
-    QuestionBlock(sf::Vector2f pos, sf::Vector2f size, std::string name, int _typeOfItem, int _themeID);
-    ~QuestionBlock();
+    InvisibleBlock(){};
+    InvisibleBlock(sf::Vector2f pos, sf::Vector2f size, std::string name, int _typeOfItem, int _themeID);
+    ~InvisibleBlock();
 
     void InitSpritesSheet() override;
     int reactToCollision(int side, Player* player = nullptr) override;
@@ -21,7 +21,7 @@ public:
     void render(sf::RenderWindow *window) override;
     void onHit(Player* player, ItemManager* itemManager) override;
 private:
-    int typeOfItem = 0; // 0: coin, 1: red-mushroom, 2: fire-flower, 3: one-up-mushroom, 4: starman
+    int typeOfItem = 0; // 0 - coin, 1 - red-mushroom or fire-flower, 2 - one-up-mushroom
     int themeID;
     int numberOfCoins;
     mario::entity::Animation *coins_animation;

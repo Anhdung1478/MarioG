@@ -16,10 +16,11 @@ public:
     void findBlocksCollisions(int &L, int &R, const Entity *EntityA, std::vector<Block*> &blocks);
     SideCollision findCollisionSide(const Entity *EntityA, const Entity *EntityB);
     void fixPosition(Entity *entityA, Entity *entityB, SideCollision side);
-    void checkCollisionPlayerWithBlocks(Player *&player, std::vector<Block*> &blocks);
+    void checkCollisionPlayerWithBlocks(Player *&player, std::vector<Block*> &blocks, std::vector<Item*> &items);
     void checkCollisionEnemyWithBlocks(std::vector<Enemy*> &enemies, std::vector<Block*> &blocks);
     void checkCollisionPlayerWithEnemies(Player *&player, std::vector<Enemy*> &enemies);
-    void checkCollisionPlayerWithItems(Player *&player, std::vector<mario::entity::Item*> &items);
+    void checkCollisionPlayerWithItems(Player *&player, std::vector<Item*> &items);
+    void checkCollisionItemsWithBlocks(std::vector<Item*> &items, std::vector<Block*> &blocks);
 private:
     ItemManager* itemManager;
 };

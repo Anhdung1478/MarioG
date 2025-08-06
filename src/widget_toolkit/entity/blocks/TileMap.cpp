@@ -169,7 +169,7 @@ bool TileMap::loadMap(const std::string& mapPath) {
     return true;
 }
 
-bool TileMap::loadObjects(std::vector<mario::entity::Block*>& backgroundBlocks) {
+bool TileMap::loadObjects(std::vector<mario::entity::Enemy*> &enemies, std::vector<mario::entity::Block*> &blocks, std::vector<mario::entity::Block*>& backgroundBlocks) {
     std::ifstream file(mapPath);
     if (!file.is_open()) {
         std::cerr << "Failed to open map file: " << mapPath << std::endl;
@@ -187,6 +187,7 @@ bool TileMap::loadObjects(std::vector<mario::entity::Block*>& backgroundBlocks) 
             // std::cout << "Loading objects from layer: " << layerName << "\n";
             for (const auto& obj : layerJson["objects"]) {
                 std::string objName = obj["name"];
+                std::string objType = obj["type"];
                 float x = obj["x"];
                 float y = obj["y"];
                 float width = obj["width"];
@@ -195,27 +196,80 @@ bool TileMap::loadObjects(std::vector<mario::entity::Block*>& backgroundBlocks) 
                 y -= 1 * 16;
                 x = x * BLOCK_SCALE.x;
                 y = y * BLOCK_SCALE.y;
+                
+                // std::cout << "Object: " << objName << " at (" << x << ", " << y << ") with size (" << width << ", " << height << ")\n";
 
+                // -1 - None, 0 - coin, 1 - Red-mushroom, 2 - Fire-flower, 3 - One-up-mushroom, 4 - Starman
                 if(layerName == "Items"){
-
-                }
-                else if(layerName == "Enemies"){
-
+                    if(objName == "coin"){
+                        if(objType == "brick"){
+                            blocks.push_back(new Brick(sf::Vector2f(x, y), sf::Vector2f(16, 16), "brick-block", 0, themeID, 10));
+                        }
+                    }
+                    if (objName == "red_mushroom"){
+                        if(objType == "brick"){
+                            blocks.push_back(new Brick(sf::Vector2f(x, y), sf::Vector2f(16, 16), "brick-block", 1, themeID));
+                        }
+                        if(objType == "question"){
+                            blocks.push_back(new QuestionBlock(sf::Vector2f(x, y), sf::Vector2f(16, 16), "question-block[0]", 1, themeID));
+                        }
+                        if(objType == "invisible"){
+                            // blocks.push_back(new InvisibleBlock(sf::Vector2f(x, y), sf::Vector2f(16, 16), "invisible-block[0]", 1, themeID));
+                        }
+                    }
+                    else if (objName == "oneup_mushroom"){
+                        if(objType == "brick"){
+                            blocks.push_back(new Brick(sf::Vector2f(x, y), sf::Vector2f(16, 16), "brick-block", 3, themeID));
+                        }
+                        if(objType == "question"){
+                            blocks.push_back(new QuestionBlock(sf::Vector2f(x, y), sf::Vector2f(16, 16), "question-block[0]", 3, themeID));
+                        }
+                        if(objType == "invisible"){
+                            // blocks.push_back(new InvisibleBlock(sf::Vector2f(x, y), sf::Vector2f(16, 16), "invisible-block[0]", 3, themeID));
+                        }
+                    }
+                    else if (objName == "starman"){
+                        if(objType == "brick"){
+                            // blocks.push_back(new Brick(sf::Vector2f(x, y), sf::Vector2f(16, 16), "brick-block", 4, themeID));
+                        }
+                        if(objType == "question"){
+                            // blocks.push_back(new QuestionBlock(sf::Vector2f(x, y), sf::Vector2f(16, 16), "question-block[0]", 4, themeID));
+                        }
+                        if(objType == "invisible"){
+                            // blocks.push_back(new InvisibleBlock(sf::Vector2f(x, y), sf::Vector2f(16, 16), "invisible-block[0]", 4, themeID));
+                        }
+                    }
                 }
                 else if(layerName == "Background"){
-                    // std::cout << "Object: " << objName << " at (" << x << ", " << y << ") with size (" << width << ", " << height << ")\n";
                     backgroundBlocks.push_back(new BackgroundBlock(sf::Vector2f(x, y), sf::Vector2f(16, 16), objName));
+                }
+                
+                if (objType == "goomba"){
+                    enemies.push_back(new mario::entity::Goomba(sf::Vector2f(x, y-100)));
+                }
+                else if (objType == "red-koopa"){
+                    enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(x, y-100), mario::entity::KoopaType::Red, false));
+                }
+                else if (objType == "red-koopa-fly"){
+                    enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(x, y-100), mario::entity::KoopaType::Red, true));
+                }
+                else if (objType == "green-koopa"){
+                    enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(x, y-100), mario::entity::KoopaType::Green, false));
+                }
+                else if (objType == "green-koopa-fly"){
+                    enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(x, y-100), mario::entity::KoopaType::Green, true));
+                }
+                else if (objType == "piranha-plant"){
+                    enemies.push_back(new mario::entity::PiranhaGreen(sf::Vector2f(x, y)));
+                }
+                else if (objType == "lakitu"){
+                    // enemies.push_back(new mario::entity::Lakitu(sf::Vector2f(x, y)));
                 }
             }
             // std::cout << '\n';
         }
     }
-    
-    return true;
-}
 
-void TileMap::createBlock(std::vector<Block*> &blocks, std::vector<Block*> &backgroundBlocks) {
-    blocks.clear();
     for (int y = 0; y < mapHeight; ++y) {
         for (int x = 0; x < mapWidth; ++x) {
             int tileId = tileIds[y * mapWidth + x];
@@ -236,57 +290,15 @@ void TileMap::createBlock(std::vector<Block*> &blocks, std::vector<Block*> &back
             } else {
                 blocks.push_back(new_block);
             }
-
-            //     block = std::make_unique<Brick>(x * tileWidth, y * tileHeight);
-            // else if (tileType == "Question") 
-            //     block = std::make_unique<QuestionBlock>(x * tileWidth, y * tileHeight);
-            // else if (tileType == "Solid")
-            //     block = new SolidBlock(x * tileWidth, y * tileHeight);
-
-            // if (block) {
-            //     blocks.push_back(std::move(block));
-            // }
-            
-            // // Calculate source rectangle in tileset with margin and spacing
-            // int sourceX = margin + (tileId % tilesetColumns) * (tileWidth + spacing);
-            // int sourceY = margin + (tileId / tilesetColumns) * (tileHeight + spacing);
-            
-            // sf::IntRect textureRect(sf::Vector2i(sourceX, sourceY), sf::Vector2i(tileWidth, tileHeight));
-            // sf::Sprite sprite(tilesetTexture, textureRect);
-            
-            // // Scale the sprite from 16x16 to 32x32
-            // float scaleX = static_cast<float>(scaledTileWidth) / tileWidth;
-            // float scaleY = static_cast<float>(scaledTileHeight) / tileHeight;
-            // sprite.setScale(sf::Vector2f(scaleX, scaleY));
-            
-            // // Position the sprite
-            // sprite.setPosition(sf::Vector2f(x * scaledTileWidth, y * scaledTileHeight));
-            
-            // tiles.push_back(sprite);
         }
     }
-    
-    // Create sprites for objects
-    // for (const auto& obj : objects) {
-    //     int tileId = obj.gid - 1; // Adjust for 1-based indexing
-        
-    //     int sourceX = margin + (tileId % tilesetColumns) * (tileWidth + spacing);
-    //     int sourceY = margin + (tileId / tilesetColumns) * (tileHeight + spacing);
-        
-    //     sf::IntRect textureRect(sf::Vector2i(sourceX, sourceY), sf::Vector2i(tileWidth, tileHeight));
-    //     sf::Sprite sprite(tilesetTexture, textureRect);
-        
-    //     // Scale the sprite
-    //     float scaleX = static_cast<float>(scaledTileWidth) / tileWidth;
-    //     float scaleY = static_cast<float>(scaledTileHeight) / tileHeight;
-    //     sprite.setScale(sf::Vector2f(scaleX, scaleY));
-        
-    //     // Position the object (note: Tiled Y coordinates need adjustment)
-    //     sprite.setPosition(sf::Vector2f(obj.x * scaleX, (obj.y - obj.height) * scaleY));
-        
-    //     tiles.push_back(sprite);
-    // }
     sortBlocks(blocks);
+    
+    return true;
+}
+
+void TileMap::createBlock(std::vector<Block*> &blocks, std::vector<Block*> &backgroundBlocks) {
+    
 }
 
 void TileMap::sortBlocks(std::vector<Block*> &blocks) {
@@ -297,59 +309,6 @@ void TileMap::sortBlocks(std::vector<Block*> &blocks) {
         return a->getPosition().x < b->getPosition().x; // Sort by X first
     });
 }
-
-// void TileMap::checkCollisionEn(mario::entity::Enemy* enemy) {
-//     int L, R;
-//     findBlocksCollisions(L, R, enemy);
-
-//     bool hasTopCollision = false;
-//     bool hasBottomCollision = false;
-//     bool hasLeftCollision = false;
-//     bool hasRightCollision = false;
-
-//     for (int i = 0; i < blocks.size(); ++i) {
-//         auto& block = blocks[i];
-//         if (!block->isExist()) continue;
-
-//         SideCollision side = findCollisionSide(enemy, block);
-//         if (side != SideCollision::None) {
-//             switch (side) {
-//                 case SideCollision::Top:
-//                     hasTopCollision = true;
-//                     break;
-//                 case SideCollision::Bottom:
-//                     hasBottomCollision = true;
-//                     break;
-//                 case SideCollision::Left:
-//                     hasLeftCollision = true;
-//                     break;
-//                 case SideCollision::Right:
-//                     hasRightCollision = true;
-//                     break;
-//                 default:
-//                     break;
-//             }
-            
-//             fixPosition(enemy, block, side);
-//         }
-//     }
-
-//     sf::Vector2f vel = enemy->getVelocity();
-//     if (hasBottomCollision) {
-//         vel.y = 0.f;
-//         enemy->setOnGround(true); // Đặt trạng thái trên mặt đất
-//     }
-
-//     if (hasTopCollision) {
-//         vel.y = 0.f;
-//     }
-
-//     if (hasLeftCollision || hasRightCollision) {
-//         vel.x = 0.f;
-//     }
-
-//     enemy->setVelocity(vel);
-// }
 
 void TileMap::update(const sf::RenderWindow *window, float dt){
 
@@ -367,36 +326,7 @@ sf::FloatRect TileMap::getWorldBounds() const {
     return sf::FloatRect(sf::Vector2f(0.f, 0.f), sf::Vector2f(mapWidth * 16 * BLOCK_SCALE.x, mapHeight * 16 * BLOCK_SCALE.y));
 }
 
-// SideCollision TileMap::checkItemCollision(Item* item) {
-//     int L, R;
-//     //findItemBlockCollisions(L, R, item);
-    
-//     for (int i = L; i < R; ++i) {
-//         auto& block = blocks[i];
-//         if (!block->isExist()) continue;
-        
-//         SideCollision side = findCollisionSide(item, block);
-//         if (side != SideCollision::None) {
-//             fixPosition(item, block, side);
-//             return side;
-//         }
-//     }
-//     return SideCollision::None;
-// }
 
-// bool TileMap::hasGroundAt(sf::Vector2f position) {
-//     // Check if there's a solid block at the given position
-//     // Used for edge detection for walking items
-//     for (const auto& block : blocks) {
-//         if (!block->isExist()) continue;
-        
-//         sf::FloatRect blockBounds = block->getHitbox();
-//         if (blockBounds.contains(position)) {
-//             return true;
-//         }
-//     }
-//     return false;
-// }
 
 } // namespace entity
 } // namespace mario

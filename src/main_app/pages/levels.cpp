@@ -4,58 +4,28 @@
 #include "../../widget_toolkit/resource/SoundManager.hpp"
 
 mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::LevelState state) : Page(context), camera({1280, 720}), currLevelState(state) {
-    p_player = new mario::entity::Player(sf::Vector2f(30, 30), state.characterType, state.stateType);
+    p_player = new mario::entity::Player(sf::Vector2f(500, 200), state.characterType, state.stateType);
 
     p_inputManager = std::make_unique<mario::input::InputManager>(context);
     
     tileMap = std::make_unique<mario::entity::TileMap>("../../asset/maps/tiles-8.json", "../../asset/maps/Map_1.json", 0);
-    tileMap->loadObjects(backgroundBlocks);
-    tileMap->createBlock(blocks, backgroundBlocks);
-    testBlock = new mario::entity::BackgroundBlock(sf::Vector2f(100, 500), sf::Vector2f(16, 16), "enemies-flag[0]");
+    tileMap->loadObjects(enemies, blocks, backgroundBlocks);
+    // tileMap->createBlock(blocks, backgroundBlocks);
+    // testBlock = new mario::entity::BackgroundBlock(sf::Vector2f(100, 500), sf::Vector2f(16, 16), "enemies-flag[0]");
     // testBlock = new mario::entity::BackgroundBlock(sf::Vector2f(100, 500), sf::Vector2f(16, 16), std::to_string(390), {"390", 1, 171, 16, 16});
 
     // Mario font initalize
     marioFont = std::make_unique<sf::Font>("../../asset/fonts/SuperMario256.ttf");
   
-    // Load items
-    items.push_back(new mario::entity::FireFlower(
+    testItem = new mario::entity::FireFlower(
         "../../asset/sprites/fireflower.json",
-        "../../asset/sprites/mario_sheets.png",
-        sf::Vector2f(1.f, 1.f),
+        "../../asset/maps/Image/tiles-8.png",
+        sf::Vector2f(2.5f, 2.5f),
         "fireflower[0]",
         sf::Vector2f(500.f, 500.f),
         sf::Vector2f(16.f, 16.f),
         sf::Vector2f(0.f, 0.f)
-    ));
-
-    items.push_back(new mario::entity::RedMushroom(
-        "../../asset/sprites/red-mushroom.json",
-        "../../asset/sprites/enemies-2.png",
-        sf::Vector2f(1.f, 1.f),
-        "red-mushroom[0]",
-        sf::Vector2f(700.f, 200.f),
-        sf::Vector2f(16.f, 16.f),
-        sf::Vector2f(0.f, 0.f)
-    ));
-
-    items.push_back(new mario::entity::OneupMushroom(
-        "../../asset/sprites/1up-mushroom.json",
-        "../../asset/sprites/enemies-2.png",
-        sf::Vector2f(1.f, 1.f),
-        "1up-mushroom[0]",
-        sf::Vector2f(900.f, 200.f),
-        sf::Vector2f(16.f, 16.f),
-        sf::Vector2f(0.f, 0.f)
-    ));
-  
-    // Load enemies
-    enemies.push_back(new mario::entity::Goomba(sf::Vector2f(1750.f, 80.f)));
-    enemies.push_back(new mario::entity::Goomba(sf::Vector2f(5539.f, 80.f)));
-    enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(1340.f, 600.f), mario::entity::KoopaType::Red, false));
-    enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(2077.f, 600.f), mario::entity::KoopaType::Green, true));
-    enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(5820.f, 600.f), mario::entity::KoopaType::Green, false));
-    enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(6951.f, 600.f), mario::entity::KoopaType::Red, true));
-    enemies.push_back(new mario::entity::PiranhaGreen(sf::Vector2f(1540.f, 545.f)));
+    );
 
     // Pause/Resume game
     pauseTexture = std::make_unique<sf::Texture>("../../asset/textures/pause-button.png");
@@ -140,6 +110,8 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
   
     p_levelDataManager = std::make_unique<mario::resource::LevelDataManager>();
     camera.setMapBounds(tileMap->getWorldBounds());
+
+    // std::this_thread::sleep_for(std::chrono::seconds(1));
 }
 
 void mario::pages::LevelsPage::autoSave() {
@@ -149,15 +121,19 @@ void mario::pages::LevelsPage::autoSave() {
 mario::pages::LevelsPage::~LevelsPage() {
     autoSave();
     delete p_player;
+
+    camera.resetToDefaultView();
     for (auto &enemy : enemies) {
         delete enemy;
     }
-    // Clean up items vector
+
     for (auto &item : items) {
         delete item;
     }
 
-    camera->resetToDefaultView();
+    for (auto &block : blocks) {
+        delete block;
+    }
 }
 
 // for Sound Manager
@@ -175,6 +151,14 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
             ++it;
         }
     }
+    for (auto it = blocks.begin(); it != blocks.end();) {
+        if ((*it)->shouldDelete()) {
+            delete *it;
+            it = blocks.erase(it); 
+        } else {
+            ++it;
+        }
+    }
 
     if(!_isPaused) {
         currLevelState.update(dt);
@@ -184,7 +168,7 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
 
         p_player->update(window, dt);
 
-        testBlock->update(window, dt);
+        // testBlock->update(window, dt);
         
         for(auto &backgroundBlock : backgroundBlocks) {
             backgroundBlock->update(window, dt);
@@ -205,17 +189,19 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
             block->update(window, dt);
         }
 
+        //testItem->update(window, dt);
         // Update items directly from vector
-        // for(auto &item : items) {
-        //     if (item && !item->isCollected()) {
-        //         item->update(window, dt);
-        //     }
-        // }
+        for(auto &item : items) {
+            if (item && !item->isCollected()) {
+                item->update(window, dt);
+            }
+        }
 
-        collisionManager.checkCollisionPlayerWithBlocks(p_player, blocks);
+        collisionManager.checkCollisionPlayerWithBlocks(p_player, blocks, items);
         collisionManager.checkCollisionEnemyWithBlocks(enemies, blocks);
         collisionManager.checkCollisionPlayerWithEnemies(p_player, enemies);
         collisionManager.checkCollisionPlayerWithItems(p_player, items);
+        collisionManager.checkCollisionItemsWithBlocks(items, blocks);
         // collisionManager.checkCollisionPlayerWithEnemies(p_player, enemies);
         // collisionManager.checkCollisionPlayerWithItems(p_player, enemies);
 
@@ -429,30 +415,28 @@ void mario::pages::LevelsPage::renderLevelState(sf::RenderWindow *window, mario:
 
 void mario::pages::LevelsPage::render(sf::RenderWindow *window) {
     camera.applyTo(*window);
-    testBlock->render(window);
+    // testBlock->render(window);
     for (auto &backgroundBlock : backgroundBlocks) {
         backgroundBlock->render(window);
     }
     
-    for (auto &block : blocks) {
-        block->render(window);
-    }
-
-    p_player->render(window);
-
-    // Render enemies
     for (auto* enemy : enemies) {
         if (!enemy->shouldDelete()) {
             enemy->render(window);
         }
     }
 
-    // Render items directly from vector
-    for (auto &item : items) {
-        // if (item && !item->isCollected()) {
-            item->render(window);
-        // }
+    for (auto &block : blocks) {
+        block->render(window);
     }
+
+    for (auto &item : items) {
+        item->render(window);
+    }
+
+    p_player->render(window);
+
+    //testItem->render(window);
 
     window->draw(*pauseSprite);
     window->draw(*homeSprite);

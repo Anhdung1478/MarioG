@@ -19,7 +19,7 @@ namespace mario::entity {
         void update(const sf::RenderWindow* window, float dt) override {
             if (!isCollected()) {
                 if (p_body) p_body->update(dt); // Might be static, but physics can still apply
-                if (p_animation) p_animation->update(window, dt);
+            //     if (p_animation) p_animation->update(window, dt);
             }
         }
 

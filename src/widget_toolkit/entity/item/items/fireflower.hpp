@@ -10,6 +10,11 @@ namespace mario::entity {
                    sf::Vector2f scale, const std::string& spriteID, 
                    sf::Vector2f position, sf::Vector2f size, sf::Vector2f velocity)
             : Item(ItemType::FireFlower, jsonPath, texturePath, scale, spriteID, position, size, velocity) {
+                p_animation->addAnimationStep("fireflower[0]");
+                p_animation->addAnimationStep("fireflower[1]");
+                p_animation->addAnimationStep("fireflower[2]");
+                p_animation->addAnimationStep("fireflower[3]");
+                p_animation->setAnimationState(true);
             }
 
         void onCollect(Entity* collector) override {
@@ -22,7 +27,7 @@ namespace mario::entity {
 
         void update(const sf::RenderWindow* window, float dt) override {
             if (!isCollected()) {
-                if (p_body) p_body->update(dt); // Might be static, but physics can still apply
+                // if (p_body) p_body->update(dt); // Might be static, but physics can still apply
                 if (p_animation) p_animation->update(window, dt);
             }
         }

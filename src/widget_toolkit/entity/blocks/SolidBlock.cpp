@@ -59,8 +59,8 @@ void SolidBlock::InitSpritesSheet() {
     };
 }
 
-void SolidBlock::reactToCollision(int side, Player* player) {
-
+int SolidBlock::reactToCollision(int side, Player* player) {
+    return -1;
 }
 
 void SolidBlock::update(const sf::RenderWindow *window, float dt) {
