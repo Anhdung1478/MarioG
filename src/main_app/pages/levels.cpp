@@ -171,10 +171,6 @@ mario::resource::LevelState mario::pages::LevelsPage::getLevelState() const { re
 bool mario::pages::LevelsPage::isPaused() const { return _isPaused; }
 
 void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) {
-    timeRemaining -= sf::seconds(dt);
-    if(timeRemaining <= sf::seconds(0.f)) {
-        // failed !!
-    }
     for (auto it = enemies.begin(); it != enemies.end();) {
         if ((*it)->shouldDelete()) {
             delete *it;
