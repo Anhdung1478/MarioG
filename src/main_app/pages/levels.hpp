@@ -17,6 +17,7 @@
 
 #include "../../widget_toolkit/entity/enemy/goomba.hpp"
 #include "../../widget_toolkit/entity/enemy/koopa.hpp"
+#include "../../widget_toolkit/entity/enemy/piranha.hpp"
 
 namespace mario::pages {
     class LevelsPage : public Page {
@@ -26,13 +27,17 @@ namespace mario::pages {
       
             std::unique_ptr<mario::entity::TileMap> tileMap;
             std::vector<mario::entity::Block*> blocks;
+            std::vector<mario::entity::Block*> backgroundBlocks;
             std::vector<mario::entity::Enemy*> enemies;
             std::vector<mario::entity::Item*> items;  // Direct item management
+
+            mario::entity::Block* testBlock;
       
-            mario::entity::Player *p_player;
-            sf::Time timeRemaining;
             Camera camera;
+            mario::entity::Player *p_player;
             mario::entity::CollisionManager collisionManager;
+
+            std::unique_ptr<sf::Font> marioFont;
 
             // for Sound Manager
             mario::resource::LevelState currLevelState;
@@ -77,6 +82,8 @@ namespace mario::pages {
             void handleEvent(const sf::RenderWindow *window, const sf::Event &event) override;
             void render(sf::RenderWindow *window) override;
             void autoSave();
+            void rePositionTextToMiddle(sf::Text &text, int rectX, int rectY);
+            void renderLevelState(sf::RenderWindow *window, mario::resource::LevelState levelState);
 
             // for Sound Manager
             mario::resource::LevelState getLevelState() const;

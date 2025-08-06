@@ -5,13 +5,18 @@
 
 mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::LevelState state) : Page(context), camera({1280, 720}), currLevelState(state) {
     p_player = new mario::entity::Player(sf::Vector2f(30, 30), state.characterType, state.stateType);
-    p_inputManager = std::make_unique<mario::input::InputManager>(context);
 
-    // Load enemies
-    // enemies.push_back(new mario::entity::Goomba(sf::Vector2f(300.f, 80.f)));
-    enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(1400.f, 80.f), mario::entity::KoopaType::Red, false));
-    // enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(350.f, 80.f), mario::entity::KoopaType::Green, true));
-   
+    p_inputManager = std::make_unique<mario::input::InputManager>(context);
+    
+    tileMap = std::make_unique<mario::entity::TileMap>("../../asset/maps/tiles-8.json", "../../asset/maps/Map_1.json", 0);
+    tileMap->loadObjects(backgroundBlocks);
+    tileMap->createBlock(blocks, backgroundBlocks);
+    testBlock = new mario::entity::BackgroundBlock(sf::Vector2f(100, 500), sf::Vector2f(16, 16), "enemies-flag[0]");
+    // testBlock = new mario::entity::BackgroundBlock(sf::Vector2f(100, 500), sf::Vector2f(16, 16), std::to_string(390), {"390", 1, 171, 16, 16});
+
+    // Mario font initalize
+    marioFont = std::make_unique<sf::Font>("../../asset/fonts/SuperMario256.ttf");
+  
     // Load items
     items.push_back(new mario::entity::FireFlower(
         "../../asset/sprites/fireflower.json",
@@ -42,20 +47,15 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
         sf::Vector2f(16.f, 16.f),
         sf::Vector2f(0.f, 0.f)
     ));
-
-    /*
-    function:
-        Item* A = new mario::entity::FireFlower(
-        "../../asset/sprites/fireflower.json",
-        "../../asset/sprites/mario_sheets.png",
-        sf::Vector2f(1.f, 1.f),
-        "fireflower[0]",
-        sf::Vector2f(500.f, 500.f),
-        sf::Vector2f(16.f, 16.f),
-        sf::Vector2f(0.f, 0.f)
-    ));
-    items.push_back(A);
-    */
+  
+    // Load enemies
+    enemies.push_back(new mario::entity::Goomba(sf::Vector2f(1750.f, 80.f)));
+    enemies.push_back(new mario::entity::Goomba(sf::Vector2f(5539.f, 80.f)));
+    enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(1340.f, 600.f), mario::entity::KoopaType::Red, false));
+    enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(2077.f, 600.f), mario::entity::KoopaType::Green, true));
+    enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(5820.f, 600.f), mario::entity::KoopaType::Green, false));
+    enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(6951.f, 600.f), mario::entity::KoopaType::Red, true));
+    enemies.push_back(new mario::entity::PiranhaGreen(sf::Vector2f(1540.f, 545.f)));
 
     // Pause/Resume game
     pauseTexture = std::make_unique<sf::Texture>("../../asset/textures/pause-button.png");
@@ -137,17 +137,9 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
     sfxSlider->setOnValueChanged([this](float value) {
         _context->getSoundManager().adjustSoundEffectsVolume(value);
     });
-
-    tileMap = std::make_unique<mario::entity::TileMap>("../../asset/maps/tiles-8.json", "../../asset/maps/Map_1.json");
-    tileMap->createBlock(blocks);
   
     p_levelDataManager = std::make_unique<mario::resource::LevelDataManager>();
     camera.setMapBounds(tileMap->getWorldBounds());
-
-    //itemManager = std::make_unique<mario::entity::ItemManager>();
-    //itemManager->setPlayerReference(p_player);
-    //itemManager->setTileMapRef(tileMap.get());
-    //itemManager->loadSpawnPoints(tileMap->getObjects());
 }
 
 void mario::pages::LevelsPage::autoSave() {
@@ -173,16 +165,38 @@ mario::resource::LevelState mario::pages::LevelsPage::getLevelState() const { re
 bool mario::pages::LevelsPage::isPaused() const { return _isPaused; }
 
 void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) {
-    timeRemaining -= sf::seconds(dt);
-    if(timeRemaining <= sf::seconds(0.f)) {
-        // failed !!
+    for (auto it = enemies.begin(); it != enemies.end();) {
+        if ((*it)->shouldDelete()) {
+            delete *it;
+            it = enemies.erase(it); 
+        } else {
+            ++it;
+        }
     }
 
     if(!_isPaused) {
+        currLevelState.update(dt);
+        if(currLevelState.times <= sf::seconds(0.f)) {
+            // failed !!
+        }
+
         p_player->update(window, dt);
+
+        testBlock->update(window, dt);
         
+        for(auto &backgroundBlock : backgroundBlocks) {
+            backgroundBlock->update(window, dt);
+        }
+
         for(auto &enemy : enemies) {
-            enemy->update(window, dt);
+            if (!enemy->shouldDelete()) {
+                mario::entity::Piranha* piranha = dynamic_cast<mario::entity::Piranha*>(enemy);
+                if (piranha) {
+                    piranha->updateWithPlayer(window, dt, p_player);
+                } else {
+                    enemy->update(window, dt);
+                }
+            }
         }
 
         for(auto &block : blocks) {
@@ -198,7 +212,7 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
 
         collisionManager.checkCollisionPlayerWithBlocks(p_player, blocks);
         collisionManager.checkCollisionEnemyWithBlocks(enemies, blocks);
-        // TODO: Add collision detection for items with player
+        collisionManager.checkCollisionPlayerWithEnemies(p_player, enemies);
         collisionManager.checkCollisionPlayerWithItems(p_player, items);
         // collisionManager.checkCollisionPlayerWithEnemies(p_player, enemies);
         // collisionManager.checkCollisionPlayerWithItems(p_player, enemies);
@@ -340,16 +354,95 @@ void mario::pages::LevelsPage::handleEvent(const sf::RenderWindow *window, const
     }
 }
 
+void mario::pages::LevelsPage::rePositionTextToMiddle(sf::Text &text, int rectX, int rectY) {
+    float textLenX = text.getGlobalBounds().size.x;
+    float textLenY = text.getGlobalBounds().size.y;
+
+    text.setFillColor(sf::Color::White);
+    text.setPosition(sf::Vector2f(int((rectX - textLenX) / 2.0), rectY));
+}
+
+void mario::pages::LevelsPage::renderLevelState(sf::RenderWindow *window, mario::resource::LevelState levelState) {
+    sf::FloatRect rect = camera.getCameraBounds();
+    sf::Vector2f rectMove = rect.position;
+    int rectX = rect.size.x / 5.f;
+    int rectY1 = 2, rectY2 = 35;
+
+    sf::Text text(*marioFont, "", 30);
+
+    text.setString("SCORE");
+    rePositionTextToMiddle(text, rectX, rectY1);
+    text.move(rectMove);
+    window->draw(text);
+
+    text.setString(to_string(levelState.score));
+    rePositionTextToMiddle(text, rectX, rectY2);
+    text.move(rectMove);
+    window->draw(text);
+
+    rectMove.x += rectX;
+    text.setString("COINS");
+    rePositionTextToMiddle(text, rectX, rectY1);
+    text.move(rectMove);
+    window->draw(text);
+
+    text.setString(to_string(levelState.coins));
+    rePositionTextToMiddle(text, rectX, rectY2);
+    text.move(rectMove);
+    window->draw(text);
+
+    rectMove.x += rectX;
+    text.setString("WORLD");
+    rePositionTextToMiddle(text, rectX, rectY1);
+    text.move(rectMove);
+    window->draw(text);
+
+    text.setString(to_string(levelState.level));
+    rePositionTextToMiddle(text, rectX, rectY2);
+    text.move(rectMove);
+    window->draw(text);
+
+    rectMove.x += rectX;
+    text.setString("TIME");
+    rePositionTextToMiddle(text, rectX, rectY1);
+    text.move(rectMove);
+    window->draw(text);
+
+    text.setString(to_string(int(levelState.times.asSeconds())));
+    rePositionTextToMiddle(text, rectX, rectY2);
+    text.move(rectMove);
+    window->draw(text);
+
+    rectMove.x += rectX;
+    text.setString("LIVES");
+    rePositionTextToMiddle(text, rectX, rectY1);
+    text.move(rectMove);
+    window->draw(text);
+
+    text.setString(to_string(levelState.num_lives));
+    rePositionTextToMiddle(text, rectX, rectY2);
+    text.move(rectMove);
+    window->draw(text);
+}
+
 void mario::pages::LevelsPage::render(sf::RenderWindow *window) {
     camera.applyTo(*window);
-    for(auto &block : blocks) {
+    testBlock->render(window);
+    for (auto &backgroundBlock : backgroundBlocks) {
+        backgroundBlock->render(window);
+    }
+    
+    for (auto &block : blocks) {
         block->render(window);
     }
+
     p_player->render(window);
 
     // Render enemies
-    for (auto &enemy : enemies) {
-        enemy->render(window);
+    for (auto* enemy : enemies) {
+        if (!enemy->shouldDelete()) {
+            enemy->render(window);
+        }
     }
 
     // Render items directly from vector
@@ -372,8 +465,8 @@ void mario::pages::LevelsPage::render(sf::RenderWindow *window) {
         musicSlider->render(*window);
         sfxSlider->render(*window);
     }
-
-    //itemManager->render(window);
+  
+    renderLevelState(window, currLevelState);   
 }
 
 void mario::pages::LevelsPage::removeCollectedItems() {

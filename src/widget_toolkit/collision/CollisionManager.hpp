@@ -4,6 +4,8 @@
 #include "../entity/player.hpp"
 #include "../entity/item/item.hpp"
 #include "../entity/item/ItemManager.hpp"
+#include "../entity/enemy/piranha.hpp"
+
 
 namespace mario {
 namespace entity {

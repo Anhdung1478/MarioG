@@ -64,6 +64,15 @@ namespace mario::entity {
                 setSprite(data);
             }
 
+            Animation(const std::string& imagePath, sf::Vector2f _scale, const SpriteData2& sprite) : scale(_scale), velocity(sf::Vector2f(0.f, 0.f)) {
+                p_textureResource.loadSheet(imagePath, sprite);
+
+                SpriteData data = p_textureResource.getSpriteData(sprite.id);
+                p_sprite = new sf::Sprite(*(data.texture));
+                p_sprite->setScale(scale);
+                setSprite(data);
+            }
+
             ~Animation() override {
                 delete p_sprite;
             }
@@ -101,6 +110,10 @@ namespace mario::entity {
                 return step;
             }
 
+            const sf::Texture& getTexture() const {
+                return p_sprite->getTexture();
+            }
+
             void move(sf::Vector2f offset) {
                 p_sprite->move(offset);
             }
@@ -128,15 +141,15 @@ namespace mario::entity {
                 p_sprite->setScale(scale);
             }
 
-            bool isFaceForward() {
+            bool isFaceForward() const {
                 return _isFaceForward;
             }
 
-            sf::Vector2f getScale() {
+            sf::Vector2f getScale() const {
                 return scale;
             }
 
-            sf::Vector2f getSize() {
+            sf::Vector2f getSize() const {
                 return p_sprite->getGlobalBounds().size;
             }
 

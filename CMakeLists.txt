@@ -7,7 +7,6 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-
 set(SFML_ROOT "C:/SFML")
 set(CMAKE_PREFIX_PATH "${SFML_ROOT}/lib/cmake/SFML" ${CMAKE_PREFIX_PATH})
 
@@ -32,4 +31,5 @@ target_include_directories(MARIOG PRIVATE "${EVENTPP_DIR}/include")
 target_link_libraries(MARIOG PRIVATE SFML::Graphics SFML::Window SFML::System SFML::Audio)
 
 # Link Box2D library
-#target_link_libraries(MARIOG PRIVATE ${BOX2D_LIBRARY})
+
+target_link_libraries(MARIOG PRIVATE ${BOX2D_LIBRARY})

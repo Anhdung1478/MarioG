@@ -88,7 +88,7 @@ void CollisionManager::checkCollisionPlayerWithBlocks(mario::entity::Player *&pl
 
         SideCollision side = findCollisionSide(player, block);
         if(side != SideCollision::None) {
-            block->reactToCollision(side ^ 1);
+            block->reactToCollision(side ^ 1, player);
             switch (side) {
                 case SideCollision::Top:
                     hasTopCollision = true;
@@ -141,57 +141,60 @@ void CollisionManager::checkCollisionPlayerWithBlocks(mario::entity::Player *&pl
 
 void CollisionManager::checkCollisionEnemyWithBlocks(std::vector<Enemy*> &enemies, std::vector<Block*> &blocks){
     for (auto& enemy : enemies) {
-        int L, R;
-        findBlocksCollisions(L, R, enemy, blocks);
+        mario::entity::Piranha* piranha = dynamic_cast<mario::entity::Piranha*>(enemy);
+        if(!piranha) {
+            int L, R;
+            findBlocksCollisions(L, R, enemy, blocks);
 
-        bool hasTopCollision = false;
-        bool hasBottomCollision = false;
-        bool hasLeftCollision = false;
-        bool hasRightCollision = false;
+            bool hasTopCollision = false;
+            bool hasBottomCollision = false;
+            bool hasLeftCollision = false;
+            bool hasRightCollision = false;
 
-        for (int i = 0; i < blocks.size(); ++i) {
-            auto& block = blocks[i];
-            if (!block->isExist()) continue;
+            for (int i = 0; i < blocks.size(); ++i) {
+                auto& block = blocks[i];
+                if (!block->isExist()) continue;
 
-            SideCollision side = findCollisionSide(enemy, block);
-            if (side != SideCollision::None) {
-                enemy->reactCollision(side, Collision(Collision::Type::Wall));
-                switch (side) {
-                    case SideCollision::Top:
-                        hasTopCollision = true;
-                        break;
-                    case SideCollision::Bottom:
-                        hasBottomCollision = true;
-                        break;
-                    case SideCollision::Left:
-                        hasLeftCollision = true;
-                        break;
-                    case SideCollision::Right:
-                        hasRightCollision = true;
-                        break;
-                    default:
-                        break;
+                SideCollision side = findCollisionSide(enemy, block);
+                if (side != SideCollision::None) {
+                    enemy->reactCollision(side, Collision(Collision::Type::Wall));
+                    switch (side) {
+                        case SideCollision::Top:
+                            hasTopCollision = true;
+                            break;
+                        case SideCollision::Bottom:
+                            hasBottomCollision = true;
+                            break;
+                        case SideCollision::Left:
+                            hasLeftCollision = true;
+                            break;
+                        case SideCollision::Right:
+                            hasRightCollision = true;
+                            break;
+                        default:
+                            break;
+                    }
+                    
+                    fixPosition(enemy, block, side);
                 }
-                
-                fixPosition(enemy, block, side);
             }
-        }
 
-        sf::Vector2f vel = enemy->getVelocity();
-        if (hasBottomCollision) {
-            vel.y = 0.f;
-            enemy->setOnGround(true); // Đặt trạng thái trên mặt đất
-        }
+            sf::Vector2f vel = enemy->getVelocity();
+            if (hasBottomCollision) {
+                vel.y = 0.f;
+                enemy->setOnGround(true); // Đặt trạng thái trên mặt đất
+            }
 
-        if (hasTopCollision) {
-            vel.y = 0.f;
-        }
+            if (hasTopCollision) {
+                vel.y = 0.f;
+            }
+          
+            if (hasLeftCollision || hasRightCollision) {
+                vel.x = 0.f;
+            }
 
-        if (hasLeftCollision || hasRightCollision) {
-            vel.x = 0.f;
-        }
-        
-        enemy->setVelocity(vel);
+            enemy->setVelocity(vel);
+
     }
 }
 
@@ -217,7 +220,7 @@ void CollisionManager::checkCollisionPlayerWithEnemies(Player *&player, std::vec
                 default:
                     break;
             }
-            // fixPosition(player, enemy, side);
+            fixPosition(player, enemy, side);
         }
     }
 
