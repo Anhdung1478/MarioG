@@ -151,11 +151,7 @@ void mario::entity::Player::collectFireFlower() {
         score += 1000;
         p_stateManager->changeToFireState(p_animation, p_body);
         // Play power-up sound
-    } else {
-        // Small Mario gets super first then fire
-        p_stateManager->changeToSuperState(p_animation, p_body);
-        // Delay fire transformation or store for next frame?
-    }
+    } 
 }
 
 void mario::entity::Player::collect1UpMushroom() {

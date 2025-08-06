@@ -121,12 +121,16 @@ void mario::pages::LevelsPage::autoSave() {
 mario::pages::LevelsPage::~LevelsPage() {
     autoSave();
     delete p_player;
+
+    camera.resetToDefaultView();
     for (auto &enemy : enemies) {
         delete enemy;
     }
+
     for (auto &item : items) {
         delete item;
     }
+
     for (auto &block : blocks) {
         delete block;
     }
