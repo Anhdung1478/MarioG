@@ -13,21 +13,23 @@
  "tileheight":46,
  "tiles":[
         {
-         "height":18,
+         "height":16,
          "id":3,
-         "image":"..\/sprites\/enemies.png",
+         "image":"Image\/Enemies\/enemies.png",
          "imageheight":232,
          "imagewidth":404,
-         "width":18,
-         "x":22,
-         "y":173
+         "type":"goomba",
+         "width":16,
+         "x":23,
+         "y":174
         }, 
         {
          "height":30,
          "id":4,
-         "image":"..\/sprites\/koopa_troopa_sheets.png",
+         "image":"Image\/Enemies\/koopa_troopa_sheets.png",
          "imageheight":364,
          "imagewidth":385,
+         "type":"red-koopa",
          "width":22,
          "x":3,
          "y":4
@@ -35,9 +37,10 @@
         {
          "height":46,
          "id":6,
-         "image":"..\/sprites\/koopa_troopa_sheets.png",
+         "image":"Image\/Enemies\/koopa_troopa_sheets.png",
          "imageheight":364,
          "imagewidth":385,
+         "type":"red-koopa-fly",
          "width":30,
          "x":8,
          "y":127
@@ -45,9 +48,10 @@
         {
          "height":30,
          "id":5,
-         "image":"..\/sprites\/koopa_troopa_sheets.png",
+         "image":"Image\/Enemies\/koopa_troopa_sheets.png",
          "imageheight":364,
          "imagewidth":385,
+         "type":"green-koopa",
          "width":22,
          "x":3,
          "y":186
@@ -55,9 +59,10 @@
         {
          "height":46,
          "id":7,
-         "image":"..\/sprites\/koopa_troopa_sheets.png",
+         "image":"Image\/Enemies\/koopa_troopa_sheets.png",
          "imageheight":364,
          "imagewidth":385,
+         "type":"green-koopa-fly",
          "width":30,
          "x":8,
          "y":309
@@ -65,9 +70,10 @@
         {
          "height":24,
          "id":8,
-         "image":"..\/sprites\/enemies.png",
+         "image":"Image\/Enemies\/enemies.png",
          "imageheight":232,
          "imagewidth":404,
+         "type":"lakitu",
          "width":16,
          "x":194,
          "y":123
@@ -75,9 +81,10 @@
         {
          "height":24,
          "id":9,
-         "image":"..\/sprites\/enemies.png",
+         "image":"Image\/Enemies\/enemies.png",
          "imageheight":232,
          "imagewidth":404,
+         "type":"piranha-plant",
          "width":16,
          "x":327,
          "y":123

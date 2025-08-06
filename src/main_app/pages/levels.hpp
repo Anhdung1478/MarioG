@@ -20,6 +20,7 @@
 
 #include "../../widget_toolkit/entity/enemy/goomba.hpp"
 #include "../../widget_toolkit/entity/enemy/koopa.hpp"
+#include "../../widget_toolkit/entity/enemy/piranha.hpp"
 
 namespace mario::pages {
     class LevelsPage : public Page {
@@ -32,6 +33,7 @@ namespace mario::pages {
             std::vector<mario::entity::Block*> backgroundBlocks;
             std::vector<mario::entity::Enemy*> enemies;
             std::vector<mario::entity::Item*> items;  // Direct item management
+            mario::entity::Item* testItem;
 
             mario::entity::Block* testBlock;
       
@@ -75,7 +77,8 @@ namespace mario::pages {
             std::unique_ptr<Slider> musicSlider;
             std::unique_ptr<Slider> sfxSlider;
 
-            // std::unique_ptr<mario::entity::ItemManager> itemManager;
+            std::unique_ptr<mario::entity::ItemManager> itemManager;
+            void removeCollectedItems();
         public:
             LevelsPage(MainWindow &context, mario::resource::LevelState state);
             ~LevelsPage();

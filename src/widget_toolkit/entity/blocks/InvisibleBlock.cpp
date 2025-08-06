@@ -1,9 +1,9 @@
-#include "QuestionBlock.hpp"
+#include "InvisibleBlock.hpp"
 #include "../item/ItemManager.hpp"
 
 namespace mario::entity {
 
-QuestionBlock::QuestionBlock(sf::Vector2f pos, sf::Vector2f size, std::string name, int _typeOfItem, int _themeID) 
+InvisibleBlock::InvisibleBlock(sf::Vector2f pos, sf::Vector2f size, std::string name, int _typeOfItem, int _themeID) 
     : numberOfCoins(1), Block(pos, size, name), typeOfItem(_typeOfItem), themeID(_themeID) 
 {
     InitSpritesSheet();
@@ -33,11 +33,11 @@ QuestionBlock::QuestionBlock(sf::Vector2f pos, sf::Vector2f size, std::string na
     bouncingDistance = p_body->getSize().y / 10.0f; // Set bouncing distance to 1/10 of the block height
 }
 
-QuestionBlock::~QuestionBlock() {
+InvisibleBlock::~InvisibleBlock() {
     delete coins_animation;
 }
 
-void QuestionBlock::InitSpritesSheet(){
+void InvisibleBlock::InitSpritesSheet(){
     sprites = {
         {"question-block[0]", 1, 52, 16, 16},
         {"question-block[1]", 18, 52, 16, 16},
@@ -70,11 +70,11 @@ void QuestionBlock::InitSpritesSheet(){
     });
 }
 
-int QuestionBlock::reactToCollision(int side, Player* player) {
-    if (side != SideCollision::Bottom) return -1; 
+int InvisibleBlock::reactToCollision(int side, Player* player) {
+    if (side != SideCollision::Bottom) return 0; 
     // Coin
     if (typeOfItem == 0) { 
-        if (numberOfCoins == 0) return -1;
+        if (numberOfCoins == 0) return 0;
 
         numberOfCoins--;
 
@@ -88,29 +88,18 @@ int QuestionBlock::reactToCollision(int side, Player* player) {
         }
     }
     else if (typeOfItem == 1) { // Red-mushroom or Fire-flower
-        if (player->getPlayerStateType() == player_state::PlayerStateType::Small) {// Spawn Red mushroom
-            p_animation->setAnimationState(false);
-            p_animation->setSpriteAnimation("empty-question-block[" + std::to_string(themeID) + "]");
-            typeOfItem = -1; // Mark as empty
-            return 1; 
-        } else if (player->getPlayerStateType() == player_state::PlayerStateType::Super) {// Spawn Fire flower
-            p_animation->setAnimationState(false);
-            p_animation->setSpriteAnimation("empty-question-block[" + std::to_string(themeID) + "]");
-            typeOfItem = -1; // Mark as empty
-            return 2;
+        if (player->getPlayerStateType() == player_state::PlayerStateType::Small) {
+            // Spawn Red mushroom
+        } else if (player->getPlayerStateType() == player_state::PlayerStateType::Super) {
+            // Spawn Fire flower
         }
-        
     }
-    else if (typeOfItem == 3) {// Spawn one-up mushroom
-        p_animation->setAnimationState(false);
-        p_animation->setSpriteAnimation("empty-question-block[" + std::to_string(themeID) + "]");
-        typeOfItem = -1; // Mark as empty
-        return 3;
+    else if (typeOfItem == 2) { // One-up mushroom
+        // Spawn one-up mushroom
     }
-    return -1;
 }
   
-void QuestionBlock::bouncingAnimation(float dt) {
+void InvisibleBlock::bouncingAnimation(float dt) {
     // std::cout << "Bouncing animation: " << bouncingTimer << "\n";
     if (bouncingTimer < 0.1f) {
         p_animation->move(sf::Vector2f(0.f, -bouncingDistance));
@@ -129,16 +118,16 @@ void QuestionBlock::bouncingAnimation(float dt) {
     bouncingTimer += dt;
 }
 
-void QuestionBlock::update(const sf::RenderWindow *window, float dt) {
+void InvisibleBlock::update(const sf::RenderWindow *window, float dt) {
     if (isBouncing) bouncingAnimation(dt);
     p_animation->update(window, dt);
     coins_animation->update(window, dt);
 }
 
-void QuestionBlock::handleEvent(const sf::RenderWindow *window, const sf::Event &event) {
+void InvisibleBlock::handleEvent(const sf::RenderWindow *window, const sf::Event &event) {
 }
 
-void QuestionBlock::render(sf::RenderWindow *window) {
+void InvisibleBlock::render(sf::RenderWindow *window) {
     Entity::render(window);
     // coins_animation->setSpriteAnimation("coin[6]");
     // coins_animation->render(window);
@@ -149,7 +138,7 @@ void QuestionBlock::render(sf::RenderWindow *window) {
 }
 
 
-void QuestionBlock::onHit(Player* player, ItemManager* itemManager) {
+void InvisibleBlock::onHit(Player* player, ItemManager* itemManager) {
     if (!hasBeenHit && itemManager) {
         hasBeenHit = true;
     }

@@ -102,8 +102,8 @@ void BackgroundBlock::InitSpritesSheet() {
     };
 }
 
-void BackgroundBlock::reactToCollision(int side, Player* player) {
-
+int BackgroundBlock::reactToCollision(int side, Player* player) {
+    return -1;
 }
 
 void BackgroundBlock::update(const sf::RenderWindow *window, float dt) {

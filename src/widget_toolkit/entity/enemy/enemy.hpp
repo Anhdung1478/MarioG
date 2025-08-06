@@ -12,7 +12,8 @@ namespace mario::entity {
 
     enum class EnemyBehavior {
         Patrol,
-        Chase
+        Chase,
+        Piranha
     };
 
     class Enemy : public Entity {
@@ -64,16 +65,21 @@ namespace mario::entity {
 
         virtual void initializeAnimations(const std::string& jsonPath, const std::string& texturePath, sf::Vector2f scale) = 0;
         virtual std::string getDeadSpriteID() const = 0;
+    protected:
+        bool shouldBeDeleted;
     public:
         Enemy(const std::string& jsonPath, const std::string& texturePath, sf::Vector2f scale, const std::string& spriteID,
             sf::Vector2f startPosition, sf::Vector2f size, const std::string& behaviorStr)
-                : Entity(jsonPath, texturePath, scale, spriteID, new DynamicBox(startPosition, size, 70.f, 200.f, -300.f, 1)) {
+                : Entity(jsonPath, texturePath, scale, spriteID, new DynamicBox(startPosition, size, 70.f, 200.f, -300.f, 1)),
+                 shouldBeDeleted(false) {
             if(behaviorStr == "Patrol") {
                 behavior = EnemyBehavior::Patrol;
                 patrolRange = 100.f;
-            } else {
+            } else if(behaviorStr == "Chase"){
                 behavior = EnemyBehavior::Chase;
                 detectionRange = 200.f;
+            } else if(behaviorStr == "Piranha") {
+                behavior = EnemyBehavior::Piranha;
             }
 
             initialPosition = startPosition;
@@ -83,6 +89,13 @@ namespace mario::entity {
             
         virtual ~Enemy() = default;
 
+        bool shouldDelete() const {
+            return shouldBeDeleted;
+        }
+
+        void setShouldDelete(bool sD) {
+            shouldBeDeleted = sD;
+        }
         // virtual void reactCollision(const Collision& collision) {
         //     if(collision.isWithWall()) {
         //         DynamicBox* body = dynamic_cast<DynamicBox*>(p_body);
@@ -116,6 +129,9 @@ namespace mario::entity {
                     break;
                 case EnemyBehavior::Chase:
                     chase(dt, player);
+                    break;
+                case EnemyBehavior::Piranha:
+                    // Piranha behavior is implemented in Derived Class
                     break;
             }
         }

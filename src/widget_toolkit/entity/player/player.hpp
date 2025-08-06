@@ -29,6 +29,9 @@ namespace mario::entity {
             int lives = 0;
             int coinCount = 0;
 
+            bool isInvincible = false;
+            float invincibleTimer = 0.f;
+
         public:
             Player(sf::Vector2f spawnPoint, CharacterListType characterType, player_state::PlayerStateType stateType);
             ~Player() override;
@@ -52,10 +55,11 @@ namespace mario::entity {
             bool isDead() const;
             bool canCollisionWithBlock() const;
 
-            void collectCoin();
-            void collectRedMushroom();
+            void collectCoin();            
+            void collectRedMushroom();            
             void collectFireFlower();
             void collect1UpMushroom();
+            void collectStarman();
 
             CharacterListType getCharacterType();
             player_state::PlayerStateType getPlayerStateType();

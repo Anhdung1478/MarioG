@@ -1,5 +1,8 @@
 {
   "fireflower": [
-    { "x": 324, "y": 261, "width": 18, "height": 19 }
+    { "x": 188, "y": 103, "width": 16, "height": 16 },
+    { "x": 205, "y": 103, "width": 16, "height": 16 },
+    { "x": 222, "y": 103, "width": 16, "height": 16 },
+    { "x": 239, "y": 103, "width": 16, "height": 16 }
   ]
 }

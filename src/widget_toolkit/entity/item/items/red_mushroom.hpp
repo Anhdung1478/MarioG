@@ -42,6 +42,7 @@ namespace mario::entity {
             : Item(ItemType::RedMushroom, jsonPath, texturePath, scale, spriteID, position, size, velocity) {
                 movementType = MovementType::Walking;
                 emergenceStartPos = position;
+                p_body->move(true, false);
             }
 
         void onCollect(Entity* collector) override {
@@ -53,14 +54,14 @@ namespace mario::entity {
 
         void update(const sf::RenderWindow* window, float dt) override {
             if (!isCollected()) {
-                if (!hasEmerged) {
-                    handleEmergence(dt);
-                } else {
-                    handleWalkingMovement(dt);
-                }
-
-                if (p_body) p_body->update(dt);
-                if (p_animation) p_animation->update(window, dt);
+                // if (!hasEmerged) {
+                //     handleEmergence(dt);
+                // } else {
+                //     handleWalkingMovement(dt);
+                // }
+                
+                // if (p_body) p_body->update(dt);
+            //     if (p_animation) p_animation->update(window, dt);
             }
         }
 

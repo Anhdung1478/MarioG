@@ -3,9 +3,10 @@
 namespace mario::entity {
 
     Brick::Brick(sf::Vector2f pos, sf::Vector2f size, std::string name, int _typeOfItem, int _themeID, int _numberOfCoins) 
-        : Block(pos, size, name), typeOfItem(_typeOfItem), themeID(_themeID), numberOfCoins(0) 
+        : Block(pos, size, name), typeOfItem(_typeOfItem), themeID(_themeID), numberOfCoins(_numberOfCoins) 
     {
         InitSpritesSheet();
+        name = name + "[" + std::to_string(themeID) + "]";
         p_animation = new mario::entity::Animation("../../asset/maps/Image/tiles-8.png", BLOCK_SCALE, sprites);
         p_animation->setSpriteAnimation(name);
         p_animation->setAnimationState(true);
@@ -56,9 +57,8 @@ namespace mario::entity {
         });
     }
 
-    void Brick::reactToCollision(int side, Player* player) {
-        if (side != SideCollision::Bottom) return;
-
+    int Brick::reactToCollision(int side, Player* player) {
+        if (side != SideCollision::Bottom) return -1;
         if(typeOfItem == -1) {
             if(player->getPlayerStateType() == player_state::PlayerStateType::Small) {
                 isBouncing = true;
@@ -69,34 +69,49 @@ namespace mario::entity {
                 // break the brick block
             }
         }    
-        else 
-        if (typeOfItem == 0) { // Coin
-            if (numberOfCoins == 0) return;
-
-            numberOfCoins--;
+        else if (typeOfItem == 0) { // Coin
+            if (numberOfCoins == 0) return -1;
             
+            numberOfCoins--;
+
+            isBouncing = true;
+            
+            coins_animation->setPosition(sf::Vector2f(originalPosition.x, originalPosition.y - 16 * BLOCK_SCALE.y));
+            coins_animation->setVelocity(sf::Vector2f(0.f, -15.f));
             coins_animation->setAnimationState(true);
 
             if(numberOfCoins == 0){
-                p_animation->setAnimationState(false);
                 p_animation->setSpriteAnimation("empty-brick-block[" + std::to_string(themeID) + "]");
+                typeOfItem = -2; // Mark as empty
             }
         }
         else if (typeOfItem == 1) { // Red-mushroom
             // Spawn Red mushroom
-            p_animation->setAnimationState(false);
-            p_animation->setSpriteAnimation("empty-brick-block[" + std::to_string(themeID) + "]");
+            if (player->getPlayerStateType() == player_state::PlayerStateType::Small) {
+                // Spawn Red mushroom
+                p_animation->setSpriteAnimation("empty-brick-block[" + std::to_string(themeID) + "]");
+                typeOfItem = -2; // Mark as empty
+                return 1; 
+            } else if (player->getPlayerStateType() == player_state::PlayerStateType::Super) {
+                // Spawn Fire flower
+                p_animation->setSpriteAnimation("empty-brick-block[" + std::to_string(themeID) + "]");
+                typeOfItem = -2; // Mark as empty
+                return 2;
+            }
         }
-        else if (typeOfItem == 2) { // One-up mushroom
+        else if (typeOfItem == 3) { // One-up mushroom
             // Spawn one-up mushroom
-            p_animation->setAnimationState(false);
             p_animation->setSpriteAnimation("empty-brick-block[" + std::to_string(themeID) + "]");
+            typeOfItem = -2; // Mark as empty
+            return 3;
         }
-        else if (typeOfItem == 3) { // Starman
+        else if (typeOfItem == 4) { // Starman
             // Spawn Starman
-            p_animation->setAnimationState(false);
             p_animation->setSpriteAnimation("empty-brick-block[" + std::to_string(themeID) + "]");
+            typeOfItem = -2; // Mark as empty
+            return 4;
         }
+        return -1; // No item to spawn
     }
 
     void Brick::bouncingAnimation(float dt) {
@@ -175,18 +190,33 @@ namespace mario::entity {
 
     void Brick::update(const sf::RenderWindow *window, float dt) {
         if (isBouncing) bouncingAnimation(dt);
+        coins_animation->update(window, dt);
         if (!fragments.empty()) {
             for (auto &fragment : fragments) {
                 fragment.update(dt);
+                if(fragment.sprite.getPosition().y > window->getSize().y) {
+                    // Remove fragment if it goes out of bounds
+                    fragment = fragments.back();
+                    fragments.pop_back();
+                }
             }
         }
+        shouldBeDeleted = fragments.empty() && !isExist();
     }
 
     void Brick::handleEvent(const sf::RenderWindow *window, const sf::Event &event) {
     }
 
     void Brick::render(sf::RenderWindow *window) {
-        Entity::render(window);
+        if(isExist()){
+            p_animation->renderWithPosition(window, p_body->getPosition());
+            p_body->renderHitboxRect(window);
+            
+        }
+        if(coins_animation->getAnimationState()) {
+            if(coins_animation->getStep() == 4) coins_animation->setVelocity(sf::Vector2f(0.f, 0.f));
+            coins_animation->render(window);
+        }
         if (!fragments.empty()) {
             for (const auto &fragment : fragments) {
                 window->draw(fragment.sprite);
