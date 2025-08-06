@@ -6,15 +6,16 @@
 
 mario::pages::MainMenuPage::MainMenuPage(mario::MainWindow &context) : Page(context) {
     p_font = std::make_unique<sf::Font>("../../asset/fonts/Cascadia.ttf");
+    p_marioFont = std::make_unique<sf::Font>("../../asset/fonts/SuperMario256.ttf");
 
     p_levelDataManager = std::make_unique<mario::resource::LevelDataManager>();
     
-    p_title = std::make_unique<sf::Text>(*p_font, "Super Mario Bros", 50);
-    p_title->setPosition({400, 50});
+    p_title = std::make_unique<sf::Text>(*p_marioFont, "Super Mario Bros", 50);
+    rePositionTextToMiddle(*p_title, 1280, 50);
     p_title->setFillColor(sf::Color::White);
 
-    p_showMenu = std::make_unique<sf::Text>(*p_font, "Press any key to continue", 17);
-    p_showMenu->setPosition({500, 500});
+    p_showMenu = std::make_unique<sf::Text>(*p_marioFont, "Press any key to continue", 17);
+    rePositionTextToMiddle(*p_showMenu, 1280, 500);
     p_showMenu->setFillColor(sf::Color::White);
 
     p_menuButtonListNode = new ButtonListNode();

@@ -2,7 +2,7 @@
 
 #include "../entity.hpp"
 #include "../../interfaces.hpp"
-#include "../player.hpp"
+#include "../player/player.hpp"
 
 enum SideCollision {
     Top    = 0,

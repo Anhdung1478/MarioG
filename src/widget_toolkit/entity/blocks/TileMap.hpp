@@ -7,7 +7,7 @@
 #include "QuestionBlock.hpp"
 #include "SolidBlock.hpp"
 #include "BackgroundBlock.hpp"
-#include "../player.hpp"
+#include "../player/player.hpp"
 #include "../../resource/json.hpp"
 #include "../../interfaces.hpp"
 #include "../item/item.hpp"

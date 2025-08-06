@@ -41,8 +41,8 @@
       { "x": 45, "y": 97, "width": 17, "height": 31 }
     ],
     "walk": [
-      { "x": 80, "y": 97, "width": 17, "height": 31 },
-      { "x": 115, "y": 97, "width": 17, "height": 31 }
+      { "x": 115, "y": 97, "width": 17, "height": 31 },
+      { "x": 80, "y": 97, "width": 17, "height": 31 }
     ],
     "jump": [
       { "x": 219, "y": 145, "width": 17, "height": 31 }

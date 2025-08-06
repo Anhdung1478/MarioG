@@ -13,11 +13,4 @@ namespace mario::entity {
             ~EntityFactory() {}
     };
 
-    class EnemyFactory {
-        public:
-            
-            ~EnemyFactory() {}
-    };
-
-    
 }

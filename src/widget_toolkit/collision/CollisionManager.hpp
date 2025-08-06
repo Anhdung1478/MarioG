@@ -1,7 +1,7 @@
 #pragma once
 #include "../entity/blocks/Block.hpp"
 #include "../entity/enemy/enemy.hpp"
-#include "../entity/player.hpp"
+#include "../entity/player/player.hpp"
 #include "../entity/item/item.hpp"
 #include "../entity/item/ItemManager.hpp"
 #include "../entity/enemy/piranha.hpp"

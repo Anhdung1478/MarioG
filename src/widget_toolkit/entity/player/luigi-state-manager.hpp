@@ -1,0 +1,46 @@
+#pragma once
+
+#include<bits/stdc++.h>
+#include<SFML/Graphics.hpp>
+#include "luigi-state.hpp"
+
+namespace mario::entity::player_state {
+    class LuigiStateManager : public PlayerStateManager {
+        private:
+            const std::string LUIGI_TYPE_STR[3] = {
+                "luigi-small",
+                "luigi-super",
+                "luigi-fire-super",
+            };
+
+        public:
+            LuigiStateManager(Animation *p_animation, Box *p_box, PlayerStateType stateType) {
+                player_small = new LuigiSmallState(LUIGI_TYPE_STR[0]);
+                player_super = new LuigiSuperState(LUIGI_TYPE_STR[1]);
+                player_fire = new LuigiFireState(LUIGI_TYPE_STR[2]);
+                
+                currStateType = stateType;
+                if(stateType == PlayerStateType::Small)
+                    curr_state = player_small;
+
+                if(stateType == PlayerStateType::Super)
+                    curr_state = player_super;
+
+                if(stateType == PlayerStateType::Fire)
+                    curr_state = player_fire;
+
+                curr_state->update(p_animation, p_box);
+            }
+
+            ~LuigiStateManager() override {
+            }
+
+            void setAnimation(Animation *p_animation, const std::string &ID) override {
+                p_animation->setSpriteAnimation(LUIGI_TYPE_STR[(int) currStateType] + "." + ID);
+            }
+            
+            void setDeadAnimation(Animation *p_animation) override {
+                p_animation->setSpriteAnimation(LUIGI_TYPE_STR[0] + ".backing[0]");
+            }
+    };
+}
