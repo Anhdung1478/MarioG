@@ -87,27 +87,37 @@ namespace mario::entity {
 
                     // Brick blocks
                     case 195:
-                        return new Brick(spawnPoint, sf::Vector2f(16, 16), "brick-block[0]", 0, -1);
+                        return new Brick(spawnPoint, sf::Vector2f(16, 16), "brick-block[0]", -1, themeID);
                     case 197:
-                        return new Brick(spawnPoint, sf::Vector2f(16, 16), "brick-block[1]", 1);
+                        return new Brick(spawnPoint, sf::Vector2f(16, 16), "brick-block[1]", -1, themeID);
                     case 199:
-                        return new Brick(spawnPoint, sf::Vector2f(16, 16), "brick-block[2]", 2);
-
+                        return new Brick(spawnPoint, sf::Vector2f(16, 16), "brick-block[2]", -1, themeID);
                     default:
                         return nullptr;
                 }
             }
 
             Block* createBackgroundBlock(int tileID, sf::Vector2f spawnPoint, int themeID, int tilesetColumns, int tileWidth, int tileHeight, int margin, int spacing) {
-                int _x = tileID % tilesetColumns;
-                int _y = tileID / tilesetColumns;
-                return new BackgroundBlock(spawnPoint, sf::Vector2f(16, 16), std::to_string(tileID), {
-                    std::to_string(tileID),
-                    _x * 16 + margin + _x * spacing, 
-                    _y * 16 + margin + _y * spacing, 
-                    16, 
-                    16
-                });
+                switch (tileID) {
+                    // Background blocks
+                    case 78:
+                        return new BackgroundBlock(spawnPoint, sf::Vector2f(16, 16), "grass[0][0]");
+                    case 79:
+                        return new BackgroundBlock(spawnPoint, sf::Vector2f(16, 16), "grass[1][0]");
+                    case 80:
+                        return new BackgroundBlock(spawnPoint, sf::Vector2f(16, 16), "grass[2][0]");
+                    default:
+                        int _x = tileID % tilesetColumns;
+                        int _y = tileID / tilesetColumns;
+                        return new BackgroundBlock(spawnPoint, sf::Vector2f(16, 16), std::to_string(tileID), {
+                            std::to_string(tileID),
+                            _x * 16 + margin + _x * spacing, 
+                            _y * 16 + margin + _y * spacing, 
+                            16, 
+                            16
+                        });
+                }
+                return nullptr;
             }
 
             ~BlockFactory() {}

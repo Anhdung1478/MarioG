@@ -122,13 +122,13 @@ void mario::entity::Player::resetJump() {
 }
 
 void mario::entity::Player::collectCoin() {
-    ++coinCount;
+    coinCount++;
     score += 200;
     
     // 1-up at 100 coins
     if (coinCount >= 100) {
         coinCount = 0;
-        ++lives;
+        lives++;
         // Play 1-up sound
     }
     
@@ -136,16 +136,19 @@ void mario::entity::Player::collectCoin() {
 }
 
 void mario::entity::Player::collectRedMushroom() {
-    score += 1000;
     if (getPlayerStateType() == player_state::PlayerStateType::Small) {
+        score += 1000;
         p_stateManager->changeToSuperState(p_animation, p_body);
         // Play power-up sound
+    } else {
+        // Already super or fire, give points instead
+        score += 1000;
     }
 }
 
 void mario::entity::Player::collectFireFlower() {
-    score += 1000;
     if (getPlayerStateType() != player_state::PlayerStateType::Small) {
+        score += 1000;
         p_stateManager->changeToFireState(p_animation, p_body);
         // Play power-up sound
     } else {
@@ -156,9 +159,15 @@ void mario::entity::Player::collectFireFlower() {
 }
 
 void mario::entity::Player::collect1UpMushroom() {
-    ++lives;
+    lives++;
     score += 1000;
     // Play 1-up sound
+}
+
+void mario::entity::Player::collectStarman() {
+    isInvincible = true;
+    invincibleTimer = 10.f; // 10 seconds of invincibility
+    // p_stateManager->changeToStarmanState(p_animation, p_body);
 }
 
 mario::entity::CharacterListType mario::entity::Player::getCharacterType() {

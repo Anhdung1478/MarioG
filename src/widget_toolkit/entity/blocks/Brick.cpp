@@ -58,9 +58,11 @@ namespace mario::entity {
 
     void Brick::reactToCollision(int side, Player* player) {
         if (side != SideCollision::Bottom) return;
-
+        std::cout << "0\n";
         if(typeOfItem == -1) {
+            std::cout << "1\n";
             if(player->getPlayerStateType() == player_state::PlayerStateType::Small) {
+                std::cout << "2\n";
                 isBouncing = true;
             }
             else{
