@@ -156,6 +156,8 @@ mario::pages::LevelsPage::~LevelsPage() {
     for (auto &item : items) {
         delete item;
     }
+
+    camera->resetToDefaultView();
 }
 
 // for Sound Manager
