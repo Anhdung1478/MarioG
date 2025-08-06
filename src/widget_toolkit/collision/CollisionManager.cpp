@@ -74,7 +74,7 @@ void CollisionManager::findBlocksCollisions(int &L, int &R, const mario::entity:
         }
     }
 
-void CollisionManager::checkCollisionPlayerWithBlocks(mario::entity::Player *&player, std::vector<Block*> &blocks) {
+void CollisionManager::checkCollisionPlayerWithBlocks(mario::entity::Player *&player, std::vector<Block*> &blocks, std::vector<Item*> &items) {
     if(player->canCollisionWithBlock() == false)
         return;
 
