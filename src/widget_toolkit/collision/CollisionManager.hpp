@@ -3,6 +3,7 @@
 #include "../entity/enemy/enemy.hpp"
 #include "../entity/player.hpp"
 #include "../entity/item/item.hpp"
+#include "../entity/enemy/piranha.hpp"
 
 namespace mario {
 namespace entity {

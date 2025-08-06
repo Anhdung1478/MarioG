@@ -1,0 +1,35 @@
+{
+  "goomba-new": {
+    "walking": [
+      { "x": 23, "y": 173, "width": 17, "height": 18 },
+      { "x": 23, "y": 173, "width": 17, "height": 18 },
+      { "x": 60, "y": 173, "width": 17, "height": 18 },
+      { "x": 60, "y": 173, "width": 17, "height": 18 }
+    ],
+    "dead": [
+      { "x": 42, "y": 173, "width": 17, "height": 18 },
+      { "x": 42, "y": 173, "width": 17, "height": 18 },
+      { "x": 42, "y": 173, "width": 17, "height": 18 }
+    ]
+  },
+  "piranha-green": {
+    "eat": [
+      { "x": 326, "y": 122, "width": 18, "height": 26 },
+      { "x": 326, "y": 122, "width": 18, "height": 26 },
+      { "x": 326, "y": 122, "width": 18, "height": 26 },
+      { "x": 345, "y": 122, "width": 18, "height": 26 },
+      { "x": 345, "y": 122, "width": 18, "height": 26 },
+      { "x": 345, "y": 122, "width": 18, "height": 26 }
+    ]
+  },
+  "piranha-red": {
+    "eat": [
+      { "x": 364, "y": 122, "width": 18, "height": 26 },
+      { "x": 364, "y": 122, "width": 18, "height": 26 },
+      { "x": 364, "y": 122, "width": 18, "height": 26 },
+      { "x": 383, "y": 122, "width": 18, "height": 26 },
+      { "x": 383, "y": 122, "width": 18, "height": 26 },
+      { "x": 383, "y": 122, "width": 18, "height": 26 }
+    ]
+  }
+}
