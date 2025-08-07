@@ -262,7 +262,7 @@ void CollisionManager::checkCollisionPlayerWithBlocks(mario::entity::Player *&pl
                 enemy->reactCollision(side ^ 1, Collision(Collision::Type::Player));
                 switch (side) {
                     case SideCollision::Top:
-                        // player->setStartedDead();
+                        player->beingHit();
                         break;
                     case SideCollision::Bottom:
                         player->resetJump();
@@ -270,10 +270,10 @@ void CollisionManager::checkCollisionPlayerWithBlocks(mario::entity::Player *&pl
                         player->jump(false);
                         break;
                     case SideCollision::Left:
-                        // player->setStartedDead();
+                        player->beingHit();
                         break;
                     case SideCollision::Right:
-                        // player->setStartedDead();
+                        player->beingHit();
                         break;
                     default:
                         break;

@@ -167,20 +167,30 @@ void mario::entity::Player::resetJump() {
     p_body->resetJump();
 }
 
-void mario::entity::Player::beingHit() {
-    if(getPlayerStateType() == player_state::PlayerStateType::Small) {
-        _isAlive = false;
-    } else {
-        p_stateManager->changeToSmallState(p_animation, p_body);
-    }
+void mario::entity::Player::becomeShadowAfterBeingHit() {
+    _isShadow = true;
+    shadowTimer = sf::seconds(1.5f);
 }
 
-bool mario::entity::Player::isInDeadAnimation() const {
-    return (!_isAlive);
+void mario::entity::Player::beingHit() {
+    if(getPlayerStateType() == player_state::PlayerStateType::Small) {
+        setStartedDead();
+    } else {
+        p_stateManager->changeToSmallState(p_animation, p_body);
+        becomeShadowAfterBeingHit();
+    }
 }
 
 bool mario::entity::Player::isDead() const {
     return _isFinishedDeadAnimation;
+}
+
+bool mario::entity::Player::isShadow() const {
+    return _isShadow;
+}
+
+bool mario::entity::Player::isInDeadAnimation() const {
+    return (!_isAlive);
 }
 
 void mario::entity::Player::collectCoin() {
@@ -229,8 +239,8 @@ void mario::entity::Player::collect1UpMushroom() {
 }
 
 void mario::entity::Player::collectStarman() {
-    isInvincible = true;
-    invincibleTimer = 10.f; // 10 seconds of invincibility
+    _isInvincible = true;
+    invincibleTimer = sf::seconds(10.f); // 10 seconds of invincibility
     // p_stateManager->changeToStarmanState(p_animation, p_body);
 }
 
