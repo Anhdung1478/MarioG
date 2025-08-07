@@ -251,7 +251,7 @@ void CollisionManager::checkCollisionPlayerWithBlocks(mario::entity::Player *&pl
     }
 
     void CollisionManager::checkCollisionPlayerWithEnemies(Player *&player, std::vector<Enemy*> &enemies) {
-        if(player->isInDeadAnimation())
+        if(player->isInDeadAnimation() || player->isShadow())
             return;
 
         for (auto& enemy : enemies) {
@@ -262,7 +262,7 @@ void CollisionManager::checkCollisionPlayerWithBlocks(mario::entity::Player *&pl
                 enemy->reactCollision(side ^ 1, Collision(Collision::Type::Player));
                 switch (side) {
                     case SideCollision::Top:
-                        // player->setStartedDead();
+                        player->beingHit();
                         break;
                     case SideCollision::Bottom:
                         player->resetJump();
@@ -270,10 +270,10 @@ void CollisionManager::checkCollisionPlayerWithBlocks(mario::entity::Player *&pl
                         player->jump(false);
                         break;
                     case SideCollision::Left:
-                        // player->setStartedDead();
+                        player->beingHit();
                         break;
                     case SideCollision::Right:
-                        // player->setStartedDead();
+                        player->beingHit();
                         break;
                     default:
                         break;
