@@ -144,7 +144,7 @@ namespace mario::entity {
               piranhaType(spriteID.find("red") != std::string::npos ? PiranhaType::Red : PiranhaType::Green),
               currentState(PiranhaState::Idle), lastState(PiranhaState::Idle),
               moveTimer(1.0f), moveDuration(1.0f), idleDuration(1.0f),
-              maxHeight(60.0f), pipePosition(startPosition), detectionRange(120.f),
+              maxHeight(70.0f), pipePosition(sf::Vector2f(startPosition.x, startPosition.y + 10.f)), detectionRange(120.f),
               Enemy(jsonPath, texturePath, scale, spriteID, startPosition, size, "Piranha") {
             try {
                 p_animation->setSpriteAnimation(spriteID);
@@ -190,6 +190,7 @@ namespace mario::entity {
             
             p_animation->update(window, dt);
             p_body->update(dt);
+            p_body->updateSize(p_animation);
         }
     };
 
