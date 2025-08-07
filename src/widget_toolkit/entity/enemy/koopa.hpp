@@ -166,12 +166,12 @@ namespace mario::entity {
                     if(side == SideCollision::Left) {
                         body->move(true, false); // Move right if hit from left
                         body->setIsFaceForward(true);
-                        std::cout << "move right" << std::endl;
+                        //std::cout << "move right" << std::endl;
                     }
                     else if(side == SideCollision::Right) {
                         body->move(false, false); // Move left if hit from right
                         body->setIsFaceForward(false);
-                        std::cout << "move left" << std::endl;
+                        //std::cout << "move left" << std::endl;
                     }
                     if(p_animation->isFaceForward() != body->isFaceForward()) {
                         p_animation->rotate();
