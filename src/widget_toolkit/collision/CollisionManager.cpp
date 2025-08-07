@@ -255,7 +255,6 @@ void CollisionManager::checkCollisionPlayerWithBlocks(mario::entity::Player *&pl
             return;
 
         for (auto& enemy : enemies) {
-            if (!player->getHitbox().findIntersection(enemy->getHitbox())) continue;
             if (!enemy->getHitbox().findIntersection(cameraBounds)) continue;
             SideCollision side = findCollisionSide(player, enemy);
             if (side != SideCollision::None) {

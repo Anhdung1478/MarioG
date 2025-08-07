@@ -86,7 +86,7 @@ int InvisibleBlock::reactToCollision(int side, Player* player) {
             p_animation->setSpriteAnimation("empty-question-block[" + std::to_string(themeID) + "]");
             typeOfItem = -1; // Mark as empty
             return 1; 
-        } else if (player->getPlayerStateType() == player_state::PlayerStateType::Super) {// Spawn Fire flower
+        } else {// Spawn Fire flower
             p_animation->setSpriteAnimation("empty-question-block[" + std::to_string(themeID) + "]");
             typeOfItem = -1; // Mark as empty
             return 2;
