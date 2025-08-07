@@ -135,7 +135,6 @@ mario::pages::LevelsPage::~LevelsPage() {
     autoSave();
     delete p_player;
 
-    std::cerr << '.' << '\n';
     camera.resetToDefaultView();
     for (auto &enemy : enemies) {
         delete enemy;
@@ -177,12 +176,16 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
     }
     
     if(!_isPaused) {
-        currLevelState.update(dt);
-        if(currLevelState.times <= sf::seconds(0.f)) {
-            // failed !!
+        if(!p_player->isInDeadAnimation()) {
+            currLevelState.update(dt);
+            if(currLevelState.times <= sf::seconds(0.f)) {
+                p_player->setStartedDead();
+                currLevelState.times = sf::seconds(0.f);
+            }
         }
 
         p_player->update(window, dt);
+        p_player->updateToLevelState(currLevelState);
 
         // testBlock->update(window, dt);
         

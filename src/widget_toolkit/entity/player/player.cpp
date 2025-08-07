@@ -184,7 +184,7 @@ bool mario::entity::Player::isDead() const {
 }
 
 void mario::entity::Player::collectCoin() {
-    coinCount++;
+    ++coinCount;
     score += 200;
     
     // 1-up at 100 coins
@@ -197,23 +197,29 @@ void mario::entity::Player::collectCoin() {
     // Play coin sound
 }
 
+void mario::entity::Player::collectCoinInBlock() {
+    collectCoin();
+}
+
 void mario::entity::Player::collectRedMushroom() {
+    score += 1000;
     if (getPlayerStateType() == player_state::PlayerStateType::Small) {
-        score += 1000;
         p_stateManager->changeToSuperState(p_animation, p_body);
         // Play power-up sound
     } else {
         // Already super or fire, give points instead
-        score += 1000;
     }
 }
 
 void mario::entity::Player::collectFireFlower() {
-    if (getPlayerStateType() != player_state::PlayerStateType::Small) {
-        score += 1000;
+    score += 1000;
+    if (getPlayerStateType() == player_state::PlayerStateType::Small) {
+        p_stateManager->changeToSuperState(p_animation, p_body);
+            // Play power-up sound
+    } else if(getPlayerStateType() == player_state::PlayerStateType::Super) {
         p_stateManager->changeToFireState(p_animation, p_body);
         // Play power-up sound
-    } 
+    }
 }
 
 void mario::entity::Player::collect1UpMushroom() {

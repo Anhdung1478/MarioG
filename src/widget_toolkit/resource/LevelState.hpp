@@ -6,7 +6,7 @@
 
 namespace mario::resource {
     struct LevelState {
-        static constexpr int DEFAULT_LEVEL_TIME[3] = {300, 300, 400};
+        static constexpr int DEFAULT_LEVEL_TIME[4] = {0, 300, 300, 400};
 
         sf::Time times;
         int level, score, coins, num_lives;

@@ -57,7 +57,8 @@ namespace mario::entity {
             bool isDead() const;
             bool isInDeadAnimation() const;
 
-            void collectCoin();            
+            void collectCoin();   
+            void collectCoinInBlock();         
             void collectRedMushroom();            
             void collectFireFlower();
             void collect1UpMushroom();
