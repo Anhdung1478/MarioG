@@ -17,8 +17,7 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
     marioFont = std::make_unique<sf::Font>("../../asset/fonts/SuperMario256.ttf");
 
     // Load enemies
-    // enemies.push_back(new mario::entity::Goomba(sf::Vector2f(300.f, 80.f)));
-    // enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(1400.f, 80.f), mario::entity::KoopaType::Red, false));
+    // enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(1350.f, 600.f), mario::entity::KoopaType::Red, false));
     // enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(350.f, 80.f), mario::entity::KoopaType::Green, true));
 
     // testItem = new mario::entity::FireFlower(

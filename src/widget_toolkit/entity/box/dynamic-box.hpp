@@ -44,7 +44,7 @@ namespace mario::entity {
 
                 _isRunning = true;
                 _isMoveRight = isMoveRight;
-                // std::cout << (_isMoveRight ? "Moving right" : "Moving left") << ", " << "Velocity X: " << velocity.x << '\n';
+                // std::cout << (isMoveRight ? "Moving right" : "Moving left") << ", " << "Velocity X: " << velocity.x << '\n';
             }
 
             void jump(bool _isReleased) override {
