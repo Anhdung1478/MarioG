@@ -75,7 +75,7 @@ void CollisionManager::findBlocksCollisions(int &L, int &R, const mario::entity:
     }
 
 void CollisionManager::checkCollisionPlayerWithBlocks(mario::entity::Player *&player, std::vector<Block*> &blocks, std::vector<Item*> &items) {
-    if(player->canCollisionWithBlock() == false)
+    if(player->isInDeadAnimation())
         return;
 
     int L, R;
@@ -246,7 +246,10 @@ void CollisionManager::checkCollisionPlayerWithBlocks(mario::entity::Player *&pl
         }
     }
 
-    void CollisionManager::checkCollisionPlayerWithEnemies(Player *&player, std::vector<Enemy*> &enemies){
+    void CollisionManager::checkCollisionPlayerWithEnemies(Player *&player, std::vector<Enemy*> &enemies) {
+        if(player->isInDeadAnimation())
+            return;
+
         for (auto& enemy : enemies) {
             SideCollision side = findCollisionSide(player, enemy);
             if (side != SideCollision::None) {
@@ -276,6 +279,9 @@ void CollisionManager::checkCollisionPlayerWithBlocks(mario::entity::Player *&pl
 
 
     void CollisionManager::checkCollisionPlayerWithItems(Player *&player, std::vector<mario::entity::Item*>& items) {
+        if(player->isInDeadAnimation())
+            return;
+
         for (auto& item : items) {
             if (!item->isCollected()) {
                 SideCollision side = findCollisionSide(player, item);

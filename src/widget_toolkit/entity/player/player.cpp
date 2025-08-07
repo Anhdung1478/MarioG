@@ -4,7 +4,7 @@
 #define FILE_PATH "../../asset/sprites/"
 
 mario::entity::Player::Player(sf::Vector2f spawnPoint, CharacterListType characterType, player_state::PlayerStateType stateType) : _characterType(characterType), _isAlive(true) {
-    _isStartedDeadAnimation = _isFinishedDeadAnimation = false;
+    _isFinishedDeadAnimation = false;
     p_body = new DynamicBox(spawnPoint, sf::Vector2f(40.f, 40.f));
     if(characterType == CharacterListType::Mario) {
         p_animation = new Animation(FILE_PATH"mario.json", FILE_PATH"mario_sheets.png", PLAYER_SCALE, "mario-small.idle[0]");
@@ -56,29 +56,56 @@ void mario::entity::Player::rotateDirection() {
     p_animation->rotate();
 }
 
-void mario::entity::Player::update(const sf::RenderWindow *window, float dt) {
-    if(p_body->getPosition().y >= 720.f)
-        _isAlive = false;
+void mario::entity::Player::setStartedDead() {
+    jump(true);
+    move(0, true);
+    move(1, true);
+    shotFireball(true);
+    _isAlive = false;
+    
+    p_animation->clearAnimationStep();
+    
+    // running dead sound
+    p_body->setVelocity(sf::Vector2f(0.f, 0.f));
+    p_body->jump(false);
 
-    if(_isAlive) {
-        if(!p_body->isOnGround()) {
-            // change texture to jumping
+    p_stateManager->setDeadAnimation(p_animation);
+    p_animation->setAnimationState(false);
+}
+
+void mario::entity::Player::managePlayerAnimation() {
+    if(!p_body->isOnGround()) { // change texture to jumping
             p_stateManager->setAnimation(p_animation, "jump[0]");
             p_animation->setAnimationState(false);
         } else {
-            if(p_body->isNotMoving()) {
-                // change texture to idle
+            if(p_body->isNotMoving()) { // change texture to idle
                 p_stateManager->setAnimation(p_animation, "idle[0]");
                 p_animation->setAnimationState(false);
             } else 
-                if(p_animation->getAnimationState() == false) {
-                    // change to run animation
+                if(p_animation->getAnimationState() == false) { // change to run animation
                     p_stateManager->setAnimation(p_animation, "idle[0]");
                     p_animation->setAnimationState(true);
                 }
                 
             hasPlayedJumpSound_ = false;
         }
+}
+
+void mario::entity::Player::managePlayerDeadState(float dt) {
+    if(!_isAlive && !_isFinishedDeadAnimation) {
+        deadAnimationTime -= sf::seconds(dt);
+        _isFinishedDeadAnimation = (deadAnimationTime <= sf::seconds(0));
+        if(_isFinishedDeadAnimation)
+            p_body->jump(true);
+    }
+}
+
+void mario::entity::Player::update(const sf::RenderWindow *window, float dt) {
+    if(p_body->getPosition().y >= 720.f)
+        setStartedDead();
+
+    if(_isAlive) {
+        managePlayerAnimation();
 
         // change state for debugging
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Num1)) {
@@ -101,28 +128,12 @@ void mario::entity::Player::update(const sf::RenderWindow *window, float dt) {
 
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Num4)) {
             std::cerr << "CALL TO FUNCTION KILLED PLAYER\n";
-            _isAlive = false;
+            setStartedDead();
             std::cerr << "SUCCESFULLY\n";
         }
     }
 
-    if(!_isAlive) {
-        if(!_isStartedDeadAnimation) {
-            _isStartedDeadAnimation = true;
-            p_animation->clearAnimationStep();
-            
-            // running dead sound
-            p_body->jump(false);
-            p_stateManager->setDeadAnimation(p_animation);
-            p_animation->setAnimationState(false);
-        } else
-            if(!_isFinishedDeadAnimation) {
-                deadAnimationTime -= sf::seconds(dt);
-                _isFinishedDeadAnimation = (deadAnimationTime <= sf::seconds(0));
-                if(_isFinishedDeadAnimation)
-                    p_body->jump(true);
-            }
-    }
+    managePlayerDeadState(dt); 
 
     p_animation->update(window, dt);
     p_body->updateSize(p_animation);
@@ -164,8 +175,8 @@ void mario::entity::Player::beingHit() {
     }
 }
 
-bool mario::entity::Player::canCollisionWithBlock() const {
-    return (!_isStartedDeadAnimation);
+bool mario::entity::Player::isInDeadAnimation() const {
+    return (!_isAlive);
 }
 
 bool mario::entity::Player::isDead() const {
@@ -225,8 +236,8 @@ mario::entity::player_state::PlayerStateType mario::entity::Player::getPlayerSta
     return p_stateManager->getCurrentState();
 }
 
-void mario::entity::Player::setJumpSoundPlayed(bool played) { 
-    hasPlayedJumpSound_ = played; 
+void mario::entity::Player::setJumpSoundPlayed(bool played) {
+    hasPlayedJumpSound_ = played;
 }
 
 bool mario::entity::Player::hasPlayedJumpSound() const { 

@@ -126,6 +126,7 @@ mario::pages::LevelsPage::~LevelsPage() {
     autoSave();
     delete p_player;
 
+    std::cerr << '.' << '\n';
     camera.resetToDefaultView();
     for (auto &enemy : enemies) {
         delete enemy;

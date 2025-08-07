@@ -40,7 +40,7 @@ namespace mario::entity::player_state {
             }
             
             void setDeadAnimation(Animation *p_animation) override {
-                p_animation->setSpriteAnimation(LUIGI_TYPE_STR[0] + ".backing[0]");
+                p_animation->setSpriteAnimation(LUIGI_TYPE_STR[0] + ".cheering[0]");
             }
     };
 }

@@ -22,8 +22,7 @@ namespace mario::entity {
             bool _isOnGround;
 
             bool hasPlayedJumpSound_ = false; // For sound effect
-            bool _isAlive = true;
-            bool _isStartedDeadAnimation = false, _isFinishedDeadAnimation = false;
+            bool _isAlive = true, _isFinishedDeadAnimation = false;
 
             int score = 0;
             int lives = 0;
@@ -51,9 +50,12 @@ namespace mario::entity {
             void setOnGround(bool isOnGround);
             void resetJump();
 
+            void setStartedDead(); // set Player status when started to dead
+            void managePlayerAnimation(); // manage Player's animation when they did smth
+            void managePlayerDeadState(float dt); // manage Player when being dead
             void beingHit(); // being hit by enemy or entity like level trap
             bool isDead() const;
-            bool canCollisionWithBlock() const;
+            bool isInDeadAnimation() const;
 
             void collectCoin();            
             void collectRedMushroom();            
