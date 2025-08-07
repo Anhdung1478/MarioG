@@ -51,6 +51,7 @@ namespace mario::pages {
             std::unique_ptr<sf::Texture> pauseTexture;
             std::unique_ptr<sf::Sprite> pauseSprite;
             std::unique_ptr<sf::Texture> pauseHoverTexture;
+            std::unique_ptr<sf::Texture> resumeTexture;
             
             std::unique_ptr<sf::Texture> panelTexture;
             std::unique_ptr<sf::Sprite> panelSprite;
@@ -78,6 +79,8 @@ namespace mario::pages {
             std::unique_ptr<Slider> sfxSlider;
 
             std::unique_ptr<mario::entity::ItemManager> itemManager;
+
+            bool isSettingsPressed = false;
             void removeCollectedItems();
         public:
             LevelsPage(MainWindow &context, mario::resource::LevelState state);
