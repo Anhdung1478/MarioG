@@ -233,6 +233,7 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
                 currLevelState = mario::resource::LevelState(currLevelState.level, currLevelState.num_lives - 1, currLevelState.score, currLevelState.coins, currLevelState.characterType);
                 _context->changePage(std::make_shared<mario::pages::LevelsPage>(*_context, currLevelState));
             } else {
+                camera.resetToDefaultView();
                 _context->changePage(std::make_shared<mario::pages::GameOverPage>(*_context));
             }
         }
@@ -326,6 +327,7 @@ void mario::pages::LevelsPage::handleEvent(const sf::RenderWindow *window, const
                 }
             } else 
                 if(homeRectF.contains(sf::Vector2f(mousePos))) {
+                    camera.resetToDefaultView();
                     _context->changePage(std::make_shared<mario::pages::MainMenuPage>(*_context));
                 } else 
                     if(settingsRectF.contains(sf::Vector2f(mousePos))) {
