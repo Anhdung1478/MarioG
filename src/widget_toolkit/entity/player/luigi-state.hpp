@@ -79,5 +79,22 @@ namespace mario::entity::player_state {
 
 
 
+    class LuigiStarState : public LuigiState {
+        private:
+            const sf::Vector2f LUIGI_DIM = sf::Vector2f(20, 31);
+
+        public:
+            LuigiStarState(const std::string &state_name) : LuigiState(state_name) {}
+
+            void update(Animation *p_eAnimation, Box *p_eBox) override {
+                sf::Vector2f GLOBAL_DIM = sf::Vector2f(LUIGI_DIM.x * LUIGI_SCALE.x, LUIGI_DIM.y * LUIGI_SCALE.y);
+                p_eBox->reSize(GLOBAL_DIM);
+                p_eAnimation->clearAnimationStep();
+                p_eAnimation->addAnimationStep(LUIGI_TYPE + ".walk[0]");
+                p_eAnimation->addAnimationStep(LUIGI_TYPE + ".walk[1]");
+                p_eAnimation->addAnimationStep(LUIGI_TYPE + ".idle[0]");
+            }
+    };
+
     #undef LUIGI_FILE_PATH
 }
