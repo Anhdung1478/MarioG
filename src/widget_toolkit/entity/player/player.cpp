@@ -91,10 +91,19 @@ void mario::entity::Player::managePlayerAnimation() {
         }
 }
 
+void mario::entity::Player::managePlayerShadowState(float dt) {
+    if(_isShadow) {
+        shadowTimer -= sf::seconds(dt);
+        if(shadowTimer <= sf::seconds(0)) {
+            toggleShadowState(false);
+        }
+    }
+}
+
 void mario::entity::Player::managePlayerDeadState(float dt) {
     if(!_isAlive && !_isFinishedDeadAnimation) {
-        deadAnimationTime -= sf::seconds(dt);
-        _isFinishedDeadAnimation = (deadAnimationTime <= sf::seconds(0));
+        deadAnimationTimer -= sf::seconds(dt);
+        _isFinishedDeadAnimation = (deadAnimationTimer <= sf::seconds(0));
         if(_isFinishedDeadAnimation)
             p_body->jump(true);
     }
@@ -127,6 +136,12 @@ void mario::entity::Player::update(const sf::RenderWindow *window, float dt) {
         }
 
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Num4)) {
+            std::cerr << "CALL TO FUNCTION HITTING PLAYER\n";
+            beingHit();
+            std::cerr << "SUCCESFULLY\n";
+        }
+
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Num5)) {
             std::cerr << "CALL TO FUNCTION KILLED PLAYER\n";
             setStartedDead();
             std::cerr << "SUCCESFULLY\n";
@@ -134,6 +149,7 @@ void mario::entity::Player::update(const sf::RenderWindow *window, float dt) {
     }
 
     managePlayerDeadState(dt); 
+    managePlayerShadowState(dt);
 
     p_animation->update(window, dt);
     p_body->updateSize(p_animation);
@@ -167,54 +183,80 @@ void mario::entity::Player::resetJump() {
     p_body->resetJump();
 }
 
-void mario::entity::Player::beingHit() {
-    if(getPlayerStateType() == player_state::PlayerStateType::Small) {
-        _isAlive = false;
-    } else {
-        p_stateManager->changeToSmallState(p_animation, p_body);
+void mario::entity::Player::toggleShadowState(bool isTurnOn) {
+    if(isTurnOn) {
+        _isShadow = true;
+        shadowTimer = sf::seconds(1.5f);
+        p_animation->setFlicker(true);
+        return;
     }
+
+    _isShadow = false;
+    p_animation->setFlicker(false);
 }
 
-bool mario::entity::Player::isInDeadAnimation() const {
-    return (!_isAlive);
+void mario::entity::Player::beingHit() {
+    if(_isShadow)
+        return;
+
+    if(getPlayerStateType() == player_state::PlayerStateType::Small) {
+        setStartedDead();
+    } else {
+        p_stateManager->changeToSmallState(p_animation, p_body);
+        toggleShadowState(1);
+    }
 }
 
 bool mario::entity::Player::isDead() const {
     return _isFinishedDeadAnimation;
 }
 
+bool mario::entity::Player::isShadow() const {
+    return _isShadow;
+}
+
+bool mario::entity::Player::isInDeadAnimation() const {
+    return (!_isAlive);
+}
+
 void mario::entity::Player::collectCoin() {
-    coinCount++;
+    ++coinCount;
     score += 200;
     
     // 1-up at 100 coins
     if (coinCount >= 100) {
-        coinCount = 0;
-        lives++;
+        lives += coinCount / 100;
+        coinCount %= 100;
         // Play 1-up sound
     }
     
     // Play coin sound
 }
 
+void mario::entity::Player::collectCoinInBlock() {
+    collectCoin();
+}
+
 void mario::entity::Player::collectRedMushroom() {
+    score += 1000;
     if (getPlayerStateType() == player_state::PlayerStateType::Small) {
-        score += 1000;
         p_stateManager->changeToSuperState(p_animation, p_body);
         // Play power-up sound
     } else {
         // Already super or fire, give points instead
-        score += 1000;
     }
     std::cout << "Collected Red Mushroom: " << score << " points\n";
 }
 
 void mario::entity::Player::collectFireFlower() {
-    if (getPlayerStateType() != player_state::PlayerStateType::Small) {
-        score += 1000;
+    score += 1000;
+    if (getPlayerStateType() == player_state::PlayerStateType::Small) {
+        p_stateManager->changeToSuperState(p_animation, p_body);
+            // Play power-up sound
+    } else if(getPlayerStateType() == player_state::PlayerStateType::Super) {
         p_stateManager->changeToFireState(p_animation, p_body);
         // Play power-up sound
-    } 
+    }
 }
 
 void mario::entity::Player::collect1UpMushroom() {
@@ -224,8 +266,8 @@ void mario::entity::Player::collect1UpMushroom() {
 }
 
 void mario::entity::Player::collectStarman() {
-    isInvincible = true;
-    invincibleTimer = 10.f; // 10 seconds of invincibility
+    _isInvincible = true;
+    invincibleTimer = sf::seconds(10.f); // 10 seconds of invincibility
     // p_stateManager->changeToStarmanState(p_animation, p_body);
 }
 

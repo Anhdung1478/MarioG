@@ -47,6 +47,7 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
     pauseSprite->setScale({1.f, 1.f});
 
     pauseHoverTexture = std::make_unique<sf::Texture>("../../asset/textures/pause-button-hover.png");
+    resumeTexture = std::make_unique<sf::Texture>("../../asset/textures/resume-button-hover.png");
 
     // Home
     homeTexture = std::make_unique<sf::Texture>("../../asset/textures/home.png");
@@ -134,6 +135,7 @@ void mario::pages::LevelsPage::autoSave() {
 mario::pages::LevelsPage::~LevelsPage() {
     autoSave();
     delete p_player;
+
     camera.resetToDefaultView();
     for (auto &enemy : enemies) {
         delete enemy;
@@ -175,12 +177,16 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
     }
     
     if(!_isPaused) {
-        currLevelState.update(dt);
-        if(currLevelState.times <= sf::seconds(0.f)) {
-            // failed !!
+        if(!p_player->isInDeadAnimation()) {
+            currLevelState.update(dt);
+            if(currLevelState.times <= sf::seconds(0.f)) {
+                p_player->setStartedDead();
+                currLevelState.times = sf::seconds(0.f);
+            }
         }
 
         p_player->update(window, dt);
+        p_player->updateToLevelState(currLevelState);
 
         // testBlock->update(window, dt);
         
@@ -278,6 +284,8 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
 
     // Check for hover state
     sf::Vector2i mousePos = sf::Mouse::getPosition(*window);
+    sf::Vector2f worldMousePos = camera.screenToWorld(mousePos, *window);
+
     sf::FloatRect pauseRect = sf::FloatRect(pauseSprite->getPosition(), 
         sf::Vector2f(pauseTexture->getSize().x * pauseSprite->getScale().x, 
                      pauseTexture->getSize().y * pauseSprite->getScale().y));
@@ -290,19 +298,21 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
         sf::Vector2f(settingsTexture->getSize().x * settingsSprite->getScale().x, 
                      settingsTexture->getSize().y * settingsSprite->getScale().y));
 
-    if (pauseRect.contains(sf::Vector2f(mousePos)) || _isPaused) {
+    if (pauseRect.contains(sf::Vector2f(worldMousePos)) && !_isPaused) {
         pauseSprite->setTexture(*pauseHoverTexture);
+    } else if (_isPaused) {
+        pauseSprite->setTexture(*resumeTexture);
     } else {
         pauseSprite->setTexture(*pauseTexture);
     }
 
-    if(homeRect.contains(sf::Vector2f(mousePos))) {
+    if(homeRect.contains(sf::Vector2f(worldMousePos))) {
         homeSprite->setTexture(*homeHoverTexture);
     } else {
         homeSprite->setTexture(*homeTexture);
     }
 
-    if(settingsRect.contains(sf::Vector2f(mousePos)) || isSettingsOpen) {
+    if(settingsRect.contains(sf::Vector2f(worldMousePos)) || isSettingsOpen) {
         settingsSprite->setTexture(*settingsHoverTexture);
     } else {
         settingsSprite->setTexture(*settingsTexture);
@@ -319,7 +329,7 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
 }
 
 void mario::pages::LevelsPage::handleEvent(const sf::RenderWindow *window, const sf::Event &event) {
-    if (const auto key = event.getIf<sf::Event::KeyPressed>(); key && key->code == sf::Keyboard::Key::Escape) {
+    if (const auto key = event.getIf<sf::Event::KeyPressed>(); key && key->code == sf::Keyboard::Key::Escape && !isSettingsOpen) {
         _isPaused = !_isPaused;
         if(_isPaused) {
             _context->getSoundManager().playSound(mario::event::SoundEvent::GAME_PAUSE);
@@ -341,15 +351,18 @@ void mario::pages::LevelsPage::handleEvent(const sf::RenderWindow *window, const
     if (auto* mouseButtonPressed = event.getIf<sf::Event::MouseButtonPressed>()) {
         if(mouseButtonPressed->button == sf::Mouse::Button::Left) {
             sf::Vector2i mousePos = sf::Mouse::getPosition(*window);
+            sf::Vector2f worldMousePos = camera.screenToWorld(mousePos, *window);   
+
             sf::FloatRect pauseRectF = sf::FloatRect(pauseSprite->getPosition(), sf::Vector2f(pauseTexture->getSize().x * pauseSprite->getScale().x, pauseTexture->getSize().y * pauseSprite->getScale().y));
             sf::FloatRect homeRectF = sf::FloatRect(homeSprite->getPosition(), sf::Vector2f(homeTexture->getSize().x * homeSprite->getScale().x, homeTexture->getSize().y * homeSprite->getScale().y));
             sf::FloatRect settingsRectF = sf::FloatRect(settingsSprite->getPosition(), sf::Vector2f(settingsTexture->getSize().x * settingsSprite->getScale().x, settingsTexture->getSize().y * settingsSprite->getScale().y));
 
-            if(pauseRectF.contains(sf::Vector2f(mousePos))) {
+            if(pauseRectF.contains(sf::Vector2f(worldMousePos)) && !isSettingsOpen) {
                 _isPaused = !_isPaused;
                 if(_isPaused) {
                     _context->getSoundManager().playSound(mario::event::SoundEvent::GAME_PAUSE);
                     _context->getSoundManager().pauseBackgroundMusic();
+                    isSettingsPressed = true;
                 } else {
                     _context->getSoundManager().resumeBackgroundMusic();
                     if (p_player) {
@@ -361,18 +374,29 @@ void mario::pages::LevelsPage::handleEvent(const sf::RenderWindow *window, const
                             enemyPtr->setActive(true); // Resume enemy activity
                         }
                     }
+                    isSettingsPressed = false;
                 }
             } else 
-                if(homeRectF.contains(sf::Vector2f(mousePos))) {
+                // if(homeRectF.contains(sf::Vector2f(mousePos))) {
+                //     _isPaused = !_isPaused;
+                //     camera.resetToDefaultView();
+                //     _context->changePage(std::make_shared<mario::pages::MainMenuPage>(*_context));
+                // } else 
+                //     if(settingsRectF.contains(sf::Vector2f(mousePos))) {
+                        
+                if(homeRectF.contains(sf::Vector2f(worldMousePos))) {
                     _isPaused = !_isPaused;
                     camera.resetToDefaultView();
                     _context->changePage(std::make_shared<mario::pages::MainMenuPage>(*_context));
                 } else 
-                    if(settingsRectF.contains(sf::Vector2f(mousePos))) {
-                        
+                    if(settingsRectF.contains(sf::Vector2f(worldMousePos))) {
                         isSettingsOpen = !isSettingsOpen;
+                        if(!isSettingsPressed) {
+                            _isPaused = !_isPaused;
+                        }
                         if(isSettingsOpen) {
                             _context->getSoundManager().playSound(mario::event::SoundEvent::GAME_PAUSE);
+                            _isPaused = true;
                         }
                     }
         } 
@@ -487,7 +511,35 @@ void mario::pages::LevelsPage::renderLevelState(sf::RenderWindow *window, mario:
 
 void mario::pages::LevelsPage::render(sf::RenderWindow *window) {
     camera.applyTo(*window);
+
     sf::FloatRect cameraBounds = camera.getCameraBounds();
+    sf::Vector2f topLeft = cameraBounds.position;
+    
+    // Set new position of sprites with camera
+    pauseSprite->setPosition(topLeft + sf::Vector2f(20.f, 95.f));
+    homeSprite->setPosition(topLeft + sf::Vector2f(20.f, 20.f));
+    settingsSprite->setPosition(topLeft + sf::Vector2f(20.f, 170.f));
+
+    sf::Vector2u windowSize(1280, 720); // Size of window
+    sf::Vector2f cameraCenter = camera.getPosition(); // Center of camera
+
+    if (panelSprite) {
+        sf::Vector2u textureSize = panelTexture->getSize();
+        panelSprite->setScale({0.6f, 0.6f});
+        sf::Vector2f panelSize = sf::Vector2f(textureSize.x * 0.6f, textureSize.y * 0.6f);
+        panelSprite->setPosition(cameraCenter - panelSize / 2.0f);
+    }
+
+    if (settingsPanelSprite) {
+        settingsPanelSprite->setOrigin(sf::Vector2f(settingsPanelTexture->getSize().x / 2.f, settingsPanelTexture->getSize().y / 2.f));
+        settingsPanelSprite->setPosition(cameraCenter);
+        settingsPanelSprite->setScale(sf::Vector2f(0.7f, 0.7f));
+
+        sf::Vector2f panelCenter = settingsPanelSprite->getPosition();
+        musicSlider->setPosition(sf::Vector2f(panelCenter.x + 80, panelCenter.y - 50));
+        sfxSlider->setPosition(sf::Vector2f(panelCenter.x + 80, panelCenter.y + 50));
+    }
+
     // testBlock->render(window);
     for (auto &backgroundBlock : backgroundBlocks) {
         if (backgroundBlock->getHitbox().findIntersection(cameraBounds)) {
