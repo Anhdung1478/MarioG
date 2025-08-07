@@ -5,6 +5,9 @@
 namespace mario {
 namespace entity {
 
+    void CollisionManager::updateCameraBounds(const sf::FloatRect &bounds) {
+        cameraBounds = bounds;
+    }
 
     void CollisionManager::sortEntitiesByX(std::vector<Block*> &Entities) {
         std::sort(Entities.begin(), Entities.end(), [](const Block *a, const Block *b){
@@ -185,6 +188,7 @@ namespace entity {
 
     void CollisionManager::checkCollisionEnemyWithBlocks(std::vector<Enemy*> &enemies, std::vector<Block*> &blocks){
         for (auto& enemy : enemies) {
+            if(!enemy->getHitbox().findIntersection(cameraBounds)) continue;
             mario::entity::Piranha* piranha = dynamic_cast<mario::entity::Piranha*>(enemy);
             if(!piranha) {
                 int L, R;
@@ -195,7 +199,7 @@ namespace entity {
                 bool hasLeftCollision = false;
                 bool hasRightCollision = false;
 
-                for (int i = 0; i < blocks.size(); ++i) {
+                for (int i = L; i < R; ++i) {
                     auto& block = blocks[i];
                     if (!block->isExist()) continue;
 
@@ -244,6 +248,8 @@ namespace entity {
 
     void CollisionManager::checkCollisionPlayerWithEnemies(Player *&player, std::vector<Enemy*> &enemies){
         for (auto& enemy : enemies) {
+            if (!player->getHitbox().findIntersection(enemy->getHitbox())) continue;
+            if (!enemy->getHitbox().findIntersection(cameraBounds)) continue;
             SideCollision side = findCollisionSide(player, enemy);
             if (side != SideCollision::None) {
                 enemy->reactCollision(side ^ 1, Collision(Collision::Type::Player));

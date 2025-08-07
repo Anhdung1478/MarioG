@@ -139,6 +139,7 @@ mario::resource::LevelState mario::pages::LevelsPage::getLevelState() const { re
 bool mario::pages::LevelsPage::isPaused() const { return _isPaused; }
 
 void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) {
+    sf::FloatRect cameraBounds = camera.getCameraBounds();
     for (auto it = enemies.begin(); it != enemies.end();) {
         if ((*it)->shouldDelete()) {
             delete *it;
@@ -167,11 +168,13 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
         // testBlock->update(window, dt);
         
         for(auto &backgroundBlock : backgroundBlocks) {
-            backgroundBlock->update(window, dt);
+            if(backgroundBlock->getHitbox().findIntersection(cameraBounds)) {
+                backgroundBlock->update(window, dt);
+            }
         }
 
         for(auto &enemy : enemies) {
-            if (!enemy->shouldDelete()) {
+            if (!enemy->shouldDelete() && enemy->getHitbox().findIntersection(cameraBounds)) {
                 mario::entity::Piranha* piranha = dynamic_cast<mario::entity::Piranha*>(enemy);
                 if (piranha) {
                     piranha->updateWithPlayer(window, dt, p_player);
@@ -182,24 +185,46 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
         }
 
         for(auto &block : blocks) {
-            block->update(window, dt);
+            if (!block->shouldDelete() && block->getHitbox().findIntersection(cameraBounds)) {
+                block->update(window, dt);
+            }
         }
 
         //testItem->update(window, dt);
         // Update items directly from vector
         for(auto &item : items) {
-            if (item && !item->isCollected()) {
+            if (item && !item->isCollected() && item->getHitbox().findIntersection(cameraBounds)) {
                 item->update(window, dt);
             }
         }
 
+        collisionManager.updateCameraBounds(cameraBounds);
         collisionManager.checkCollisionPlayerWithBlocks(p_player, blocks, items);
         collisionManager.checkCollisionEnemyWithBlocks(enemies, blocks);
         collisionManager.checkCollisionPlayerWithEnemies(p_player, enemies);
         collisionManager.checkCollisionPlayerWithItems(p_player, items);
         collisionManager.checkCollisionItemsWithBlocks(items, blocks);
-        // collisionManager.checkCollisionPlayerWithEnemies(p_player, enemies);
-        // collisionManager.checkCollisionPlayerWithItems(p_player, enemies);
+
+
+        // auto measure = [](auto&& func, const std::string& name) {
+        //     auto start = std::chrono::high_resolution_clock::now();
+        //     func();
+        //     auto end = std::chrono::high_resolution_clock::now();
+
+        //     auto elapsedMicro = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+
+        //     if(elapsedMicro > 100){
+        //         std::cout << name << ": " << elapsedMicro << " ms" << std::endl;
+        //     }
+        // };
+
+        // collisionManager.updateCameraBounds(cameraBounds);
+        // measure([&]{ collisionManager.checkCollisionPlayerWithBlocks(p_player, blocks, items); }, "Player-Blocks");
+        // measure([&]{ collisionManager.checkCollisionEnemyWithBlocks(enemies, blocks); }, "Enemy-Blocks");
+        // measure([&]{ collisionManager.checkCollisionPlayerWithEnemies(p_player, enemies); }, "Player-Enemies");
+        // measure([&]{ collisionManager.checkCollisionPlayerWithItems(p_player, items); }, "Player-Items");
+        // measure([&]{ collisionManager.checkCollisionItemsWithBlocks(items, blocks); }, "Items-Blocks");
+
 
 
         // for (auto* enemy : enemies) {
@@ -411,23 +436,30 @@ void mario::pages::LevelsPage::renderLevelState(sf::RenderWindow *window, mario:
 
 void mario::pages::LevelsPage::render(sf::RenderWindow *window) {
     camera.applyTo(*window);
+    sf::FloatRect cameraBounds = camera.getCameraBounds();
     // testBlock->render(window);
     for (auto &backgroundBlock : backgroundBlocks) {
-        backgroundBlock->render(window);
+        if (backgroundBlock->getHitbox().findIntersection(cameraBounds)) {
+            backgroundBlock->render(window);
+        }
     }
     
     for (auto* enemy : enemies) {
-        if (!enemy->shouldDelete()) {
+        if (!enemy->shouldDelete() && enemy->getHitbox().findIntersection(cameraBounds)) {
             enemy->render(window);
         }
     }
 
     for (auto &block : blocks) {
-        block->render(window);
+        if (!block->shouldDelete() && block->getHitbox().findIntersection(cameraBounds)) {
+            block->render(window);
+        }
     }
 
     for (auto &item : items) {
-        item->render(window);
+        if (item && !item->isCollected() && item->getHitbox().findIntersection(cameraBounds)) {
+            item->render(window);
+        }
     }
 
     p_player->render(window);
