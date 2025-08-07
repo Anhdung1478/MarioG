@@ -6,7 +6,7 @@
 #include "../widget_toolkit/interfaces.hpp"
 #include "../widget_toolkit/entity/box/static-box.hpp"
 #include "../widget_toolkit/resource/SoundManager.hpp"
-#include "../widget_toolkit/entity/player.hpp"
+#include "../widget_toolkit/entity/player/player.hpp"
 
 #define DEFAULT_FPS 60
 #define DEFAULT_WIN_WIDTH 1280
@@ -36,6 +36,8 @@ namespace mario {
             void render(sf::RenderWindow *window) override;
             void closeWindow();
             void run();
+
+            sf::Vector2f getWindowSize() const;
 
             // Use for sound manager
             void setPageMusic(std::shared_ptr<Page> page);

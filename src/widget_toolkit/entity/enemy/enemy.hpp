@@ -4,7 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include "../entity.hpp"
 #include "../box/dynamic-box.hpp"
-#include "../player.hpp"
+#include "../player/player.hpp"
 #include "../blocks/Block.hpp"
 
 namespace mario::entity {
@@ -146,6 +146,7 @@ namespace mario::entity {
             updateBehavior(dt);
             p_animation->update(window, dt);
             p_body->update(dt);
+            // p_body->updateSize(p_animation);
         }
 
         void handleEvent(const sf::RenderWindow* window, const sf::Event& event) override {

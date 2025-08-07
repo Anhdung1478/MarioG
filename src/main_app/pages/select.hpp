@@ -2,8 +2,8 @@
 
 #include "page.hpp"
 #include "../../widget_toolkit/resource/LevelState.hpp"
-#include "../../widget_toolkit/entity/player.hpp"
-#include "../../widget_toolkit/entity/player_state/player-state.hpp"
+#include "../../widget_toolkit/entity/player/player.hpp"
+#include "../../widget_toolkit/entity/player/player-state.hpp"
 
 namespace mario::pages {
 

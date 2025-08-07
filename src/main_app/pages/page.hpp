@@ -17,6 +17,14 @@ namespace mario {
                 if(_context) 
                     _context->closeWindow();
             }
+
+            void rePositionTextToMiddle(sf::Text &text, int rectX, int rectY) {
+                float textLenX = text.getGlobalBounds().size.x;
+                float textLenY = text.getGlobalBounds().size.y;
+
+                text.setFillColor(sf::Color::White);
+                text.setPosition(sf::Vector2f(int((rectX - textLenX) / 2.0), rectY));
+            }
             
             bool getPaused() const { return false; }
 

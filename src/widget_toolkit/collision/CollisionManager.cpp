@@ -18,16 +18,17 @@ namespace entity {
         });
     }
 
-    void CollisionManager::findBlocksCollisions(int &L, int &R, const mario::entity::Entity *EntityA, std::vector<Block*> &blocks){
-        //using lower_bound and upper_bound to find the range of blocks that might collide with the entity
-        auto itL = std::lower_bound(blocks.begin(), blocks.end(), EntityA->getPosition().x - EntityA->getSize().x, 
-            [](const Block *block, float posX) {
-                return block->getPosition().x < posX;
-            });
-        auto itR = std::upper_bound(blocks.begin(), blocks.end(), EntityA->getPosition().x + EntityA->getSize().x, 
-            [](float posX, const Block *block) {
-                return posX < block->getPosition().x;
-            });
+void CollisionManager::findBlocksCollisions(int &L, int &R, const mario::entity::Entity *EntityA, std::vector<Block*> &blocks) {
+    //using lower_bound and upper_bound to find the range of blocks that might collide with the entity
+    auto itL = std::lower_bound(blocks.begin(), blocks.end(), EntityA->getPosition().x - EntityA->getSize().x, 
+        [](const Block *block, float posX) {
+            return block->getPosition().x < posX;
+        });
+
+    auto itR = std::upper_bound(blocks.begin(), blocks.end(), EntityA->getPosition().x + EntityA->getSize().x, 
+        [](float posX, const Block *block) {
+            return posX < block->getPosition().x;
+        });
 
         // Set the collision bounds
         L = std::distance(blocks.begin(), itL);
@@ -76,9 +77,12 @@ namespace entity {
         }
     }
 
-    void CollisionManager::checkCollisionPlayerWithBlocks(mario::entity::Player *&player, std::vector<Block*> &blocks, std::vector<Item*> &items) {
-        int L, R;
-        findBlocksCollisions(L, R, player, blocks);
+void CollisionManager::checkCollisionPlayerWithBlocks(mario::entity::Player *&player, std::vector<Block*> &blocks, std::vector<Item*> &items) {
+    if(player->isInDeadAnimation())
+        return;
+
+    int L, R;
+    findBlocksCollisions(L, R, player, blocks);
 
         bool hasTopCollision = false;
         bool hasBottomCollision = false;
@@ -246,7 +250,10 @@ namespace entity {
         }
     }
 
-    void CollisionManager::checkCollisionPlayerWithEnemies(Player *&player, std::vector<Enemy*> &enemies){
+    void CollisionManager::checkCollisionPlayerWithEnemies(Player *&player, std::vector<Enemy*> &enemies) {
+        if(player->isInDeadAnimation())
+            return;
+
         for (auto& enemy : enemies) {
             if (!player->getHitbox().findIntersection(enemy->getHitbox())) continue;
             if (!enemy->getHitbox().findIntersection(cameraBounds)) continue;
@@ -278,6 +285,9 @@ namespace entity {
 
 
     void CollisionManager::checkCollisionPlayerWithItems(Player *&player, std::vector<mario::entity::Item*>& items) {
+        if(player->isInDeadAnimation())
+            return;
+
         for (auto& item : items) {
             if (!item->isCollected()) {
                 SideCollision side = findCollisionSide(player, item);

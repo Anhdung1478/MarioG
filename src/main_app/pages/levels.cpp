@@ -5,7 +5,6 @@
 
 mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::LevelState state) : Page(context), camera({1280, 720}), currLevelState(state) {
     p_player = new mario::entity::Player(sf::Vector2f(500, 200), state.characterType, state.stateType);
-
     p_inputManager = std::make_unique<mario::input::InputManager>(context);
     
     tileMap = std::make_unique<mario::entity::TileMap>("../../asset/maps/tiles-8.json", "../../asset/maps/Map_1.json", 0);
@@ -16,7 +15,12 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
 
     // Mario font initalize
     marioFont = std::make_unique<sf::Font>("../../asset/fonts/SuperMario256.ttf");
-  
+
+    // Load enemies
+    // enemies.push_back(new mario::entity::Goomba(sf::Vector2f(300.f, 80.f)));
+    enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(1400.f, 80.f), mario::entity::KoopaType::Red, false));
+    // enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(350.f, 80.f), mario::entity::KoopaType::Green, true));
+
     testItem = new mario::entity::FireFlower(
         "../../asset/sprites/fireflower.json",
         "../../asset/maps/Image/tiles-8.png",
@@ -121,12 +125,17 @@ void mario::pages::LevelsPage::autoSave() {
 mario::pages::LevelsPage::~LevelsPage() {
     autoSave();
     delete p_player;
+
+    std::cerr << '.' << '\n';
+    camera.resetToDefaultView();
     for (auto &enemy : enemies) {
         delete enemy;
     }
+
     for (auto &item : items) {
         delete item;
     }
+
     for (auto &block : blocks) {
         delete block;
     }
@@ -148,6 +157,7 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
             ++it;
         }
     }
+
     for (auto it = blocks.begin(); it != blocks.end();) {
         if ((*it)->shouldDelete()) {
             delete *it;
@@ -156,7 +166,7 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
             ++it;
         }
     }
-
+    
     if(!_isPaused) {
         currLevelState.update(dt);
         if(currLevelState.times <= sf::seconds(0.f)) {
@@ -238,14 +248,22 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
         //     }
         // }
 
-
-
         camera.followEntity(*p_player, dt);
         camera.update(dt);
         
         currLevelState.stateType = p_player->getPlayerStateType();
         p_levelDataManager->update(dt, currLevelState);
         removeCollectedItems();
+
+        if(p_player->isDead()) {
+            if(currLevelState.num_lives > 0) {
+                currLevelState = mario::resource::LevelState(currLevelState.level, currLevelState.num_lives - 1, currLevelState.score, currLevelState.coins, currLevelState.characterType);
+                _context->changePage(std::make_shared<mario::pages::LevelsPage>(*_context, currLevelState));
+            } else {
+                camera.resetToDefaultView();
+                _context->changePage(std::make_shared<mario::pages::GameOverPage>(*_context));
+            }
+        }
     }
 
     // Check for hover state
@@ -285,6 +303,9 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
         musicSlider->update(*window);
         sfxSlider->update(*window);
     }
+
+    // itemManager->update(window, dt);
+    // itemManager->processSpawnTriggers(p_player, dt);
 }
 
 void mario::pages::LevelsPage::handleEvent(const sf::RenderWindow *window, const sf::Event &event) {
@@ -333,6 +354,7 @@ void mario::pages::LevelsPage::handleEvent(const sf::RenderWindow *window, const
                 }
             } else 
                 if(homeRectF.contains(sf::Vector2f(mousePos))) {
+                    camera.resetToDefaultView();
                     _context->changePage(std::make_shared<mario::pages::MainMenuPage>(*_context));
                 } else 
                     if(settingsRectF.contains(sf::Vector2f(mousePos))) {
@@ -363,6 +385,13 @@ void mario::pages::LevelsPage::handleEvent(const sf::RenderWindow *window, const
     }
 }
 
+sf::Vector2f mario::pages::LevelsPage::getPositionRelativeToCamera(sf::Vector2f pos) {
+    sf::FloatRect rect = camera.getCameraBounds();
+    sf::Vector2f cameraPos = rect.position;
+
+    return sf::Vector2f(pos.x + cameraPos.x, pos.y + cameraPos.y);
+}
+
 void mario::pages::LevelsPage::rePositionTextToMiddle(sf::Text &text, int rectX, int rectY) {
     float textLenX = text.getGlobalBounds().size.x;
     float textLenY = text.getGlobalBounds().size.y;
@@ -372,64 +401,74 @@ void mario::pages::LevelsPage::rePositionTextToMiddle(sf::Text &text, int rectX,
 }
 
 void mario::pages::LevelsPage::renderLevelState(sf::RenderWindow *window, mario::resource::LevelState levelState) {
-    sf::FloatRect rect = camera.getCameraBounds();
-    sf::Vector2f rectMove = rect.position;
-    int rectX = rect.size.x / 5.f;
+    sf::Vector2f windowSize = _context->getWindowSize();
+    sf::Vector2f rectMove(0.f, 0.f);
+    int rectX = windowSize.x / 5.f;
     int rectY1 = 2, rectY2 = 35;
 
     sf::Text text(*marioFont, "", 30);
 
     text.setString("SCORE");
     rePositionTextToMiddle(text, rectX, rectY1);
+    text.setPosition(getPositionRelativeToCamera(text.getPosition()));
     text.move(rectMove);
     window->draw(text);
 
     text.setString(to_string(levelState.score));
     rePositionTextToMiddle(text, rectX, rectY2);
+    text.setPosition(getPositionRelativeToCamera(text.getPosition()));
     text.move(rectMove);
     window->draw(text);
 
     rectMove.x += rectX;
     text.setString("COINS");
     rePositionTextToMiddle(text, rectX, rectY1);
+    text.setPosition(getPositionRelativeToCamera(text.getPosition()));
     text.move(rectMove);
     window->draw(text);
 
     text.setString(to_string(levelState.coins));
     rePositionTextToMiddle(text, rectX, rectY2);
+    text.setPosition(getPositionRelativeToCamera(text.getPosition()));
     text.move(rectMove);
     window->draw(text);
 
     rectMove.x += rectX;
     text.setString("WORLD");
     rePositionTextToMiddle(text, rectX, rectY1);
+    text.setPosition(getPositionRelativeToCamera(text.getPosition()));
     text.move(rectMove);
     window->draw(text);
 
     text.setString(to_string(levelState.level));
     rePositionTextToMiddle(text, rectX, rectY2);
+    text.setPosition(getPositionRelativeToCamera(text.getPosition()));
     text.move(rectMove);
     window->draw(text);
 
     rectMove.x += rectX;
     text.setString("TIME");
     rePositionTextToMiddle(text, rectX, rectY1);
+    text.setPosition(getPositionRelativeToCamera(text.getPosition()));
     text.move(rectMove);
     window->draw(text);
 
     text.setString(to_string(int(levelState.times.asSeconds())));
     rePositionTextToMiddle(text, rectX, rectY2);
+    text.setPosition(getPositionRelativeToCamera(text.getPosition()));
     text.move(rectMove);
     window->draw(text);
 
     rectMove.x += rectX;
     text.setString("LIVES");
     rePositionTextToMiddle(text, rectX, rectY1);
+    text.setPosition(getPositionRelativeToCamera(text.getPosition()));
     text.move(rectMove);
     window->draw(text);
 
     text.setString(to_string(levelState.num_lives));
     rePositionTextToMiddle(text, rectX, rectY2);
+    text.setPosition(getPositionRelativeToCamera(text.getPosition()));
     text.move(rectMove);
     window->draw(text);
 }
@@ -454,6 +493,19 @@ void mario::pages::LevelsPage::render(sf::RenderWindow *window) {
         if (!block->shouldDelete() && block->getHitbox().findIntersection(cameraBounds)) {
             block->render(window);
         }
+    }
+
+    p_player->render(window);
+
+    // Render enemies
+    for (auto* enemy : enemies) {
+        if (!enemy->shouldDelete()) {
+            enemy->render(window);
+        }
+    }
+
+    for (auto &block : blocks) {
+        block->render(window);
     }
 
     for (auto &item : items) {

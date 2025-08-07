@@ -199,4 +199,13 @@ public:
     sf::Vector2i worldToScreen(const sf::Vector2f& worldPos, const sf::RenderWindow& window) const {
         return window.mapCoordsToPixel(worldPos, view);
     }
+
+    void resetToDefaultView() {
+        view.setSize(static_cast<sf::Vector2f>(windowSize));
+        view.setCenter(static_cast<sf::Vector2f>(windowSize) / 2.f);
+        targetPosition = view.getCenter();
+        removeBounds();
+        removeMapBounds();
+        isInCornerMode = false;
+    }
 };

@@ -1,8 +1,8 @@
 #pragma once
 
 #include <bits/stdc++.h>
-#include "../entity/player-list.hpp"
-#include "../entity/player_state/player-state.hpp"
+#include "../entity/player/player-list.hpp"
+#include "../entity/player/player-state.hpp"
 
 namespace mario::resource {
     struct LevelState {
