@@ -8,10 +8,7 @@ InvisibleBlock::InvisibleBlock(sf::Vector2f pos, sf::Vector2f size, std::string 
 {
     InitSpritesSheet();
     p_animation = new mario::entity::Animation("../../asset/maps/Image/tiles-8.png", BLOCK_SCALE, sprites);
-    p_animation->addAnimationStep("question-block[0]");
-    p_animation->addAnimationStep("question-block[1]");
-    p_animation->addAnimationStep("question-block[2]");
-    p_animation->setTimeBetweenStep(1/5.0f);
+    p_animation->addAnimationStep("empty-question-block[" + std::to_string(themeID) + "]");
     p_animation->setAnimationState(true);
 
     coins_animation->addAnimationStep("coin[0]");
@@ -39,9 +36,6 @@ InvisibleBlock::~InvisibleBlock() {
 
 void InvisibleBlock::InitSpritesSheet(){
     sprites = {
-        {"question-block[0]", 1, 52, 16, 16},
-        {"question-block[1]", 18, 52, 16, 16},
-        {"question-block[2]", 35, 52, 16, 16},
         {"empty-question-block[0]", 1, 69, 16, 16},
         {"empty-question-block[1]", 35, 69, 16, 16},
         {"empty-question-block[2]", 69, 69, 16, 16}
@@ -71,10 +65,11 @@ void InvisibleBlock::InitSpritesSheet(){
 }
 
 int InvisibleBlock::reactToCollision(int side, Player* player) {
-    if (side != SideCollision::Bottom) return 0; 
+    if (side != SideCollision::Bottom) return -1; 
+    isVisible = true;
     // Coin
     if (typeOfItem == 0) { 
-        if (numberOfCoins == 0) return 0;
+        if (numberOfCoins == 0) return -1;
 
         numberOfCoins--;
 
@@ -83,20 +78,27 @@ int InvisibleBlock::reactToCollision(int side, Player* player) {
         isBouncing = true;
 
         if(numberOfCoins == 0){
-            p_animation->setAnimationState(false);
             p_animation->setSpriteAnimation("empty-question-block[" + std::to_string(themeID) + "]");
         }
     }
     else if (typeOfItem == 1) { // Red-mushroom or Fire-flower
-        if (player->getPlayerStateType() == player_state::PlayerStateType::Small) {
-            // Spawn Red mushroom
-        } else if (player->getPlayerStateType() == player_state::PlayerStateType::Super) {
-            // Spawn Fire flower
+        if (player->getPlayerStateType() == player_state::PlayerStateType::Small) {// Spawn Red mushroom
+            p_animation->setSpriteAnimation("empty-question-block[" + std::to_string(themeID) + "]");
+            typeOfItem = -1; // Mark as empty
+            return 1; 
+        } else if (player->getPlayerStateType() == player_state::PlayerStateType::Super) {// Spawn Fire flower
+            p_animation->setSpriteAnimation("empty-question-block[" + std::to_string(themeID) + "]");
+            typeOfItem = -1; // Mark as empty
+            return 2;
         }
+        
     }
-    else if (typeOfItem == 2) { // One-up mushroom
-        // Spawn one-up mushroom
+    else if (typeOfItem == 3) {// Spawn one-up mushroom
+        p_animation->setSpriteAnimation("empty-question-block[" + std::to_string(themeID) + "]");
+        typeOfItem = -1; // Mark as empty
+        return 3;
     }
+    return -1;
 }
   
 void InvisibleBlock::bouncingAnimation(float dt) {
@@ -128,7 +130,10 @@ void InvisibleBlock::handleEvent(const sf::RenderWindow *window, const sf::Event
 }
 
 void InvisibleBlock::render(sf::RenderWindow *window) {
-    Entity::render(window);
+    if(isVisible) {
+        p_animation->renderWithPosition(window, p_body->getPosition());
+    }
+    p_body->renderHitboxRect(window);
     // coins_animation->setSpriteAnimation("coin[6]");
     // coins_animation->render(window);
     if(coins_animation->getAnimationState()) {
@@ -139,9 +144,7 @@ void InvisibleBlock::render(sf::RenderWindow *window) {
 
 
 void InvisibleBlock::onHit(Player* player, ItemManager* itemManager) {
-    if (!hasBeenHit && itemManager) {
-        hasBeenHit = true;
-    }
+
 }
 
 } // namespace mario::entity

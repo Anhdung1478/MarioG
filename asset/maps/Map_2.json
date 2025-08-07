@@ -132,18 +132,6 @@
          "name":"Enemies",
          "objects":[
                 {
-                 "gid":391,
-                 "height":16,
-                 "id":3,
-                 "name":"enemies-flag[0]",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":16,
-                 "x":2904.00568181818,
-                 "y":112.005681818182
-                }, 
-                {
                  "gid":1179,
                  "height":24,
                  "id":11,
@@ -417,7 +405,31 @@
          "draworder":"topdown",
          "id":3,
          "name":"Background",
-         "objects":[],
+         "objects":[
+                {
+                 "gid":391,
+                 "height":16,
+                 "id":69,
+                 "name":"enemies-flag[0]",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":16,
+                 "x":2904,
+                 "y":112
+                }, 
+                {
+                 "gid":430,
+                 "height":16,
+                 "id":70,
+                 "name":"win-flag[0]",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":16,
+                 "x":3003.25,
+                 "y":180.75
+                }],
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
@@ -425,7 +437,7 @@
          "y":0
         }],
  "nextlayerid":5,
- "nextobjectid":69,
+ "nextobjectid":71,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.11.2",

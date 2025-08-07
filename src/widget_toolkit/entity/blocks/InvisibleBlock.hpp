@@ -21,12 +21,12 @@ public:
     void render(sf::RenderWindow *window) override;
     void onHit(Player* player, ItemManager* itemManager) override;
 private:
-    int typeOfItem = 0; // 0 - coin, 1 - red-mushroom or fire-flower, 2 - one-up-mushroom
+    int typeOfItem = 0; // 0: coin, 1: red-mushroom, 2: fire-flower, 3: one-up-mushroom, 4: starman
     int themeID;
     int numberOfCoins;
     mario::entity::Animation *coins_animation;
     std::vector<SpriteData2> sprites;
-    bool hasBeenHit = false;
+    bool isVisible = false;
 
     sf::Vector2f originalPosition;
     bool isBouncing = false;

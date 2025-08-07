@@ -5,6 +5,7 @@
 #include "blocks/QuestionBlock.hpp"
 #include "blocks/Brick.hpp"
 #include "blocks/BackgroundBlock.hpp"
+#include "blocks/InvisibleBlock.hpp"
 
 namespace mario::entity {
     class BlockFactory {
@@ -92,6 +93,11 @@ namespace mario::entity {
                         return new Brick(spawnPoint, sf::Vector2f(16, 16), "brick-block", -1, themeID);
                     case 199:
                         return new Brick(spawnPoint, sf::Vector2f(16, 16), "brick-block", -1, themeID);
+                    
+                    // Invisible blocks
+                    case 161:
+                        return new InvisibleBlock(spawnPoint, sf::Vector2f(16, 16), "invisible-block[0]", 0, themeID);
+                    
                     default:
                         return nullptr;
                 }
@@ -106,6 +112,8 @@ namespace mario::entity {
                         return new BackgroundBlock(spawnPoint, sf::Vector2f(16, 16), "grass[1][0]");
                     case 80:
                         return new BackgroundBlock(spawnPoint, sf::Vector2f(16, 16), "grass[2][0]");
+                    case 120: // Coin
+                        break;
                     default:
                         int _x = tileID % tilesetColumns;
                         int _y = tileID / tilesetColumns;

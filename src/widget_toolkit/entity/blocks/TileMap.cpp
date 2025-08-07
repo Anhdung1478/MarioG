@@ -169,7 +169,7 @@ bool TileMap::loadMap(const std::string& mapPath) {
     return true;
 }
 
-bool TileMap::loadObjects(std::vector<mario::entity::Enemy*> &enemies, std::vector<mario::entity::Block*> &blocks, std::vector<mario::entity::Block*>& backgroundBlocks) {
+bool TileMap::loadObjects(std::vector<mario::entity::Enemy*> &enemies, std::vector<Item*> &items, std::vector<mario::entity::Block*> &blocks, std::vector<mario::entity::Block*>& backgroundBlocks) {
     std::ifstream file(mapPath);
     if (!file.is_open()) {
         std::cerr << "Failed to open map file: " << mapPath << std::endl;
@@ -214,7 +214,7 @@ bool TileMap::loadObjects(std::vector<mario::entity::Enemy*> &enemies, std::vect
                             blocks.push_back(new QuestionBlock(sf::Vector2f(x, y), sf::Vector2f(16, 16), "question-block[0]", 1, themeID));
                         }
                         if(objType == "invisible"){
-                            // blocks.push_back(new InvisibleBlock(sf::Vector2f(x, y), sf::Vector2f(16, 16), "invisible-block[0]", 1, themeID));
+                            blocks.push_back(new InvisibleBlock(sf::Vector2f(x, y), sf::Vector2f(16, 16), "invisible-block[0]", 1, themeID));
                         }
                     }
                     else if (objName == "oneup_mushroom"){
@@ -225,7 +225,7 @@ bool TileMap::loadObjects(std::vector<mario::entity::Enemy*> &enemies, std::vect
                             blocks.push_back(new QuestionBlock(sf::Vector2f(x, y), sf::Vector2f(16, 16), "question-block[0]", 3, themeID));
                         }
                         if(objType == "invisible"){
-                            // blocks.push_back(new InvisibleBlock(sf::Vector2f(x, y), sf::Vector2f(16, 16), "invisible-block[0]", 3, themeID));
+                            blocks.push_back(new InvisibleBlock(sf::Vector2f(x, y), sf::Vector2f(16, 16), "invisible-block[0]", 3, themeID));
                         }
                     }
                     else if (objName == "starman"){
@@ -279,14 +279,24 @@ bool TileMap::loadObjects(std::vector<mario::entity::Enemy*> &enemies, std::vect
             // Adjust for 1-based indexing in Tiled
             tileId -= 1;
 
+            if(tileId == 120){ // Coin
+                items.push_back(new mario::entity::Coin(
+                                "../../asset/sprites/coin.json",
+                                "../../asset/maps/Image/tiles-8.png",
+                                sf::Vector2f(2.5f, 2.5f),
+                                "coin[0]",
+                                sf::Vector2f(x * tileWidth, y * tileHeight),
+                                sf::Vector2f(16.f, 16.f)
+                            ));
+            }
+
             // Create the block based on the tile type
             std::string tileType = tileProperties[tileId];
             Block* new_block = blockFactory->createBlock(tileId, sf::Vector2f(x * tileWidth, y * tileHeight), themeID);
             if(new_block == nullptr) {
                 new_block = blockFactory->createBackgroundBlock(tileId, sf::Vector2f(x * tileWidth, y * tileHeight), themeID, tilesetColumns, tileWidth, tileHeight, margin, spacing);
                 
-                assert(new_block != nullptr);
-                backgroundBlocks.push_back(new_block);
+                if(new_block) backgroundBlocks.push_back(new_block);
             } else {
                 blocks.push_back(new_block);
             }

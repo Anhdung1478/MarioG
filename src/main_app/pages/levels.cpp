@@ -4,11 +4,11 @@
 #include "../../widget_toolkit/resource/SoundManager.hpp"
 
 mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::LevelState state) : Page(context), camera({1280, 720}), currLevelState(state) {
-    p_player = new mario::entity::Player(sf::Vector2f(500, 200), state.characterType, state.stateType);
+    p_player = new mario::entity::Player(sf::Vector2f(100, 400), state.characterType, state.stateType);
     p_inputManager = std::make_unique<mario::input::InputManager>(context);
-    
-    tileMap = std::make_unique<mario::entity::TileMap>("../../asset/maps/tiles-8.json", "../../asset/maps/Map_1.json", 0);
-    tileMap->loadObjects(enemies, blocks, backgroundBlocks);
+
+    tileMap = std::make_unique<mario::entity::TileMap>("../../asset/maps/tiles-8.json", "../../asset/maps/Map_" + std::to_string(currLevelState.level) + ".json", currLevelState.level-1);
+    tileMap->loadObjects(enemies, items, blocks, backgroundBlocks);
     // tileMap->createBlock(blocks, backgroundBlocks);
     // testBlock = new mario::entity::BackgroundBlock(sf::Vector2f(100, 500), sf::Vector2f(16, 16), "enemies-flag[0]");
     // testBlock = new mario::entity::BackgroundBlock(sf::Vector2f(100, 500), sf::Vector2f(16, 16), std::to_string(390), {"390", 1, 171, 16, 16});
@@ -18,17 +18,26 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
 
     // Load enemies
     // enemies.push_back(new mario::entity::Goomba(sf::Vector2f(300.f, 80.f)));
-    enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(1400.f, 80.f), mario::entity::KoopaType::Red, false));
+    // enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(1400.f, 80.f), mario::entity::KoopaType::Red, false));
     // enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(350.f, 80.f), mario::entity::KoopaType::Green, true));
 
-    testItem = new mario::entity::FireFlower(
-        "../../asset/sprites/fireflower.json",
+    // testItem = new mario::entity::FireFlower(
+    //     "../../asset/sprites/fireflower.json",
+    //     "../../asset/maps/Image/tiles-8.png",
+    //     sf::Vector2f(2.5f, 2.5f),
+    //     "fireflower[0]",
+    //     sf::Vector2f(500.f, 500.f),
+    //     sf::Vector2f(16.f, 16.f),
+    //     sf::Vector2f(0.f, 0.f)
+    // );
+
+    testItem = new mario::entity::Coin(
+        "../../asset/sprites/coin.json",
         "../../asset/maps/Image/tiles-8.png",
         sf::Vector2f(2.5f, 2.5f),
-        "fireflower[0]",
+        "coin[0]",
         sf::Vector2f(500.f, 500.f),
-        sf::Vector2f(16.f, 16.f),
-        sf::Vector2f(0.f, 0.f)
+        sf::Vector2f(16.f, 16.f)
     );
 
     // Pause/Resume game
