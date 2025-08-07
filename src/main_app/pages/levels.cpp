@@ -190,13 +190,14 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
         // testBlock->update(window, dt);
         
         for(auto &backgroundBlock : backgroundBlocks) {
-            if(backgroundBlock->getHitbox().findIntersection(cameraBounds)) {
+            // if(backgroundBlock->getHitbox().findIntersection(cameraBounds)) {
                 backgroundBlock->update(window, dt);
-            }
+            // }
         }
 
         for(auto &enemy : enemies) {
             if (!enemy->shouldDelete() && enemy->getHitbox().findIntersection(cameraBounds)) {
+            // if (!enemy->shouldDelete()) {
                 mario::entity::Piranha* piranha = dynamic_cast<mario::entity::Piranha*>(enemy);
                 if (piranha) {
                     piranha->updateWithPlayer(window, dt, p_player);
@@ -236,7 +237,7 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
         //     auto elapsedMicro = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
 
         //     if(elapsedMicro > 100){
-        //         std::cout << name << ": " << elapsedMicro << " ms" << std::endl;
+        //         std::cout << name << ": " << elapsedMicro << " ms" << "\n";
         //     }
         // };
 
@@ -262,6 +263,8 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
 
         camera.followEntity(*p_player, dt);
         camera.update(dt);
+
+
         
         currLevelState.stateType = p_player->getPlayerStateType();
         p_levelDataManager->update(dt, currLevelState);
@@ -373,7 +376,15 @@ void mario::pages::LevelsPage::handleEvent(const sf::RenderWindow *window, const
                     isSettingsPressed = false;
                 }
             } else 
+                // if(homeRectF.contains(sf::Vector2f(mousePos))) {
+                //     _isPaused = !_isPaused;
+                //     camera.resetToDefaultView();
+                //     _context->changePage(std::make_shared<mario::pages::MainMenuPage>(*_context));
+                // } else 
+                //     if(settingsRectF.contains(sf::Vector2f(mousePos))) {
+                        
                 if(homeRectF.contains(sf::Vector2f(worldMousePos))) {
+                    _isPaused = !_isPaused;
                     camera.resetToDefaultView();
                     _context->changePage(std::make_shared<mario::pages::MainMenuPage>(*_context));
                 } else 
@@ -566,7 +577,9 @@ void mario::pages::LevelsPage::render(sf::RenderWindow *window) {
         }
     }
 
+
     p_player->render(window);
+
 
     //testItem->render(window);
 
@@ -585,6 +598,7 @@ void mario::pages::LevelsPage::render(sf::RenderWindow *window) {
     }
   
     renderLevelState(window, currLevelState);   
+
 }
 
 void mario::pages::LevelsPage::removeCollectedItems() {
