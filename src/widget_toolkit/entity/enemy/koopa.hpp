@@ -301,6 +301,7 @@ namespace mario::entity {
             updateBehavior(dt);
             p_animation->update(window, dt);
             p_body->update(dt);
+            // p_body->updateSize(p_animation);
         }
     };
 
