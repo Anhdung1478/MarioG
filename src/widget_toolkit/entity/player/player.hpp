@@ -17,8 +17,8 @@ namespace mario::entity {
             mario::entity::player_state::PlayerStateManager *p_stateManager;
             CharacterListType _characterType;
 
-            sf::Time deadAnimationTime = sf::seconds(3);
-            sf::Time shootingDelayTime;
+            sf::Time deadAnimationTimer = sf::seconds(3);
+            sf::Time shootingDelayTimer;
             sf::Time invincibleTimer, shadowTimer;
             bool _isOnGround;
 
@@ -51,11 +51,11 @@ namespace mario::entity {
 
             void setStartedDead(); // set Player status when started to dead
             void managePlayerAnimation(); // manage Player's animation when they did smth
-            void manage
+            void managePlayerShadowState(float dt); // manage Player shadow state (state after being hit and last 1.5s. In this state, Player can go through Enemy but not Block)
             void managePlayerDeadState(float dt); // manage Player when being dead
             
             void beingHit(); // being hit by enemy or entity like level trap
-            void becomeShadowAfterBeingHit(); // become invisible in x second after being hit by enemy or level trap
+            void toggleShadowState(bool isTurnOn); // toggle on/off shadow state, turn on to be a shadow in x second after being hit by enemy or level trap. In this state, Player can go through Enemy but not Block
             
             bool isDead() const;
             bool isShadow() const;

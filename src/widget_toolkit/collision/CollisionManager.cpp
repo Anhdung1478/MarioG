@@ -251,7 +251,7 @@ void CollisionManager::checkCollisionPlayerWithBlocks(mario::entity::Player *&pl
     }
 
     void CollisionManager::checkCollisionPlayerWithEnemies(Player *&player, std::vector<Enemy*> &enemies) {
-        if(player->isInDeadAnimation())
+        if(player->isInDeadAnimation() || player->isShadow())
             return;
 
         for (auto& enemy : enemies) {

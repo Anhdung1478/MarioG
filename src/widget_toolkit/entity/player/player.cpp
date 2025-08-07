@@ -91,10 +91,19 @@ void mario::entity::Player::managePlayerAnimation() {
         }
 }
 
+void mario::entity::Player::managePlayerShadowState(float dt) {
+    if(_isShadow) {
+        shadowTimer -= sf::seconds(dt);
+        if(shadowTimer <= sf::seconds(0)) {
+            toggleShadowState(false);
+        }
+    }
+}
+
 void mario::entity::Player::managePlayerDeadState(float dt) {
     if(!_isAlive && !_isFinishedDeadAnimation) {
-        deadAnimationTime -= sf::seconds(dt);
-        _isFinishedDeadAnimation = (deadAnimationTime <= sf::seconds(0));
+        deadAnimationTimer -= sf::seconds(dt);
+        _isFinishedDeadAnimation = (deadAnimationTimer <= sf::seconds(0));
         if(_isFinishedDeadAnimation)
             p_body->jump(true);
     }
@@ -127,6 +136,12 @@ void mario::entity::Player::update(const sf::RenderWindow *window, float dt) {
         }
 
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Num4)) {
+            std::cerr << "CALL TO FUNCTION HITTING PLAYER\n";
+            beingHit();
+            std::cerr << "SUCCESFULLY\n";
+        }
+
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Num5)) {
             std::cerr << "CALL TO FUNCTION KILLED PLAYER\n";
             setStartedDead();
             std::cerr << "SUCCESFULLY\n";
@@ -134,6 +149,7 @@ void mario::entity::Player::update(const sf::RenderWindow *window, float dt) {
     }
 
     managePlayerDeadState(dt); 
+    managePlayerShadowState(dt);
 
     p_animation->update(window, dt);
     p_body->updateSize(p_animation);
@@ -167,17 +183,27 @@ void mario::entity::Player::resetJump() {
     p_body->resetJump();
 }
 
-void mario::entity::Player::becomeShadowAfterBeingHit() {
-    _isShadow = true;
-    shadowTimer = sf::seconds(1.5f);
+void mario::entity::Player::toggleShadowState(bool isTurnOn) {
+    if(isTurnOn) {
+        _isShadow = true;
+        shadowTimer = sf::seconds(1.5f);
+        p_animation->setFlicker(true);
+        return;
+    }
+
+    _isShadow = false;
+    p_animation->setFlicker(false);
 }
 
 void mario::entity::Player::beingHit() {
+    if(_isShadow)
+        return;
+
     if(getPlayerStateType() == player_state::PlayerStateType::Small) {
         setStartedDead();
     } else {
         p_stateManager->changeToSmallState(p_animation, p_body);
-        becomeShadowAfterBeingHit();
+        toggleShadowState(1);
     }
 }
 
@@ -199,8 +225,8 @@ void mario::entity::Player::collectCoin() {
     
     // 1-up at 100 coins
     if (coinCount >= 100) {
-        coinCount = 0;
-        lives++;
+        lives += coinCount / 100;
+        coinCount %= 100;
         // Play 1-up sound
     }
     
