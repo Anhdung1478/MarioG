@@ -79,5 +79,22 @@ namespace mario::entity::player_state {
 
 
     
+    class MarioStarState : public MarioState {
+        private:
+            const sf::Vector2f MARIO_DIM = sf::Vector2f(20, 31);
+
+        public:
+            MarioStarState(const std::string &state_name) : MarioState(state_name) {}
+
+            void update(Animation *p_eAnimation, Box *p_eBox) override {
+                sf::Vector2f GLOBAL_DIM = sf::Vector2f(MARIO_DIM.x * MARIO_SCALE.x, MARIO_DIM.y * MARIO_SCALE.y);
+                p_eBox->reSize(GLOBAL_DIM);
+                p_eAnimation->clearAnimationStep();
+                p_eAnimation->addAnimationStep(MARIO_TYPE + ".walk[0]");
+                p_eAnimation->addAnimationStep(MARIO_TYPE + ".walk[1]");
+                p_eAnimation->addAnimationStep(MARIO_TYPE + ".idle[0]");
+            }
+    };
+    
     #undef MARIO_FILE_PATH
 }

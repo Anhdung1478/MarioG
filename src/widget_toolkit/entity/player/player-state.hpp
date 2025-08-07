@@ -9,7 +9,8 @@ namespace mario::entity::player_state {
     enum class PlayerStateType {
         Small = 0,
         Super = 1,
-        Fire = 2
+        Fire = 2,
+        Star = 3
     };
 
 
