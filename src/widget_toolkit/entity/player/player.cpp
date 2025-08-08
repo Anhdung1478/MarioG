@@ -251,7 +251,7 @@ void mario::entity::Player::collectFireFlower() {
     score += 1000;
     if (getPlayerStateType() == player_state::PlayerStateType::Small) {
         p_stateManager->changeToSuperState(p_animation, p_body);
-            // Play power-up sound
+        // Play power-up sound
     } else if(getPlayerStateType() == player_state::PlayerStateType::Super) {
         p_stateManager->changeToFireState(p_animation, p_body);
         // Play power-up sound

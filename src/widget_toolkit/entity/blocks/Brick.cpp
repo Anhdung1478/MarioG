@@ -208,11 +208,9 @@ namespace mario::entity {
     }
 
     void Brick::render(sf::RenderWindow *window) {
-        if(isExist()){
-            p_animation->renderWithPosition(window, p_body->getPosition());
-            p_body->renderHitboxRect(window);
-            
-        }
+        if(isExist())
+            Entity::render(window);
+
         if(coins_animation->getAnimationState()) {
             if(coins_animation->getStep() == 4) coins_animation->setVelocity(sf::Vector2f(0.f, 0.f));
             coins_animation->render(window);
