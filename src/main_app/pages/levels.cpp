@@ -127,6 +127,8 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
     // std::this_thread::sleep_for(std::chrono::seconds(1));
 }
 
+/* ========================================================================================================================================================================== */
+
 void mario::pages::LevelsPage::autoSave() {
     p_levelDataManager->autoSave(currLevelState);
 }
@@ -155,6 +157,8 @@ mario::resource::LevelState mario::pages::LevelsPage::getLevelState() const { re
 // Pause Game
 bool mario::pages::LevelsPage::isPaused() const { return _isPaused; }
 
+/* ========================================================================================================================================================================== */
+
 void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) {
     sf::FloatRect cameraBounds = camera.getCameraBounds();
     for (auto it = enemies.begin(); it != enemies.end();) {
@@ -176,107 +180,116 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
     }
     
     if(!_isPaused) {
-        if(!p_player->isInBehavior(mario::entity::PlayerBehavior::Dying)) {
-            currLevelState.update(dt);
-            if(currLevelState.times <= sf::seconds(0.f)) {
-                p_player->changePlayerBehavior(mario::entity::PlayerBehavior::Dying);
-                currLevelState.times = sf::seconds(0.f);
+        if(!p_player->isTransforming()) {
+            if(!p_player->isInBehavior(mario::entity::PlayerBehavior::Dying)) {
+                currLevelState.update(dt);
+                if(currLevelState.times <= sf::seconds(0.f)) {
+                    p_player->changePlayerBehavior(mario::entity::PlayerBehavior::Dying);
+                    currLevelState.times = sf::seconds(0.f);
+                }
             }
         }
 
         p_player->update(window, dt);
         p_player->updateToLevelState(currLevelState);
 
-        // testBlock->update(window, dt);
-        
-        for(auto &backgroundBlock : backgroundBlocks) {
-            // if(backgroundBlock->getHitbox().findIntersection(cameraBounds)) {
-                backgroundBlock->update(window, dt);
-            // }
-        }
-
-        for(auto &enemy : enemies) {
-            if (!enemy->shouldDelete() && enemy->getHitbox().findIntersection(cameraBounds)) {
-            // if (!enemy->shouldDelete()) {
-                mario::entity::Piranha* piranha = dynamic_cast<mario::entity::Piranha*>(enemy);
-                if (piranha) {
-                    piranha->updateWithPlayer(window, dt, p_player);
-                } else {
-                    enemy->update(window, dt);
+        if(!p_player->isTransforming()) {
+            // testBlock->update(window, dt);
+            
+            for(auto &backgroundBlock : backgroundBlocks) {
+                // if(backgroundBlock->getHitbox().findIntersection(cameraBounds)) {
+                    backgroundBlock->update(window, dt);
+                // }
+            }
+    
+            for(auto &enemy : enemies) {
+                if (!enemy->shouldDelete() && enemy->getHitbox().findIntersection(cameraBounds)) {
+                // if (!enemy->shouldDelete()) {
+                    mario::entity::Piranha* piranha = dynamic_cast<mario::entity::Piranha*>(enemy);
+                    if (piranha) {
+                        piranha->updateWithPlayer(window, dt, p_player);
+                    } else {
+                        enemy->update(window, dt);
+                    }
+                }
+            }
+    
+            for(auto &block : blocks) {
+                if (!block->shouldDelete() && block->getHitbox().findIntersection(cameraBounds)) {
+                    block->update(window, dt);
+                }
+            }
+    
+            //testItem->update(window, dt);
+            // Update items directly from vector
+            for(auto &item : items) {
+                if (item && !item->isCollected() && item->getHitbox().findIntersection(cameraBounds)) {
+                    item->update(window, dt);
                 }
             }
         }
-
-        for(auto &block : blocks) {
-            if (!block->shouldDelete() && block->getHitbox().findIntersection(cameraBounds)) {
-                block->update(window, dt);
-            }
-        }
-
-        //testItem->update(window, dt);
-        // Update items directly from vector
-        for(auto &item : items) {
-            if (item && !item->isCollected() && item->getHitbox().findIntersection(cameraBounds)) {
-                item->update(window, dt);
-            }
-        }
-
-        collisionManager.updateCameraBounds(cameraBounds);
-        collisionManager.checkCollisionPlayerWithBlocks(p_player, blocks, items);
-        collisionManager.checkCollisionEnemyWithBlocks(enemies, blocks);
-        collisionManager.checkCollisionPlayerWithEnemies(p_player, enemies);
-        collisionManager.checkCollisionPlayerWithItems(p_player, items);
-        collisionManager.checkCollisionItemsWithBlocks(items, blocks);
-
-
-        // auto measure = [](auto&& func, const std::string& name) {
-        //     auto start = std::chrono::high_resolution_clock::now();
-        //     func();
-        //     auto end = std::chrono::high_resolution_clock::now();
-
-        //     auto elapsedMicro = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-
-        //     if(elapsedMicro > 100){
-        //         std::cout << name << ": " << elapsedMicro << " ms" << "\n";
-        //     }
-        // };
-
-        // collisionManager.updateCameraBounds(cameraBounds);
-        // measure([&]{ collisionManager.checkCollisionPlayerWithBlocks(p_player, blocks, items); }, "Player-Blocks");
-        // measure([&]{ collisionManager.checkCollisionEnemyWithBlocks(enemies, blocks); }, "Enemy-Blocks");
-        // measure([&]{ collisionManager.checkCollisionPlayerWithEnemies(p_player, enemies); }, "Player-Enemies");
-        // measure([&]{ collisionManager.checkCollisionPlayerWithItems(p_player, items); }, "Player-Items");
-        // measure([&]{ collisionManager.checkCollisionItemsWithBlocks(items, blocks); }, "Items-Blocks");
-
-
-
-        // for (auto* enemy : enemies) {
-        //     mario::entity::Enemy* enemyPtr = dynamic_cast<mario::entity::Enemy*>(enemy);
-        //     if (enemyPtr) {
-        //         enemyPtr->updateBehavior(dt, p_player);
-        //         enemyPtr->update(window, dt);
-        //         tileMap->checkCollisionEn(enemyPtr); // Sử dụng enemyPtr (Enemy*)
-        //     } else {
-        //         enemy->update(window, dt); // Xử lý các Entity không phải Enemy (nếu có)
-        //     }
-        // }
-
-        camera.followEntity(*p_player, dt);
-        camera.update(dt);
-
-
         
-        currLevelState.stateType = p_player->getPlayerStateType();
-        p_levelDataManager->update(dt, currLevelState);
-        removeCollectedItems();
+        
+        collisionManager.checkCollisionPlayerWithBlocks(p_player, blocks, items);
+        
 
-        if(p_player->isDead()) {
-            if(currLevelState.num_lives > 0) {
-                currLevelState = mario::resource::LevelState(currLevelState.level, currLevelState.num_lives - 1, currLevelState.score, currLevelState.coins, currLevelState.characterType);
-                _context->changePage(std::make_shared<mario::pages::LevelsPage>(*_context, currLevelState));
-            } else {
-                camera.resetToDefaultView();
-                _context->changePage(std::make_shared<mario::pages::GameOverPage>(*_context));
+        if(!p_player->isTransforming()) {
+            collisionManager.updateCameraBounds(cameraBounds);
+            collisionManager.checkCollisionEnemyWithBlocks(enemies, blocks);
+            collisionManager.checkCollisionPlayerWithEnemies(p_player, enemies);
+            collisionManager.checkCollisionPlayerWithItems(p_player, items);
+            collisionManager.checkCollisionItemsWithBlocks(items, blocks);
+    
+    
+            // auto measure = [](auto&& func, const std::string& name) {
+            //     auto start = std::chrono::high_resolution_clock::now();
+            //     func();
+            //     auto end = std::chrono::high_resolution_clock::now();
+    
+            //     auto elapsedMicro = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+    
+            //     if(elapsedMicro > 100){
+            //         std::cout << name << ": " << elapsedMicro << " ms" << "\n";
+            //     }
+            // };
+    
+            // collisionManager.updateCameraBounds(cameraBounds);
+            // measure([&]{ collisionManager.checkCollisionPlayerWithBlocks(p_player, blocks, items); }, "Player-Blocks");
+            // measure([&]{ collisionManager.checkCollisionEnemyWithBlocks(enemies, blocks); }, "Enemy-Blocks");
+            // measure([&]{ collisionManager.checkCollisionPlayerWithEnemies(p_player, enemies); }, "Player-Enemies");
+            // measure([&]{ collisionManager.checkCollisionPlayerWithItems(p_player, items); }, "Player-Items");
+            // measure([&]{ collisionManager.checkCollisionItemsWithBlocks(items, blocks); }, "Items-Blocks");
+    
+    
+    
+            // for (auto* enemy : enemies) {
+            //     mario::entity::Enemy* enemyPtr = dynamic_cast<mario::entity::Enemy*>(enemy);
+            //     if (enemyPtr) {
+            //         enemyPtr->updateBehavior(dt, p_player);
+            //         enemyPtr->update(window, dt);
+            //         tileMap->checkCollisionEn(enemyPtr); // Sử dụng enemyPtr (Enemy*)
+            //     } else {
+            //         enemy->update(window, dt); // Xử lý các Entity không phải Enemy (nếu có)
+            //     }
+            // }
+    
+            camera.followEntity(*p_player, dt);
+            camera.update(dt);
+    
+    
+            
+            currLevelState.stateType = p_player->getPlayerStateType();
+            p_levelDataManager->update(dt, currLevelState);
+            removeCollectedItems();
+    
+            if(p_player->isDead()) {
+                if(currLevelState.num_lives > 0) {
+                    currLevelState = mario::resource::LevelState(currLevelState.level, currLevelState.num_lives - 1, currLevelState.score, currLevelState.coins, currLevelState.characterType);
+                    _context->changePage(std::make_shared<mario::pages::LevelsPage>(*_context, currLevelState));
+                } else {
+                    camera.resetToDefaultView();
+                    _context->changePage(std::make_shared<mario::pages::GameOverPage>(*_context));
+                }
             }
         }
     }
@@ -326,6 +339,8 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
     // itemManager->update(window, dt);
     // itemManager->processSpawnTriggers(p_player, dt);
 }
+
+/* ========================================================================================================================================================================== */
 
 void mario::pages::LevelsPage::handleEvent(const sf::RenderWindow *window, const sf::Event &event) {
     if (const auto key = event.getIf<sf::Event::KeyPressed>(); key && key->code == sf::Keyboard::Key::Escape && !isSettingsOpen) {
@@ -420,6 +435,8 @@ void mario::pages::LevelsPage::handleEvent(const sf::RenderWindow *window, const
     }
 }
 
+/* ========================================================================================================================================================================== */
+
 sf::Vector2f mario::pages::LevelsPage::getPositionRelativeToCamera(sf::Vector2f pos) {
     sf::FloatRect rect = camera.getCameraBounds();
     sf::Vector2f cameraPos = rect.position;
@@ -434,6 +451,8 @@ void mario::pages::LevelsPage::rePositionTextToMiddle(sf::Text &text, int rectX,
     text.setFillColor(sf::Color::White);
     text.setPosition(sf::Vector2f(int((rectX - textLenX) / 2.0), rectY));
 }
+
+/* ========================================================================================================================================================================== */
 
 void mario::pages::LevelsPage::renderLevelState(sf::RenderWindow *window, mario::resource::LevelState levelState) {
     sf::Vector2f windowSize = _context->getWindowSize();
@@ -508,8 +527,12 @@ void mario::pages::LevelsPage::renderLevelState(sf::RenderWindow *window, mario:
     window->draw(text);
 }
 
+/* ========================================================================================================================================================================== */
+
 void mario::pages::LevelsPage::render(sf::RenderWindow *window) {
     camera.applyTo(*window);
+
+    // draw background here
 
     sf::FloatRect cameraBounds = camera.getCameraBounds();
     sf::Vector2f topLeft = cameraBounds.position;

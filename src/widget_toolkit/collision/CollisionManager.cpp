@@ -2,8 +2,7 @@
 
 #include <algorithm>
 
-namespace mario {
-namespace entity {
+namespace mario::entity {
 
     void CollisionManager::updateCameraBounds(const sf::FloatRect &bounds) {
         cameraBounds = bounds;
@@ -78,12 +77,12 @@ namespace entity {
         }
     }
 
-void CollisionManager::checkCollisionPlayerWithBlocks(mario::entity::Player *&player, std::vector<Block*> &blocks, std::vector<Item*> &items) {
-    if(!player->canCollisionWithBlock())
-        return;
+    void CollisionManager::checkCollisionPlayerWithBlocks(mario::entity::Player *&player, std::vector<Block*> &blocks, std::vector<Item*> &items) {
+        if(!player->canCollisionWithBlock())
+            return;
 
-    int L, R;
-    findBlocksCollisions(L, R, player, blocks);
+        int L, R;
+        findBlocksCollisions(L, R, player, blocks);
 
         bool hasTopCollision = false;
         bool hasBottomCollision = false;
@@ -315,6 +314,5 @@ void CollisionManager::checkCollisionPlayerWithBlocks(mario::entity::Player *&pl
             }
         }
     }
-
-} // namespace entity
-} // namespace mario
+    
+} // namespace mario::entity

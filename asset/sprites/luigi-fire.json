@@ -1,47 +1,9 @@
 {
-  "luigi-fire-small": {
-    "idle": [
-      { "x": 130, "y": 94, "width": 17, "height": 16 }
-    ],
-    "walk": [
-      { "x": 145, "y": 95, "width": 17, "height": 16 },
-      { "x": 161, "y": 95, "width": 17, "height": 16 }
-    ],
-    "jump": [
-      { "x": 179, "y": 95, "width": 17, "height": 16 }
-    ],
-    "get-ready": [
-      { "x": 115, "y": 111, "width": 17, "height": 16 }
-    ],
-    "fly-with-arms-in-front": [
-      { "x": 115, "y": 131, "width": 17, "height": 16 }
-    ],
-    "fly-with-arms-level": [
-      { "x": 134, "y": 130, "width": 17, "height": 16 }
-    ],
-    "fly-with-arms-behind": [
-      { "x": 152, "y": 130, "width": 17, "height": 16 }
-    ],
-    "backing": [
-      { "x": 167, "y": 113, "width": 17, "height": 16 }
-    ],
-    "idle-with-hands-in-front": [
-      { "x": 151, "y": 112, "width": 17, "height": 16 }
-    ],
-    "dying": [
-      { "x": 97, "y": 95, "width": 17, "height": 16 }
-    ],
-    "saying-hi": [
-      { "x": 81, "y": 112, "width": 17, "height": 16 }
-    ]
-  },
-
   "luigi-fire-super": {
     "idle": [
       { "x": 772, "y": 36, "width": 14, "height": 31 }
     ],
     "walk": [
-      { "x": 772, "y": 79, "width": 14, "height": 31 },
       { "x": 792, "y": 79, "width": 16, "height": 30 },
       { "x": 813, "y": 79, "width": 16, "height": 31 }
     ],

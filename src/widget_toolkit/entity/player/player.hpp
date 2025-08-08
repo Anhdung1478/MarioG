@@ -8,6 +8,7 @@
 #include "luigi-state-manager.hpp"
 #include "../../resource/LevelState.hpp"
 #include "../item/item.hpp"
+#include "fireball.hpp"
 
 namespace mario::entity {
     static constexpr sf::Vector2f PLAYER_SCALE = sf::Vector2f(2.5f, 2.5f);
@@ -21,6 +22,8 @@ namespace mario::entity {
             CharacterListType _characterType;
             PlayerBehavior playerBehavior;
 
+            std::vector<Fireball*> fireballs;
+
             sf::Time shootingDelayTimer;
             sf::Time behaviorTimer;
             bool _isOnGround;
@@ -28,6 +31,7 @@ namespace mario::entity {
             bool hasPlayedJumpSound_ = false; // For sound effect
             bool _canMove = true, _isAlive = true, _isDeadAlready = false;
             bool _canCollisionWithEnemy = true, _canCollisionWithItem = true, _canCollisionWithBlock = true;
+            bool _isTransforming = false;
 
             int score = 0;
             int lives = 0;
@@ -62,11 +66,14 @@ namespace mario::entity {
             void changeState(player_state::PlayerStateType newStateType); // change Player State into newStateType
 
             bool isDead() const;
+            bool isTransforming() const;
             bool isInBehavior(PlayerBehavior behavior) const;
             bool canCollisionWithEnemy() const;
             bool canCollisionWithItem() const;
             bool canCollisionWithBlock() const;
 
+            void breakBrick();
+            void hitEmptyBlock();
             void collectCoin();   
             void collectCoinInBlock();         
             void collectRedMushroom();            

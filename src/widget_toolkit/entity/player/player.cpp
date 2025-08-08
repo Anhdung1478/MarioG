@@ -46,6 +46,8 @@ void mario::entity::Player::move(bool isMoveRight, bool isReleased) {
 void mario::entity::Player::shotFireball(bool isReleased) {
     if(!_canMove)
         return;
+
+    
 }
 
 /* =================================================================================================================================================================== */
@@ -130,12 +132,16 @@ void mario::entity::Player::changePlayerBehavior(PlayerBehavior newBehavior) {
 
         _canCollisionWithEnemy = _canCollisionWithItem = true;
         p_stateManager->changeToSuperState(p_animation, p_body);
+
+        _isTransforming = false;
         togglePlayerMove(true);
     }
 
     if(playerBehavior == PlayerBehavior::TransformBTS) {
         _canCollisionWithEnemy = _canCollisionWithItem = true;
         p_stateManager->changeToSmallState(p_animation, p_body);
+
+        _isTransforming = false;
         togglePlayerMove(true);
     }
 
@@ -151,6 +157,7 @@ void mario::entity::Player::changePlayerBehavior(PlayerBehavior newBehavior) {
     if(playerBehavior == PlayerBehavior::Dying) {
         _canCollisionWithEnemy = _canCollisionWithItem = _canCollisionWithBlock = true;
         _isAlive = true;
+
         p_body->jump(true);
         togglePlayerMove(true);
     }
@@ -171,10 +178,13 @@ void mario::entity::Player::changePlayerBehavior(PlayerBehavior newBehavior) {
         togglePlayerMove(false);
 
         // play powerup sound
+        _isTransforming = true;
         behaviorTimer = sf::seconds(1.f);
         p_animation->clearAnimationStep();
 
-        // add animation step
+        std::string currPlayerStateID = p_stateManager->getCurrentPlayerStateID();
+        for (int i = 0; i < 10; ++i)
+            p_animation->addAnimationStep(currPlayerStateID + ".become-super-state[" + std::to_string(i) + "]");
 
         p_animation->setAnimationState(true);
     }
@@ -183,11 +193,11 @@ void mario::entity::Player::changePlayerBehavior(PlayerBehavior newBehavior) {
         _canCollisionWithEnemy = _canCollisionWithItem = false;
         togglePlayerMove(false);
 
+        _isTransforming = true;
         behaviorTimer = sf::seconds(1.5f);
         p_animation->clearAnimationStep();
 
         std::string currPlayerStateID = p_stateManager->getCurrentPlayerStateID();
-        std::cerr << currPlayerStateID << '\n';
         for (int i = 0; i < 15; ++i)
             p_animation->addAnimationStep(currPlayerStateID + ".hit[" + std::to_string(i) + "]");
 
@@ -341,6 +351,10 @@ bool mario::entity::Player::isDead() const {
     return _isDeadAlready;
 }
 
+bool mario::entity::Player::isTransforming() const {
+    return _isTransforming;
+}
+
 bool mario::entity::Player::isInBehavior(PlayerBehavior behavior) const {
     return (playerBehavior == behavior);
 }
@@ -358,6 +372,15 @@ bool mario::entity::Player::canCollisionWithBlock() const {
 }
 
 /* =================================================================================================================================================================== */
+
+void mario::entity::Player::breakBrick() {
+    // Play break brick sound
+    score += 50;
+}
+
+void mario::entity::Player::hitEmptyBlock() {
+    // Play hit empty block sound
+}
 
 void mario::entity::Player::collectCoin() {
     ++coinCount;
