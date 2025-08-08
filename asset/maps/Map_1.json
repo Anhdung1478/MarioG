@@ -203,18 +203,6 @@
                  "y":256
                 }, 
                 {
-                 "gid":1177,
-                 "height":46,
-                 "id":45,
-                 "name":"",
-                 "rotation":0,
-                 "type":"red-koopa-fly",
-                 "visible":true,
-                 "width":30,
-                 "x":880,
-                 "y":256
-                }, 
-                {
                  "gid":1175,
                  "height":30,
                  "id":46,
@@ -223,7 +211,7 @@
                  "type":"red-koopa",
                  "visible":true,
                  "width":22,
-                 "x":848,
+                 "x":880,
                  "y":256
                 }, 
                 {
@@ -235,19 +223,7 @@
                  "type":"green-koopa-fly",
                  "visible":true,
                  "width":30,
-                 "x":800,
-                 "y":256
-                }, 
-                {
-                 "gid":1177,
-                 "height":46,
-                 "id":49,
-                 "name":"",
-                 "rotation":0,
-                 "type":"red-koopa-fly",
-                 "visible":true,
-                 "width":30,
-                 "x":416,
+                 "x":848,
                  "y":256
                 }, 
                 {

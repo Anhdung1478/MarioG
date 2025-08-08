@@ -8,8 +8,8 @@ namespace mario::entity {
     {
         InitSpritesSheet();
         p_animation = new mario::entity::Animation("../../asset/maps/Image/tiles-8.png", BLOCK_SCALE, sprites);
-        p_animation->addAnimationStep("empty-question-block[" + std::to_string(themeID) + "]");
-        p_animation->setAnimationState(true);
+        p_animation->setSpriteAnimation("empty-question-block[" + std::to_string(themeID) + "]");
+        p_animation->setAnimationState(false);
 
         coins_animation->addAnimationStep("coin[0]");
         coins_animation->addAnimationStep("coin[1]");
@@ -86,7 +86,7 @@ namespace mario::entity {
                 p_animation->setSpriteAnimation("empty-question-block[" + std::to_string(themeID) + "]");
                 typeOfItem = -1; // Mark as empty
                 return 1; 
-            } else if (player->getPlayerStateType() == player_state::PlayerStateType::Super) {// Spawn Fire flower
+            } else {// Spawn Fire flower
                 p_animation->setSpriteAnimation("empty-question-block[" + std::to_string(themeID) + "]");
                 typeOfItem = -1; // Mark as empty
                 return 2;
