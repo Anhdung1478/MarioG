@@ -36,6 +36,7 @@ namespace mario::pages {
             mario::entity::Item* testItem;
 
             mario::entity::Block* testBlock;
+            // mario::entity::FireWorks* testFireWorks;
       
             Camera camera;
             mario::entity::Player *p_player;
