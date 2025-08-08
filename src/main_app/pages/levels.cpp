@@ -197,8 +197,7 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
         }
 
         for(auto &enemy : enemies) {
-            if (!enemy->shouldDelete() && enemy->getHitbox().findIntersection(cameraBounds)) {
-            // if (!enemy->shouldDelete()) {
+            if (!enemy->shouldDelete()) {
                 mario::entity::Piranha* piranha = dynamic_cast<mario::entity::Piranha*>(enemy);
                 if (piranha) {
                     piranha->updateWithPlayer(window, dt, p_player);
@@ -266,8 +265,6 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
 
         camera.followEntity(*p_player, dt);
         camera.update(dt);
-
-
         
         currLevelState.stateType = p_player->getPlayerStateType();
         p_levelDataManager->update(dt, currLevelState);

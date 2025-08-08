@@ -153,25 +153,24 @@ namespace mario::entity {
         void reactCollision(int side, const Collision& collision) override {
             if(collision.isWithPlayer() && (side == SideCollision::Top)) {
                 hitByPlayer();
-            // } else if(collision.isWithPlayer() && (side == SideCollision::Right || side == SideCollision::Left)) {
-            //     DynamicBox* body = dynamic_cast<DynamicBox*>(p_body);
-            //     if(body) {
-            //         checkShell = true;
-            //         float pushSpeed = 2000.f;
-            //         body->setVelocity({body->isFaceForward() ? pushSpeed : -pushSpeed, body->getVelocity().y});
-            //     }
+            } else if(collision.isWithPlayer() && currentState == KoopaState::Shell && lastState == KoopaState::Shell) {
+                DynamicBox* body = dynamic_cast<DynamicBox*>(p_body);
+                if(body) {
+                    checkShell = true;
+                    float pushSpeed = 1000.f;
+                    body->setVelocity({body->isFaceForward() ? -pushSpeed : pushSpeed, body->getVelocity().y});
+                }
             } else if(collision.isWithWall() && (side == SideCollision::Left || side == SideCollision::Right)) {
                 DynamicBox* body = dynamic_cast<DynamicBox*>(p_body);
                 if(body) {
                     if(side == SideCollision::Left) {
                         body->move(true, false); // Move right if hit from left
                         body->setIsFaceForward(true);
-                        //std::cout << "move right" << std::endl;
                     }
                     else if(side == SideCollision::Right) {
                         body->move(false, false); // Move left if hit from right
                         body->setIsFaceForward(false);
-                        //std::cout << "move left" << std::endl;
+                        //std::cout << "COLLISION: " << body->getVelocity().x << std::endl;
                     }
                     if(p_animation->isFaceForward() != body->isFaceForward()) {
                         p_animation->rotate();
@@ -192,8 +191,14 @@ namespace mario::entity {
                         p_animation->rotate();
                     }
                 }
-            } else if(p_body->getPosition().x >= initialPosition.x - patrolRange && p_body->getPosition().x <= initialPosition.x + patrolRange) {
+            } else if(p_body->getPosition().x >= initialPosition.x - patrolRange && p_body->getPosition().x <= initialPosition.x + patrolRange){
                 p_body->move(p_body->isFaceForward(), false); // continue
+            } else if (!(collision.isWithWall() && (side == SideCollision::Left || side == SideCollision::Right)) && currentState == KoopaState::Shell && lastState == KoopaState::Shell && checkShell) {
+                float pushSpeed = 1000.f;
+                p_body->setVelocity({p_body->getVelocity().x < 0 ? -pushSpeed : pushSpeed, p_body->getVelocity().y});
+                //std::cout << "After: " << p_body->getVelocity().x << std::endl;
+                //std::cout << "Before: " << p_body->getVelocity().x << std::endl;
+                //std::cout << "UPDATE: " << p_body->getVelocity().x << std::endl;
             }
         }
 

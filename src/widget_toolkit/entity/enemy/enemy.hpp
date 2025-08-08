@@ -33,11 +33,6 @@ namespace mario::entity {
                     body->move(false, false); // move left
                     // std::cout << "Moving left\n";
                 }
-                // else {
-                //     body->move(body->isFaceForward(), false); // continue
-                //     std::cout << "Moving left\n";
-                // }
-
                 if (p_animation->isFaceForward() == body->isFaceForward()) {
                     p_animation->rotate();
                 }
