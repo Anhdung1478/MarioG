@@ -329,7 +329,8 @@ namespace mario::entity {
     }
 
     sf::FloatRect TileMap::getWorldBounds() const {
-        return sf::FloatRect(sf::Vector2f(0.f, 0.f), sf::Vector2f(mapWidth * 16 * BLOCK_SCALE.x, mapHeight * 16 * BLOCK_SCALE.y));
+        std::cout << "Map Width: " << mapWidth << ", Map Height: " << mapHeight << "\n";
+        return sf::FloatRect(sf::Vector2f(0.f, 0.f), sf::Vector2f((mapWidth - 1) * 16 * BLOCK_SCALE.x, (mapHeight - 1) * 16 * BLOCK_SCALE.y));
     }
 
 } // namespace mario::entity

@@ -35,6 +35,10 @@ namespace mario::pages {
             std::vector<mario::entity::Item*> items;  // Direct item management
             mario::entity::Item* testItem;
 
+            // Background
+            sf::Texture backgroundTexture;
+            sf::Sprite *backgroundSprite;
+
             mario::entity::Block* testBlock;
             // mario::entity::FireWorks* testFireWorks;
       
