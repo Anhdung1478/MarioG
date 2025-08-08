@@ -43,8 +43,12 @@ namespace mario::entity {
             virtual void handleEvent(const sf::RenderWindow* window, const sf::Event& event) override {}
 
             void render(sf::RenderWindow *window) override {
-                p_animation->renderWithPosition(window, p_body->getPosition());
-                p_body->renderHitboxRect(window);
+                if(p_animation && p_body)
+                    p_animation->renderWithPosition(window, p_body->getPosition());
+                
+                bool isRenderWithHitbox = true;
+                if(p_body && isRenderWithHitbox)
+                    p_body->renderHitboxRect(window);
             }
 
             void setPosition(sf::Vector2f pos) {

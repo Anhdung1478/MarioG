@@ -3,4 +3,4 @@ Lives= 0
 Coins= 0
 Score= 1000
 CharacterType= 0
-StateType= 0
+StateType= 1

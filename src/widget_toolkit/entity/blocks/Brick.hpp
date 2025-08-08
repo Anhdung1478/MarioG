@@ -3,38 +3,38 @@
 
 namespace mario::entity {
 
-struct BrickFragment;
+    struct BrickFragment;
 
-class Brick : public Block {
-public:
-    Brick(){};
-    Brick(sf::Vector2f pos, sf::Vector2f size, std::string name, int _typeOfItem = -1, int _themeID = 0, int _numberOfCoins = 0);
-    ~Brick() = default;
-    void InitSpritesSheet() override;
-    int reactToCollision(int side, Player* player = nullptr) override;
+    class Brick : public Block {
+    public:
+        Brick(){};
+        Brick(sf::Vector2f pos, sf::Vector2f size, std::string name, int _typeOfItem = -1, int _themeID = 0, int _numberOfCoins = 0);
+        ~Brick() = default;
+        void InitSpritesSheet() override;
+        int reactToCollision(int side, Player* player = nullptr) override;
 
-    void update(const sf::RenderWindow *window, float dt) override;
-    void handleEvent(const sf::RenderWindow *window, const sf::Event &event) override;
-    void render(sf::RenderWindow *window) override;
-private:
-    
+        void update(const sf::RenderWindow *window, float dt) override;
+        void handleEvent(const sf::RenderWindow *window, const sf::Event &event) override;
+        void render(sf::RenderWindow *window) override;
+    private:
+        
 
-    // mario::entity::Animation *fragment_animation;
-    int typeOfItem = -1; // -2: empty block , -1: None, 0: coin, 1: Red-mushroom, 2: Fire-flower, 3: One-up-mushroom, 4: Starman
-    int themeID = 0;
-    int numberOfCoins = 0;
-    mario::entity::Animation *coins_animation;
-    std::vector<SpriteData2> sprites;
+        // mario::entity::Animation *fragment_animation;
+        int typeOfItem = -1; // -2: empty block , -1: None, 0: coin, 1: Red-mushroom, 2: Fire-flower, 3: One-up-mushroom, 4: Starman
+        int themeID = 0;
+        int numberOfCoins = 0;
+        mario::entity::Animation *coins_animation;
+        std::vector<SpriteData2> sprites;
 
-    std::vector<mario::entity::BrickFragment> fragments;
-    void createFragments();
+        std::vector<mario::entity::BrickFragment> fragments;
+        void createFragments();
 
-    sf::Vector2f originalPosition;
-    bool isBouncing = false;
-    float bouncingTimer = 0.0f;
-    float bouncingDistance = 0.0f;
-    void bouncingAnimation(float dt);
-};
+        sf::Vector2f originalPosition;
+        bool isBouncing = false;
+        float bouncingTimer = 0.0f;
+        float bouncingDistance = 0.0f;
+        void bouncingAnimation(float dt);
+    };
 
 } // namespace mario::entity
 
