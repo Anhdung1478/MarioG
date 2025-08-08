@@ -17,8 +17,7 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
     marioFont = std::make_unique<sf::Font>("../../asset/fonts/SuperMario256.ttf");
 
     // Load enemies
-    // enemies.push_back(new mario::entity::Goomba(sf::Vector2f(300.f, 80.f)));
-    // enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(1400.f, 80.f), mario::entity::KoopaType::Red, false));
+    // enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(1350.f, 600.f), mario::entity::KoopaType::Red, false));
     // enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(350.f, 80.f), mario::entity::KoopaType::Green, true));
 
     // testItem = new mario::entity::FireFlower(
@@ -43,8 +42,8 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
     // Pause/Resume game
     pauseTexture = std::make_unique<sf::Texture>("../../asset/textures/pause-button.png");
     pauseSprite = std::make_unique<sf::Sprite>(*pauseTexture);
-    pauseSprite->setPosition({20, 95});
-    pauseSprite->setScale({1.f, 1.f});
+    pauseSprite->setPosition({20, 97});
+    pauseSprite->setScale({0.9f, 0.9f});
 
     pauseHoverTexture = std::make_unique<sf::Texture>("../../asset/textures/pause-button-hover.png");
     resumeTexture = std::make_unique<sf::Texture>("../../asset/textures/resume-button-hover.png");
@@ -52,16 +51,16 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
     // Home
     homeTexture = std::make_unique<sf::Texture>("../../asset/textures/home.png");
     homeSprite = std::make_unique<sf::Sprite>(*homeTexture);
-    homeSprite->setPosition({20, 20});
-    homeSprite->setScale({1.f, 1.f});
+    homeSprite->setPosition({20, 30});
+    homeSprite->setScale({0.9f, 0.9f});
 
     homeHoverTexture = std::make_unique<sf::Texture>("../../asset/textures/home-hover.png");
 
     // Settings
     settingsTexture = std::make_unique<sf::Texture>("../../asset/textures/settings.png");
     settingsSprite = std::make_unique<sf::Sprite>(*settingsTexture);
-    settingsSprite->setPosition({20, 170});
-    settingsSprite->setScale({1.f, 1.f});
+    settingsSprite->setPosition({20, 164});
+    settingsSprite->setScale({0.9f, 0.9f});
 
     settingsHoverTexture = std::make_unique<sf::Texture>("../../asset/textures/settings-hover.png");
 
@@ -516,9 +515,9 @@ void mario::pages::LevelsPage::render(sf::RenderWindow *window) {
     sf::Vector2f topLeft = cameraBounds.position;
     
     // Set new position of sprites with camera
-    pauseSprite->setPosition(topLeft + sf::Vector2f(20.f, 95.f));
-    homeSprite->setPosition(topLeft + sf::Vector2f(20.f, 20.f));
-    settingsSprite->setPosition(topLeft + sf::Vector2f(20.f, 170.f));
+    pauseSprite->setPosition(topLeft + sf::Vector2f(20.f, 97.f));
+    homeSprite->setPosition(topLeft + sf::Vector2f(20.f, 30.f));
+    settingsSprite->setPosition(topLeft + sf::Vector2f(20.f, 164.f));
 
     sf::Vector2u windowSize(1280, 720); // Size of window
     sf::Vector2f cameraCenter = camera.getPosition(); // Center of camera

@@ -19,8 +19,6 @@ namespace mario::entity {
     class Enemy : public Entity {
     private:
         EnemyBehavior behavior;
-        float patrolRange;
-        sf::Vector2f initialPosition;
         float detectionRange;
         bool isActive;
 
@@ -67,6 +65,8 @@ namespace mario::entity {
         virtual std::string getDeadSpriteID() const = 0;
     protected:
         bool shouldBeDeleted;
+        sf::Vector2f initialPosition;
+        float patrolRange;
     public:
         Enemy(const std::string& jsonPath, const std::string& texturePath, sf::Vector2f scale, const std::string& spriteID,
             sf::Vector2f startPosition, sf::Vector2f size, const std::string& behaviorStr)
@@ -116,7 +116,7 @@ namespace mario::entity {
                     if(p_animation->isFaceForward() == body->isFaceForward()) {
                         p_animation->rotate();
                     }
-                } 
+                }
             }
         }
 
