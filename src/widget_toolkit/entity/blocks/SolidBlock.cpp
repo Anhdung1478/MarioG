@@ -14,7 +14,7 @@ namespace mario::entity {
 
         p_animation = new mario::entity::Animation("../../asset/maps/Image/tiles-8.png", BLOCK_SCALE, sprites);
         p_animation->setSpriteAnimation(name);
-        p_animation->setAnimationState(true);
+        p_animation->setAnimationState(false);
     }
 
     SolidBlock::~SolidBlock() {

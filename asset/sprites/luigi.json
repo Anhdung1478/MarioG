@@ -20,10 +20,8 @@
     "become-super-luigi": [
       { "x": 180, "y": 155, "width": 11, "height": 15 },
       { "x": 199, "y": 148, "width": 14, "height": 22 },
-      { "x": 220, "y": 139, "width": 14, "height": 31 },
       { "x": 180, "y": 155, "width": 11, "height": 15 },
       { "x": 199, "y": 148, "width": 14, "height": 22 },
-      { "x": 220, "y": 139, "width": 14, "height": 31 },
       { "x": 180, "y": 155, "width": 11, "height": 15 },
       { "x": 199, "y": 148, "width": 14, "height": 22 },
       { "x": 220, "y": 139, "width": 14, "height": 31 },

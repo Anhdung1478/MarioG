@@ -17,6 +17,18 @@
       { "x": 6, "y": 176, "width": 13, "height": 16 },
       { "x": 28, "y": 176, "width": 13, "height": 15 }
     ],
+    "become-super-mario": [
+      { "x": 179, "y": 152, "width": 12, "height": 15 },
+      { "x": 199, "y": 145, "width": 14, "height": 22 },
+      { "x": 179, "y": 152, "width": 12, "height": 15 },
+      { "x": 199, "y": 145, "width": 14, "height": 22 },
+      { "x": 179, "y": 152, "width": 12, "height": 15 },
+      { "x": 199, "y": 145, "width": 14, "height": 22 },
+      { "x": 220, "y": 137, "width": 14, "height": 30 },
+      { "x": 179, "y": 152, "width": 12, "height": 15 },
+      { "x": 199, "y": 145, "width": 14, "height": 22 },
+      { "x": 220, "y": 137, "width": 14, "height": 30 }
+    ],
     "fly-with-arms-in-front": [
       { "x": 44, "y": 62, "width": 15, "height": 18 }
     ],
