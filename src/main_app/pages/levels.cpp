@@ -176,10 +176,10 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
     }
     
     if(!_isPaused) {
-        if(!p_player->isInDeadAnimation()) {
+        if(!p_player->isInBehavior(mario::entity::PlayerBehavior::Dying)) {
             currLevelState.update(dt);
             if(currLevelState.times <= sf::seconds(0.f)) {
-                p_player->setStartedDead();
+                p_player->changePlayerBehavior(mario::entity::PlayerBehavior::Dying);
                 currLevelState.times = sf::seconds(0.f);
             }
         }

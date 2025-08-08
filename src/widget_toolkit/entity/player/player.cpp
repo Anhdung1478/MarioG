@@ -4,7 +4,9 @@
 #define FILE_PATH "../../asset/sprites/"
 
 mario::entity::Player::Player(sf::Vector2f spawnPoint, CharacterListType characterType, player_state::PlayerStateType stateType) : _characterType(characterType), _isAlive(true) {
-    _isFinishedDeadAnimation = false;
+    _isDeadAlready = false;
+    playerBehavior = PlayerBehavior::Normal;
+
     p_body = new DynamicBox(spawnPoint, sf::Vector2f(40.f, 40.f));
     if(characterType == CharacterListType::Mario) {
         p_animation = new Animation(FILE_PATH"mario.json", FILE_PATH"mario_sheets.png", PLAYER_SCALE, "mario-small.idle[0]");
@@ -25,24 +27,28 @@ mario::entity::Player::~Player() {
     delete p_stateManager;
 }
 
+/* =================================================================================================================================================================== */
+
 void mario::entity::Player::jump(bool isReleased) {
-    if(!_isAlive)
+    if(!_canMove)
         return;
 
     p_body->jump(isReleased);
 }
 
 void mario::entity::Player::move(bool isMoveRight, bool isReleased) {
-    if(!_isAlive)
+    if(!_canMove)
         return;
 
     p_body->move(isMoveRight, isReleased);
 }
 
 void mario::entity::Player::shotFireball(bool isReleased) {
-    if(!_isAlive)
+    if(!_canMove)
         return;
 }
+
+/* =================================================================================================================================================================== */
 
 sf::Vector2f mario::entity::Player::getVelocity() const {
     return p_body->getVelocity();
@@ -56,24 +62,12 @@ void mario::entity::Player::rotateDirection() {
     p_animation->rotate();
 }
 
-void mario::entity::Player::setStartedDead() {
-    jump(true);
-    move(0, true);
-    move(1, true);
-    shotFireball(true);
-    _isAlive = false;
-    
-    p_animation->clearAnimationStep();
-    
-    // running dead sound
-    p_body->setVelocity(sf::Vector2f(0.f, 0.f));
-    p_body->jump(false);
-
-    p_stateManager->setDeadAnimation(p_animation);
-    p_animation->setAnimationState(false);
-}
+/* =================================================================================================================================================================== */
 
 void mario::entity::Player::managePlayerAnimation() {
+    if(playerBehavior != PlayerBehavior::Normal)
+        return;
+
     if(!p_body->isOnGround()) { // change texture to jumping
             p_stateManager->setAnimation(p_animation, "jump[0]");
             p_animation->setAnimationState(false);
@@ -91,27 +85,174 @@ void mario::entity::Player::managePlayerAnimation() {
         }
 }
 
-void mario::entity::Player::managePlayerShadowState(float dt) {
-    if(_isShadow) {
-        shadowTimer -= sf::seconds(dt);
-        if(shadowTimer <= sf::seconds(0)) {
-            toggleShadowState(false);
-        }
+void mario::entity::Player::updatePlayerBehavior(float dt) {
+    behaviorTimer -= sf::seconds(dt);
+    if(behaviorTimer <= sf::seconds(0)) {
+        if(playerBehavior == PlayerBehavior::Invincible || playerBehavior == PlayerBehavior::Shadow || playerBehavior == PlayerBehavior::TransformSTB)
+            changePlayerBehavior(PlayerBehavior::Normal);
+
+        if(playerBehavior == PlayerBehavior::TransformBTS)
+            changePlayerBehavior(PlayerBehavior::Shadow);
+
+        if(playerBehavior == PlayerBehavior::Dying)
+            changePlayerBehavior(PlayerBehavior::AlreadyDead);
     }
 }
 
-void mario::entity::Player::managePlayerDeadState(float dt) {
-    if(!_isAlive && !_isFinishedDeadAnimation) {
-        deadAnimationTimer -= sf::seconds(dt);
-        _isFinishedDeadAnimation = (deadAnimationTimer <= sf::seconds(0));
-        if(_isFinishedDeadAnimation)
-            p_body->jump(true);
+void mario::entity::Player::togglePlayerMove(bool canMove) {
+    if(_canMove == canMove)
+        return;
+
+    if(!canMove) { // released all Player's button
+        jump(true);
+        move(0, true);
+        move(1, true);
+        shotFireball(true);
+    }
+    
+    _canMove = canMove;
+}
+
+/* =================================================================================================================================================================== */
+
+void mario::entity::Player::changePlayerBehavior(PlayerBehavior newBehavior) {
+    if(playerBehavior == newBehavior)
+        return;
+
+    // remove last Behavior
+    if(playerBehavior == PlayerBehavior::Shadow) {
+        p_animation->setFlicker(false);
+        _canCollisionWithEnemy = true;
+    }
+
+    if(playerBehavior == PlayerBehavior::TransformSTB) {
+        // stop powerup sound
+
+        _canCollisionWithEnemy = _canCollisionWithItem = true;
+        p_stateManager->changeToSuperState(p_animation, p_body);
+        togglePlayerMove(true);
+    }
+
+    if(playerBehavior == PlayerBehavior::TransformBTS) {
+        _canCollisionWithEnemy = _canCollisionWithItem = true;
+        p_stateManager->changeToSmallState(p_animation, p_body);
+        togglePlayerMove(true);
+    }
+
+    if(playerBehavior == PlayerBehavior::Invincible) {
+        // stop invincible behavior sound (Player after loot star 10s, ran out of time)
+    }
+
+    if(playerBehavior == PlayerBehavior::Climbing) {
+        _canCollisionWithEnemy = _canCollisionWithItem = true;
+        togglePlayerMove(true);
+    }
+
+    if(playerBehavior == PlayerBehavior::Dying) {
+        _canCollisionWithEnemy = _canCollisionWithItem = _canCollisionWithBlock = true;
+        _isAlive = true;
+        p_body->jump(true);
+        togglePlayerMove(true);
+    }
+
+    /* =================================================================================================================================================================== */
+
+    // change to new Behavior
+
+    playerBehavior = newBehavior;
+    if(newBehavior == PlayerBehavior::Shadow) {
+        _canCollisionWithEnemy = false;
+        p_animation->setFlicker(true);
+        behaviorTimer = sf::seconds(1.5f);
+    }
+
+    if(newBehavior == PlayerBehavior::TransformSTB) {
+        _canCollisionWithEnemy = _canCollisionWithItem = false;
+        togglePlayerMove(false);
+
+        // play powerup sound
+        behaviorTimer = sf::seconds(1.f);
+        p_animation->clearAnimationStep();
+
+        // add animation step
+
+        p_animation->setAnimationState(true);
+    }
+
+    if(newBehavior == PlayerBehavior::TransformBTS) {
+        _canCollisionWithEnemy = _canCollisionWithItem = false;
+        togglePlayerMove(false);
+
+        behaviorTimer = sf::seconds(1.5f);
+        p_animation->clearAnimationStep();
+
+        std::string currPlayerStateID = p_stateManager->getCurrentPlayerStateID();
+        std::cerr << currPlayerStateID << '\n';
+        for (int i = 0; i < 15; ++i)
+            p_animation->addAnimationStep(currPlayerStateID + ".hit[" + std::to_string(i) + "]");
+
+        p_animation->setAnimationState(true);
+    }
+
+    if(newBehavior == PlayerBehavior::Invincible) {
+        // play invincible behavior sound (Player after loot star)
+
+        behaviorTimer = sf::seconds(10.f); // 10 seconds of invincibility
+    }
+
+    if(newBehavior == PlayerBehavior::Climbing) {
+        _canCollisionWithEnemy = _canCollisionWithItem = false;
+        togglePlayerMove(false);
+    }
+
+    if(newBehavior == PlayerBehavior::Dying) { 
+        _canCollisionWithEnemy = _canCollisionWithItem = _canCollisionWithBlock = false;
+        // play dead sound
+        
+        _isAlive = false;
+        togglePlayerMove(false);
+        
+        behaviorTimer = sf::seconds(3);
+        p_animation->clearAnimationStep();
+        
+        p_body->setVelocity(sf::Vector2f(0.f, 0.f));
+        p_body->jump(false);
+
+        p_stateManager->setDeadAnimation(p_animation);
+        p_animation->setAnimationState(false);
+    }
+
+    if(newBehavior == PlayerBehavior::AlreadyDead) {
+        _canCollisionWithEnemy = _canCollisionWithItem = _canCollisionWithBlock = false;
+        _isAlive = false;
+        _isDeadAlready = true;
+        togglePlayerMove(false);
     }
 }
+
+/* =================================================================================================================================================================== */
+
+void mario::entity::Player::changeState(player_state::PlayerStateType newStateType) {
+    player_state::PlayerStateType lastState = p_stateManager->getCurrentState();
+    if(newStateType == lastState)
+        return;
+    
+    if(lastState == player_state::PlayerStateType::Small) {
+        // newState == player_state::PlayerStateType::Super
+        changePlayerBehavior(PlayerBehavior::TransformSTB);
+    } else
+        if(newStateType == player_state::PlayerStateType::Small) {
+            changePlayerBehavior(PlayerBehavior::TransformBTS);
+        } else { // Super to Fire
+            p_stateManager->changeState(newStateType, p_animation, p_body);
+        }
+}
+
+/* =================================================================================================================================================================== */
 
 void mario::entity::Player::update(const sf::RenderWindow *window, float dt) {
     if(p_body->getPosition().y >= 720.f)
-        setStartedDead();
+        changePlayerBehavior(PlayerBehavior::Dying);
 
     if(_isAlive) {
         managePlayerAnimation();
@@ -119,19 +260,19 @@ void mario::entity::Player::update(const sf::RenderWindow *window, float dt) {
         // change state for debugging
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Num1)) {
             std::cerr << "CALL TO FUNCTION CHANGE TO SMALL STATE\n";
-            p_stateManager->changeToSmallState(p_animation, p_body);
+            changeState(player_state::PlayerStateType::Small);
             std::cerr << "SUCCESFULLY\n";
         }
     
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Num2)) {
             std::cerr << "CALL TO FUNCTION CHANGE TO SUPER STATE\n";
-            p_stateManager->changeToSuperState(p_animation, p_body);
+            changeState(player_state::PlayerStateType::Super);
             std::cerr << "SUCCESFULLY\n";
         }
     
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Num3)) {
             std::cerr << "CALL TO FUNCTION CHANGE TO FIRE STATE\n";
-            p_stateManager->changeToFireState(p_animation, p_body);
+            changeState(player_state::PlayerStateType::Fire);
             std::cerr << "SUCCESFULLY\n";
         }
 
@@ -143,14 +284,12 @@ void mario::entity::Player::update(const sf::RenderWindow *window, float dt) {
 
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Num5)) {
             std::cerr << "CALL TO FUNCTION KILLED PLAYER\n";
-            setStartedDead();
+            changePlayerBehavior(PlayerBehavior::Dying);
             std::cerr << "SUCCESFULLY\n";
         }
     }
 
-    managePlayerDeadState(dt); 
-    managePlayerShadowState(dt);
-
+    updatePlayerBehavior(dt);
     p_animation->update(window, dt);
     p_body->updateSize(p_animation);
     p_body->update(dt);
@@ -175,6 +314,8 @@ void mario::entity::Player::render(sf::RenderWindow *window) {
     Entity::render(window);
 }
 
+/* =================================================================================================================================================================== */
+
 void mario::entity::Player::setOnGround(bool isOnGround) {
     p_body->setOnGround(isOnGround);
 }
@@ -183,45 +324,40 @@ void mario::entity::Player::resetJump() {
     p_body->resetJump();
 }
 
-void mario::entity::Player::toggleShadowState(bool isTurnOn) {
-    if(isTurnOn) {
-        _isShadow = true;
-        shadowTimer = sf::seconds(1.5f);
-        p_animation->setFlicker(true);
-        return;
-    }
-
-    _isShadow = false;
-    p_animation->setFlicker(false);
-}
-
-void mario::entity::Player::changePlayerBehavior(PlayerBehavior newBehavior) {
-    
-}
-
 void mario::entity::Player::beingHit() {
-    if(_isShadow)
+    if(playerBehavior != PlayerBehavior::Normal)
         return;
 
     if(getPlayerStateType() == player_state::PlayerStateType::Small) {
-        setStartedDead();
+        changePlayerBehavior(PlayerBehavior::Dying);
     } else {
-        p_stateManager->changeToSmallState(p_animation, p_body);
-        toggleShadowState(1);
+        changeState(player_state::PlayerStateType::Small);
     }
 }
 
+/* =================================================================================================================================================================== */
+
 bool mario::entity::Player::isDead() const {
-    return _isFinishedDeadAnimation;
+    return _isDeadAlready;
 }
 
-bool mario::entity::Player::isShadow() const {
-    return _isShadow;
+bool mario::entity::Player::isInBehavior(PlayerBehavior behavior) const {
+    return (playerBehavior == behavior);
 }
 
-bool mario::entity::Player::isInDeadAnimation() const {
-    return (!_isAlive);
+bool mario::entity::Player::canCollisionWithEnemy() const {
+    return _canCollisionWithEnemy;
 }
+
+bool mario::entity::Player::canCollisionWithItem() const {
+    return _canCollisionWithItem;
+}
+
+bool mario::entity::Player::canCollisionWithBlock() const {
+    return _canCollisionWithBlock;
+}
+
+/* =================================================================================================================================================================== */
 
 void mario::entity::Player::collectCoin() {
     ++coinCount;
@@ -244,21 +380,22 @@ void mario::entity::Player::collectCoinInBlock() {
 void mario::entity::Player::collectRedMushroom() {
     score += 1000;
     if (getPlayerStateType() == player_state::PlayerStateType::Small) {
-        p_stateManager->changeToSuperState(p_animation, p_body);
+        changeState(player_state::PlayerStateType::Super);
         // Play power-up sound
     } else {
         // Already super or fire, give points instead
     }
-    std::cout << "Collected Red Mushroom: " << score << " points\n";
+
+    std::cerr << "Collected Red Mushroom: " << score << " points\n";
 }
 
 void mario::entity::Player::collectFireFlower() {
     score += 1000;
     if (getPlayerStateType() == player_state::PlayerStateType::Small) {
-        p_stateManager->changeToSuperState(p_animation, p_body);
+        changeState(player_state::PlayerStateType::Super);
         // Play power-up sound
     } else if(getPlayerStateType() == player_state::PlayerStateType::Super) {
-        p_stateManager->changeToFireState(p_animation, p_body);
+        changeState(player_state::PlayerStateType::Fire);
         // Play power-up sound
     }
 }
@@ -270,16 +407,20 @@ void mario::entity::Player::collect1UpMushroom() {
 }
 
 void mario::entity::Player::collectStarman() {
-    _isInvincible = true;
-    invincibleTimer = sf::seconds(10.f); // 10 seconds of invincibility
-    // p_stateManager->changeToStarmanState(p_animation, p_body);
+    changePlayerBehavior(PlayerBehavior::Invincible);
 }
 
-mario::entity::CharacterListType mario::entity::Player::getCharacterType() {
+/* =================================================================================================================================================================== */
+
+mario::entity::PlayerBehavior mario::entity::Player::getPlayerBehavior() const {
+    return playerBehavior;
+}
+
+mario::entity::CharacterListType mario::entity::Player::getCharacterType() const {
     return _characterType;
 }
 
-mario::entity::player_state::PlayerStateType mario::entity::Player::getPlayerStateType() {
+mario::entity::player_state::PlayerStateType mario::entity::Player::getPlayerStateType() const {
     return p_stateManager->getCurrentState();
 }
 

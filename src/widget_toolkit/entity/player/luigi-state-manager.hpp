@@ -28,8 +28,8 @@ namespace mario::entity::player_state {
 
                 if(stateType == PlayerStateType::Fire)
                     curr_state = player_fire;
-
-                curr_state->update(p_animation, p_box);
+                
+                loadCurrentStateAnimation(p_animation, p_box);
             }
 
             ~LuigiStateManager() override {
@@ -41,6 +41,10 @@ namespace mario::entity::player_state {
             
             void setDeadAnimation(Animation *p_animation) override {
                 p_animation->setSpriteAnimation(LUIGI_TYPE_STR[0] + ".dying[0]");
+            }
+
+            std::string getCurrentPlayerStateID() const override {
+                return LUIGI_TYPE_STR[(int) currStateType];
             }
     };
 }
