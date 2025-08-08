@@ -161,7 +161,6 @@ namespace mario::entity {
 
             void rotate() {
                 _isFaceForward = 1 - _isFaceForward;
-                
                 scale.x = -scale.x;
                 p_sprite->setScale(scale);
             }

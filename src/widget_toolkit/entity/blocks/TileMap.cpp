@@ -240,31 +240,31 @@ bool TileMap::loadObjects(std::vector<mario::entity::Enemy*> &enemies, std::vect
                         }
                     }
                 }
-                else if(layerName == "Background"){
-                    backgroundBlocks.push_back(new BackgroundBlock(sf::Vector2f(x, y), sf::Vector2f(16, 16), objName));
-                }
+                // else if(layerName == "Background"){
+                //     backgroundBlocks.push_back(new BackgroundBlock(sf::Vector2f(x, y), sf::Vector2f(16, 16), objName));
+                // }
                 
-                if (objType == "goomba"){
-                    enemies.push_back(new mario::entity::Goomba(sf::Vector2f(x, y-100)));
-                }
-                else if (objType == "red-koopa"){
+                // if (objType == "goomba"){
+                //     enemies.push_back(new mario::entity::Goomba(sf::Vector2f(x, y-100)));
+                // }
+                if (objType == "red-koopa"){
                     enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(x, y-100), mario::entity::KoopaType::Red, false));
                 }
                 else if (objType == "red-koopa-fly"){
                     enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(x, y-100), mario::entity::KoopaType::Red, true));
                 }
-                else if (objType == "green-koopa"){
-                    enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(x, y-100), mario::entity::KoopaType::Green, false));
-                }
-                else if (objType == "green-koopa-fly"){
-                    enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(x, y-100), mario::entity::KoopaType::Green, true));
-                }
-                else if (objType == "piranha-plant"){
-                    enemies.push_back(new mario::entity::PiranhaGreen(sf::Vector2f(x, y)));
-                }
-                else if (objType == "lakitu"){
-                    // enemies.push_back(new mario::entity::Lakitu(sf::Vector2f(x, y)));
-                }
+                // else if (objType == "green-koopa"){
+                //     enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(x, y-100), mario::entity::KoopaType::Green, false));
+                // }
+                // else if (objType == "green-koopa-fly"){
+                //     enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(x, y-100), mario::entity::KoopaType::Green, true));
+                // }
+                // else if (objType == "piranha-plant"){
+                //     enemies.push_back(new mario::entity::PiranhaGreen(sf::Vector2f(x, y)));
+                // }
+                // else if (objType == "lakitu"){
+                //     // enemies.push_back(new mario::entity::Lakitu(sf::Vector2f(x, y)));
+                // }
             }
             // std::cout << '\n';
         }

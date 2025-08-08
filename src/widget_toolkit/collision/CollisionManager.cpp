@@ -192,7 +192,6 @@ void CollisionManager::checkCollisionPlayerWithBlocks(mario::entity::Player *&pl
 
     void CollisionManager::checkCollisionEnemyWithBlocks(std::vector<Enemy*> &enemies, std::vector<Block*> &blocks){
         for (auto& enemy : enemies) {
-            if(!enemy->getHitbox().findIntersection(cameraBounds)) continue;
             mario::entity::Piranha* piranha = dynamic_cast<mario::entity::Piranha*>(enemy);
             if(!piranha) {
                 int L, R;
@@ -255,7 +254,6 @@ void CollisionManager::checkCollisionPlayerWithBlocks(mario::entity::Player *&pl
             return;
 
         for (auto& enemy : enemies) {
-            if (!enemy->getHitbox().findIntersection(cameraBounds)) continue;
             SideCollision side = findCollisionSide(player, enemy);
             if (side != SideCollision::None) {
                 enemy->reactCollision(side ^ 1, Collision(Collision::Type::Player));
