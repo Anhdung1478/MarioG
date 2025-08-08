@@ -1,9 +1,9 @@
 {
   "explosion": {
     "explode": [
-      { "x": 324, "y": 235, "width": 19, "height": 20 },
-      { "x": 358, "y": 235, "width": 19, "height": 20 },
-      { "x": 394, "y": 235, "width": 19, "height": 20 }
+      { "x": 43, "y": 36, "width": 8, "height": 8 },
+      { "x": 60, "y": 33, "width": 12, "height": 14 },
+      { "x": 77, "y": 32, "width": 16, "height": 16 }
     ]
   }
 }

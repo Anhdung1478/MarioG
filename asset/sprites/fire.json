@@ -1,10 +1,10 @@
 {
   "fire": {
     "roll": [
-      { "x": 183, "y": 235, "width": 16, "height": 14 },
-      { "x": 217, "y": 235, "width": 16, "height": 14 },
-      { "x": 252, "y": 235, "width": 16, "height": 14 },
-      { "x": 287, "y": 235, "width": 16, "height": 14 }
+      { "x": 2, "y": 31, "width": 8, "height": 8 },
+      { "x": 11, "y": 31, "width": 8, "height": 8 },
+      { "x": 20, "y": 31, "width": 8, "height": 8 },
+      { "x": 29, "y": 31, "width": 8, "height": 8 }
     ]
   }
 }

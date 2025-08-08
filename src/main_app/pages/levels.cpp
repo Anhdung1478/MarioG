@@ -3,41 +3,47 @@
 #include "main-menu.hpp"
 #include "../../widget_toolkit/resource/SoundManager.hpp"
 
-mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::LevelState state) : Page(context), camera({1280, 720}), currLevelState(state) {
+mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::LevelState state) : Page(context), camera({1280, 720}), currLevelState(state), backgroundSprite(nullptr) {
     p_player = new mario::entity::Player(sf::Vector2f(100, 400), state.characterType, state.stateType);
     p_inputManager = std::make_unique<mario::input::InputManager>(context);
 
     tileMap = std::make_unique<mario::entity::TileMap>("../../asset/maps/tiles-8.json", "../../asset/maps/Map_" + std::to_string(currLevelState.level) + ".json", currLevelState.level-1);
     tileMap->loadObjects(enemies, items, blocks, backgroundBlocks);
+
+    if (!backgroundTexture.loadFromFile("../../asset/maps/MapBackground/map_" + std::to_string(currLevelState.level) + "_background.png")) {
+        std::cout << "Failed to load background texture for level " << currLevelState.level << "\n";
+        exit(1);
+    }
+
+    sf::Vector2f boundWorldSize = tileMap->getWorldBounds().size;
+    // if(currLevelState.level != 1) {
+    //     boundWorldSize -= sf::Vector2f(0, 2 * 16 * mario::entity::BLOCK_SCALE.y);
+    // }
+    
+    backgroundSprite = new sf::Sprite(backgroundTexture);
+    backgroundSprite->setPosition({0, 0});
+    float scaleX = boundWorldSize.x / backgroundTexture.getSize().x;
+    float scaleY = boundWorldSize.y / backgroundTexture.getSize().y;
+    backgroundSprite->setScale({scaleX, scaleY});
     // tileMap->createBlock(blocks, backgroundBlocks);
     // testBlock = new mario::entity::BackgroundBlock(sf::Vector2f(100, 500), sf::Vector2f(16, 16), "enemies-flag[0]");
     // testBlock = new mario::entity::BackgroundBlock(sf::Vector2f(100, 500), sf::Vector2f(16, 16), std::to_string(390), {"390", 1, 171, 16, 16});
+    // testFireWorks = new mario::entity::FireWorks(sf::Vector2f(500, 200), sf::Vector2f(500, 500), "fireworks[0]");
+    // testFireWorks->setShowFireworks(true);
+
+
 
     // Mario font initalize
     marioFont = std::make_unique<sf::Font>("../../asset/fonts/SuperMario256.ttf");
 
-    // Load enemies
-    // enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(1350.f, 600.f), mario::entity::KoopaType::Red, false));
-    // enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(350.f, 80.f), mario::entity::KoopaType::Green, true));
-
-    // testItem = new mario::entity::FireFlower(
-    //     "../../asset/sprites/fireflower.json",
+    // testItem = new mario::entity::Coin(
+    //     "../../asset/sprites/coin.json",
     //     "../../asset/maps/Image/tiles-8.png",
     //     sf::Vector2f(2.5f, 2.5f),
-    //     "fireflower[0]",
+    //     "coin[0]",
     //     sf::Vector2f(500.f, 500.f),
-    //     sf::Vector2f(16.f, 16.f),
-    //     sf::Vector2f(0.f, 0.f)
+    //     sf::Vector2f(16.f, 16.f)
     // );
-
-    testItem = new mario::entity::Coin(
-        "../../asset/sprites/coin.json",
-        "../../asset/maps/Image/tiles-8.png",
-        sf::Vector2f(2.5f, 2.5f),
-        "coin[0]",
-        sf::Vector2f(500.f, 500.f),
-        sf::Vector2f(16.f, 16.f)
-    );
 
     // Pause/Resume game
     pauseTexture = std::make_unique<sf::Texture>("../../asset/textures/pause-button.png");
@@ -207,7 +213,7 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
         }
 
         for(auto &block : blocks) {
-            if (!block->shouldDelete() && block->getHitbox().findIntersection(cameraBounds)) {
+            if (!block->shouldDelete()) {
                 block->update(window, dt);
             }
         }
@@ -227,6 +233,8 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
         collisionManager.checkCollisionPlayerWithItems(p_player, items);
         collisionManager.checkCollisionItemsWithBlocks(items, blocks);
         collisionManager.checkCollisionEnemyWithEnemy(enemies);
+
+        // testFireWorks->update(window, dt);
         // auto measure = [](auto&& func, const std::string& name) {
         //     auto start = std::chrono::high_resolution_clock::now();
         //     func();
@@ -505,6 +513,7 @@ void mario::pages::LevelsPage::renderLevelState(sf::RenderWindow *window, mario:
 }
 
 void mario::pages::LevelsPage::render(sf::RenderWindow *window) {
+    window->draw(*backgroundSprite);
     camera.applyTo(*window);
 
     sf::FloatRect cameraBounds = camera.getCameraBounds();
@@ -587,6 +596,7 @@ void mario::pages::LevelsPage::render(sf::RenderWindow *window) {
         }
     }
 
+    // testFireWorks->render(window);
 
     p_player->render(window);
 

@@ -80,6 +80,7 @@ namespace mario::entity {
             if(numberOfCoins == 0){
                 p_animation->setSpriteAnimation("empty-question-block[" + std::to_string(themeID) + "]");
             }
+            player->collectCoinInBlock();
         }
         else if (typeOfItem == 1) { // Red-mushroom or Fire-flower
             if (player->getPlayerStateType() == player_state::PlayerStateType::Small) {// Spawn Red mushroom
