@@ -13,13 +13,14 @@ enum SideCollision {
 };
 
 struct Collision {
-    enum class Type { Player, Wall, Bullet, Brick };
+    enum class Type { Player, Wall, Bullet, Brick, Enemy };
     Type type;
     Collision(Type t) : type(t) {}
     bool isWithPlayer() const { return type == Type::Player; }
     bool isWithWall() const { return type == Type::Wall; }
     bool isWithBullet() const { return type == Type::Bullet; }
     bool isWithBrick() const { return type == Type::Brick; }
+    bool isWithEnemy() const { return type == Type::Enemy; }
 };
 
 namespace mario::entity {

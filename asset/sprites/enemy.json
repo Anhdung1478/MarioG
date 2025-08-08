@@ -10,6 +10,9 @@
       { "x": 41, "y": 181, "width": 18, "height": 10 },
       { "x": 41, "y": 181, "width": 18, "height": 10 },
       { "x": 41, "y": 181, "width": 18, "height": 10 }
+    ],
+    "dead-special": [
+      { "x": 79, "y": 173, "width": 18, "height": 18 }
     ]
   },
   "piranha-green": {

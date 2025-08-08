@@ -21,6 +21,9 @@ namespace mario::entity {
         EnemyBehavior behavior;
         float detectionRange;
         bool isActive;
+        bool isPlayerDeadWhenCollisionLF = true;
+        bool isPlayerDeadWhenCollisionT = false;
+        bool isCheckCollisionWithBlock = true;
 
         void patrol(float dt) {
             DynamicBox* body = dynamic_cast<DynamicBox*>(p_body);
@@ -182,6 +185,30 @@ namespace mario::entity {
             if (body) {
                 body->setVelocity(velocity);
             }
+        }
+
+        void setIsPlayerDeadWhenCollisionLF(bool check) {
+            isPlayerDeadWhenCollisionLF = check;
+        }
+
+        bool getIsPlayerDeadWhenCollisionLF() {
+            return isPlayerDeadWhenCollisionLF;
+        }
+
+        void setIsPlayerDeadWhenCollisionT(bool check) {
+            isPlayerDeadWhenCollisionT = check;
+        }
+
+        bool getIsPlayerDeadWhenCollisionT() {
+            return isPlayerDeadWhenCollisionT;
+        }
+
+        void setIsCheckCollisionWithBlock(bool check) {
+            isCheckCollisionWithBlock = check;
+        }
+
+        bool getIsCheckCollisionWithBlock() {
+            return isCheckCollisionWithBlock;
         }
     };
     

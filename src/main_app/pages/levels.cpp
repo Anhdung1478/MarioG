@@ -226,8 +226,7 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
         collisionManager.checkCollisionPlayerWithEnemies(p_player, enemies);
         collisionManager.checkCollisionPlayerWithItems(p_player, items);
         collisionManager.checkCollisionItemsWithBlocks(items, blocks);
-
-
+        collisionManager.checkCollisionEnemyWithEnemy(enemies);
         // auto measure = [](auto&& func, const std::string& name) {
         //     auto start = std::chrono::high_resolution_clock::now();
         //     func();
@@ -542,10 +541,14 @@ void mario::pages::LevelsPage::render(sf::RenderWindow *window) {
             backgroundBlock->render(window);
         }
     }
-    
+
+    // Render Piranha enemies before blocks
     for (auto* enemy : enemies) {
         if (!enemy->shouldDelete() && enemy->getHitbox().findIntersection(cameraBounds)) {
-            enemy->render(window);
+            mario::entity::Piranha* piranha = dynamic_cast<mario::entity::Piranha*>(enemy);
+            if (piranha) {
+                piranha->render(window);
+            }
         }
     }
 
@@ -555,18 +558,28 @@ void mario::pages::LevelsPage::render(sf::RenderWindow *window) {
         }
     }
 
-    p_player->render(window);
-
-    // Render enemies
+    // Render non-Piranha enemies after blocks
     for (auto* enemy : enemies) {
-        if (!enemy->shouldDelete()) {
-            enemy->render(window);
+        if (!enemy->shouldDelete() && enemy->getHitbox().findIntersection(cameraBounds)) {
+            mario::entity::Piranha* piranha = dynamic_cast<mario::entity::Piranha*>(enemy);
+            if (!piranha) { 
+                enemy->render(window);
+            }
         }
     }
 
-    for (auto &block : blocks) {
-        block->render(window);
-    }
+    p_player->render(window);
+
+    // // Render enemies
+    // for (auto* enemy : enemies) {
+    //     if (!enemy->shouldDelete()) {
+    //         enemy->render(window);
+    //     }
+    // }
+
+    // for (auto &block : blocks) {
+    //     block->render(window);
+    // }
 
     for (auto &item : items) {
         if (item && !item->isCollected() && item->getHitbox().findIntersection(cameraBounds)) {
