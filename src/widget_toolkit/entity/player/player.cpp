@@ -195,6 +195,10 @@ void mario::entity::Player::toggleShadowState(bool isTurnOn) {
     p_animation->setFlicker(false);
 }
 
+void mario::entity::Player::changePlayerBehavior(PlayerBehavior newBehavior) {
+    
+}
+
 void mario::entity::Player::beingHit() {
     if(_isShadow)
         return;

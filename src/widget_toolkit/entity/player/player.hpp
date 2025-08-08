@@ -16,6 +16,7 @@ namespace mario::entity {
         private:
             mario::entity::player_state::PlayerStateManager *p_stateManager;
             CharacterListType _characterType;
+            PlayerBehavior playerBehavior;
 
             sf::Time deadAnimationTimer = sf::seconds(3);
             sf::Time shootingDelayTimer;
@@ -54,6 +55,7 @@ namespace mario::entity {
             void managePlayerShadowState(float dt); // manage Player shadow state (state after being hit and last 1.5s. In this state, Player can go through Enemy but not Block)
             void managePlayerDeadState(float dt); // manage Player when being dead
             
+            void changePlayerBehavior(PlayerBehavior newBehavior); // change Player behavior to newBehavior
             void beingHit(); // being hit by enemy or entity like level trap
             void toggleShadowState(bool isTurnOn); // toggle on/off shadow state, turn on to be a shadow in x second after being hit by enemy or level trap. In this state, Player can go through Enemy but not Block
             
