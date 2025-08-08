@@ -34,7 +34,7 @@ namespace mario::entity {
 
         void loadRunningAnimations() {
             p_animation->clearAnimationStep();
-            for (int i = 0; i < 10; ++i) {
+            for (int i = 0; i < 11; ++i) {
                 std::string spriteID = typePrefix + "running[" + std::to_string(i) + "]";
                 try {
                     p_animation->addAnimationStep(spriteID);
@@ -166,10 +166,12 @@ namespace mario::entity {
                     if(side == SideCollision::Left) {
                         body->move(true, false); // Move right if hit from left
                         body->setIsFaceForward(true);
+                        //std::cout << "move right" << std::endl;
                     }
                     else if(side == SideCollision::Right) {
                         body->move(false, false); // Move left if hit from right
                         body->setIsFaceForward(false);
+                        //std::cout << "move left" << std::endl;
                     }
                     if(p_animation->isFaceForward() != body->isFaceForward()) {
                         p_animation->rotate();
@@ -190,7 +192,7 @@ namespace mario::entity {
                         p_animation->rotate();
                     }
                 }
-            } else {
+            } else if(p_body->getPosition().x >= initialPosition.x - patrolRange && p_body->getPosition().x <= initialPosition.x + patrolRange) {
                 p_body->move(p_body->isFaceForward(), false); // continue
             }
         }
@@ -300,8 +302,8 @@ namespace mario::entity {
             }
             updateBehavior(dt);
             p_animation->update(window, dt);
+            p_body->updateSize(p_animation);
             p_body->update(dt);
-            // p_body->updateSize(p_animation);
         }
     };
 

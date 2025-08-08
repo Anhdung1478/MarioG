@@ -165,8 +165,8 @@ namespace mario::entity {
             if (!shouldBeDeleted) {
                 updateBehavior(dt);
                 p_animation->update(window, dt);
-                p_body->update(dt);
                 p_body->updateSize(p_animation);
+                p_body->update(dt);
             }
         }
     };

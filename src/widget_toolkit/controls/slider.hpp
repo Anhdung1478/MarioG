@@ -18,6 +18,7 @@ namespace mario {
             float maxValue;
             float currentValue;
             sf::Vector2f Scale;
+            sf::Vector2f position;
 
             bool isDragging = false;
 
@@ -26,7 +27,7 @@ namespace mario {
 
         public:
             Slider(std::unique_ptr<sf::Texture> barTex,  std::unique_ptr<sf::Texture> handleTex, std::unique_ptr<sf::Font> font, 
-                        sf::Vector2f position, std::string label, sf::Vector2f Sc, float minVal = 0.f, float maxVal = 100.f, float initialVal = 50.0f);
+                        sf::Vector2f pos, std::string label, sf::Vector2f Sc, float minVal = 0.f, float maxVal = 100.f, float initialVal = 50.0f);
 
             void handleEvent(const sf::Event& event, const sf::RenderWindow& window);
             void update(const sf::RenderWindow& window);
@@ -36,5 +37,7 @@ namespace mario {
             float getValue() const;
 
             void setOnValueChanged(std::function<void(float)> callback);
+
+            void setPosition(sf::Vector2f newPos);
     };
 }

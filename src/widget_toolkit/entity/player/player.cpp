@@ -245,6 +245,7 @@ void mario::entity::Player::collectRedMushroom() {
     } else {
         // Already super or fire, give points instead
     }
+    std::cout << "Collected Red Mushroom: " << score << " points\n";
 }
 
 void mario::entity::Player::collectFireFlower() {

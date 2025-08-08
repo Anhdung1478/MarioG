@@ -92,7 +92,7 @@ namespace mario::entity {
                 p_animation->setSpriteAnimation("empty-brick-block[" + std::to_string(themeID) + "]");
                 typeOfItem = -2; // Mark as empty
                 return 1; 
-            } else if (player->getPlayerStateType() == player_state::PlayerStateType::Super) {
+            } else {
                 // Spawn Fire flower
                 p_animation->setSpriteAnimation("empty-brick-block[" + std::to_string(themeID) + "]");
                 typeOfItem = -2; // Mark as empty

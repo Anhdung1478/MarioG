@@ -5,9 +5,9 @@
 using namespace mario;
 
     Slider::Slider(std::unique_ptr<sf::Texture> barTex,  std::unique_ptr<sf::Texture> handleTex, std::unique_ptr<sf::Font> f, 
-            sf::Vector2f position, std::string label, sf::Vector2f Sc, float minVal, float maxVal, float initialVal)
+            sf::Vector2f pos, std::string label, sf::Vector2f Sc, float minVal, float maxVal, float initialVal)
     : barTexture(std::move(barTex)), handleTexture(std::move(handleTex)), font(std::move(f)),
-    minValue(minVal), maxValue(maxVal), currentValue(initialVal), Scale(Sc){
+    minValue(minVal), maxValue(maxVal), currentValue(initialVal), Scale(Sc), position(pos){
     barSprite = std::make_unique<sf::Sprite>(*barTexture);
     barSprite->setOrigin(sf::Vector2f(barTexture->getSize().x / 2.f, barTexture->getSize().y / 2.f));
     barSprite->setPosition(sf::Vector2f(position));
@@ -113,4 +113,20 @@ float Slider::getValue() const {
 
 void Slider::setOnValueChanged(std::function<void(float)> callback) {
     onValueChanged = callback;
+}
+
+void Slider::setPosition(sf::Vector2f newPos) {
+    position = newPos;
+
+    barSprite->setPosition(position);
+
+    float barStartX = barSprite->getGlobalBounds().position.x + 28;
+    float barWidth = barSprite->getGlobalBounds().size.x - 55;
+    float percent = (currentValue - minValue) / (maxValue - minValue);
+    float handleX = barStartX + barWidth * percent;
+    handleSprite->setPosition(sf::Vector2f(handleX, barSprite->getPosition().y));
+
+    sf::FloatRect barBounds = barSprite->getGlobalBounds();
+    labelText->setPosition(sf::Vector2f(barBounds.position.x - labelText->getGlobalBounds().size.x - 30,
+                                        barBounds.position.y + barBounds.size.y / 2.f - labelText->getCharacterSize() / 1.5f));
 }
