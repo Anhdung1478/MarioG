@@ -22,8 +22,7 @@ struct Collision {
     bool isWithBrick() const { return type == Type::Brick; }
 };
 
-namespace mario {
-    namespace entity {
+namespace mario::entity {
 
     class Player;
     class ItemManager;
@@ -51,5 +50,4 @@ namespace mario {
         bool shouldDelete() const { return shouldBeDeleted; }
     };
 
-    } // namespace entity
-} // namespace mario
+} // namespace mario::entity

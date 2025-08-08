@@ -152,7 +152,7 @@ void mario::entity::Player::update(const sf::RenderWindow *window, float dt) {
     managePlayerShadowState(dt);
 
     p_animation->update(window, dt);
-    p_body->updateSize(p_animation);
+    // p_body->updateSize(p_animation);
     p_body->update(dt);
     
     if(p_animation->isFaceForward() != p_body->isFaceForward())
@@ -252,7 +252,7 @@ void mario::entity::Player::collectFireFlower() {
     score += 1000;
     if (getPlayerStateType() == player_state::PlayerStateType::Small) {
         p_stateManager->changeToSuperState(p_animation, p_body);
-            // Play power-up sound
+        // Play power-up sound
     } else if(getPlayerStateType() == player_state::PlayerStateType::Super) {
         p_stateManager->changeToFireState(p_animation, p_body);
         // Play power-up sound

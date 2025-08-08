@@ -9,7 +9,7 @@ namespace mario::entity {
         name = name + "[" + std::to_string(themeID) + "]";
         p_animation = new mario::entity::Animation("../../asset/maps/Image/tiles-8.png", BLOCK_SCALE, sprites);
         p_animation->setSpriteAnimation(name);
-        p_animation->setAnimationState(true);
+        p_animation->setAnimationState(false);
 
         coins_animation->addAnimationStep("coin[0]");
         coins_animation->addAnimationStep("coin[1]");
@@ -208,11 +208,9 @@ namespace mario::entity {
     }
 
     void Brick::render(sf::RenderWindow *window) {
-        if(isExist()){
-            p_animation->renderWithPosition(window, p_body->getPosition());
-            p_body->renderHitboxRect(window);
-            
-        }
+        if(isExist())
+            Entity::render(window);
+
         if(coins_animation->getAnimationState()) {
             if(coins_animation->getStep() == 4) coins_animation->setVelocity(sf::Vector2f(0.f, 0.f));
             coins_animation->render(window);

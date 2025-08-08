@@ -18,21 +18,22 @@ namespace entity {
         });
     }
 
-void CollisionManager::findBlocksCollisions(int &L, int &R, const mario::entity::Entity *EntityA, std::vector<Block*> &blocks) {
-    //using lower_bound and upper_bound to find the range of blocks that might collide with the entity
-    auto itL = std::lower_bound(blocks.begin(), blocks.end(), EntityA->getPosition().x - EntityA->getSize().x, 
-        [](const Block *block, float posX) {
-            return block->getPosition().x < posX;
-        });
+    void CollisionManager::findBlocksCollisions(int &L, int &R, const mario::entity::Entity *EntityA, std::vector<Block*> &blocks) {
+        //using lower_bound and upper_bound to find the range of blocks that might collide with the entity
+        float boundX = 2 * EntityA->getSize().x;
+        auto itL = std::lower_bound(blocks.begin(), blocks.end(), EntityA->getPosition().x - boundX, 
+            [](const Block *block, float posX) {
+                return block->getPosition().x < posX;
+            });
 
-    auto itR = std::upper_bound(blocks.begin(), blocks.end(), EntityA->getPosition().x + EntityA->getSize().x, 
-        [](float posX, const Block *block) {
-            return posX < block->getPosition().x;
-        });
+        auto itR = std::upper_bound(blocks.begin(), blocks.end(), EntityA->getPosition().x + boundX, 
+            [](float posX, const Block *block) {
+                return posX < block->getPosition().x;
+            });
 
-        // Set the collision bounds
-        L = std::distance(blocks.begin(), itL);
-        R = std::distance(blocks.begin(), itR);
+            // Set the collision bounds
+            L = std::distance(blocks.begin(), itL);
+            R = std::distance(blocks.begin(), itR);
     }
 
     SideCollision CollisionManager::findCollisionSide(const mario::entity::Entity *entityA, const mario::entity::Entity *entityB) {
