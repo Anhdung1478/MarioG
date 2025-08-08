@@ -152,7 +152,7 @@ void mario::entity::Player::update(const sf::RenderWindow *window, float dt) {
     managePlayerShadowState(dt);
 
     p_animation->update(window, dt);
-    p_body->updateSize(p_animation);
+    // p_body->updateSize(p_animation);
     p_body->update(dt);
     
     if(p_animation->isFaceForward() != p_body->isFaceForward())
