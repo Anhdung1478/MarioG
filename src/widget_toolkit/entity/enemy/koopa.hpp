@@ -18,7 +18,8 @@ namespace mario::entity {
             Running,
             Jumping,
             TransitionToShell,
-            Shell
+            Shell,
+            DeadSpecial
         };
 
         KoopaType koopaType;
@@ -29,8 +30,13 @@ namespace mario::entity {
         float stateTimer;
         bool checkShell = false;
         float hitCooldown = 0.f;
+        float shellCollisionTimer = 0.f;
+        float verticalVelocity = 0.f;
+        const float jumpForce = -450.f;
+        const float gravity = 600.f;
         static constexpr float HIT_COOLDOWN_DURATION = 1.0f;
         static constexpr float TRANSITION_DURATION = 0.35f;
+        static constexpr float SHELL_COLLISION_DELAY = 0.1f;
 
         void loadRunningAnimations() {
             p_animation->clearAnimationStep();
@@ -78,6 +84,16 @@ namespace mario::entity {
                 } catch (const std::out_of_range& e) {
                     std::cerr << "Error loading sprite: " << spriteID << " - " << e.what() << "\n";
                 }
+            }
+        }
+
+        void loadDeadSpecialAnimations() {
+            p_animation->clearAnimationStep();
+            std::string spriteID = typePrefix + "dead-special[" + std::to_string(0) + "]";
+            try {
+                p_animation->addAnimationStep(spriteID);
+            } catch (const std::out_of_range& e) {
+                std::cerr << "Error loading sprite: " << spriteID << " - " << e.what() << "\n";
             }
         }
 
@@ -151,15 +167,28 @@ namespace mario::entity {
         }
 
         void reactCollision(int side, const Collision& collision) override {
-            if(collision.isWithPlayer() && (side == SideCollision::Top)) {
+            if(collision.isWithPlayer() && (side == SideCollision::Top) && currentState != KoopaState::Shell) {
                 hitByPlayer();
-            } else if(collision.isWithPlayer() && currentState == KoopaState::Shell && lastState == KoopaState::Shell) {
+            } else if(collision.isWithPlayer() && currentState == KoopaState::Shell && lastState == KoopaState::Shell && !checkShell) {
                 DynamicBox* body = dynamic_cast<DynamicBox*>(p_body);
                 if(body) {
                     checkShell = true;
                     float pushSpeed = 1000.f;
-                    body->setVelocity({body->isFaceForward() ? -pushSpeed : pushSpeed, body->getVelocity().y});
+                    body->setVelocity({side == SideCollision::Right ? -pushSpeed : pushSpeed, body->getVelocity().y});
+                    shellCollisionTimer = SHELL_COLLISION_DELAY;
                 }
+            } else if(collision.isWithEnemy()){
+                currentState = KoopaState::DeadSpecial;
+                loadDeadSpecialAnimations();
+                try {
+                    p_animation->setSpriteAnimation(typePrefix + "dead-special[0]");
+                } catch (const std::out_of_range& e) {
+                    std::cerr << "Error setting sprite: goomba-new.dead-special[0] - " << e.what() << "\n";
+                }
+                p_animation->setAnimationState(false);
+                verticalVelocity = jumpForce;
+                lastState = KoopaState::DeadSpecial;
+                setActive(true);
             } else if(collision.isWithWall() && (side == SideCollision::Left || side == SideCollision::Right)) {
                 DynamicBox* body = dynamic_cast<DynamicBox*>(p_body);
                 if(body) {
@@ -206,6 +235,15 @@ namespace mario::entity {
             if (hitCooldown > 0.f) {
                 hitCooldown -= dt;
                 if (hitCooldown < 0.f) hitCooldown = 0.f;
+            }
+
+            if (shellCollisionTimer > 0.f) {
+                shellCollisionTimer -= dt;
+                if (shellCollisionTimer <= 0.f) {
+                    setIsPlayerDeadWhenCollisionLF(true);
+                    setIsPlayerDeadWhenCollisionT(true);
+                    shellCollisionTimer = 0.f;
+                }
             }
 
             if (p_body->getPosition().y > 1000.f) {
@@ -302,13 +340,23 @@ namespace mario::entity {
                         lastState = KoopaState::TransitionToShell;
                     }
                 } else if (currentState == KoopaState::Shell && lastState == KoopaState::Shell && !checkShell) {
+                    setIsPlayerDeadWhenCollisionLF(false);
                     p_body->setVelocity({0.f, p_body->getVelocity().y});
                 }
+                if (currentState == KoopaState::DeadSpecial) {
+                    verticalVelocity += gravity * dt;
+                    p_body->setPosition(sf::Vector2f(p_body->getPosition().x, p_body->getPosition().y + verticalVelocity * dt));
+                    setIsCheckCollisionWithBlock(false);
+                } 
             }
             updateBehavior(dt);
             p_animation->update(window, dt);
             p_body->updateSize(p_animation);
             p_body->update(dt);
+        }
+
+        bool checkShellState() {
+            return currentState == KoopaState::Shell && checkShell;
         }
     };
 

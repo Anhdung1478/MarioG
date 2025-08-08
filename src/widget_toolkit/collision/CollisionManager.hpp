@@ -5,6 +5,8 @@
 #include "../entity/item/item.hpp"
 #include "../entity/item/ItemManager.hpp"
 #include "../entity/enemy/piranha.hpp"
+#include "../entity/enemy/koopa.hpp"
+#include "../entity/enemy/goomba.hpp"
 
 
 namespace mario {
@@ -22,6 +24,7 @@ public:
     void checkCollisionPlayerWithEnemies(Player *&player, std::vector<Enemy*> &enemies);
     void checkCollisionPlayerWithItems(Player *&player, std::vector<Item*> &items);
     void checkCollisionItemsWithBlocks(std::vector<Item*> &items, std::vector<Block*> &blocks);
+    void checkCollisionEnemyWithEnemy(std::vector<Enemy*> &enemies);
 private:
     ItemManager* itemManager;
     sf::FloatRect cameraBounds;

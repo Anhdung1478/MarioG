@@ -11,11 +11,15 @@ namespace mario::entity {
     protected:
         enum class GoombaState {
             Walking,
-            Dead
+            Dead,
+            DeadSpecial
         };
 
         GoombaState currentState;
         GoombaState lastState;
+        float verticalVelocity = 0.f;
+        const float jumpForce = -450.f;
+        const float gravity = 600.f;
         
         void loadWalkingAnimations() {
             p_animation->clearAnimationStep();
@@ -39,6 +43,17 @@ namespace mario::entity {
                 } catch (const std::out_of_range& e) {
                     std::cerr << "Error loading sprite: " << spriteID << " - " << e.what() << "\n";
                 }
+            }
+            p_animation->setLoop(false);
+        }
+
+        void loadDeadSpecialAnimations() {
+            p_animation->clearAnimationStep();
+            std::string spriteID = "goomba-new.dead-special[0]";
+            try {
+                p_animation->addAnimationStep(spriteID);
+            } catch (const std::out_of_range& e) {
+                std::cerr << "Error loading sprite: " << spriteID << " - " << e.what() << "\n";
             }
             p_animation->setLoop(false);
         }
@@ -114,7 +129,20 @@ namespace mario::entity {
                 setActive(true);
             } else if(collision.isWithBrick()) {
 
-            } else {
+            } else if(collision.isWithEnemy()) {
+                currentState = GoombaState::DeadSpecial;
+                loadDeadSpecialAnimations();
+                try {
+                    p_animation->setSpriteAnimation("goomba-new.dead-special[0]");
+                } catch (const std::out_of_range& e) {
+                    std::cerr << "Error setting sprite: goomba-new.dead-special[0] - " << e.what() << "\n";
+                }
+                p_animation->setAnimationState(false);
+                verticalVelocity = jumpForce;
+                lastState = GoombaState::DeadSpecial;
+                setActive(true);
+            }
+            else {
                 p_body->move(p_body->isFaceForward(), false); // continue
             }
         }
@@ -160,7 +188,12 @@ namespace mario::entity {
                         p_animation->setAnimationState(false);
                         shouldBeDeleted = true;
                     }
-                }
+                } 
+                if (currentState == GoombaState::DeadSpecial) {
+                    verticalVelocity += gravity * dt;
+                    p_body->setPosition(sf::Vector2f(p_body->getPosition().x, p_body->getPosition().y + verticalVelocity * dt));
+                    setIsCheckCollisionWithBlock(false);
+                } 
             }
             if (!shouldBeDeleted) {
                 updateBehavior(dt);
