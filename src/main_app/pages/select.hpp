@@ -31,8 +31,8 @@ namespace mario::pages {
             float frameWidth;
             float FRAME_SPACING;
 
-            sf::Texture backgroundTexture;
-            sf::Sprite backgroundSprite;
+            std::unique_ptr<sf::Texture> backgroundTexture;
+            std::unique_ptr<sf::Sprite> backgroundSprite;
         public:
             SelectPage(MainWindow &context, int level);
             ~SelectPage();
