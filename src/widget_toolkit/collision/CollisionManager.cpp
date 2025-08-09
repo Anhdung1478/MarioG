@@ -2,8 +2,7 @@
 
 #include <algorithm>
 
-namespace mario {
-namespace entity {
+namespace mario::entity {
 
     void CollisionManager::updateCameraBounds(const sf::FloatRect &bounds) {
         cameraBounds = bounds;
@@ -78,12 +77,12 @@ namespace entity {
         }
     }
 
-void CollisionManager::checkCollisionPlayerWithBlocks(mario::entity::Player *&player, std::vector<Block*> &blocks, std::vector<Item*> &items) {
-    if(player->isInDeadAnimation())
-        return;
+    void CollisionManager::checkCollisionPlayerWithBlocks(mario::entity::Player *&player, std::vector<Block*> &blocks, std::vector<Item*> &items) {
+        if(!player->canCollisionWithBlock())
+            return;
 
-    int L, R;
-    findBlocksCollisions(L, R, player, blocks);
+        int L, R;
+        findBlocksCollisions(L, R, player, blocks);
 
         bool hasTopCollision = false;
         bool hasBottomCollision = false;
@@ -258,13 +257,16 @@ void CollisionManager::checkCollisionPlayerWithBlocks(mario::entity::Player *&pl
     }
 
     void CollisionManager::checkCollisionPlayerWithEnemies(Player *&player, std::vector<Enemy*> &enemies) {
-        if(player->isInDeadAnimation() || player->isShadow())
+        if(!player->canCollisionWithEnemy())
             return;
 
         for (auto& enemy : enemies) {
             SideCollision side = findCollisionSide(player, enemy);
             if (side != SideCollision::None) {
                 enemy->reactCollision(side ^ 1, Collision(Collision::Type::Player));
+                if(player->isShadow() && side != SideCollision::Bottom)
+                    side = SideCollision::None;
+
                 switch (side) {
                     case SideCollision::Top:
                         player->beingHit();
@@ -275,9 +277,7 @@ void CollisionManager::checkCollisionPlayerWithBlocks(mario::entity::Player *&pl
                             player->beingHit();
                         } else {
                             // std::cout << 1 << std::endl;
-                            player->resetJump();
-                            player->setOnGround(true);
-                            player->jump(false);
+                            player->jumpOnEnemyHead();
                         }
                         break;
                     case SideCollision::Left:
@@ -300,7 +300,7 @@ void CollisionManager::checkCollisionPlayerWithBlocks(mario::entity::Player *&pl
 
 
     void CollisionManager::checkCollisionPlayerWithItems(Player *&player, std::vector<mario::entity::Item*>& items) {
-        if(player->isInDeadAnimation())
+        if(!player->canCollisionWithItem())
             return;
 
         for (auto& item : items) {
@@ -418,6 +418,5 @@ void CollisionManager::checkCollisionPlayerWithBlocks(mario::entity::Player *&pl
             }
         }
     }
-
-} // namespace entity
-} // namespace mario
+    
+} // namespace mario::entity

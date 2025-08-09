@@ -112,7 +112,7 @@ namespace mario::entity {
 
             void resetJump() override {
                 velocity.y = std::min(velocity.y, 0.f);
-                _isJumpping = 0;
+                _isJumpping = false;
             }
 
             bool isNotMoving() const override {

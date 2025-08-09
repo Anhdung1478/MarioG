@@ -8,27 +8,38 @@
 #include "luigi-state-manager.hpp"
 #include "../../resource/LevelState.hpp"
 #include "../item/item.hpp"
+#include "fireball.hpp"
 
 namespace mario::entity {
     static constexpr sf::Vector2f PLAYER_SCALE = sf::Vector2f(2.5f, 2.5f);
+    static constexpr float ANIMATION_TIME_BETWEEN_STEP_WHEN_BEING_HIT = 1.f / 10.f;
+    static constexpr float ANIMATION_TIME_BETWEEN_STEP_WHEN_TRANSFORM_TO_BIG = 1.f / 10.f;
+    static constexpr float ANIMATION_TIME_BETWEEN_STEP_IN_NORMAL_BEHAVIOR = 1.f / 10.f;
 
     class Player : public Entity {
         private:
             mario::entity::player_state::PlayerStateManager *p_stateManager;
             CharacterListType _characterType;
+            PlayerBehavior playerBehavior;
 
-            sf::Time deadAnimationTimer = sf::seconds(3);
+            std::vector<Fireball*> fireballs;
+
             sf::Time shootingDelayTimer;
-            sf::Time invincibleTimer, shadowTimer;
+            sf::Time behaviorTimer;
             bool _isOnGround;
 
             bool hasPlayedJumpSound_ = false; // For sound effect
-            bool _isAlive = true, _isFinishedDeadAnimation = false;
-            bool _isShadow = false, _isInvincible = false;
+            bool _canMove = true, _isAlive = true, _isDeadAlready = false;
+            bool _canCollisionWithEnemy = true, _canCollisionWithItem = true, _canCollisionWithBlock = true;
+            bool _isTransforming = false;
 
             int score = 0;
             int lives = 0;
             int coinCount = 0;
+            int scoreMultiplier = 0;
+
+            void managePlayerAnimation(); // manage Animation for Player (idle, run or jump animation)
+            void updatePlayerBehavior(float dt); // update for Player Behavior (some behavior will change when ran out of time)
 
         public:
             Player(sf::Vector2f spawnPoint, CharacterListType characterType, player_state::PlayerStateType stateType);
@@ -42,34 +53,39 @@ namespace mario::entity {
             void move(bool isMoveRight, bool isReleased);
         
             void update(const sf::RenderWindow *window, float dt) override;
-            void updateToLevelState(mario::resource::LevelState &levelState);
             void handleEvent(const sf::RenderWindow *window, const sf::Event &event) override;
             void render(sf::RenderWindow *window) override;
-
+            
+            void updateToLevelState(mario::resource::LevelState &levelState);
             void setOnGround(bool isOnGround);
+            void togglePlayerMove(bool canMove); // toggle turn on/off movement of Player (when turn off, Player won't be able to move)
             void resetJump();
 
-            void setStartedDead(); // set Player status when started to dead
-            void managePlayerAnimation(); // manage Player's animation when they did smth
-            void managePlayerShadowState(float dt); // manage Player shadow state (state after being hit and last 1.5s. In this state, Player can go through Enemy but not Block)
-            void managePlayerDeadState(float dt); // manage Player when being dead
-            
             void beingHit(); // being hit by enemy or entity like level trap
-            void toggleShadowState(bool isTurnOn); // toggle on/off shadow state, turn on to be a shadow in x second after being hit by enemy or level trap. In this state, Player can go through Enemy but not Block
-            
+            void changePlayerBehavior(PlayerBehavior newBehavior); // change Player behavior to newBehavior
+            void changeState(player_state::PlayerStateType newStateType); // change Player State into newStateType
+
             bool isDead() const;
             bool isShadow() const;
-            bool isInDeadAnimation() const;
+            bool isTransforming() const;
+            bool isInBehavior(PlayerBehavior behavior) const;
+            bool canCollisionWithEnemy() const;
+            bool canCollisionWithItem() const;
+            bool canCollisionWithBlock() const;
 
+            void breakBrick();
+            void hitEmptyBlock();
             void collectCoin();   
             void collectCoinInBlock();         
             void collectRedMushroom();            
             void collectFireFlower();
             void collect1UpMushroom();
             void collectStarman();
+            void jumpOnEnemyHead();
 
-            CharacterListType getCharacterType();
-            player_state::PlayerStateType getPlayerStateType();
+            PlayerBehavior getPlayerBehavior() const;
+            CharacterListType getCharacterType() const;
+            player_state::PlayerStateType getPlayerStateType() const;
             
             void setJumpSoundPlayed(bool played);
             bool hasPlayedJumpSound() const;
