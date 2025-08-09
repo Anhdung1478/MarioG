@@ -2,8 +2,7 @@
 
 #include <algorithm>
 
-namespace mario {
-namespace entity {
+namespace mario::entity {
 
     void CollisionManager::loadGroundBlocks(const std::vector<Block*> &blocks) {
         groundBlocks = blocks;
@@ -84,41 +83,41 @@ namespace entity {
         }
     }
 
-void CollisionManager::checkCollisionPlayerWithBlocks(mario::entity::Player *&player, std::vector<Block*> &blocks, std::vector<Item*> &items) {
-    if(player->isInDeadAnimation())
-        return;
-    
-    sf::Vector2f vel = player->getVelocity();
+    void CollisionManager::checkCollisionPlayerWithBlocks(mario::entity::Player *&player, std::vector<Block*> &blocks, std::vector<Item*> &items) {
+        if(!player->canCollisionWithBlock())
+            return;
+        
+        sf::Vector2f vel = player->getVelocity();
 
-    for(const auto& block : groundBlocks) {
-        if(!block->isExist()) continue;
-        SideCollision side = findCollisionSide(player, block);
-        if(side != SideCollision::None) {
-            switch (side) {
-                case SideCollision::Top:
-                    vel.y = 0.f;
-                    break;
-                case SideCollision::Bottom:
-                    vel.y = -10.f;
-                    player->resetJump();
-                    player->setOnGround(true);
-                    break;
-                case SideCollision::Left:
-                    vel.x = 0.f;
-                    break;
-                case SideCollision::Right:
-                    vel.x = 0.f;
-                    break;
-                default:
-                    break;
+        for(const auto& block : groundBlocks) {
+            if(!block->isExist()) continue;
+            SideCollision side = findCollisionSide(player, block);
+            if(side != SideCollision::None) {
+                switch (side) {
+                    case SideCollision::Top:
+                        vel.y = 0.f;
+                        break;
+                    case SideCollision::Bottom:
+                        vel.y = -10.f;
+                        player->resetJump();
+                        player->setOnGround(true);
+                        break;
+                    case SideCollision::Left:
+                        vel.x = 0.f;
+                        break;
+                    case SideCollision::Right:
+                        vel.x = 0.f;
+                        break;
+                    default:
+                        break;
+                }
+
+                fixPosition(player, block, side);
             }
-
-            fixPosition(player, block, side);
         }
-    }
-
-    int L, R;
-    findBlocksCollisions(L, R, player, blocks);
+        
+        int L, R;
+        findBlocksCollisions(L, R, player, blocks);
 
         bool hasTopCollision = false;
         bool hasBottomCollision = false;
@@ -277,7 +276,11 @@ void CollisionManager::checkCollisionPlayerWithBlocks(mario::entity::Player *&pl
                                 hasTopCollision = true;
                                 break;
                             case SideCollision::Bottom:
-                                hasBottomCollision = true;
+                                if(enemy->getIsCheckCollisionWithBlock()) {
+                                    hasBottomCollision = true;
+                                } else {
+                                    hasBottomCollision = false;
+                                }
                                 break;
                             case SideCollision::Left:
                                 hasLeftCollision = true;
@@ -288,14 +291,17 @@ void CollisionManager::checkCollisionPlayerWithBlocks(mario::entity::Player *&pl
                             default:
                                 break;
                         }
-                        
-                        fixPosition(enemy, block, side);
+                        if(enemy->getIsCheckCollisionWithBlock()) {
+                            fixPosition(enemy, block, side);
+                        }
                     }
                 }
 
                 if (hasBottomCollision) {
                     vel.y = -10.f;
                     enemy->setOnGround(true); // Đặt trạng thái trên mặt đất
+                } else {
+                    enemy->setOnGround(false);
                 }
 
                 if (hasTopCollision) {
@@ -312,27 +318,38 @@ void CollisionManager::checkCollisionPlayerWithBlocks(mario::entity::Player *&pl
     }
 
     void CollisionManager::checkCollisionPlayerWithEnemies(Player *&player, std::vector<Enemy*> &enemies) {
-        if(player->isInDeadAnimation() || player->isShadow())
+        if(!player->canCollisionWithEnemy())
             return;
 
         for (auto& enemy : enemies) {
             SideCollision side = findCollisionSide(player, enemy);
             if (side != SideCollision::None) {
                 enemy->reactCollision(side ^ 1, Collision(Collision::Type::Player));
+                if(player->isShadow() && side != SideCollision::Bottom)
+                    side = SideCollision::None;
+
                 switch (side) {
                     case SideCollision::Top:
                         player->beingHit();
                         break;
                     case SideCollision::Bottom:
-                        player->resetJump();
-                        player->setOnGround(true);
-                        player->jump(false);
+                        if(enemy->getIsPlayerDeadWhenCollisionT()) {
+                            // std::cout << 2 << std::endl;
+                            player->beingHit();
+                        } else {
+                            // std::cout << 1 << std::endl;
+                            player->jumpOnEnemyHead();
+                        }
                         break;
                     case SideCollision::Left:
-                        player->beingHit();
+                        if(enemy->getIsPlayerDeadWhenCollisionLF()) {
+                            player->beingHit();
+                        }
                         break;
                     case SideCollision::Right:
-                        player->beingHit();
+                        if(enemy->getIsPlayerDeadWhenCollisionLF()) {
+                            player->beingHit();
+                        }
                         break;
                     default:
                         break;
@@ -344,7 +361,7 @@ void CollisionManager::checkCollisionPlayerWithBlocks(mario::entity::Player *&pl
 
 
     void CollisionManager::checkCollisionPlayerWithItems(Player *&player, std::vector<mario::entity::Item*>& items) {
-        if(player->isInDeadAnimation())
+        if(!player->canCollisionWithItem())
             return;
 
         for (auto& item : items) {
@@ -355,6 +372,94 @@ void CollisionManager::checkCollisionPlayerWithBlocks(mario::entity::Player *&pl
                 }
             }
         }
+    }
+
+    void CollisionManager::checkCollisionEnemyWithEnemy(std::vector<Enemy*> &enemies) {
+        for (size_t i = 0; i < enemies.size(); ++i) {
+        auto& enemyA = enemies[i];
+        if (!enemyA->isExist()) continue;
+
+        mario::entity::Piranha* piranhaA = dynamic_cast<mario::entity::Piranha*>(enemyA);
+        if (piranhaA) continue;
+
+        // Check if koopaA is in ShellState
+        mario::entity::Koopa* koopaA = dynamic_cast<mario::entity::Koopa*>(enemyA);
+        bool isKoopaAShell = koopaA && koopaA->checkShellState();
+
+        for (size_t j = i + 1; j < enemies.size(); ++j) {
+            auto& enemyB = enemies[j];
+            if (!enemyB->isExist()) continue;
+
+            // skip Piranha
+            mario::entity::Piranha* piranhaB = dynamic_cast<mario::entity::Piranha*>(enemyB);
+            if (piranhaB) continue;
+
+            // Check if koopaB is in ShellState
+            mario::entity::Koopa* koopaB = dynamic_cast<mario::entity::Koopa*>(enemyB);
+            bool isKoopaBShell = koopaB && koopaB->checkShellState();
+
+            // Skip if all of them is Koopa and in ShellState
+            if (isKoopaAShell && isKoopaBShell) continue;
+
+            // Skip if no one is Koopa and in ShellState
+            if (!isKoopaAShell && !isKoopaBShell) continue;
+
+            SideCollision side = findCollisionSide(enemyA, enemyB);
+            if (side != SideCollision::None) {
+                // Which one is Koopa and in ShellState
+                if (isKoopaAShell) {
+                    // if enemyA is Koopa and in ShellState, we call reactCollision for enemyB
+                    SideCollision oppositeSide = side;
+                    switch (side) {
+                        case SideCollision::Top:
+                            oppositeSide = SideCollision::Bottom;
+                            break;
+                        case SideCollision::Bottom:
+                            oppositeSide = SideCollision::Top;
+                            break;
+                        case SideCollision::Left:
+                            oppositeSide = SideCollision::Right;
+                            break;
+                        case SideCollision::Right:
+                            oppositeSide = SideCollision::Left;
+                            break;
+                        default:
+                            break;
+                    }
+                    enemyB->reactCollision(oppositeSide, Collision(Collision::Type::Enemy));
+                    fixPosition(enemyB, enemyA, oppositeSide);
+
+                    // Update velocity for enemyB
+                    sf::Vector2f velB = enemyB->getVelocity();
+                    if (oppositeSide == SideCollision::Bottom) {
+                        velB.y = 0.f;
+                        enemyB->setOnGround(true);
+                    } else if (oppositeSide == SideCollision::Top) {
+                        velB.y = 0.f;
+                    } else if (oppositeSide == SideCollision::Left || oppositeSide == SideCollision::Right) {
+                        velB.x = 0.f;
+                    }
+                    enemyB->setVelocity(velB);
+                } else if (isKoopaBShell) {
+                    // if enemyB is Koopa and in Shell State, call reactCollision for enemyA
+                    enemyA->reactCollision(side, Collision(Collision::Type::Enemy));
+                    fixPosition(enemyA, enemyB, side);
+
+                    // update velocity for enemyA
+                    sf::Vector2f velA = enemyA->getVelocity();
+                    if (side == SideCollision::Bottom) {
+                        velA.y = 0.f;
+                        enemyA->setOnGround(true);
+                    } else if (side == SideCollision::Top) {
+                        velA.y = 0.f;
+                    } else if (side == SideCollision::Left || side == SideCollision::Right) {
+                        velA.x = 0.f;
+                    }
+                    enemyA->setVelocity(velA);
+                }
+            }
+        }
+    }
     }
 
     void CollisionManager::checkCollisionItemsWithBlocks(std::vector<mario::entity::Item*>& items, std::vector<mario::entity::Block*>& blocks) {
@@ -383,6 +488,5 @@ void CollisionManager::checkCollisionPlayerWithBlocks(mario::entity::Player *&pl
             }
         }
     }
-
-} // namespace entity
-} // namespace mario
+    
+} // namespace mario::entity

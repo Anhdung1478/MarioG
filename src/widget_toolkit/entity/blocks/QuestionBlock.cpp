@@ -73,7 +73,11 @@ namespace mario::entity {
     int QuestionBlock::reactToCollision(int side, Player* player) {
         if (side != SideCollision::Bottom) return -1; 
         // Coin
-        if (typeOfItem == 0) { 
+        if (typeOfItem == -1) {
+            player->hitEmptyBlock();
+            return -1;
+        }
+        else if (typeOfItem == 0) { 
             if (numberOfCoins == 0) return -1;
 
             numberOfCoins--;

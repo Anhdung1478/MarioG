@@ -25,4 +25,3 @@ target_include_directories(MARIOG PRIVATE "${EVENTPP_DIR}/include")
 
 # Link libraries
 target_link_libraries(MARIOG PRIVATE SFML::Graphics SFML::Window SFML::System SFML::Audio)
-

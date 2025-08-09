@@ -59,7 +59,12 @@ namespace mario::entity {
 
     int Brick::reactToCollision(int side, Player* player) {
         if (side != SideCollision::Bottom) return -1;
-        if(typeOfItem == -1) {
+        
+        if(typeOfItem == -2) {
+            player->hitEmptyBlock();
+            return -1;
+        }
+        else if(typeOfItem == -1) {
             if(player->getPlayerStateType() == player_state::PlayerStateType::Small) {
                 isBouncing = true;
             }
@@ -68,6 +73,7 @@ namespace mario::entity {
                 setExist(false);
                 // break the brick block
             }
+            player->breakBrick();
         }    
         else if (typeOfItem == 0) { // Coin
             if (numberOfCoins == 0) return -1;
