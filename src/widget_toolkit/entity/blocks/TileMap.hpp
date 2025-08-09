@@ -38,6 +38,7 @@ namespace mario::entity {
         std::string mapPath;
         std::string tilesetPath;
 
+        int levelState = 1;
         int themeID = 0;
         int mapWidth;
         int mapHeight;
@@ -48,14 +49,14 @@ namespace mario::entity {
         int spacing; // Spacing between tiles
     public:
         TileMap();
-        TileMap(const std::string &tilesetPath, const std::string &mapPathm, int themeID);
+        TileMap(const std::string &tilesetPath, const std::string &mapPathm, int levelState, int themeID);
         ~TileMap();
 
         //const std::vector<ObjectData>& getObjects() const { return objects; }
 
         bool loadTileset(const std::string &tilesetPath);
         bool loadMap(const std::string &mapPath);
-        bool loadObjects(std::vector<mario::entity::Enemy*> &enemies, std::vector<Item*> &items, std::vector<mario::entity::Block*> &blocks, std::vector<mario::entity::Block*> &backgroundBlocks);
+        bool loadObjects(std::vector<mario::entity::Enemy*> &enemies, std::vector<Item*> &items, std::vector<mario::entity::Block*> &blocks, std::vector<mario::entity::Block*> &groundBlocks, std::vector<mario::entity::Block*> &backgroundBlocks);
 
         void createBlock(std::vector<Block*> &blocks, std::vector<Block*> &backgroundBlocks);
         void sortBlocks(std::vector<Block*> &blocks);

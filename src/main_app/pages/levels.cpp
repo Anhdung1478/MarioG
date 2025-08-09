@@ -7,8 +7,9 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
     p_player = new mario::entity::Player(sf::Vector2f(100, 400), state.characterType, state.stateType);
     p_inputManager = std::make_unique<mario::input::InputManager>(context);
 
-    tileMap = std::make_unique<mario::entity::TileMap>("../../asset/maps/tiles-8.json", "../../asset/maps/Map_" + std::to_string(currLevelState.level) + ".json", currLevelState.level-1);
-    tileMap->loadObjects(enemies, items, blocks, backgroundBlocks);
+    tileMap = std::make_unique<mario::entity::TileMap>("../../asset/maps/tiles-8.json", "../../asset/maps/Map_" + std::to_string(currLevelState.level) + ".json", currLevelState.level, currLevelState.level-1);
+    tileMap->loadObjects(enemies, items, blocks, groundBlocks, backgroundBlocks);
+    collisionManager.loadGroundBlocks(groundBlocks);
 
     if (!backgroundTexture.loadFromFile("../../asset/maps/MapBackground/map_" + std::to_string(currLevelState.level) + "_background.png")) {
         std::cout << "Failed to load background texture for level " << currLevelState.level << "\n";
@@ -515,6 +516,7 @@ void mario::pages::LevelsPage::renderLevelState(sf::RenderWindow *window, mario:
 
 void mario::pages::LevelsPage::render(sf::RenderWindow *window) {
     window->draw(*backgroundSprite);
+    // std::cout << "Position's player: " << p_player->getPosition().x << ", " << p_player->getPosition().y << "\n";
     camera.applyTo(*window);
 
     sf::FloatRect cameraBounds = camera.getCameraBounds();
@@ -546,6 +548,12 @@ void mario::pages::LevelsPage::render(sf::RenderWindow *window) {
     }
 
     // testBlock->render(window);
+    for(auto &block : groundBlocks){
+        if (block->getHitbox().findIntersection(cameraBounds)) {
+            block->render(window);
+        }
+    }
+
     for (auto &backgroundBlock : backgroundBlocks) {
         if (backgroundBlock->getHitbox().findIntersection(cameraBounds)) {
             backgroundBlock->render(window);
