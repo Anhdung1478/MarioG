@@ -30,19 +30,16 @@ mario::pages::SelectPage::SelectPage(MainWindow &context, int level)
     backgroundSprite.setTexture(backgroundTexture);
 
     sf::Vector2u textureSize = backgroundTexture.getSize();
-    float scaleX = SCREEN_WIDTH / textureSize.x;
-    float scaleY = SCREEN_HEIGHT / textureSize.y;
+    float scaleX = static_cast<float>(SCREEN_WIDTH / textureSize.x);
+    float scaleY = static_cast<float>(SCREEN_HEIGHT / textureSize.y);
 
     // Bigger scale so we fill the screen
     float scale = std::max(scaleX, scaleY);
-    backgroundSprite.setScale(scale, scale);
+    backgroundSprite.setScale(sf::Vector2f(scale, scale));
 
     // Center crop
     sf::FloatRect bounds = backgroundSprite.getGlobalBounds();
-    backgroundSprite.setPosition(
-        (SCREEN_WIDTH - bounds.width) / 2.f,
-        (SCREEN_HEIGHT - bounds.height) / 2.f
-    );
+    backgroundSprite.setPosition(sf::Vector2f((SCREEN_WIDTH - bounds.width) / 2.f, (SCREEN_HEIGHT - bounds.height) / 2.f));
 
     const SpriteData& curtainData = TextureManager::getInstance().getSpriteData("curtain[0]");
     curtainSprite.setTexture(*curtainData.texture);
