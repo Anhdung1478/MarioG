@@ -259,14 +259,15 @@ namespace mario::entity {
             SideCollision side = findCollisionSide(player, enemy);
             if (side != SideCollision::None) {
                 enemy->reactCollision(side ^ 1, Collision(Collision::Type::Player));
+                if(player->isShadow() && side != SideCollision::Bottom)
+                    side = SideCollision::None;
+
                 switch (side) {
                     case SideCollision::Top:
                         player->beingHit();
                         break;
                     case SideCollision::Bottom:
-                        player->resetJump();
-                        player->setOnGround(true);
-                        player->jump(false);
+                        player->jumpOnEnemyHead();
                         break;
                     case SideCollision::Left:
                         player->beingHit();

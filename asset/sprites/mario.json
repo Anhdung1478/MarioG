@@ -17,7 +17,7 @@
       { "x": 6, "y": 176, "width": 13, "height": 16 },
       { "x": 28, "y": 176, "width": 13, "height": 15 }
     ],
-    "become-super-state": [
+    "become-mario-super": [
       { "x": 179, "y": 152, "width": 12, "height": 15 },
       { "x": 199, "y": 145, "width": 14, "height": 22 },
       { "x": 179, "y": 152, "width": 12, "height": 15 },
@@ -74,30 +74,6 @@
         { "x": 196, "y": 291, "width": 16, "height": 16 },
         { "x": 217, "y": 291, "width": 16, "height": 16 },
         { "x": 238, "y": 291, "width": 16, "height": 16 }
-      ],
-      "climb": [
-        { "x": 7, "y": 490, "width": 13, "height": 16 },
-        { "x": 28, "y": 490, "width": 13, "height": 15 },
-        { "x": 49, "y": 490, "width": 13, "height": 16 },
-        { "x": 70, "y": 490, "width": 13, "height": 15 },
-        { "x": 91, "y": 490, "width": 13, "height": 16 },
-        { "x": 112, "y": 490, "width": 13, "height": 15 },
-        { "x": 133, "y": 490, "width": 13, "height": 16 },
-        { "x": 154, "y": 490, "width": 13, "height": 15 }
-      ],
-      "become-super-mario": [
-        { "x": 7, "y": 417, "width": 12, "height": 15 },
-        { "x": 28, "y": 417, "width": 12, "height": 15 },
-        { "x": 49, "y": 417, "width": 12, "height": 15 },
-        { "x": 69, "y": 410, "width": 14, "height": 22 },
-        { "x": 91, "y": 417, "width": 12, "height": 15 },
-        { "x": 111, "y": 410, "width": 14, "height": 22 },
-        { "x": 133, "y": 417, "width": 12, "height": 15 },
-        { "x": 153, "y": 410, "width": 14, "height": 22 },
-        { "x": 174, "y": 402, "width": 14, "height": 30 },
-        { "x": 196, "y": 417, "width": 12, "height": 15 },
-        { "x": 216, "y": 410, "width": 14, "height": 22 },
-        { "x": 237, "y": 402, "width": 14, "height": 30 }
       ]
     },
 
@@ -136,7 +112,7 @@
       { "x": 678, "y": 146, "width": 16, "height": 16 },
       { "x": 701, "y": 147, "width": 12, "height": 15 }
     ],
-    "become-fire-mario": [
+    "become-mario-fire": [
       { "x": 793, "y": 214, "width": 14, "height": 30 },
       { "x": 814, "y": 214, "width": 14, "height": 30 },
       { "x": 835, "y": 214, "width": 14, "height": 30 },
@@ -211,6 +187,119 @@
       { "x": 833, "y": 422, "width": 14, "height": 26 },
       { "x": 854, "y": 422, "width": 14, "height": 28 },
       { "x": 875, "y": 422, "width": 14, "height": 26 }
+    ]
+  },
+
+  "mario-fire": {
+    "idle": [
+      { "x": 794, "y": 36, "width": 14, "height": 30 }
+    ],
+    "walk": [
+      { "x": 814, "y": 78, "width": 16, "height": 29 },
+      { "x": 835, "y": 78, "width": 16, "height": 30 }
+    ],
+    "jump": [
+      { "x": 886, "y": 35, "width": 16, "height": 30 }
+    ],
+    "crouch": [
+      { "x": 837, "y": 44, "width": 16, "height": 22 }
+    ],
+    "climb": [
+      { "x": 838, "y": 121, "width": 14, "height": 28 },
+      { "x": 859, "y": 121, "width": 14, "height": 26 }
+    ],
+    "shoot": [
+      { "x": 921, "y": 78, "width": 15, "height": 30 }
+    ],
+    "hit": [
+      { "x": 971, "y": 141, "width": 14, "height": 30 },
+      { "x": 991, "y": 140, "width": 16, "height": 30 },
+      { "x": 1012, "y": 144, "width": 16, "height": 27 },
+      { "x": 1033, "y": 155, "width": 16, "height": 16 },
+      { "x": 1012, "y": 144, "width": 16, "height": 27 },
+      { "x": 1033, "y": 155, "width": 16, "height": 16 },
+      { "x": 1012, "y": 144, "width": 16, "height": 27 },
+      { "x": 1033, "y": 155, "width": 16, "height": 16 },
+      { "x": 1012, "y": 144, "width": 16, "height": 27 },
+      { "x": 1033, "y": 155, "width": 16, "height": 16 },
+      { "x": 1012, "y": 144, "width": 16, "height": 27 },
+      { "x": 1033, "y": 155, "width": 16, "height": 16 },
+      { "x": 1012, "y": 144, "width": 16, "height": 27 },
+      { "x": 1033, "y": 155, "width": 16, "height": 16 },
+      { "x": 1056, "y": 156, "width": 12, "height": 15 }
+    ],
+    "get-ready": [
+      { "x": 115, "y": 32, "width": 17, "height": 30 }
+    ],
+    "fly-with-arms-in-front": [
+      { "x": 191, "y": 64, "width": 17, "height": 28 }
+    ],
+    "fly-with-arms-level": [
+      { "x": 171, "y": 67, "width": 17, "height": 28 }
+    ],
+    "fly-with-arms-behind": [
+      { "x": 147, "y": 66, "width": 17, "height": 30 }
+    ],
+    "backing": [
+      { "x": 173, "y": 36, "width": 17, "height": 28 },
+      { "x": 155, "y": 36, "width": 17, "height": 28 }
+    ],
+    "cheering": [
+      { "x": 97, "y": 95, "width": 17, "height": 16 }
+    ],
+    "saying-hi": [
+      { "x": 126, "y": 64, "width": 17, "height": 28 }
+    ],
+    "stand-with-hands-on-nose": [
+      { "x": 135, "y": 33, "width": 17, "height": 30 }
+    ]
+  },
+
+  "invincible-mario-fire": {
+    "idle": [
+      { "x": 558, "y": 332, "width": 14, "height": 30 },
+      { "x": 579, "y": 332, "width": 14, "height": 30 },
+      { "x": 600, "y": 332, "width": 14, "height": 30 },
+      { "x": 621, "y": 332, "width": 14, "height": 30 }
+    ],
+    "walk": [
+      { "x": 558, "y": 374, "width": 14, "height": 30 },
+      { "x": 578, "y": 406, "width": 16, "height": 29 },
+      { "x": 578, "y": 438, "width": 16, "height": 30 },
+      { "x": 599, "y": 406, "width": 16, "height": 29 },
+      { "x": 599, "y": 438, "width": 16, "height": 30 },
+      { "x": 620, "y": 406, "width": 16, "height": 29 },
+      { "x": 620, "y": 438, "width": 16, "height": 30 },
+      { "x": 557, "y": 406, "width": 16, "height": 29 },
+      { "x": 557, "y": 438, "width": 16, "height": 30 }
+    ],
+    "jump": [
+      { "x": 727, "y": 331, "width": 16, "height": 30 },
+      { "x": 748, "y": 331, "width": 16, "height": 30 },
+      { "x": 769, "y": 331, "width": 16, "height": 30 },
+      { "x": 790, "y": 331, "width": 16, "height": 30 }
+    ],
+    "crouch": [
+      { "x": 727, "y": 388, "width": 16, "height": 22 },
+      { "x": 748, "y": 388, "width": 16, "height": 22 },
+      { "x": 769, "y": 388, "width": 16, "height": 22 },
+      { "x": 790, "y": 388, "width": 16, "height": 22 }
+    ],
+    "climb": [
+      { "x": 728, "y": 422, "width": 14, "height": 28 },
+      { "x": 749, "y": 422, "width": 14, "height": 26 },
+      { "x": 770, "y": 422, "width": 14, "height": 28 },
+      { "x": 791, "y": 422, "width": 14, "height": 26 },
+      { "x": 812, "y": 422, "width": 14, "height": 28 },
+      { "x": 833, "y": 422, "width": 14, "height": 26 },
+      { "x": 854, "y": 422, "width": 14, "height": 28 },
+      { "x": 875, "y": 422, "width": 14, "height": 26 }
+    ],
+    "shoot": [
+      { "x": 727, "y": 464, "width": 15, "height": 30 },
+      { "x": 748, "y": 464, "width": 15, "height": 30 },
+      { "x": 769, "y": 464, "width": 15, "height": 30 },
+      { "x": 790, "y": 464, "width": 15, "height": 30 }
     ]
   }
 }

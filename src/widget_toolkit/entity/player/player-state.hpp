@@ -7,10 +7,9 @@
 
 namespace mario::entity::player_state {
     enum class PlayerStateType {
-        Small = 0,
-        Super = 1,
-        Fire = 2,
-        Star = 3
+        Small = 0,  // next state of Small is Super
+        Super = 1,  // next state of Super is Fire
+        Fire = 2    // next state of Fire doesn't exist
     };
 
 
@@ -87,5 +86,6 @@ namespace mario::entity::player_state {
             virtual void setAnimation(Animation *p_animation, const std::string &ID) = 0;
             virtual void setDeadAnimation(Animation *p_animation) = 0;
             virtual std::string getCurrentPlayerStateID() const = 0;
+            virtual std::string getNextPlayerStateID() const = 0;
     };
 }

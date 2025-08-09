@@ -10,7 +10,7 @@ namespace mario::entity::player_state {
             const std::string MARIO_TYPE_STR[3] = {
                 "mario-small",
                 "mario-super",
-                "mario-fire-super",
+                "mario-fire",
             };
 
         public:
@@ -44,7 +44,12 @@ namespace mario::entity::player_state {
             }
 
             std::string getCurrentPlayerStateID() const override {
-                return MARIO_TYPE_STR[(int) currStateType];
+                return MARIO_TYPE_STR[int(currStateType)];
+            }
+
+            std::string getNextPlayerStateID() const override {
+                // currStateType != PlayerStateType::Fire
+                return MARIO_TYPE_STR[int(currStateType) + 1];
             }
     };
 }

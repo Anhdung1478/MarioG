@@ -36,7 +36,7 @@ namespace mario::entity {
             int score = 0;
             int lives = 0;
             int coinCount = 0;
-
+            int scoreMultiplier = 0;
 
             void managePlayerAnimation(); // manage Animation for Player (idle, run or jump animation)
             void updatePlayerBehavior(float dt); // update for Player Behavior (some behavior will change when ran out of time)
@@ -66,6 +66,7 @@ namespace mario::entity {
             void changeState(player_state::PlayerStateType newStateType); // change Player State into newStateType
 
             bool isDead() const;
+            bool isShadow() const;
             bool isTransforming() const;
             bool isInBehavior(PlayerBehavior behavior) const;
             bool canCollisionWithEnemy() const;
@@ -80,6 +81,7 @@ namespace mario::entity {
             void collectFireFlower();
             void collect1UpMushroom();
             void collectStarman();
+            void jumpOnEnemyHead();
 
             PlayerBehavior getPlayerBehavior() const;
             CharacterListType getCharacterType() const;

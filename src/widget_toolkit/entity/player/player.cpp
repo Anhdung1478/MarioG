@@ -10,15 +10,11 @@ mario::entity::Player::Player(sf::Vector2f spawnPoint, CharacterListType charact
     p_body = new DynamicBox(spawnPoint, sf::Vector2f(40.f, 40.f));
     if(characterType == CharacterListType::Mario) {
         p_animation = new Animation(FILE_PATH"mario.json", FILE_PATH"mario_sheets.png", PLAYER_SCALE, "mario-small.idle[0]");
-        p_animation->loadSheet(FILE_PATH"mario-fire.json", FILE_PATH"mario-fire.png");
-
         p_stateManager = new mario::entity::player_state::MarioStateManager(p_animation, p_body, stateType);
     }
 
     if(characterType == CharacterListType::Luigi) {
         p_animation = new Animation(FILE_PATH"luigi.json", FILE_PATH"luigi_sheets.png", PLAYER_SCALE, "luigi-small.idle[0]");
-        p_animation->loadSheet(FILE_PATH"luigi-fire.json", FILE_PATH"luigi-fire.png");
-
         p_stateManager = new mario::entity::player_state::LuigiStateManager(p_animation, p_body, stateType);
     }
 }
@@ -124,7 +120,6 @@ void mario::entity::Player::changePlayerBehavior(PlayerBehavior newBehavior) {
     // remove last Behavior
     if(playerBehavior == PlayerBehavior::Shadow) {
         p_animation->setFlicker(false);
-        _canCollisionWithEnemy = true;
     }
 
     if(playerBehavior == PlayerBehavior::TransformSTB) {
@@ -168,7 +163,6 @@ void mario::entity::Player::changePlayerBehavior(PlayerBehavior newBehavior) {
 
     playerBehavior = newBehavior;
     if(newBehavior == PlayerBehavior::Shadow) {
-        _canCollisionWithEnemy = false;
         p_animation->setFlicker(true);
         behaviorTimer = sf::seconds(1.5f);
     }
@@ -183,8 +177,10 @@ void mario::entity::Player::changePlayerBehavior(PlayerBehavior newBehavior) {
         p_animation->clearAnimationStep();
 
         std::string currPlayerStateID = p_stateManager->getCurrentPlayerStateID();
+        std::string nextPlayerStateID = p_stateManager->getNextPlayerStateID();
+        std::string prefixIDAnimation = currPlayerStateID + "." + "become-" + nextPlayerStateID;
         for (int i = 0; i < 10; ++i)
-            p_animation->addAnimationStep(currPlayerStateID + ".become-super-state[" + std::to_string(i) + "]");
+            p_animation->addAnimationStep(prefixIDAnimation + "[" + std::to_string(i) + "]");
 
         p_animation->setAnimationState(true);
     }
@@ -250,11 +246,12 @@ void mario::entity::Player::changeState(player_state::PlayerStateType newStateTy
     if(lastState == player_state::PlayerStateType::Small) {
         // newState == player_state::PlayerStateType::Super
         changePlayerBehavior(PlayerBehavior::TransformSTB);
-    } else
+    } else 
         if(newStateType == player_state::PlayerStateType::Small) {
             changePlayerBehavior(PlayerBehavior::TransformBTS);
-        } else { // Super to Fire
-            p_stateManager->changeState(newStateType, p_animation, p_body);
+        } else {
+            changePlayerBehavior(PlayerBehavior::Normal);
+            p_stateManager->changeToFireState(p_animation, p_body);
         }
 }
 
@@ -302,7 +299,8 @@ void mario::entity::Player::update(const sf::RenderWindow *window, float dt) {
     updatePlayerBehavior(dt);
     p_animation->update(window, dt);
     // p_body->updateSize(p_animation);
-    p_body->update(dt);
+    if(playerBehavior != PlayerBehavior::TransformBTS && playerBehavior != PlayerBehavior::TransformSTB)
+        p_body->update(dt);
     
     if(p_animation->isFaceForward() != p_body->isFaceForward())
         rotateDirection();
@@ -328,6 +326,8 @@ void mario::entity::Player::render(sf::RenderWindow *window) {
 
 void mario::entity::Player::setOnGround(bool isOnGround) {
     p_body->setOnGround(isOnGround);
+    if(isOnGround)
+        scoreMultiplier = 0;
 }
 
 void mario::entity::Player::resetJump() {
@@ -349,6 +349,10 @@ void mario::entity::Player::beingHit() {
 
 bool mario::entity::Player::isDead() const {
     return _isDeadAlready;
+}
+
+bool mario::entity::Player::isShadow() const {
+    return (playerBehavior == PlayerBehavior::Shadow);
 }
 
 bool mario::entity::Player::isTransforming() const {
@@ -431,6 +435,17 @@ void mario::entity::Player::collect1UpMushroom() {
 
 void mario::entity::Player::collectStarman() {
     changePlayerBehavior(PlayerBehavior::Invincible);
+}
+
+void mario::entity::Player::jumpOnEnemyHead() {
+    int tempMult = scoreMultiplier;
+
+    resetJump();
+    setOnGround(true);
+    jump(false);
+
+    scoreMultiplier = tempMult;
+    score += ++scoreMultiplier * 100;
 }
 
 /* =================================================================================================================================================================== */
