@@ -84,6 +84,7 @@ namespace mario::entity {
                 p_animation->setSpriteAnimation("empty-brick-block[" + std::to_string(themeID) + "]");
                 typeOfItem = -2; // Mark as empty
             }
+            player->collectCoinInBlock();
         }
         else if (typeOfItem == 1) { // Red-mushroom
             // Spawn Red mushroom

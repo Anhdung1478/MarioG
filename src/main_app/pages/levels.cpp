@@ -3,41 +3,47 @@
 #include "main-menu.hpp"
 #include "../../widget_toolkit/resource/SoundManager.hpp"
 
-mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::LevelState state) : Page(context), camera({1280, 720}), currLevelState(state) {
+mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::LevelState state) : Page(context), camera({1280, 720}), currLevelState(state), backgroundSprite(nullptr) {
     p_player = new mario::entity::Player(sf::Vector2f(100, 400), state.characterType, state.stateType);
     p_inputManager = std::make_unique<mario::input::InputManager>(context);
 
     tileMap = std::make_unique<mario::entity::TileMap>("../../asset/maps/tiles-8.json", "../../asset/maps/Map_" + std::to_string(currLevelState.level) + ".json", currLevelState.level-1);
     tileMap->loadObjects(enemies, items, blocks, backgroundBlocks);
+
+    if (!backgroundTexture.loadFromFile("../../asset/maps/MapBackground/map_" + std::to_string(currLevelState.level) + "_background.png")) {
+        std::cout << "Failed to load background texture for level " << currLevelState.level << "\n";
+        exit(1);
+    }
+
+    sf::Vector2f boundWorldSize = tileMap->getWorldBounds().size;
+    // if(currLevelState.level != 1) {
+    //     boundWorldSize -= sf::Vector2f(0, 2 * 16 * mario::entity::BLOCK_SCALE.y);
+    // }
+    
+    backgroundSprite = new sf::Sprite(backgroundTexture);
+    backgroundSprite->setPosition({0, 0});
+    float scaleX = boundWorldSize.x / backgroundTexture.getSize().x;
+    float scaleY = boundWorldSize.y / backgroundTexture.getSize().y;
+    backgroundSprite->setScale({scaleX, scaleY});
     // tileMap->createBlock(blocks, backgroundBlocks);
     // testBlock = new mario::entity::BackgroundBlock(sf::Vector2f(100, 500), sf::Vector2f(16, 16), "enemies-flag[0]");
     // testBlock = new mario::entity::BackgroundBlock(sf::Vector2f(100, 500), sf::Vector2f(16, 16), std::to_string(390), {"390", 1, 171, 16, 16});
+    // testFireWorks = new mario::entity::FireWorks(sf::Vector2f(500, 200), sf::Vector2f(500, 500), "fireworks[0]");
+    // testFireWorks->setShowFireworks(true);
+
+
 
     // Mario font initalize
     marioFont = std::make_unique<sf::Font>("../../asset/fonts/SuperMario256.ttf");
 
-    // Load enemies
-    // enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(1350.f, 600.f), mario::entity::KoopaType::Red, false));
-    // enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(350.f, 80.f), mario::entity::KoopaType::Green, true));
-
-    // testItem = new mario::entity::FireFlower(
-    //     "../../asset/sprites/fireflower.json",
+    // testItem = new mario::entity::Coin(
+    //     "../../asset/sprites/coin.json",
     //     "../../asset/maps/Image/tiles-8.png",
     //     sf::Vector2f(2.5f, 2.5f),
-    //     "fireflower[0]",
+    //     "coin[0]",
     //     sf::Vector2f(500.f, 500.f),
-    //     sf::Vector2f(16.f, 16.f),
-    //     sf::Vector2f(0.f, 0.f)
+    //     sf::Vector2f(16.f, 16.f)
     // );
-
-    testItem = new mario::entity::Coin(
-        "../../asset/sprites/coin.json",
-        "../../asset/maps/Image/tiles-8.png",
-        sf::Vector2f(2.5f, 2.5f),
-        "coin[0]",
-        sf::Vector2f(500.f, 500.f),
-        sf::Vector2f(16.f, 16.f)
-    );
 
     // Pause/Resume game
     pauseTexture = std::make_unique<sf::Texture>("../../asset/textures/pause-button.png");
@@ -201,10 +207,9 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
                     backgroundBlock->update(window, dt);
                 // }
             }
-    
+
             for(auto &enemy : enemies) {
-                if (!enemy->shouldDelete() && enemy->getHitbox().findIntersection(cameraBounds)) {
-                // if (!enemy->shouldDelete()) {
+                if (!enemy->shouldDelete()) {
                     mario::entity::Piranha* piranha = dynamic_cast<mario::entity::Piranha*>(enemy);
                     if (piranha) {
                         piranha->updateWithPlayer(window, dt, p_player);
@@ -213,13 +218,13 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
                     }
                 }
             }
-    
-            for(auto &block : blocks) {
-                if (!block->shouldDelete() && block->getHitbox().findIntersection(cameraBounds)) {
+
+            for (auto &block : blocks) {
+                if (!block->shouldDelete()) {
                     block->update(window, dt);
                 }
             }
-    
+
             //testItem->update(window, dt);
             // Update items directly from vector
             for(auto &item : items) {
@@ -228,8 +233,7 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
                 }
             }
         }
-        
-        
+
         collisionManager.checkCollisionPlayerWithBlocks(p_player, blocks, items);
         
 
@@ -239,29 +243,29 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
             collisionManager.checkCollisionPlayerWithEnemies(p_player, enemies);
             collisionManager.checkCollisionPlayerWithItems(p_player, items);
             collisionManager.checkCollisionItemsWithBlocks(items, blocks);
-    
-    
+
+            // testFireWorks->update(window, dt);
             // auto measure = [](auto&& func, const std::string& name) {
             //     auto start = std::chrono::high_resolution_clock::now();
             //     func();
             //     auto end = std::chrono::high_resolution_clock::now();
-    
+
             //     auto elapsedMicro = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-    
+
             //     if(elapsedMicro > 100){
             //         std::cout << name << ": " << elapsedMicro << " ms" << "\n";
             //     }
             // };
-    
+
             // collisionManager.updateCameraBounds(cameraBounds);
             // measure([&]{ collisionManager.checkCollisionPlayerWithBlocks(p_player, blocks, items); }, "Player-Blocks");
             // measure([&]{ collisionManager.checkCollisionEnemyWithBlocks(enemies, blocks); }, "Enemy-Blocks");
             // measure([&]{ collisionManager.checkCollisionPlayerWithEnemies(p_player, enemies); }, "Player-Enemies");
             // measure([&]{ collisionManager.checkCollisionPlayerWithItems(p_player, items); }, "Player-Items");
             // measure([&]{ collisionManager.checkCollisionItemsWithBlocks(items, blocks); }, "Items-Blocks");
-    
-    
-    
+
+
+
             // for (auto* enemy : enemies) {
             //     mario::entity::Enemy* enemyPtr = dynamic_cast<mario::entity::Enemy*>(enemy);
             //     if (enemyPtr) {
@@ -272,16 +276,16 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
             //         enemy->update(window, dt); // Xử lý các Entity không phải Enemy (nếu có)
             //     }
             // }
-    
+
             camera.followEntity(*p_player, dt);
             camera.update(dt);
-    
-    
+
+
             
             currLevelState.stateType = p_player->getPlayerStateType();
             p_levelDataManager->update(dt, currLevelState);
             removeCollectedItems();
-    
+
             if(p_player->isDead()) {
                 if(currLevelState.num_lives > 0) {
                     currLevelState = mario::resource::LevelState(currLevelState.level, currLevelState.num_lives - 1, currLevelState.score, currLevelState.coins, currLevelState.characterType);
@@ -530,6 +534,7 @@ void mario::pages::LevelsPage::renderLevelState(sf::RenderWindow *window, mario:
 /* ========================================================================================================================================================================== */
 
 void mario::pages::LevelsPage::render(sf::RenderWindow *window) {
+    window->draw(*backgroundSprite);
     camera.applyTo(*window);
 
     // draw background here
@@ -568,10 +573,14 @@ void mario::pages::LevelsPage::render(sf::RenderWindow *window) {
             backgroundBlock->render(window);
         }
     }
-    
+
+    // Render Piranha enemies before blocks
     for (auto* enemy : enemies) {
         if (!enemy->shouldDelete() && enemy->getHitbox().findIntersection(cameraBounds)) {
-            enemy->render(window);
+            mario::entity::Piranha* piranha = dynamic_cast<mario::entity::Piranha*>(enemy);
+            if (piranha) {
+                piranha->render(window);
+            }
         }
     }
 
@@ -581,18 +590,28 @@ void mario::pages::LevelsPage::render(sf::RenderWindow *window) {
         }
     }
 
-    p_player->render(window);
-
-    // Render enemies
+    // Render non-Piranha enemies after blocks
     for (auto* enemy : enemies) {
-        if (!enemy->shouldDelete()) {
-            enemy->render(window);
+        if (!enemy->shouldDelete() && enemy->getHitbox().findIntersection(cameraBounds)) {
+            mario::entity::Piranha* piranha = dynamic_cast<mario::entity::Piranha*>(enemy);
+            if (!piranha) { 
+                enemy->render(window);
+            }
         }
     }
 
-    for (auto &block : blocks) {
-        block->render(window);
-    }
+    p_player->render(window);
+
+    // // Render enemies
+    // for (auto* enemy : enemies) {
+    //     if (!enemy->shouldDelete()) {
+    //         enemy->render(window);
+    //     }
+    // }
+
+    // for (auto &block : blocks) {
+    //     block->render(window);
+    // }
 
     for (auto &item : items) {
         if (item && !item->isCollected() && item->getHitbox().findIntersection(cameraBounds)) {
@@ -600,6 +619,7 @@ void mario::pages::LevelsPage::render(sf::RenderWindow *window) {
         }
     }
 
+    // testFireWorks->render(window);
 
     p_player->render(window);
 
