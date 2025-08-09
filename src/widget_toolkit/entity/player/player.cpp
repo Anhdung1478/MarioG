@@ -7,6 +7,9 @@ mario::entity::Player::Player(sf::Vector2f spawnPoint, CharacterListType charact
     _isDeadAlready = false;
     playerBehavior = PlayerBehavior::Normal;
 
+    std::string fontPath = "../../asset/fonts/SuperMario256.ttf";
+    popUpScoreList = new PopUpTextList(1.5f, 25, sf::Vector2f(0, -25.f), fontPath, sf::Color::Black);
+
     p_body = new DynamicBox(spawnPoint, sf::Vector2f(40.f, 40.f));
     if(characterType == CharacterListType::Mario) {
         p_animation = new Animation(FILE_PATH"mario.json", FILE_PATH"mario_sheets.png", PLAYER_SCALE, "mario-small.idle[0]");
@@ -21,6 +24,7 @@ mario::entity::Player::Player(sf::Vector2f spawnPoint, CharacterListType charact
 
 mario::entity::Player::~Player() {
     delete p_stateManager;
+    delete popUpScoreList;
 }
 
 /* =================================================================================================================================================================== */
@@ -296,6 +300,8 @@ void mario::entity::Player::update(const sf::RenderWindow *window, float dt) {
         }
     }
 
+    popUpScoreList->update(window, dt);
+
     updatePlayerBehavior(dt);
     p_animation->update(window, dt);
     // p_body->updateSize(p_animation);
@@ -320,6 +326,7 @@ void mario::entity::Player::handleEvent(const sf::RenderWindow *window, const sf
 
 void mario::entity::Player::render(sf::RenderWindow *window) {
     Entity::render(window);
+    popUpScoreList->render(window);
 }
 
 /* =================================================================================================================================================================== */
@@ -377,9 +384,14 @@ bool mario::entity::Player::canCollisionWithBlock() const {
 
 /* =================================================================================================================================================================== */
 
+void mario::entity::Player::addPopUpScore(int _score) {
+    score += _score;
+    popUpScoreList->addAPopUpText(p_body->getPosition(), std::to_string(_score));
+}
+
 void mario::entity::Player::breakBrick() {
     // Play break brick sound
-    score += 50;
+    addPopUpScore(50);
 }
 
 void mario::entity::Player::hitEmptyBlock() {
@@ -388,7 +400,7 @@ void mario::entity::Player::hitEmptyBlock() {
 
 void mario::entity::Player::collectCoin() {
     ++coinCount;
-    score += 200;
+    addPopUpScore(200);
     
     // 1-up at 100 coins
     if (coinCount >= 100) {
@@ -405,7 +417,7 @@ void mario::entity::Player::collectCoinInBlock() {
 }
 
 void mario::entity::Player::collectRedMushroom() {
-    score += 1000;
+    addPopUpScore(1000);
     if (getPlayerStateType() == player_state::PlayerStateType::Small) {
         changeState(player_state::PlayerStateType::Super);
         // Play power-up sound
@@ -417,7 +429,7 @@ void mario::entity::Player::collectRedMushroom() {
 }
 
 void mario::entity::Player::collectFireFlower() {
-    score += 1000;
+    addPopUpScore(1000);
     if (getPlayerStateType() == player_state::PlayerStateType::Small) {
         changeState(player_state::PlayerStateType::Super);
         // Play power-up sound
@@ -429,7 +441,7 @@ void mario::entity::Player::collectFireFlower() {
 
 void mario::entity::Player::collect1UpMushroom() {
     lives++;
-    score += 1000;
+    addPopUpScore(1000);
     // Play 1-up sound
 }
 
@@ -445,7 +457,7 @@ void mario::entity::Player::jumpOnEnemyHead() {
     jump(false);
 
     scoreMultiplier = tempMult;
-    score += ++scoreMultiplier * 100;
+    addPopUpScore(++scoreMultiplier * 100);
 }
 
 /* =================================================================================================================================================================== */

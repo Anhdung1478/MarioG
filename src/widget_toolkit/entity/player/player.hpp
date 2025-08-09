@@ -9,6 +9,7 @@
 #include "../../resource/LevelState.hpp"
 #include "../item/item.hpp"
 #include "fireball.hpp"
+#include "../../controls/popup-text-list.hpp"
 
 namespace mario::entity {
     static constexpr sf::Vector2f PLAYER_SCALE = sf::Vector2f(2.5f, 2.5f);
@@ -23,6 +24,7 @@ namespace mario::entity {
             PlayerBehavior playerBehavior;
 
             std::vector<Fireball*> fireballs;
+            mario::PopUpTextList *popUpScoreList;
 
             sf::Time shootingDelayTimer;
             sf::Time behaviorTimer;
@@ -73,15 +75,16 @@ namespace mario::entity {
             bool canCollisionWithItem() const;
             bool canCollisionWithBlock() const;
 
-            void breakBrick();
-            void hitEmptyBlock();
-            void collectCoin();   
-            void collectCoinInBlock();         
-            void collectRedMushroom();            
-            void collectFireFlower();
-            void collect1UpMushroom();
-            void collectStarman();
-            void jumpOnEnemyHead();
+            void addPopUpScore(int score);  // pop up score when getting some new score
+            void breakBrick();           // appear when Player break the brick block
+            void hitEmptyBlock();        // appear when Player hit the empty block 
+            void collectCoin();          // appear when Player collect a coin in map
+            void collectCoinInBlock();   // appear when Player collect a coin in block when break or hit it    
+            void collectRedMushroom();   // appear when Player collect a Red Mushroom
+            void collectFireFlower();    // appear when Player collect a Fire Flower
+            void collect1UpMushroom();   // appear when Player collect a 1-Up Mushroom
+            void collectStarman();       // appear when Player collect a Starman
+            void jumpOnEnemyHead();      // appear when Player jump on an enemy head an kill it
 
             PlayerBehavior getPlayerBehavior() const;
             CharacterListType getCharacterType() const;
