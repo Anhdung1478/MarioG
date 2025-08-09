@@ -229,7 +229,7 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
             //testItem->update(window, dt);
             // Update items directly from vector
             for(auto &item : items) {
-                if (item && !item->isCollected() && item->getHitbox().findIntersection(cameraBounds)) {
+                if (item && !item->isCollected()) {
                     item->update(window, dt);
                 }
             }
