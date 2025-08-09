@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <eventpp/callbacklist.h>
 #include "../interfaces.hpp"
+#include "../sfml-extra-feature/rounded-rectangle-shape.hpp"
 
 namespace mario {
     enum class ButtonState {
@@ -37,7 +38,7 @@ namespace mario {
             }
 
             Button(std::string buttText = "") : fontSize(20), enabled(true), selected(false), buttonText(buttText) {
-                font = std::make_unique<sf::Font>("../../asset/fonts/Cascadia.ttf");
+                font = std::make_unique<sf::Font>("../../asset/fonts/SuperMario256.ttf");
                 p_nodeOnButton = nullptr;
             }
 
@@ -74,31 +75,43 @@ namespace mario {
 
             void handleEvent(const sf::RenderWindow *window, const sf::Event &event) override {
             }
+
+            void drawRoundedRectangle(sf::RenderWindow *window, sf::FloatRect rect, sf::Color buttonColor) {
+                // Define properties for the rounded rectangle
+                float cornerRadius = 7.5f;
+
+                sf::RoundedRectangleShape roundedRect(rect.size, cornerRadius, 4);
+                roundedRect.setPosition(rect.position);
+                roundedRect.setFillColor(buttonColor);
+                
+                window->draw(roundedRect);
+            }
                 
             void render(sf::RenderWindow *window) override {
-                if(enabled) {
-                    sf::RectangleShape rect(sf::Vector2f(buttonRect.size.x, buttonRect.size.y));
-                    rect.setPosition(buttonRect.position);
-                    rect.setFillColor((state == ButtonState::Pressed) ? sf::Color::Green : 
-                        ((state == ButtonState::Hover) ? sf::Color::Yellow : sf::Color::Magenta));
-                    
-                    window->draw(rect);
+                if(!enabled) {
 
-                    if(selected) {
-                        sf::CircleShape triangle(5);
-                        triangle.setPosition(sf::Vector2f(buttonRect.position.x - 30, buttonRect.position.y));
-                        triangle.setFillColor(sf::Color::White);
-                        window->draw(triangle);
-                    }
-
-                    sf::Text text(*font, buttonText, fontSize);
-                    float textLenX = text.getGlobalBounds().size.x;
-                    float textLenY = text.getGlobalBounds().size.y;
-
-                    text.setFillColor(sf::Color::White);
-                    text.setPosition(sf::Vector2f(int(buttonRect.position.x + (buttonRect.size.x - textLenX) / 2.0), int(buttonRect.position.y + (buttonRect.size.y - fontSize * 4 / 3.0) / 2.0)));
-                    window->draw(text); 
+                    return;
                 }
+
+                sf::Color buttonColor = (state == ButtonState::Pressed) ? sf::Color::Green : 
+                    ((state == ButtonState::Hover) ? sf::Color::Yellow : sf::Color(49, 139, 23, 255));
+
+                drawRoundedRectangle(window, buttonRect, buttonColor);
+
+                if(selected) {
+                    sf::CircleShape triangle(5);
+                    triangle.setPosition(sf::Vector2f(buttonRect.position.x - 30, buttonRect.position.y));
+                    triangle.setFillColor(sf::Color::White);
+                    window->draw(triangle);
+                }
+
+                sf::Text text(*font, buttonText, fontSize);
+                float textLenX = text.getGlobalBounds().size.x;
+                float textLenY = text.getGlobalBounds().size.y;
+
+                text.setFillColor(sf::Color(239, 139, 54, 255));
+                text.setPosition(sf::Vector2f(int(buttonRect.position.x + (buttonRect.size.x - textLenX) / 2.f), int(buttonRect.position.y - 4 + (buttonRect.size.y - textLenY) / 2.f)));
+                window->draw(text); 
             }
     };
 }
