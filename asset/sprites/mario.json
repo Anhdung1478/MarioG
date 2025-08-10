@@ -112,12 +112,6 @@
       { "x": 678, "y": 146, "width": 16, "height": 16 },
       { "x": 701, "y": 147, "width": 12, "height": 15 }
     ],
-    "become-mario-fire": [
-      { "x": 793, "y": 214, "width": 14, "height": 30 },
-      { "x": 814, "y": 214, "width": 14, "height": 30 },
-      { "x": 835, "y": 214, "width": 14, "height": 30 },
-      { "x": 856, "y": 214, "width": 14, "height": 30 }
-    ],
     "get-ready": [
       { "x": 357, "y": 98, "width": 18, "height": 30 }
     ],
