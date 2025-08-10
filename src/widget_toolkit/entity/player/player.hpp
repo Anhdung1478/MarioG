@@ -48,11 +48,15 @@ namespace mario::entity {
             ~Player() override;
             
             void rotateDirection();
-            void jump(bool isReleased);
             sf::Vector2f getVelocity() const;
             void setVelocity(sf::Vector2f vel);
-            void shotFireball(bool isReleased);
+            
+            void jump(bool isReleased);
             void move(bool isMoveRight, bool isReleased);
+            void shotFireball(bool isReleased);
+
+            int getNumberFireballs() const;
+            Fireball* getFireballAtPos(int idx) const;
         
             void update(const sf::RenderWindow *window, float dt) override;
             void handleEvent(const sf::RenderWindow *window, const sf::Event &event) override;

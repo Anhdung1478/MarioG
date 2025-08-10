@@ -52,6 +52,16 @@ void mario::entity::Player::shotFireball(bool isReleased) {
 
 /* =================================================================================================================================================================== */
 
+mario::entity::Fireball* mario::entity::Player::getFireballAtPos(int idx) const {
+    return fireballs[idx];
+}
+
+int mario::entity::Player::getNumberFireballs() const {
+    return fireballs.size();
+}
+
+/* =================================================================================================================================================================== */
+
 sf::Vector2f mario::entity::Player::getVelocity() const {
     return p_body->getVelocity();
 }

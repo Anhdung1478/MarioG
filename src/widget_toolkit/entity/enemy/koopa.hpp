@@ -205,7 +205,7 @@ namespace mario::entity {
                         p_animation->rotate();
                     }
                 }
-            } else if(collision.isWithBullet()) {
+            } else if(collision.isWithFireball()) {
                 currentState = KoopaState::Shell;
                 loadShellAnimations();
                 p_animation->setSpriteAnimation(typePrefix + "knocked-out[0]");

@@ -63,9 +63,7 @@ namespace mario::entity {
             }
 
             void update(float dt) override {
-                // std::cout << "Velocity: " << velocity.x << ", " << velocity.y << std::endl;
                 if(_isRunning) {
-                    // std::cout << ((_isMoveRight) ? "Moving right" : "Moving left") << "\n";
                     if(_isMoveRight != (velocity.x > 0.f)) {
                         if(_isMoveRight) {
                             velocity.x = std::min(velocity.x + 2 * acceleration.x * dt, maxVelocityX);
@@ -80,10 +78,7 @@ namespace mario::entity {
                         }
                     }
 
-
                     _isFaceForward = (velocity.x > 0.f);
-                    // std::cout << _isFaceForward << std::endl;
-                    // std::cout << (_isMoveRight ? "Moving right" : "Moving left") << ", " << "Velocity X: " << velocity.x << '\n';
                 } else
                     if(abs(velocity.x) > 0.f)
                         velocity.x += ((velocity.x > 0.f) ? -1 : +1) * std::min(acceleration.x * 2 * dt, abs(velocity.x));
@@ -128,7 +123,6 @@ namespace mario::entity {
             }
 
             void setIsFaceForward(bool isFaceForward) {
-                // std::cout << "setIsFaceForward" << std::endl;
                 _isFaceForward = isFaceForward;
             }
 
