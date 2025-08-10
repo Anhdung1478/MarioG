@@ -17,6 +17,14 @@ namespace mario::entity {
         p_animation->setAnimationState(false);
     }
 
+    SolidBlock::SolidBlock(const std::string &imagePath, const sf::Vector2f &pos, const sf::Vector2f &size, const std::string &name, const SpriteData2 &sprite)
+        : Block(pos * BLOCK_SCALE.x, size, name)
+    {
+        p_animation = new mario::entity::Animation(imagePath, BLOCK_SCALE, sprite);
+        p_animation->setSpriteAnimation(name);
+        p_animation->setAnimationState(false);
+    }
+
     SolidBlock::~SolidBlock() {
     }
 

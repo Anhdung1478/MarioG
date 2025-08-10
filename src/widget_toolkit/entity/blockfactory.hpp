@@ -14,65 +14,65 @@ namespace mario::entity {
                 switch (tileID) {
                     // Grass ground tiles
                     case 0:
-                        return new SolidBlock(spawnPoint, sf::Vector2f(16, 16), "grass-ground[0]");
+                        return nullptr;
                     case 1:
-                        return new SolidBlock(spawnPoint, sf::Vector2f(16, 16), "grass-ground[1]");
+                        return nullptr;
                     case 2:
-                        return new SolidBlock(spawnPoint, sf::Vector2f(16, 16), "grass-ground[2]");
+                        return nullptr;
                     case 39:
-                        return new SolidBlock(spawnPoint, sf::Vector2f(16, 16), "grass-ground[3]");
+                        return nullptr;
                     case 40:
-                        return new SolidBlock(spawnPoint, sf::Vector2f(16, 16), "grass-ground[4]");
+                        return nullptr;
                     case 41:
-                        return new SolidBlock(spawnPoint, sf::Vector2f(16, 16), "grass-ground[5]");
+                        return nullptr;
                         
                     // Stone ground tiles
                     case 4:
-                        return new SolidBlock(spawnPoint, sf::Vector2f(16, 16), "stone-ground[0]");
+                        return nullptr;
                     case 5:
-                        return new SolidBlock(spawnPoint, sf::Vector2f(16, 16), "stone-ground[1]");
+                        return nullptr;
                     case 6:
-                        return new SolidBlock(spawnPoint, sf::Vector2f(16, 16), "stone-ground[2]");
+                        return nullptr;
                     case 43:
-                        return new SolidBlock(spawnPoint, sf::Vector2f(16, 16), "stone-ground[3]");
+                        return nullptr;
                     case 44:
-                        return new SolidBlock(spawnPoint, sf::Vector2f(16, 16), "stone-ground[4]");
+                        return nullptr;
                     case 45:
-                        return new SolidBlock(spawnPoint, sf::Vector2f(16, 16), "stone-ground[5]");
+                        return nullptr;
                     
                     // Snow ground tiles
                     case 8:
-                        return new SolidBlock(spawnPoint, sf::Vector2f(16, 16), "snow-ground[0]");
+                        return nullptr;
                     case 9:
-                        return new SolidBlock(spawnPoint, sf::Vector2f(16, 16), "snow-ground[1]");
+                        return nullptr;
                     case 10:
-                        return new SolidBlock(spawnPoint, sf::Vector2f(16, 16), "snow-ground[2]");
+                        return nullptr;
                     case 47:
-                        return new SolidBlock(spawnPoint, sf::Vector2f(16, 16), "snow-ground[3]");
+                        return nullptr;
                     case 48:
-                        return new SolidBlock(spawnPoint, sf::Vector2f(16, 16), "snow-ground[4]");
+                        return nullptr;
                     case 49:
-                        return new SolidBlock(spawnPoint, sf::Vector2f(16, 16), "snow-ground[5]");
+                        return nullptr;
 
                     // Green pipe tiles
                     case 123:
-                        return new SolidBlock(spawnPoint, sf::Vector2f(16, 16), "green-pipe[0]");
+                        return nullptr;
                     case 124:
-                        return new SolidBlock(spawnPoint, sf::Vector2f(16, 16), "green-pipe[1]");
+                        return nullptr;
                     case 162:
-                        return new SolidBlock(spawnPoint, sf::Vector2f(16, 16), "green-pipe[2]");
+                        return nullptr;
                     case 163:
-                        return new SolidBlock(spawnPoint, sf::Vector2f(16, 16), "green-pipe[3]");
+                        return nullptr;
                     
                     // Gray pipe tiles
                     case 128:
-                        return new SolidBlock(spawnPoint, sf::Vector2f(16, 16), "gray-pipe[0]");
+                        return nullptr;
                     case 129:
-                        return new SolidBlock(spawnPoint, sf::Vector2f(16, 16), "gray-pipe[1]");
+                        return nullptr;
                     case 167:
-                        return new SolidBlock(spawnPoint, sf::Vector2f(16, 16), "gray-pipe[2]");
+                        return nullptr;
                     case 168:
-                        return new SolidBlock(spawnPoint, sf::Vector2f(16, 16), "gray-pipe[3]");
+                        return nullptr;
 
                     // Stair blocks
                     case 351:
@@ -105,6 +105,68 @@ namespace mario::entity {
 
             Block* createBackgroundBlock(int tileID, sf::Vector2f spawnPoint, int themeID, int tilesetColumns, int tileWidth, int tileHeight, int margin, int spacing) {
                 switch (tileID) {
+                    // Grass ground tiles
+                    case 0:
+                        return nullptr;
+                    case 1:
+                        return nullptr;
+                    case 2:
+                        return nullptr;
+                    case 39:
+                        return nullptr;
+                    case 40:
+                        return nullptr;
+                    case 41:
+                        return nullptr;
+                        
+                    // Stone ground tiles
+                    case 4:
+                        return nullptr;
+                    case 5:
+                        return nullptr;
+                    case 6:
+                        return nullptr;
+                    case 43:
+                        return nullptr;
+                    case 44:
+                        return nullptr;
+                    case 45:
+                        return nullptr;
+                    
+                    // Snow ground tiles
+                    case 8:
+                        return nullptr;
+                    case 9:
+                        return nullptr;
+                    case 10:
+                        return nullptr;
+                    case 47:
+                        return nullptr;
+                    case 48:
+                        return nullptr;
+                    case 49:
+                        return nullptr;
+
+                    // Green pipe tiles
+                    case 123:
+                        return nullptr;
+                    case 124:
+                        return nullptr;
+                    case 162:
+                        return nullptr;
+                    case 163:
+                        return nullptr;
+                    
+                    // Gray pipe tiles
+                    case 128:
+                        return nullptr;
+                    case 129:
+                        return nullptr;
+                    case 167:
+                        return nullptr;
+                    case 168:
+                        return nullptr;
+
                     // Background blocks
                     case 78:
                         return new BackgroundBlock(spawnPoint, sf::Vector2f(16, 16), "grass[0][0]");

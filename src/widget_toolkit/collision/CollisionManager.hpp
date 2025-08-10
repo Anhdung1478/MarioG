@@ -19,6 +19,7 @@ public:
     SideCollision findCollisionSide(const Entity *EntityA, const Entity *EntityB);
     void fixPosition(Entity *entityA, Entity *entityB, SideCollision side);
     void updateCameraBounds(const sf::FloatRect &bounds);
+    void loadGroundBlocks(const std::vector<Block*> &blocks);
     void checkCollisionPlayerWithBlocks(Player *&player, std::vector<Block*> &blocks, std::vector<Item*> &items);
     void checkCollisionEnemyWithBlocks(std::vector<Enemy*> &enemies, std::vector<Block*> &blocks);
     void checkCollisionPlayerWithEnemies(Player *&player, std::vector<Enemy*> &enemies);
@@ -26,6 +27,7 @@ public:
     void checkCollisionItemsWithBlocks(std::vector<Item*> &items, std::vector<Block*> &blocks);
     void checkCollisionEnemyWithEnemy(std::vector<Enemy*> &enemies);
 private:
+    std::vector<Block*> groundBlocks;
     ItemManager* itemManager;
     sf::FloatRect cameraBounds;
 };

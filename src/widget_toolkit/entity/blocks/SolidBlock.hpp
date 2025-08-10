@@ -10,6 +10,7 @@ namespace mario::entity {
     public:
         SolidBlock();
         SolidBlock(const sf::Vector2f &pos, const sf::Vector2f &size, const std::string &name);
+        SolidBlock(const std::string &imagePath, const sf::Vector2f &pos, const sf::Vector2f &size, const std::string &name, const SpriteData2 &sprite);
         ~SolidBlock();
 
         void InitSpritesSheet() override;

@@ -30,6 +30,7 @@ namespace mario::pages {
       
             std::unique_ptr<mario::entity::TileMap> tileMap;
             std::vector<mario::entity::Block*> blocks;
+            std::vector<mario::entity::Block*> groundBlocks;
             std::vector<mario::entity::Block*> backgroundBlocks;
             std::vector<mario::entity::Enemy*> enemies;
             std::vector<mario::entity::Item*> items;  // Direct item management

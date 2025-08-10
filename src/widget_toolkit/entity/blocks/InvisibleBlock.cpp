@@ -68,7 +68,11 @@ namespace mario::entity {
         if (side != SideCollision::Bottom) return -1; 
         isVisible = true;
         // Coin
-        if (typeOfItem == 0) { 
+        if (typeOfItem == -1) {
+            player->hitEmptyBlock();
+            return -1;
+        }
+        else if (typeOfItem == 0) { 
             if (numberOfCoins == 0) return -1;
 
             numberOfCoins--;

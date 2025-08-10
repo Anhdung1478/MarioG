@@ -4,6 +4,10 @@
 
 namespace mario::entity {
 
+    void CollisionManager::loadGroundBlocks(const std::vector<Block*> &blocks) {
+        groundBlocks = blocks;
+    }
+
     void CollisionManager::updateCameraBounds(const sf::FloatRect &bounds) {
         cameraBounds = bounds;
     }
@@ -19,7 +23,7 @@ namespace mario::entity {
 
     void CollisionManager::findBlocksCollisions(int &L, int &R, const mario::entity::Entity *EntityA, std::vector<Block*> &blocks) {
         //using lower_bound and upper_bound to find the range of blocks that might collide with the entity
-        float boundX = 2 * EntityA->getSize().x;
+        float boundX = 2 * EntityA->getSize().x; 
         auto itL = std::lower_bound(blocks.begin(), blocks.end(), EntityA->getPosition().x - boundX, 
             [](const Block *block, float posX) {
                 return block->getPosition().x < posX;
@@ -27,12 +31,14 @@ namespace mario::entity {
 
         auto itR = std::upper_bound(blocks.begin(), blocks.end(), EntityA->getPosition().x + boundX, 
             [](float posX, const Block *block) {
+
                 return posX < block->getPosition().x;
             });
 
-            // Set the collision bounds
-            L = std::distance(blocks.begin(), itL);
-            R = std::distance(blocks.begin(), itR);
+        // Set the collision bounds
+        L = std::distance(blocks.begin(), itL);
+        R = std::distance(blocks.begin(), itR);
+        R = std::min(R, static_cast<int>(blocks.size()) - 1); // Ensure R does not exceed the size of the vector
     }
 
     SideCollision CollisionManager::findCollisionSide(const mario::entity::Entity *entityA, const mario::entity::Entity *entityB) {
@@ -78,19 +84,48 @@ namespace mario::entity {
     }
 
     void CollisionManager::checkCollisionPlayerWithBlocks(mario::entity::Player *&player, std::vector<Block*> &blocks, std::vector<Item*> &items) {
-        if(player->canCollisionWithBlock()) {
+        if(player->canCollisionWithBlock()) {        
+            sf::Vector2f vel = player->getVelocity();
+
+            for(const auto& block : groundBlocks) {
+                if(!block->isExist()) continue;
+                SideCollision side = findCollisionSide(player, block);
+                if(side != SideCollision::None) {
+                    switch (side) {
+                        case SideCollision::Top:
+                            vel.y = 0.f;
+                            break;
+                        case SideCollision::Bottom:
+                            vel.y = -10.f;
+                            player->resetJump();
+                            player->setOnGround(true);
+                            break;
+                        case SideCollision::Left:
+                            vel.x = 0.f;
+                            break;
+                        case SideCollision::Right:
+                            vel.x = 0.f;
+                            break;
+                        default:
+                            break;
+                    }
+
+                    fixPosition(player, block, side);
+                }
+            }
+        
             int L, R;
             findBlocksCollisions(L, R, player, blocks);
-    
+
             bool hasTopCollision = false;
             bool hasBottomCollision = false;
             bool hasLeftCollision = false;
             bool hasRightCollision = false;
-    
+
             for(int i = L; i <= R; ++i){
                 auto& block = blocks[i];
                 if (!block->isExist()) continue;
-    
+
                 SideCollision side = findCollisionSide(player, block);
                 if(side != SideCollision::None) {
                     int typeOfItem = block->reactToCollision(side ^ 1, player);
@@ -160,7 +195,6 @@ namespace mario::entity {
                 }
             }
     
-            sf::Vector2f vel = player->getVelocity();
             if(hasBottomCollision) {
                 vel.y = -10.f;
                 player->resetJump();
@@ -246,6 +280,34 @@ namespace mario::entity {
         for (auto& enemy : enemies) {
             mario::entity::Piranha* piranha = dynamic_cast<mario::entity::Piranha*>(enemy);
             if(!piranha) {
+                sf::Vector2f vel = enemy->getVelocity();
+                for(const auto& block : groundBlocks) {
+                    if(!block->isExist()) continue;
+                    SideCollision side = findCollisionSide(enemy, block);
+                    if(side != SideCollision::None) {
+                        enemy->reactCollision(side, Collision(Collision::Type::Wall));
+                        switch (side) {
+                            case SideCollision::Top:
+                                vel.y = 0.f;
+                                break;
+                            case SideCollision::Bottom:
+                                vel.y = -10.f;
+                                enemy->setOnGround(true); // Đặt trạng thái trên mặt đất
+                                break;
+                            case SideCollision::Left:
+                                vel.x = 0.f;
+                                break;
+                            case SideCollision::Right:
+                                vel.x = 0.f;
+                                break;
+                            default:
+                                break;
+                        }
+
+                        fixPosition(enemy, block, side);
+                    }
+                }
+
                 int L, R;
                 findBlocksCollisions(L, R, enemy, blocks);
 
@@ -287,9 +349,8 @@ namespace mario::entity {
                     }
                 }
 
-                sf::Vector2f vel = enemy->getVelocity();
                 if (hasBottomCollision) {
-                    vel.y = 0.f;
+                    vel.y = -10.f;
                     enemy->setOnGround(true); // Đặt trạng thái trên mặt đất
                 } else {
                     enemy->setOnGround(false);
@@ -466,6 +527,15 @@ namespace mario::entity {
     void CollisionManager::checkCollisionItemsWithBlocks(std::vector<mario::entity::Item*>& items, std::vector<mario::entity::Block*>& blocks) {
         for (auto& item : items) {
             if (!item->isCollected()) {
+
+                for(const auto& block : groundBlocks) {
+                    if(!block->isExist()) continue;
+                    SideCollision side = findCollisionSide(item, block);
+                    if(side != SideCollision::None) {
+                        fixPosition(item, block, side);
+                    }
+                }
+
                 int L, R;
                 findBlocksCollisions(L, R, item, blocks);
                 for (int i = L; i <= R; ++i) {
