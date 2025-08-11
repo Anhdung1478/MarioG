@@ -10,7 +10,9 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
       currLevelState(state),
       networkManager(networkManager),
       gameMode(mode),
-      remotePlayer(nullptr) {
+      remotePlayer(nullptr),
+      gameOverReceivedForLocal(false),
+      remotePlayerDead(false) {
     
     // Initialize player with the correct character type and state
     p_player = new mario::entity::Player(sf::Vector2f(100, 400), state.characterType, state.stateType);
@@ -24,6 +26,7 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
                 mario::entity::CharacterListType::Luigi : mario::entity::CharacterListType::Mario,
             state.stateType
         );
+        remotePlayer->setRemote(true);
     }
 
     // Load level and other game elements
@@ -34,22 +37,20 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
     );
     tileMap->loadObjects(enemies, items, blocks, backgroundBlocks);
 
+    // Generate unique IDs for items and enemies for network sync
+    for (size_t i = 0; i < items.size(); ++i) {
+        if (items[i]) {
+            items[i]->setNetworkId(static_cast<int>(i));
+        }
+    }
+    for (size_t i = 0; i < enemies.size(); ++i) {
+        if (enemies[i]) {
+            enemies[i]->setNetworkId(static_cast<int>(i));
+        }
+    }
+
     // Mario font initalize
     marioFont = std::make_unique<sf::Font>("../../asset/fonts/SuperMario256.ttf");
-
-    // Load enemies
-    // enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(1350.f, 600.f), mario::entity::KoopaType::Red, false));
-    // enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(350.f, 80.f), mario::entity::KoopaType::Green, true));
-
-    // testItem = new mario::entity::FireFlower(
-    //     "../../asset/sprites/fireflower.json",
-    //     "../../asset/maps/Image/tiles-8.png",
-    //     sf::Vector2f(2.5f, 2.5f),
-    //     "fireflower[0]",
-    //     sf::Vector2f(500.f, 500.f),
-    //     sf::Vector2f(16.f, 16.f),
-    //     sf::Vector2f(0.f, 0.f)
-    // );
 
     testItem = new mario::entity::Coin(
         "../../asset/sprites/coin.json",
@@ -89,7 +90,7 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
     panelTexture = std::make_unique<sf::Texture>("../../asset/textures/pause-text.png");
     panelSprite = std::make_unique<sf::Sprite>(*panelTexture);
 
-    sf::Vector2u windowSize =  sf::Vector2u(1280, 720);
+    sf::Vector2u windowSize = sf::Vector2u(1280, 720);
     sf::Vector2u textureSize = panelTexture->getSize();
     panelSprite->setScale({0.6f, 0.6f});
     sf::Vector2f panelSize = sf::Vector2f(textureSize.x *0.6f, textureSize.y * 0.6f);
@@ -144,8 +145,6 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
   
     p_levelDataManager = std::make_unique<mario::resource::LevelDataManager>();
     camera.setMapBounds(tileMap->getWorldBounds());
-
-    // std::this_thread::sleep_for(std::chrono::seconds(1));
 }
 
 void mario::pages::LevelsPage::autoSave() {
@@ -172,215 +171,6 @@ mario::pages::LevelsPage::~LevelsPage() {
     if (remotePlayer) {
         delete remotePlayer;
         remotePlayer = nullptr;
-    }
-}
-
-// for Sound Manager
-mario::resource::LevelState mario::pages::LevelsPage::getLevelState() const { return currLevelState; }
-
-// Pause Game
-bool mario::pages::LevelsPage::isPaused() const { return _isPaused; }
-
-void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) {
-    if (isGameOver()) {
-        _context->changePage(std::make_unique<GameOverPage>(*_context));
-        return;
-    }
-
-    sf::FloatRect cameraBounds = camera.getCameraBounds();
-    for (auto it = enemies.begin(); it != enemies.end();) {
-        if ((*it)->shouldDelete()) {
-            delete *it;
-            it = enemies.erase(it); 
-        } else {
-            ++it;
-        }
-    }
-
-    for (auto it = blocks.begin(); it != blocks.end();) {
-        if ((*it)->shouldDelete()) {
-            delete *it;
-            it = blocks.erase(it); 
-        } else {
-            ++it;
-        }
-    }
-    
-    if(!_isPaused) {
-        if(!p_player->isInDeadAnimation()) {
-            currLevelState.update(dt);
-            if(currLevelState.times <= sf::seconds(0.f)) {
-                p_player->setStartedDead();
-                currLevelState.times = sf::seconds(0.f);
-            }
-        }
-
-        p_player->update(window, dt);
-        p_player->updateToLevelState(currLevelState);
-
-        // testBlock->update(window, dt);
-        
-        for(auto &backgroundBlock : backgroundBlocks) {
-            // if(backgroundBlock->getHitbox().findIntersection(cameraBounds)) {
-                backgroundBlock->update(window, dt);
-            // }
-        }
-
-        for(auto &enemy : enemies) {
-            if (!enemy->shouldDelete() && enemy->getHitbox().findIntersection(cameraBounds)) {
-            // if (!enemy->shouldDelete()) {
-                mario::entity::Piranha* piranha = dynamic_cast<mario::entity::Piranha*>(enemy);
-                if (piranha) {
-                    piranha->updateWithPlayer(window, dt, p_player);
-                } else {
-                    enemy->update(window, dt);
-                }
-            }
-        }
-
-        for(auto &block : blocks) {
-            if (!block->shouldDelete() && block->getHitbox().findIntersection(cameraBounds)) {
-                block->update(window, dt);
-            }
-        }
-
-        //testItem->update(window, dt);
-        // Update items directly from vector
-        for(auto &item : items) {
-            if (item && !item->isCollected() && item->getHitbox().findIntersection(cameraBounds)) {
-                item->update(window, dt);
-            }
-        }
-
-        collisionManager.updateCameraBounds(cameraBounds);
-        collisionManager.checkCollisionPlayerWithBlocks(p_player, blocks, items);
-        collisionManager.checkCollisionEnemyWithBlocks(enemies, blocks);
-        collisionManager.checkCollisionPlayerWithEnemies(p_player, enemies);
-        collisionManager.checkCollisionPlayerWithItems(p_player, items);
-        collisionManager.checkCollisionItemsWithBlocks(items, blocks);
-
-        if (gameMode != GameMode::SinglePlayer && networkManager) {
-            handleNetworkUpdates(dt);
-            
-            // Use the two-player camera when in multiplayer
-            if (remotePlayer) {
-                // Calculate distance between players
-                float dx = p_player->getPosition().x - remotePlayer->getPosition().x;
-                float dy = p_player->getPosition().y - remotePlayer->getPosition().y;
-                float distance = std::sqrt(dx * dx + dy * dy);
-                
-                // If players are close together, use two-player camera
-                if (distance < 800.0f) {  // 800 pixels is the threshold for two-player camera
-                    camera.followTwoEntities(*p_player, *remotePlayer, dt);
-                } else {
-                    // If players are too far, just follow the local player
-                    camera.followEntity(*p_player, dt);
-                }
-            } else {
-                camera.followEntity(*p_player, dt);
-            }
-        } else {
-            // Single player mode
-            camera.followEntity(*p_player, dt);
-        }
-        
-        camera.update(dt);
-
-        currLevelState.stateType = p_player->getPlayerStateType();
-        p_levelDataManager->update(dt, currLevelState);
-        removeCollectedItems();
-
-        if(p_player->isDead()) {
-            if(currLevelState.num_lives > 0) {
-                currLevelState = mario::resource::LevelState(currLevelState.level, currLevelState.num_lives - 1, currLevelState.score, currLevelState.coins, currLevelState.characterType);
-                _context->changePage(std::make_shared<mario::pages::LevelsPage>(*_context, currLevelState, networkManager, gameMode));
-            } else {
-                camera.resetToDefaultView();
-                _context->changePage(std::make_shared<mario::pages::GameOverPage>(*_context));
-            }
-        }
-    }
-
-    // Check for hover state
-    sf::Vector2i mousePos = sf::Mouse::getPosition(*window);
-    sf::Vector2f worldMousePos = camera.screenToWorld(mousePos, *window);
-
-    sf::FloatRect pauseRect = sf::FloatRect(pauseSprite->getPosition(), 
-        sf::Vector2f(pauseTexture->getSize().x * pauseSprite->getScale().x, 
-                     pauseTexture->getSize().y * pauseSprite->getScale().y));
-    
-    sf::FloatRect homeRect = sf::FloatRect(homeSprite->getPosition(), 
-        sf::Vector2f(homeTexture->getSize().x * homeSprite->getScale().x, 
-                     homeTexture->getSize().y * homeSprite->getScale().y));
-    
-    sf::FloatRect settingsRect = sf::FloatRect(settingsSprite->getPosition(), 
-        sf::Vector2f(settingsTexture->getSize().x * settingsSprite->getScale().x, 
-                     settingsTexture->getSize().y * settingsSprite->getScale().y));
-
-    if (pauseRect.contains(sf::Vector2f(worldMousePos)) && !_isPaused) {
-        pauseSprite->setTexture(*pauseHoverTexture);
-    } else if (_isPaused) {
-        pauseSprite->setTexture(*resumeTexture);
-    } else {
-        pauseSprite->setTexture(*pauseTexture);
-    }
-
-    if(homeRect.contains(sf::Vector2f(worldMousePos))) {
-        homeSprite->setTexture(*homeHoverTexture);
-    } else {
-        homeSprite->setTexture(*homeTexture);
-    }
-
-    if(settingsRect.contains(sf::Vector2f(worldMousePos)) || isSettingsOpen) {
-        settingsSprite->setTexture(*settingsHoverTexture);
-    } else {
-        settingsSprite->setTexture(*settingsTexture);
-    }
-
-    // Settings
-    if (isSettingsOpen) {
-        musicSlider->update(*window);
-        sfxSlider->update(*window);
-    }
-
-    // itemManager->update(window, dt);
-    // itemManager->processSpawnTriggers(p_player, dt);
-}
-
-void mario::pages::LevelsPage::handleNetworkUpdates(float dt) {
-    // Send player state at fixed intervals
-    static float timeSinceLastUpdate = 0.0f;
-    timeSinceLastUpdate += dt;
-    
-    if (timeSinceLastUpdate >= NETWORK_UPDATE_INTERVAL) {
-        // Send our player's state
-        if (networkManager) {
-            networkManager->sendPlayerState(
-                p_player->getPosition(),
-                p_player->getVelocity()
-            );
-            
-            // Process incoming network messages
-            std::unique_ptr<NetworkMessage> msg;
-            while ((msg = networkManager->pollMessage())) {
-                switch (msg->type) {
-                    case NetworkMessage::PlayerState:
-                        if (remotePlayer) {
-                            remotePlayer->setPosition(msg->position);
-                            remotePlayer->setVelocity(msg->velocity);
-                        }
-                        break;
-                    case NetworkMessage::GameOver:
-                        setGameOver(true);
-                        break;
-                    case NetworkMessage::PlayerWin:
-                        // Handle player win condition
-                        break;
-                }
-            }
-        }
-        
-        timeSinceLastUpdate = 0.0f;
     }
 }
 
@@ -477,19 +267,304 @@ void mario::pages::LevelsPage::handleEvent(const sf::RenderWindow *window, const
     }
 }
 
-sf::Vector2f mario::pages::LevelsPage::getPositionRelativeToCamera(sf::Vector2f pos) {
-    sf::FloatRect rect = camera.getCameraBounds();
-    sf::Vector2f cameraPos = rect.position;
+// for Sound Manager
+mario::resource::LevelState mario::pages::LevelsPage::getLevelState() const { return currLevelState; }
 
-    return sf::Vector2f(pos.x + cameraPos.x, pos.y + cameraPos.y);
+// Pause Game
+bool mario::pages::LevelsPage::isPaused() const { return _isPaused; }
+
+void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) {
+    // Check for game over first
+    if (gameOverReceivedForLocal || isGameOver()) {
+        _context->changePage(std::make_unique<GameOverPage>(*_context));
+        return;
+    }
+
+    sf::FloatRect cameraBounds = camera.getCameraBounds();
+    
+    // Clean up deleted objects
+    for (auto it = enemies.begin(); it != enemies.end();) {
+        if ((*it)->shouldDelete()) {
+            delete *it;
+            it = enemies.erase(it); 
+        } else {
+            ++it;
+        }
+    }
+
+    for (auto it = blocks.begin(); it != blocks.end();) {
+        if ((*it)->shouldDelete()) {
+            delete *it;
+            it = blocks.erase(it); 
+        } else {
+            ++it;
+        }
+    }
+    
+    // Handle network updates for multiplayer
+    if (gameMode != GameMode::SinglePlayer && networkManager) {
+        handleNetworkUpdates(dt);
+    }
+
+    if(!_isPaused) {
+        if(!p_player->isInDeadAnimation()) {
+            currLevelState.update(dt);
+            if(currLevelState.times <= sf::seconds(0.f)) {
+                p_player->setStartedDead();
+                currLevelState.times = sf::seconds(0.f);
+            }
+        }
+
+        p_player->update(window, dt);
+        p_player->updateToLevelState(currLevelState);
+
+        // Send player state every frame after local movement is resolved
+        if (gameMode != GameMode::SinglePlayer && networkManager) {
+            networkManager->sendPlayerState(
+                p_player->getPosition(),
+                p_player->getVelocity()
+            );
+        }
+
+        // Update remote player for multiplayer
+        if (gameMode != GameMode::SinglePlayer && remotePlayer) {
+            sf::Vector2f currentPos = remotePlayer->getPosition();
+            remotePlayer->syncNetworkState(
+                currentPos + (remoteTargetPos - currentPos) * 0.2f,
+                remoteTargetVel
+            );
+            collisionManager.checkCollisionPlayerWithBlocks(remotePlayer, blocks, items);
+            remotePlayer->update(window, dt);
+        }
+        
+        for(auto &backgroundBlock : backgroundBlocks) {
+            backgroundBlock->update(window, dt);
+        }
+
+        for(auto &enemy : enemies) {
+            if (!enemy->shouldDelete() && enemy->getHitbox().findIntersection(cameraBounds)) {
+                mario::entity::Piranha* piranha = dynamic_cast<mario::entity::Piranha*>(enemy);
+                if (piranha) {
+                    piranha->updateWithPlayer(window, dt, p_player);
+                } else {
+                    enemy->update(window, dt);
+                }
+            }
+        }
+
+        for(auto &block : blocks) {
+            if (!block->shouldDelete() && block->getHitbox().findIntersection(cameraBounds)) {
+                block->update(window, dt);
+            }
+        }
+
+        // Update items directly from vector
+        for(auto &item : items) {
+            if (item && !item->isCollected() && item->getHitbox().findIntersection(cameraBounds)) {
+                item->update(window, dt);
+            }
+        }
+
+        collisionManager.updateCameraBounds(cameraBounds);
+        
+        // Handle collisions
+        collisionManager.checkCollisionPlayerWithBlocks(p_player, blocks, items);
+        collisionManager.checkCollisionEnemyWithBlocks(enemies, blocks);
+        collisionManager.checkCollisionPlayerWithEnemies(p_player, enemies);
+        
+        // Check for item collection and notify network
+        checkItemCollection();
+        
+        // Check for enemy defeats and notify network
+        checkEnemyDefeats();
+        
+        collisionManager.checkCollisionItemsWithBlocks(items, blocks);
+
+        if (gameMode != GameMode::SinglePlayer && remotePlayer) {
+            if (p_player->getHitbox().findIntersection(remotePlayer->getHitbox())) {
+                sf::Vector2f diff = p_player->getPosition() - remotePlayer->getPosition();
+                float len = std::max(1.f, std::sqrt(diff.x * diff.x + diff.y * diff.y));
+                diff /= len;
+                p_player->setPosition(p_player->getPosition() + diff * 5.f);
+                remotePlayer->setPosition(remotePlayer->getPosition() - diff * 5.f);
+            }
+        }
+
+        // Camera logic - simplified to avoid weird zooming
+        if (gameMode != GameMode::SinglePlayer && remotePlayer) {
+            // Calculate center point between both players
+            sf::Vector2f player1Pos = p_player->getPosition();
+            sf::Vector2f player2Pos = remotePlayer->getPosition();
+            sf::Vector2f centerPoint = (player1Pos + player2Pos) / 2.0f;
+            
+            // Calculate distance between players
+            float distance = std::sqrt(std::pow(player1Pos.x - player2Pos.x, 2) + 
+                                     std::pow(player1Pos.y - player2Pos.y, 2));
+            
+            // If players are reasonably close (within screen bounds), follow center point
+            if (distance < 600.0f) {
+                camera.followPosition(centerPoint, dt);
+            } else {
+                // If too far apart, just follow local player
+                camera.followEntity(*p_player, dt);
+            }
+        } else {
+            // Single player mode - follow local player
+            camera.followEntity(*p_player, dt);
+        }
+        
+        camera.update(dt);
+
+        currLevelState.stateType = p_player->getPlayerStateType();
+        p_levelDataManager->update(dt, currLevelState);
+        removeCollectedItems();
+
+        // Handle player death
+        if(p_player->isDead()) {
+            if (gameMode != GameMode::SinglePlayer && networkManager) {
+                // Send game over message to other player
+                networkManager->sendGameOver();
+            }
+            
+            if(currLevelState.num_lives > 0) {
+                currLevelState = mario::resource::LevelState(currLevelState.level, currLevelState.num_lives - 1, currLevelState.score, currLevelState.coins, currLevelState.characterType);
+                _context->changePage(std::make_shared<mario::pages::LevelsPage>(*_context, currLevelState, networkManager, gameMode));
+            } else {
+                camera.resetToDefaultView();
+                _context->changePage(std::make_shared<mario::pages::GameOverPage>(*_context));
+            }
+        }
+    }
+
+    // UI hover logic
+    sf::Vector2i mousePos = sf::Mouse::getPosition(*window);
+    sf::Vector2f worldMousePos = camera.screenToWorld(mousePos, *window);
+
+    sf::FloatRect pauseRect = sf::FloatRect(pauseSprite->getPosition(), 
+        sf::Vector2f(pauseTexture->getSize().x * pauseSprite->getScale().x, 
+                     pauseTexture->getSize().y * pauseSprite->getScale().y));
+    
+    sf::FloatRect homeRect = sf::FloatRect(homeSprite->getPosition(), 
+        sf::Vector2f(homeTexture->getSize().x * homeSprite->getScale().x, 
+                     homeTexture->getSize().y * homeSprite->getScale().y));
+    
+    sf::FloatRect settingsRect = sf::FloatRect(settingsSprite->getPosition(), 
+        sf::Vector2f(settingsTexture->getSize().x * settingsSprite->getScale().x, 
+                     settingsTexture->getSize().y * settingsSprite->getScale().y));
+
+    if (pauseRect.contains(sf::Vector2f(worldMousePos)) && !_isPaused) {
+        pauseSprite->setTexture(*pauseHoverTexture);
+    } else if (_isPaused) {
+        pauseSprite->setTexture(*resumeTexture);
+    } else {
+        pauseSprite->setTexture(*pauseTexture);
+    }
+
+    if(homeRect.contains(sf::Vector2f(worldMousePos))) {
+        homeSprite->setTexture(*homeHoverTexture);
+    } else {
+        homeSprite->setTexture(*homeTexture);
+    }
+
+    if(settingsRect.contains(sf::Vector2f(worldMousePos)) || isSettingsOpen) {
+        settingsSprite->setTexture(*settingsHoverTexture);
+    } else {
+        settingsSprite->setTexture(*settingsTexture);
+    }
+
+    // Settings
+    if (isSettingsOpen) {
+        musicSlider->update(*window);
+        sfxSlider->update(*window);
+    }
 }
 
-void mario::pages::LevelsPage::rePositionTextToMiddle(sf::Text &text, int rectX, int rectY) {
-    float textLenX = text.getGlobalBounds().size.x;
-    float textLenY = text.getGlobalBounds().size.y;
+void mario::pages::LevelsPage::checkItemCollection() {
+    for (auto& item : items) {
+        if (item && item->isCollected() && !item->isNetworkNotified()) {
+            // Send network message about collected item
+            if (gameMode != GameMode::SinglePlayer && networkManager) {
+                networkManager->sendItemCollected(item->getNetworkId(), item->getPosition());
+            }
+            item->setNetworkNotified(true);
+        }
+    }
+}
 
-    text.setFillColor(sf::Color::White);
-    text.setPosition(sf::Vector2f(int((rectX - textLenX) / 2.0), rectY));
+void mario::pages::LevelsPage::checkEnemyDefeats() {
+    for (auto& enemy : enemies) {
+        if (enemy && enemy->isDead() && !enemy->isNetworkNotified()) {
+            // Send network message about defeated enemy
+            if (gameMode != GameMode::SinglePlayer && networkManager) {
+                networkManager->sendEnemyDefeated(enemy->getNetworkId(), enemy->getPosition());
+            }
+            enemy->setNetworkNotified(true);
+        }
+    }
+}
+
+void mario::pages::LevelsPage::handleNetworkUpdates(float dt) {
+    static const int localPlayerId = (gameMode == GameMode::Host) ? 0 : 1;
+
+    if (!networkManager) return;
+
+    std::unique_ptr<NetworkMessage> msg;
+    while ((msg = networkManager->pollMessage())) {
+        switch (msg->type) {
+            case NetworkMessage::PlayerState:
+                if (remotePlayer) {
+                    remoteTargetPos = msg->position;
+                    remoteTargetVel = msg->velocity;
+                }
+                break;
+
+            case NetworkMessage::ItemCollected:
+                handleRemoteItemCollection(msg->itemId, msg->position);
+                break;
+
+            case NetworkMessage::EnemyDefeated:
+                handleRemoteEnemyDefeat(msg->enemyId, msg->position);
+                break;
+
+            case NetworkMessage::GameOver:
+                if (msg->playerId == localPlayerId) {
+                    gameOverReceivedForLocal = true;
+                } else {
+                    remotePlayerDead = true;
+                }
+                break;
+
+            case NetworkMessage::PlayerWin:
+                // Future win condition
+                break;
+        }
+    }
+}
+
+void mario::pages::LevelsPage::handleRemoteItemCollection(int itemId, const sf::Vector2f& position) {
+    // Find and mark item as collected by remote player
+    for (auto& item : items) {
+        if (item && item->getNetworkId() == itemId) {
+            if (!item->isCollected()) {
+                item->setCollected(true);
+                item->setNetworkNotified(true);
+            }
+            break;
+        }
+    }
+}
+
+void mario::pages::LevelsPage::handleRemoteEnemyDefeat(int enemyId, const sf::Vector2f& position) {
+    // Find and mark enemy as defeated by remote player
+    for (auto& enemy : enemies) {
+        if (enemy && enemy->getNetworkId() == enemyId) {
+            if (!enemy->isDead()) {
+                enemy->setDead(true);
+                enemy->setNetwork(true);
+            }
+            break;
+        }
+    }
 }
 
 void mario::pages::LevelsPage::renderLevelState(sf::RenderWindow *window, mario::resource::LevelState levelState) {
@@ -563,6 +638,21 @@ void mario::pages::LevelsPage::renderLevelState(sf::RenderWindow *window, mario:
     text.setPosition(getPositionRelativeToCamera(text.getPosition()));
     text.move(rectMove);
     window->draw(text);
+}
+
+sf::Vector2f mario::pages::LevelsPage::getPositionRelativeToCamera(sf::Vector2f pos) {
+    sf::FloatRect rect = camera.getCameraBounds();
+    sf::Vector2f cameraPos = rect.position;
+
+    return sf::Vector2f(pos.x + cameraPos.x, pos.y + cameraPos.y);
+}
+
+void mario::pages::LevelsPage::rePositionTextToMiddle(sf::Text &text, int rectX, int rectY) {
+    float textLenX = text.getGlobalBounds().size.x;
+    float textLenY = text.getGlobalBounds().size.y;
+
+    text.setFillColor(sf::Color::White);
+    text.setPosition(sf::Vector2f(int((rectX - textLenX) / 2.0), rectY));
 }
 
 void mario::pages::LevelsPage::render(sf::RenderWindow *window) {

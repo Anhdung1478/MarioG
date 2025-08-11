@@ -21,6 +21,10 @@ namespace mario::entity {
         EnemyBehavior behavior;
         float detectionRange;
         bool isActive;
+        bool isDeadFlag = false;
+        bool networkNotified = false;
+        int networkId = -1;
+        bool isNetwork = false;
 
         void patrol(float dt) {
             DynamicBox* body = dynamic_cast<DynamicBox*>(p_body);
@@ -188,6 +192,16 @@ namespace mario::entity {
                 body->setVelocity(velocity);
             }
         }
+
+        // Network methods
+        void setNetworkId(int id) { networkId = id; }
+        int getNetworkId() const { return networkId; }
+        void setNetworkNotified(bool notified) { networkNotified = notified; }
+        bool isNetworkNotified() const { return networkNotified; }
+        void setDead(bool dead) { isDeadFlag = dead; }
+        bool isDead() const { return isDeadFlag; }
+        void setNetwork(bool network) { isNetwork = network; }
+        bool getIsNetwork() const { return isNetwork; }
     };
     
     #undef FILE_PATH

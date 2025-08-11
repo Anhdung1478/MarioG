@@ -82,5 +82,6 @@ namespace mario::entity {
             int getScore() { return score;}
             int getCoins() { return coinCount; }
             int getLives() { return lives; }
+            void setRemote(bool isRemote) { _isRemotePlayer = isRemote; } 
     };
 }

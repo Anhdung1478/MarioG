@@ -1,6 +1,7 @@
 // network/NetworkManager.hpp
 #pragma once
 #include <SFML/Network.hpp>
+#include <SFML/System/Vector2.hpp>
 #include <thread>
 #include <atomic>
 #include <mutex>
@@ -12,9 +13,21 @@ enum class NetworkRole { None, Server, Client };
 
 // Add this struct:
 struct NetworkMessage {
-    enum Type { PlayerState, GameOver, PlayerWin } type;
+    enum Type : uint8_t {
+        PlayerState = 1,
+        GameOver = 2,
+        PlayerWin = 3,
+        ItemCollected = 4,
+        EnemyDefeated = 5,
+        ConnectionTest = 6
+    };
+    
+    Type type;
     sf::Vector2f position;
     sf::Vector2f velocity;
+    int itemId = -1;
+    int enemyId = -1;
+    int playerId = -1;  // Add player ID for game over/win messages
 };
 
 class NetworkManager {
@@ -44,6 +57,8 @@ public:
     std::unique_ptr<NetworkMessage> pollMessage();
     bool sendGameOver();
     bool sendPlayerWin();
+    bool sendItemCollected(int itemId, const sf::Vector2f& position);
+    bool sendEnemyDefeated(int enemyId, const sf::Vector2f& position);
 
 private:
     void receiverLoop();

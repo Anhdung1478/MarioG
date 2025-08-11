@@ -226,6 +226,11 @@ public:
         view.setCenter(newPos);
     }
 
+    void followPosition(const sf::Vector2f& position, float deltaTime) {
+        setTarget(position);
+        update(deltaTime);
+    }
+
     bool isInCorner() const {
         return isInCornerMode;
     }

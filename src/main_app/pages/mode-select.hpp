@@ -19,6 +19,7 @@ namespace mario::pages {
         std::unique_ptr<sf::Font> marioFont;
         std::unique_ptr<sf::Text> _titleText;
         std::unique_ptr<sf::Text> _modeText;
+        std::unique_ptr<sf::Text> _statusText;
         int _selectedLevel{1}; // Initialize to 1 or another default value
     };
 }
