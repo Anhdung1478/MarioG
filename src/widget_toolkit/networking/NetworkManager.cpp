@@ -138,38 +138,22 @@ void NetworkManager::receiverLoop() {
     while (running_) {
         if (!connected_) {
             if (isServer) {
+                // Server should re-listen for new connections
                 std::cout << "[Network] waiting for new client connection...\n";
                 listener_.setBlocking(true);
                 if (listener_.accept(socket_) == sf::Socket::Status::Done) {
                     std::cout << "[Network] new client connected\n";
                     socket_.setBlocking(false);
                     connected_ = true;
+                    // Give new connection time to stabilize
                     std::this_thread::sleep_for(std::chrono::milliseconds(200));
                 } else {
                     std::this_thread::sleep_for(std::chrono::milliseconds(100));
                     continue;
                 }
             } else {
-                // Client tries to reconnect periodically
-                std::cout << "[Network] client not connected, attempting reconnect...\n";
-                socket_.setBlocking(true);
-                auto addrOpt = sf::IpAddress::resolve(serverIp_); // you need to store server IP somewhere
-                if (!addrOpt) {
-                    std::cerr << "[Network] failed to resolve server IP: " << serverIp_ << "\n";
-                    std::this_thread::sleep_for(std::chrono::seconds(2));
-                    continue;
-                }
-                auto result = socket_.connect(addrOpt.value(), serverPort_); // also store server port somewhere
-                if (result == sf::Socket::Status::Done) {
-                    std::cout << "[Network] reconnected to server\n";
-                    socket_.setBlocking(false);
-                    connected_ = true;
-                    std::this_thread::sleep_for(std::chrono::milliseconds(200));
-                } else {
-                    std::cerr << "[Network] reconnect attempt failed\n";
-                    std::this_thread::sleep_for(std::chrono::seconds(2));
-                    continue;
-                }
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                continue;
             }
         }
 
@@ -180,13 +164,13 @@ void NetworkManager::receiverLoop() {
             std::lock_guard<std::mutex> lock(incomingMutex_);
             incoming_.push(packet);
         } else if (result == sf::Socket::Status::NotReady) {
+            // No data available, sleep briefly
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
         } else if (result == sf::Socket::Status::Disconnected) {
             std::cout << "[Network] peer disconnected (detected in receiver)\n";
             connected_ = false;
             socket_.disconnect();
-            // For server, keep listening for new clients
-            // For client, will try reconnect next iteration
+            // Loop will go back to listening for new connections if server
         } else if (result == sf::Socket::Status::Error) {
             std::cerr << "[Network] socket error in receiver\n";
             connected_ = false;
@@ -196,7 +180,7 @@ void NetworkManager::receiverLoop() {
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
     }
-
+    
     std::cout << "[Network] receiver thread stopped\n";
 }
 
