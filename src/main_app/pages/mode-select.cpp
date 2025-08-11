@@ -57,7 +57,7 @@ namespace mario::pages {
             else if (keyEvent->scancode == sf::Keyboard::Scancode::Num3) {
                 // Join game as LUIGI
                 auto networkManager = std::make_shared<NetworkManager>();
-                if (networkManager->connectToServer("192.168.1.18", 54000)) {
+                if (networkManager->connectToServer("192.168.1.40", 54000)) {
                     mario::resource::LevelState levelState(
                         _selectedLevel, 
                         2, 
