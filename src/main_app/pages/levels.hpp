@@ -22,6 +22,9 @@
 #include "../../widget_toolkit/entity/enemy/koopa.hpp"
 #include "../../widget_toolkit/entity/enemy/piranha.hpp"
 
+#include "../../widget_toolkit/networking/NetworkManager.hpp"
+#include "../../widget_toolkit/networking/GameMode.hpp"
+
 namespace mario::pages {
     class LevelsPage : public Page {
         private:
@@ -82,8 +85,17 @@ namespace mario::pages {
 
             bool isSettingsPressed = false;
             void removeCollectedItems();
+            bool _gameOver = false;
+            NetworkManager* networkManager;
+            GameMode gameMode;
+            mario::entity::Player *remotePlayer;
+            sf::Clock networkUpdateTimer;
+            const float NETWORK_UPDATE_INTERVAL = 0.1f; // 10 updates per second
+            
+            void handleNetworkUpdates(float dt);
         public:
-            LevelsPage(MainWindow &context, mario::resource::LevelState state);
+            LevelsPage(MainWindow &context, mario::resource::LevelState state, 
+                        NetworkManager* networkManager = nullptr, GameMode mode = GameMode::SinglePlayer);
             ~LevelsPage();
 
             void update(const sf::RenderWindow *window, float dt) override;
@@ -100,5 +112,7 @@ namespace mario::pages {
 
             // Pause Game
             bool isPaused() const;
+            void setGameOver(bool state) { _gameOver = state; }
+            bool isGameOver() const { return _gameOver; }
     };
 }

@@ -24,23 +24,6 @@ mario::pages::SelectPage::SelectPage(MainWindow &context, int level)
     const float SCREEN_WIDTH = 1280.0f;
     const float SCREEN_HEIGHT = 720.0f;
 
-    if (!backgroundTexture.loadFromFile("../../asset/sprites/level_theme.jpg")) {
-        throw std::runtime_error("Failed to load background image: level_theme.jpg");
-    }
-    backgroundSprite.setTexture(backgroundTexture);
-
-    sf::Vector2u textureSize = backgroundTexture.getSize();
-    float scaleX = static_cast<float>(SCREEN_WIDTH / textureSize.x);
-    float scaleY = static_cast<float>(SCREEN_HEIGHT / textureSize.y);
-
-    // Bigger scale so we fill the screen
-    float scale = std::max(scaleX, scaleY);
-    backgroundSprite.setScale(sf::Vector2f(scale, scale));
-
-    // Center crop
-    sf::FloatRect bounds = backgroundSprite.getGlobalBounds();
-    backgroundSprite.setPosition(sf::Vector2f((SCREEN_WIDTH - bounds.width) / 2.f, (SCREEN_HEIGHT - bounds.height) / 2.f));
-
     const SpriteData& curtainData = TextureManager::getInstance().getSpriteData("curtain[0]");
     curtainSprite.setTexture(*curtainData.texture);
     curtainSprite.setTextureRect(sf::IntRect({curtainData.x, curtainData.y}, {curtainData.z, curtainData.t}));
@@ -225,7 +208,6 @@ void mario::pages::SelectPage::handleEvent(const sf::RenderWindow *window, const
 
 
 void mario::pages::SelectPage::render(sf::RenderWindow *window) {
-    window->draw(backgroundSprite);
     window->draw(curtainSprite);
     window->draw(titleSprite);
     for (size_t i = 0; i < charFrameSprites.size(); i++) {
