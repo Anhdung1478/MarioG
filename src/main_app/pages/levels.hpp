@@ -86,7 +86,7 @@ namespace mario::pages {
             bool isSettingsPressed = false;
             void removeCollectedItems();
             bool _gameOver = false;
-            NetworkManager* networkManager;
+            std::shared_ptr<NetworkManager> networkManager;
             GameMode gameMode;
             mario::entity::Player *remotePlayer;
             sf::Clock networkUpdateTimer;
@@ -95,7 +95,7 @@ namespace mario::pages {
             void handleNetworkUpdates(float dt);
         public:
             LevelsPage(MainWindow &context, mario::resource::LevelState state, 
-                        NetworkManager* networkManager = nullptr, GameMode mode = GameMode::SinglePlayer);
+                        std::shared_ptr<NetworkManager> networkManager = nullptr, GameMode mode = GameMode::SinglePlayer);
             ~LevelsPage();
 
             void update(const sf::RenderWindow *window, float dt) override;

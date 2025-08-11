@@ -4,7 +4,7 @@
 #include "../../widget_toolkit/resource/SoundManager.hpp"
 
 mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::LevelState state, 
-                                   NetworkManager* networkManager, GameMode mode) 
+                                   std::shared_ptr<NetworkManager> networkManager, GameMode mode) 
     : Page(context), 
       camera({1280, 720}), 
       currLevelState(state),

@@ -51,7 +51,7 @@ namespace mario::pages {
                         mario::entity::CharacterListType::Mario, 
                         mario::entity::player_state::PlayerStateType::Small
                     );
-                    _context->changePage(std::make_shared<LevelsPage>(*_context, levelState));
+                    _context->changePage(std::make_shared<LevelsPage>(*_context, levelState, networkManager, GameMode::Host));
                 }
             }
             else if (keyEvent->scancode == sf::Keyboard::Scancode::Num3) {
@@ -66,7 +66,7 @@ namespace mario::pages {
                         mario::entity::CharacterListType::Luigi, 
                         mario::entity::player_state::PlayerStateType::Small
                     );
-                    _context->changePage(std::make_shared<LevelsPage>(*_context, levelState));
+                    _context->changePage(std::make_shared<LevelsPage>(*_context, levelState, networkManager, GameMode::Client));
                 }
             }
         }
