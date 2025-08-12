@@ -29,8 +29,8 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
     // tileMap->createBlock(blocks, backgroundBlocks);
     // testBlock = new mario::entity::BackgroundBlock(sf::Vector2f(100, 500), sf::Vector2f(16, 16), "enemies-flag[0]");
     // testBlock = new mario::entity::BackgroundBlock(sf::Vector2f(100, 500), sf::Vector2f(16, 16), std::to_string(390), {"390", 1, 171, 16, 16});
-    // testFireWorks = new mario::entity::FireWorks(sf::Vector2f(500, 200), sf::Vector2f(500, 500), "fireworks[0]");
-    // testFireWorks->setShowFireworks(true);
+    testFireWorks = new mario::entity::FireWorks(sf::Vector2f(500, 200), sf::Vector2f(500, 200));
+    testFireWorks->setShowFireworks(true);
 
 
 
@@ -245,7 +245,7 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
             collisionManager.checkCollisionPlayerWithItems(p_player, items);
             collisionManager.checkCollisionItemsWithBlocks(items, blocks);
 
-            // testFireWorks->update(window, dt);
+            testFireWorks->update(window, dt);
             // auto measure = [](auto&& func, const std::string& name) {
             //     auto start = std::chrono::high_resolution_clock::now();
             //     func();
@@ -627,7 +627,7 @@ void mario::pages::LevelsPage::render(sf::RenderWindow *window) {
         }
     }
 
-    // testFireWorks->render(window);
+    testFireWorks->render(window);
 
     p_player->render(window);
 
