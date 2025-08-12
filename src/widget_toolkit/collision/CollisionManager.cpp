@@ -317,6 +317,21 @@ namespace mario::entity {
                         }
                     }
                 }
+                sf::Vector2f vel = enemy->getVelocity();
+                if (hasBottomCollisionF) {
+                    vel.y = -10.f;
+                    enemy->setOnGround(true);
+                } else {
+                    enemy->setOnGround(false);
+                }
+
+                if (hasTopCollisionF) {
+                    vel.y = 0.f;
+                }
+            
+                if (hasLeftCollisionF || hasRightCollisionF) {
+                    vel.x = 0.f;
+                }
 
                 int L, R;
                 findBlocksCollisions(L, R, enemy, blocks);
@@ -359,10 +374,9 @@ namespace mario::entity {
                     }
                 }
 
-                sf::Vector2f vel = enemy->getVelocity();
                 if (hasBottomCollision) {
-                    vel.y = 0.f;
-                    enemy->setOnGround(true); // Đặt trạng thái trên mặt đất
+                    vel.y = -10.f;
+                    enemy->setOnGround(true);
                 } else {
                     enemy->setOnGround(false);
                 }
@@ -376,8 +390,6 @@ namespace mario::entity {
                 }
 
                 enemy->setVelocity(vel);
-
-                mario::entity::Koopa* koopa = dynamic_cast<mario::entity::Koopa*>(enemy);
             }
         }
     }

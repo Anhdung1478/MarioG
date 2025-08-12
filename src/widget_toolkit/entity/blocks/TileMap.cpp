@@ -259,7 +259,7 @@ namespace mario::entity {
                         enemies.push_back(new mario::entity::PiranhaGreen(sf::Vector2f(x, y)));
                     }
                     else if (objType == "lakitu"){
-                        // enemies.push_back(new mario::entity::Lakitu(sf::Vector2f(x, y)));
+                        enemies.push_back(new mario::entity::Lakitu(sf::Vector2f(x, y)));
                     }
                 }
                 // std::cout << '\n';

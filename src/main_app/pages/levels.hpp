@@ -106,5 +106,9 @@ namespace mario::pages {
 
             // Pause Game
             bool isPaused() const;
+
+            // void addEnemy(mario::entity::Enemy* enemy) { 
+            //     enemies.push_back(enemy);
+            // }
     };
 }
