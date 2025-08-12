@@ -35,8 +35,8 @@ namespace mario::entity::player_state {
             ~MarioStateManager() override {
             }
 
-            void setAnimation(Animation *p_animation, const std::string &ID) override {
-                p_animation->setSpriteAnimation(MARIO_TYPE_STR[(int) currStateType] + "." + ID);
+            void setAnimation(Animation *p_animation, const std::string &prefixSpriteID, const std::string &ID) override {
+                p_animation->setSpriteAnimation(prefixSpriteID + MARIO_TYPE_STR[(int) currStateType] + "." + ID);
             }
             
             void setDeadAnimation(Animation *p_animation) override {

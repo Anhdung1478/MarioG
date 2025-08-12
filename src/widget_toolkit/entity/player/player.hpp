@@ -90,6 +90,7 @@ namespace mario::entity {
             void collectStarman();       // appear when Player collect a Starman
             void jumpOnEnemyHead();      // appear when Player jump on an enemy head an kill it
 
+            std::string getPrefixBehavior() const;
             PlayerBehavior getPlayerBehavior() const;
             CharacterListType getCharacterType() const;
             player_state::PlayerStateType getPlayerStateType() const;

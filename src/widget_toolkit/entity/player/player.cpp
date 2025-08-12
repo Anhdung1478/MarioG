@@ -77,19 +77,36 @@ void mario::entity::Player::rotateDirection() {
 /* =================================================================================================================================================================== */
 
 void mario::entity::Player::managePlayerAnimation() {
+    if(playerBehavior == PlayerBehavior::Invincible) { // use a variable x, change x from x to x + 1 when anytime call to managePlayerAnimation, using  
+        if(!p_body->isOnGround()) { // change texture to jumping
+            p_stateManager->setAnimation(p_animation, getPrefixBehavior(), "jump[0]");
+        } else {
+            if(p_body->isNotMoving()) { // change texture to idle
+                p_stateManager->setAnimation(p_animation, getPrefixBehavior(), "idle[0]");
+            } else 
+                if(p_animation->getAnimationState() == false) { // change to run animation
+                    p_stateManager->setAnimation(p_animation, getPrefixBehavior(), "idle[0]");
+                }
+           
+            hasPlayedJumpSound_ = false; 
+        }
+
+        p_animation->setAnimationState(true);
+    }
+
     if(playerBehavior != PlayerBehavior::Normal)
         return;
 
     if(!p_body->isOnGround()) { // change texture to jumping
-            p_stateManager->setAnimation(p_animation, "jump[0]");
+            p_stateManager->setAnimation(p_animation, getPrefixBehavior(), "jump[0]");
             p_animation->setAnimationState(false);
         } else {
             if(p_body->isNotMoving()) { // change texture to idle
-                p_stateManager->setAnimation(p_animation, "idle[0]");
+                p_stateManager->setAnimation(p_animation, getPrefixBehavior(), "idle[0]");
                 p_animation->setAnimationState(false);
             } else 
                 if(p_animation->getAnimationState() == false) { // change to run animation
-                    p_stateManager->setAnimation(p_animation, "idle[0]");
+                    p_stateManager->setAnimation(p_animation, getPrefixBehavior(), "idle[0]");
                     p_animation->setAnimationState(true);
                 }
                 
@@ -471,6 +488,10 @@ void mario::entity::Player::jumpOnEnemyHead() {
 }
 
 /* =================================================================================================================================================================== */
+
+std::string mario::entity::Player::getPrefixBehavior() const {
+    return (playerBehavior == PlayerBehavior::Invincible) ? "invincible-" : "";
+}
 
 mario::entity::PlayerBehavior mario::entity::Player::getPlayerBehavior() const {
     return playerBehavior;
