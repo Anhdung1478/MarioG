@@ -1,6 +1,6 @@
 Level= 1
-Lives= 0
-Coins= 10
-Score= 15200
+Lives= 2
+Coins= 1
+Score= 1550
 CharacterType= 0
-StateType= 0
+StateType= 1

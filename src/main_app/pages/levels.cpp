@@ -244,7 +244,7 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
             collisionManager.checkCollisionPlayerWithEnemies(p_player, enemies);
             collisionManager.checkCollisionPlayerWithItems(p_player, items);
             collisionManager.checkCollisionItemsWithBlocks(items, blocks);
-
+            collisionManager.checkCollisionEnemyWithEnemy(enemies);
             // testFireWorks->update(window, dt);
             // auto measure = [](auto&& func, const std::string& name) {
             //     auto start = std::chrono::high_resolution_clock::now();
@@ -536,7 +536,6 @@ void mario::pages::LevelsPage::renderLevelState(sf::RenderWindow *window, mario:
 
 void mario::pages::LevelsPage::render(sf::RenderWindow *window) {
     window->draw(*backgroundSprite);
-    // std::cout << "Position's player: " << p_player->getPosition().x << ", " << p_player->getPosition().y << "\n";
     camera.applyTo(*window);
 
     // draw background here

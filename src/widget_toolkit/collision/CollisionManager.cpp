@@ -280,31 +280,41 @@ namespace mario::entity {
         for (auto& enemy : enemies) {
             mario::entity::Piranha* piranha = dynamic_cast<mario::entity::Piranha*>(enemy);
             if(!piranha) {
-                sf::Vector2f vel = enemy->getVelocity();
+                bool hasTopCollisionF = false;
+                bool hasBottomCollisionF = false;
+                bool hasLeftCollisionF = false;
+                bool hasRightCollisionF = false;
+
                 for(const auto& block : groundBlocks) {
                     if(!block->isExist()) continue;
+
                     SideCollision side = findCollisionSide(enemy, block);
                     if(side != SideCollision::None) {
                         enemy->reactCollision(side, Collision(Collision::Type::Wall));
                         switch (side) {
                             case SideCollision::Top:
-                                vel.y = 0.f;
+                                hasTopCollisionF = true;
                                 break;
                             case SideCollision::Bottom:
-                                vel.y = -10.f;
-                                enemy->setOnGround(true); // Đặt trạng thái trên mặt đất
+                                if(enemy->getIsCheckCollisionWithBlock()) {
+                                    hasBottomCollisionF = true;
+                                } else {
+                                    hasBottomCollisionF = false;
+                                }
                                 break;
                             case SideCollision::Left:
-                                vel.x = 0.f;
+                                hasLeftCollisionF = true;
                                 break;
                             case SideCollision::Right:
-                                vel.x = 0.f;
+                                hasRightCollisionF = true;
                                 break;
                             default:
                                 break;
                         }
 
-                        fixPosition(enemy, block, side);
+                        if(enemy->getIsCheckCollisionWithBlock()) {
+                            fixPosition(enemy, block, side);
+                        }
                     }
                 }
 
@@ -349,8 +359,9 @@ namespace mario::entity {
                     }
                 }
 
+                sf::Vector2f vel = enemy->getVelocity();
                 if (hasBottomCollision) {
-                    vel.y = -10.f;
+                    vel.y = 0.f;
                     enemy->setOnGround(true); // Đặt trạng thái trên mặt đất
                 } else {
                     enemy->setOnGround(false);
@@ -365,6 +376,8 @@ namespace mario::entity {
                 }
 
                 enemy->setVelocity(vel);
+
+                mario::entity::Koopa* koopa = dynamic_cast<mario::entity::Koopa*>(enemy);
             }
         }
     }
@@ -384,10 +397,8 @@ namespace mario::entity {
                             break;
                         case SideCollision::Bottom:
                             if(enemy->getIsPlayerDeadWhenCollisionT()) {
-                                // std::cout << 2 << std::endl;
                                 player->beingHit();
                             } else {
-                                // std::cout << 1 << std::endl;
                                 player->jumpOnEnemyHead();
                             }
                             break;
