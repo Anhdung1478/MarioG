@@ -17,7 +17,7 @@ namespace mario::entity {
     }
 
     void FireWorks::createFireworksAnimation() {
-        int numberOfFireworks = 20;
+        int numberOfFireworks = 30;
         for (int i = 0; i < numberOfFireworks; ++i) {
             fireWorks.push_back(FireworksData(rand() % 3, position, size, texture));
         }
