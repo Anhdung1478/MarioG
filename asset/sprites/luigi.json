@@ -112,12 +112,6 @@
       { "x": 679, "y": 148, "width": 16, "height": 16 },
       { "x": 703, "y": 149, "width": 11, "height": 15 }
     ],
-    "become-luigi-fire": [
-      { "x": 772, "y": 217, "width": 14, "height": 31 },
-      { "x": 793, "y": 217, "width": 14, "height": 31 },
-      { "x": 814, "y": 217, "width": 14, "height": 31 },
-      { "x": 835, "y": 217, "width": 14, "height": 31 }
-    ],
     "get-ready": [
       { "x": 357, "y": 98, "width": 18, "height": 30 }
     ],

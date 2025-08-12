@@ -116,7 +116,7 @@ namespace mario::entity {
                         p_animation->rotate();
                     }
                 }
-            } else if(collision.isWithBullet()) {
+            } else if(collision.isWithFireball()) {
                 currentState = GoombaState::Dead;
                 loadDeadAnimations();
                 try {
