@@ -158,6 +158,7 @@ namespace mario::entity {
                 body->setVelocity({0.f, 0.f}); // Initialize velocity to zero
                 body->setPosition({startPosition.x, startPosition.y - maxHeight}); // Start at top
             }
+            setIsPlayerDeadWhenCollisionT(true);
         }
 
         virtual ~Piranha() = default;

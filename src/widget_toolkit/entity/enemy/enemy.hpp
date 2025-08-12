@@ -25,6 +25,9 @@ namespace mario::entity {
         bool networkNotified = false;
         int networkId = -1;
         bool isNetwork = false;
+        bool isPlayerDeadWhenCollisionLF = true;
+        bool isPlayerDeadWhenCollisionT = false;
+        bool isCheckCollisionWithBlock = true;
 
         void patrol(float dt) {
             DynamicBox* body = dynamic_cast<DynamicBox*>(p_body);
@@ -37,11 +40,6 @@ namespace mario::entity {
                     body->move(false, false); // move left
                     // std::cout << "Moving left\n";
                 }
-                // else {
-                //     body->move(body->isFaceForward(), false); // continue
-                //     std::cout << "Moving left\n";
-                // }
-
                 if (p_animation->isFaceForward() == body->isFaceForward()) {
                     p_animation->rotate();
                 }
@@ -202,6 +200,29 @@ namespace mario::entity {
         bool isDead() const { return isDeadFlag; }
         void setNetwork(bool network) { isNetwork = network; }
         bool getIsNetwork() const { return isNetwork; }
+        void setIsPlayerDeadWhenCollisionLF(bool check) {
+            isPlayerDeadWhenCollisionLF = check;
+        }
+
+        bool getIsPlayerDeadWhenCollisionLF() {
+            return isPlayerDeadWhenCollisionLF;
+        }
+
+        void setIsPlayerDeadWhenCollisionT(bool check) {
+            isPlayerDeadWhenCollisionT = check;
+        }
+
+        bool getIsPlayerDeadWhenCollisionT() {
+            return isPlayerDeadWhenCollisionT;
+        }
+
+        void setIsCheckCollisionWithBlock(bool check) {
+            isCheckCollisionWithBlock = check;
+        }
+
+        bool getIsCheckCollisionWithBlock() {
+            return isCheckCollisionWithBlock;
+        }
     };
     
     #undef FILE_PATH

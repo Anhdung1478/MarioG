@@ -104,7 +104,7 @@ namespace mario::entity {
             
             void setAnimationState(bool running) {
                 _isRunning = running;
-                if(!_isRunning) {
+                if(_isRunning) {
                     setAnimationStep(0);
                     animationTimer = sf::seconds(0.f);
                 }
@@ -161,7 +161,6 @@ namespace mario::entity {
 
             void rotate() {
                 _isFaceForward = 1 - _isFaceForward;
-                
                 scale.x = -scale.x;
                 p_sprite->setScale(scale);
             }
@@ -179,10 +178,12 @@ namespace mario::entity {
             }
 
             void update(const sf::RenderWindow *window, float dt) override {
-                animationTimer += (_isRunning ? sf::seconds(dt) : sf::seconds(0));
-                if(animationTimer >= sf::seconds(TIME_BETWEEN_STEP)) {
-                    animationTimer -= sf::seconds(TIME_BETWEEN_STEP);
-                    performNextAnimation();
+                if(_isRunning) {
+                    animationTimer += sf::seconds(dt);
+                    if(animationTimer >= sf::seconds(TIME_BETWEEN_STEP)) {
+                        animationTimer -= sf::seconds(TIME_BETWEEN_STEP);
+                        performNextAnimation();
+                    }
                 }
 
                 if(_isFlicker) {

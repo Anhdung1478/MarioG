@@ -13,17 +13,17 @@ enum SideCollision {
 };
 
 struct Collision {
-    enum class Type { Player, Wall, Bullet, Brick };
+    enum class Type { Player, Wall, Fireball, Brick, Enemy };
     Type type;
     Collision(Type t) : type(t) {}
     bool isWithPlayer() const { return type == Type::Player; }
     bool isWithWall() const { return type == Type::Wall; }
-    bool isWithBullet() const { return type == Type::Bullet; }
+    bool isWithFireball() const { return type == Type::Fireball; }
     bool isWithBrick() const { return type == Type::Brick; }
+    bool isWithEnemy() const { return type == Type::Enemy; }
 };
 
-namespace mario {
-    namespace entity {
+namespace mario::entity {
 
     class Player;
     class ItemManager;
@@ -51,5 +51,4 @@ namespace mario {
         bool shouldDelete() const { return shouldBeDeleted; }
     };
 
-    } // namespace entity
-} // namespace mario
+} // namespace mario::entity

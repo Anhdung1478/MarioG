@@ -64,7 +64,6 @@ namespace mario::entity {
 
             void update(float dt) override {
                 if(_isRunning) {
-                    // std::cout << ((_isMoveRight) ? "Moving right" : "Moving left") << "\n";
                     if(_isMoveRight != (velocity.x > 0.f)) {
                         if(_isMoveRight) {
                             velocity.x = std::min(velocity.x + 2 * acceleration.x * dt, maxVelocityX);
@@ -79,9 +78,7 @@ namespace mario::entity {
                         }
                     }
 
-
                     _isFaceForward = (velocity.x > 0.f);
-                    // std::cout << (_isMoveRight ? "Moving right" : "Moving left") << ", " << "Velocity X: " << velocity.x << '\n';
                 } else
                     if(abs(velocity.x) > 0.f)
                         velocity.x += ((velocity.x > 0.f) ? -1 : +1) * std::min(acceleration.x * 2 * dt, abs(velocity.x));
@@ -110,7 +107,7 @@ namespace mario::entity {
 
             void resetJump() override {
                 velocity.y = std::min(velocity.y, 0.f);
-                _isJumpping = 0;
+                _isJumpping = false;
             }
 
             bool isNotMoving() const override {
@@ -139,6 +136,10 @@ namespace mario::entity {
 
             sf::Vector2f getVelocity() const override {
                 return velocity;
+            }
+
+            void setAcceleration(sf::Vector2f acc) {
+                acceleration = acc;
             }
     };
 }

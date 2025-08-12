@@ -9,7 +9,7 @@ namespace mario::entity {
         name = name + "[" + std::to_string(themeID) + "]";
         p_animation = new mario::entity::Animation("../../asset/maps/Image/tiles-8.png", BLOCK_SCALE, sprites);
         p_animation->setSpriteAnimation(name);
-        p_animation->setAnimationState(true);
+        p_animation->setAnimationState(false);
 
         coins_animation->addAnimationStep("coin[0]");
         coins_animation->addAnimationStep("coin[1]");
@@ -59,7 +59,12 @@ namespace mario::entity {
 
     int Brick::reactToCollision(int side, Player* player) {
         if (side != SideCollision::Bottom) return -1;
-        if(typeOfItem == -1) {
+        
+        if(typeOfItem == -2) {
+            player->hitEmptyBlock();
+            return -1;
+        }
+        else if(typeOfItem == -1) {
             if(player->getPlayerStateType() == player_state::PlayerStateType::Small) {
                 isBouncing = true;
             }
@@ -68,6 +73,7 @@ namespace mario::entity {
                 setExist(false);
                 // break the brick block
             }
+            player->breakBrick();
         }    
         else if (typeOfItem == 0) { // Coin
             if (numberOfCoins == 0) return -1;
@@ -84,6 +90,7 @@ namespace mario::entity {
                 p_animation->setSpriteAnimation("empty-brick-block[" + std::to_string(themeID) + "]");
                 typeOfItem = -2; // Mark as empty
             }
+            player->collectCoinInBlock();
         }
         else if (typeOfItem == 1) { // Red-mushroom
             // Spawn Red mushroom
@@ -208,11 +215,9 @@ namespace mario::entity {
     }
 
     void Brick::render(sf::RenderWindow *window) {
-        if(isExist()){
-            p_animation->renderWithPosition(window, p_body->getPosition());
-            p_body->renderHitboxRect(window);
-            
-        }
+        if(isExist())
+            Entity::render(window);
+
         if(coins_animation->getAnimationState()) {
             if(coins_animation->getStep() == 4) coins_animation->setVelocity(sf::Vector2f(0.f, 0.f));
             coins_animation->render(window);

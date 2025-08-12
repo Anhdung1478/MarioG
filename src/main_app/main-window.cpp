@@ -52,7 +52,8 @@ void mario::MainWindow::run() {
     isRunning = true;
 
     while (isRunning) {
-        sf::Time deltaTime = clock.restart(); // Get the time elapsed since the last frame
+        // sf::Time deltaTime = clock.restart(); // Get the time elapsed since the last frame
+        sf::Time deltaTime = sf::seconds(1.0f / (float)(fixedFPS));
         /*while(deltaTime < timeStep) {
             sf::sleep(timeStep - deltaTime);
             deltaTime += clock.restart();

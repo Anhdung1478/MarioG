@@ -67,12 +67,7 @@ namespace mario::entity {
 
             // Render logic
             virtual void render(sf::RenderWindow* window) override {
-                if (p_animation && p_body) {
-                    p_animation->renderWithPosition(window, p_body->getPosition());
-                }
-                if (p_body) {
-                    p_body->renderHitboxRect(window);
-                }
+                Entity::render(window);
             }
 
             // Getter for item type

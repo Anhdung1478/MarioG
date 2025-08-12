@@ -33,18 +33,22 @@ namespace mario::entity {
                     delete p_body;
             }
             
-            virtual void update(const sf::RenderWindow* window, float dt) override {
+            void update(const sf::RenderWindow* window, float dt) override {
                 if (p_animation && p_body) {
                     p_animation->update(window, dt);
                     p_body->update(dt);
                 }
             }
 
-            virtual void handleEvent(const sf::RenderWindow* window, const sf::Event& event) override {}
+            void handleEvent(const sf::RenderWindow* window, const sf::Event& event) override {}
 
             void render(sf::RenderWindow *window) override {
-                p_animation->renderWithPosition(window, p_body->getPosition());
-                p_body->renderHitboxRect(window);
+                if(p_animation && p_body)
+                    p_animation->renderWithPosition(window, p_body->getPosition());
+                
+                bool isRenderWithHitbox = true;
+                if(p_body && isRenderWithHitbox)
+                    p_body->renderHitboxRect(window);
             }
 
             void setPosition(sf::Vector2f pos) {

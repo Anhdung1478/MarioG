@@ -2,8 +2,7 @@
 #include "../box/static-box.hpp"
 #include "../item/ItemManager.hpp"
 
-namespace mario {
-    namespace entity {
+namespace mario::entity {
 
     Block::Block() : Entity(), name(""), exist(true) {
     }
@@ -18,5 +17,4 @@ namespace mario {
         // Derived classes should override this method for specific behavior
     }
 
-} // namespace entity
-} // namespace mario
+} // namespace mario::entity
