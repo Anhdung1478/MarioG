@@ -26,7 +26,6 @@ namespace mario::entity {
         void initializeAnimations(const std::string& jsonPath, const std::string& texturePath, sf::Vector2f scale) override {
             p_animation->loadSheet(jsonPath, texturePath);
             p_animation->clearAnimationStep();
-            // Chỉ có 1 frame duy nhất
             try {
                 p_animation->addAnimationStep("lakitu.flying[0]");
                 p_animation->setSpriteAnimation("lakitu.flying[0]");
@@ -64,7 +63,6 @@ namespace mario::entity {
         void updateBehavior(float dt, const Player* player) {
             if (!getActive() || !player) return;
 
-            // Lakitu chỉ di chuyển theo X của player
             DynamicBox* body = dynamic_cast<DynamicBox*>(p_body);
             if (body) {
                 float targetX = player->getPosition().x + HORIZONTAL_OFFSET;
@@ -72,11 +70,9 @@ namespace mario::entity {
                 float distanceToTarget = std::abs(targetX - currentX);
 
                 bool moveRight = targetX > currentX;
-                // Chỉ di chuyển nếu khác vị trí hiện tại một khoảng nhỏ để tránh rung
                 if (distanceToTarget > 1.f) {
                     body->move(moveRight, false);
 
-                    // Chỉ đổi hướng khi đang di chuyển và hướng thay đổi
                     if (p_animation->isFaceForward() != moveRight) {
                         p_animation->rotate();
                     }
@@ -87,7 +83,7 @@ namespace mario::entity {
         void updateWithPlayer(const sf::RenderWindow* window, float dt, const Player* player) {
             if (shouldDelete()) return;
 
-            updateBehavior(dt, player); // Player sẽ truyền từ Game khi gọi
+            updateBehavior(dt, player);
             
             p_animation->update(window, dt);
             p_body->updateSize(p_animation);

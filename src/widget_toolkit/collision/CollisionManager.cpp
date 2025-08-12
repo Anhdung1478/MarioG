@@ -336,6 +336,11 @@ namespace mario::entity {
                 int L, R;
                 findBlocksCollisions(L, R, enemy, blocks);                
 
+                bool hasTopCollision = false;
+                bool hasBottomCollision = false;
+                bool hasLeftCollision = false;
+                bool hasRightCollision = false;
+
                 for (int i = L; i < R; ++i) {
                     auto& block = blocks[i];
                     if (!block->isExist()) continue;

@@ -61,12 +61,11 @@ namespace mario::entity {
         void reactCollision(int side, const Collision& collision) override {
             if (collision.isWithWall()) {
                 if (currentState == BallState::FreeFall) {
-                    // Khi rơi chạm đất -> chuyển sang Walking
                     currentState = BallState::Walking;
                     initializeAnimations(FILE_PATH"enemy.json", FILE_PATH"enemy.png", {2.5f, 2.5f});
                     
                     if (auto body = dynamic_cast<DynamicBox*>(p_body)) {
-                        body->setVelocity({-150.f, 0.f}); // đi sang trái
+                        body->setVelocity({-150.f, 0.f}); // move left
                     }
                 }
             }
@@ -75,7 +74,7 @@ namespace mario::entity {
         void updateBehavior(float dt, Player* player = nullptr) override {
             if (currentState == BallState::Walking) {
                 if (auto body = dynamic_cast<DynamicBox*>(p_body)) {
-                    body->move(false, false); // luôn đi sang trái
+                    body->move(false, false); // always move left
                 }
             }
         }
