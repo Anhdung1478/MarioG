@@ -30,11 +30,9 @@ namespace mario::entity {
             if(body) {
                 float currentX = body->getPosition().x;
                 if((currentX < initialPosition.x - patrolRange)) {
-                    body->move(true, false); // move right
-                    // std::cout << "Moving right\n";
+                    body->move(true, false); 
                 } else if ((currentX > initialPosition.x + patrolRange)) {
-                    body->move(false, false); // move left
-                    // std::cout << "Moving left\n";
+                    body->move(false, false);
                 }
                 if (p_animation->isFaceForward() == body->isFaceForward()) {
                     p_animation->rotate();
@@ -94,17 +92,6 @@ namespace mario::entity {
         void setShouldDelete(bool sD) {
             shouldBeDeleted = sD;
         }
-        // virtual void reactCollision(const Collision& collision) {
-        //     if(collision.isWithWall()) {
-        //         DynamicBox* body = dynamic_cast<DynamicBox*>(p_body);
-        //         if(body) {
-        //             body->setVelocity({-body->getVelocity().x, body->getVelocity().y});
-        //             if(p_animation->isFaceForward() == body->isFaceForward()) {
-        //                 p_animation->rotate();
-        //             }
-        //         } 
-        //     }
-        // }
 
         virtual void reactCollision(int side, const Collision& collision) {
             if(collision.isWithWall() && (side == SideCollision::Left || side == SideCollision::Right)) {

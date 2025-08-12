@@ -3,7 +3,8 @@
 
 #define FILE_PATH "../../asset/sprites/"
 
-mario::entity::Player::Player(sf::Vector2f spawnPoint, CharacterListType characterType, player_state::PlayerStateType stateType) : _characterType(characterType), _isAlive(true) {
+mario::entity::Player::Player(sf::Vector2f spawnPoint, CharacterListType characterType, player_state::PlayerStateType stateType, mario::audio::SoundManager& soundManager)
+             : _characterType(characterType), _isAlive(true), soundManager(soundManager) {
     _isDeadAlready = false;
     playerBehavior = PlayerBehavior::Normal;
 
@@ -32,6 +33,11 @@ mario::entity::Player::~Player() {
 void mario::entity::Player::jump(bool isReleased) {
     if(!_canMove)
         return;
+
+    if (!isReleased && !hasPlayedJumpSound_) {
+        soundManager.playSound(mario::event::SoundEvent::PLAYER_JUMP); // Phát âm thanh nhảy
+        hasPlayedJumpSound_ = true;
+    }
 
     p_body->jump(isReleased);
 }
@@ -95,6 +101,8 @@ void mario::entity::Player::managePlayerAnimation() {
                 
             hasPlayedJumpSound_ = false;
         }
+
+    hasPlayedJumpSound_ = false;
 }
 
 void mario::entity::Player::updatePlayerBehavior(float dt) {
@@ -137,7 +145,7 @@ void mario::entity::Player::changePlayerBehavior(PlayerBehavior newBehavior) {
     }
 
     if(playerBehavior == PlayerBehavior::TransformSTB) {
-        // stop powerup sound
+        soundManager.playSound(mario::event::SoundEvent::POWER_DOWN);
 
         _canCollisionWithEnemy = _canCollisionWithItem = true;
         p_stateManager->changeToSuperState(p_animation, p_body);
@@ -185,7 +193,7 @@ void mario::entity::Player::changePlayerBehavior(PlayerBehavior newBehavior) {
         _canCollisionWithEnemy = _canCollisionWithItem = false;
         togglePlayerMove(false);
 
-        // play powerup sound
+        soundManager.playSound(mario::event::SoundEvent::POWER_UP);
         _isTransforming = true;
         behaviorTimer = sf::seconds(1.f);
         p_animation->clearAnimationStep();
@@ -215,7 +223,7 @@ void mario::entity::Player::changePlayerBehavior(PlayerBehavior newBehavior) {
     }
 
     if(newBehavior == PlayerBehavior::Invincible) {
-        // play invincible behavior sound (Player after loot star)
+        soundManager.playSound(mario::event::SoundEvent::POWERUP_APPEARS);
 
         behaviorTimer = sf::seconds(10.f); // 10 seconds of invincibility
     }
@@ -227,7 +235,8 @@ void mario::entity::Player::changePlayerBehavior(PlayerBehavior newBehavior) {
 
     if(newBehavior == PlayerBehavior::Dying) { 
         _canCollisionWithEnemy = _canCollisionWithItem = _canCollisionWithBlock = false;
-        // play dead sound
+        
+        soundManager.playSound(mario::event::SoundEvent::PLAYER_DIE);
         
         _isAlive = false;
         togglePlayerMove(false);
@@ -400,26 +409,25 @@ void mario::entity::Player::addPopUpScore(int _score) {
 }
 
 void mario::entity::Player::breakBrick() {
-    // Play break brick sound
+    soundManager.playSound(mario::event::SoundEvent::BLOCK_BREAK);
     addPopUpScore(50);
 }
 
 void mario::entity::Player::hitEmptyBlock() {
-    // Play hit empty block sound
+    soundManager.playSound(mario::event::SoundEvent::BLOCK_BUMP);
 }
 
 void mario::entity::Player::collectCoin() {
     ++coinCount;
     addPopUpScore(200);
     
-    // 1-up at 100 coins
+    soundManager.playSound(mario::event::SoundEvent::COIN_COLLECT);
+
     if (coinCount >= 100) {
         lives += coinCount / 100;
         coinCount %= 100;
-        // Play 1-up sound
+        soundManager.playSound(mario::event::SoundEvent::ONE_UP);
     }
-    
-    // Play coin sound
 }
 
 void mario::entity::Player::collectCoinInBlock() {
@@ -430,7 +438,7 @@ void mario::entity::Player::collectRedMushroom() {
     addPopUpScore(1000);
     if (getPlayerStateType() == player_state::PlayerStateType::Small) {
         changeState(player_state::PlayerStateType::Super);
-        // Play power-up sound
+        soundManager.playSound(mario::event::SoundEvent::POWER_UP);
     } else {
         // Already super or fire, give points instead
     }
@@ -442,17 +450,17 @@ void mario::entity::Player::collectFireFlower() {
     addPopUpScore(1000);
     if (getPlayerStateType() == player_state::PlayerStateType::Small) {
         changeState(player_state::PlayerStateType::Super);
-        // Play power-up sound
+        soundManager.playSound(mario::event::SoundEvent::POWER_UP);
     } else if(getPlayerStateType() == player_state::PlayerStateType::Super) {
         changeState(player_state::PlayerStateType::Fire);
-        // Play power-up sound
+        soundManager.playSound(mario::event::SoundEvent::POWER_UP);
     }
 }
 
 void mario::entity::Player::collect1UpMushroom() {
     lives++;
     addPopUpScore(1000);
-    // Play 1-up sound
+    soundManager.playSound(mario::event::SoundEvent::ONE_UP);
 }
 
 void mario::entity::Player::collectStarman() {
@@ -464,8 +472,11 @@ void mario::entity::Player::jumpOnEnemyHead() {
 
     resetJump();
     setOnGround(true);
+    hasPlayedJumpSound_ = false;
     jump(false);
 
+    soundManager.playSound(mario::event::SoundEvent::ENEMY_STOMP);
+    
     scoreMultiplier = tempMult;
     addPopUpScore(++scoreMultiplier * 100);
 }

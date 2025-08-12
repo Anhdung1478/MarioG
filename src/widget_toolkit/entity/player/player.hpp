@@ -10,6 +10,7 @@
 #include "../item/item.hpp"
 #include "fireball.hpp"
 #include "../../controls/popup-text-list.hpp"
+#include "../../resource/SoundManager.hpp"
 
 namespace mario::entity {
     static constexpr sf::Vector2f PLAYER_SCALE = sf::Vector2f(2.5f, 2.5f);
@@ -19,6 +20,8 @@ namespace mario::entity {
 
     class Player : public Entity {
         private:
+            mario::audio::SoundManager& soundManager; // for sound effects
+
             mario::entity::player_state::PlayerStateManager *p_stateManager;
             CharacterListType _characterType;
             PlayerBehavior playerBehavior;
@@ -44,7 +47,7 @@ namespace mario::entity {
             void updatePlayerBehavior(float dt); // update for Player Behavior (some behavior will change when ran out of time)
 
         public:
-            Player(sf::Vector2f spawnPoint, CharacterListType characterType, player_state::PlayerStateType stateType);
+            Player(sf::Vector2f spawnPoint, CharacterListType characterType, player_state::PlayerStateType stateType, mario::audio::SoundManager& soundManager);
             ~Player() override;
             
             void rotateDirection();

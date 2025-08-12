@@ -141,5 +141,9 @@ namespace mario::entity {
             void setAcceleration(sf::Vector2f acc) {
                 acceleration = acc;
             }
+
+            void setGravityEnabled(bool enabled) {
+                acceleration.y = enabled ? 980.f : 0.f;
+            }
     };
 }

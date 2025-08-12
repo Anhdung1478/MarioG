@@ -34,5 +34,20 @@
       { "x": 383, "y": 122, "width": 18, "height": 26 },
       { "x": 383, "y": 122, "width": 18, "height": 26 }
     ]
+  },
+  "lakitu": {
+    "flying": [
+      { "x": 193, "y": 123, "width": 17, "height": 25 }
+    ]
+  },
+  "ball": {
+    "walking": [
+      { "x": 193, "y": 149, "width": 18, "height": 18 },
+      { "x": 174, "y": 149, "width": 18, "height": 18 }
+    ],
+    "free-fall": [
+      { "x": 232, "y": 149, "width": 16, "height": 18 },
+      { "x": 251, "y": 149, "width": 18, "height": 18 }
+    ]
   }
 }

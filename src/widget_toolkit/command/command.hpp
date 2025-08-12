@@ -17,10 +17,10 @@ namespace mario::input { // Command pattern
             void execute(mario::entity::Player &player, bool isReleased) override {
                 player.jump(isReleased);
 
-                if(!player.hasPlayedJumpSound()) {
-                    context_.getSoundManager().playSound(mario::event::SoundEvent::PLAYER_JUMP);
-                    player.setJumpSoundPlayed(true);
-                }
+                // if(!player.hasPlayedJumpSound()) {
+                //     context_.getSoundManager().playSound(mario::event::SoundEvent::PLAYER_JUMP);
+                //     player.setJumpSoundPlayed(true);
+                // }
             }
         private:
             MainWindow& context_;
