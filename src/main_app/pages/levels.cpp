@@ -4,7 +4,7 @@
 #include "../../widget_toolkit/resource/SoundManager.hpp"
 
 mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::LevelState state) : Page(context), camera({1280, 720}), currLevelState(state), backgroundSprite(nullptr) {
-    p_player = new mario::entity::Player(sf::Vector2f(8400, 400), state.characterType, state.stateType);
+    p_player = new mario::entity::Player(sf::Vector2f(100, 400), state.characterType, state.stateType);
     p_inputManager = std::make_unique<mario::input::InputManager>(context);
 
     tileMap = std::make_unique<mario::entity::TileMap>("../../asset/maps/tiles-8.json", "../../asset/maps/Map_" + std::to_string(currLevelState.level) + ".json", currLevelState.level, currLevelState.level-1);
