@@ -74,6 +74,8 @@ namespace mario::entity {
             void togglePlayerMove(bool canMove); // toggle turn on/off movement of Player (when turn off, Player won't be able to move)
             void resetJump();
 
+            void toggleClimbingBehavior(bool isFinished); // toggle turn on/off climbing behavior of Player (when turn on, Player will climbing from top of flag to ground)
+
             void beingHit(); // being hit by enemy or entity like level trap
             void changePlayerBehavior(PlayerBehavior newBehavior); // change Player behavior to newBehavior
             void changeState(player_state::PlayerStateType newStateType); // change Player State into newStateType
@@ -110,7 +112,7 @@ namespace mario::entity {
     
             bool _isRemotePlayer = false;
 
-            int getScore() { return score;}
+            int getScore() { return score; }
             int getCoins() { return coinCount; }
             int getLives() { return lives; }
             void setRemote(bool isRemote) { _isRemotePlayer = isRemote; } 

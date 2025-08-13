@@ -25,7 +25,8 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
             sf::Vector2f(200, 400),  // Different starting position than local player
             state.characterType == mario::entity::CharacterListType::Mario ? 
                 mario::entity::CharacterListType::Luigi : mario::entity::CharacterListType::Mario,
-            state.stateType
+            state.stateType, 
+            context.getSoundManager()
         );
         remotePlayer->setRemote(true);
     }

@@ -395,6 +395,12 @@ void mario::entity::Player::render(sf::RenderWindow *window) {
 
 /* =================================================================================================================================================================== */
 
+void toggleClimbingBehavior(bool isFinished) {
+    
+}
+
+/* =================================================================================================================================================================== */
+
 void mario::entity::Player::setOnGround(bool isOnGround) {
     p_body->setOnGround(isOnGround);
     if(isOnGround)
