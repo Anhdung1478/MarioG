@@ -21,6 +21,8 @@ mario::entity::Player::Player(sf::Vector2f spawnPoint, CharacterListType charact
         p_animation = new Animation(FILE_PATH"luigi.json", FILE_PATH"luigi_sheets.png", PLAYER_SCALE, "luigi-small.idle[0]");
         p_stateManager = new mario::entity::player_state::LuigiStateManager(p_animation, p_body, stateType);
     }
+
+    p_fireballList = std::make_unique<mario::entity::FireballList>();
 }
 
 mario::entity::Player::~Player() {
@@ -50,20 +52,37 @@ void mario::entity::Player::move(bool isMoveRight, bool isReleased) {
 }
 
 void mario::entity::Player::shotFireball(bool isReleased) {
-    if(!_canMove)
+    if(!_canMove || p_stateManager->getCurrentState() != player_state::PlayerStateType::Fire || shootingDelayTimer > sf::seconds(0.f) || p_fireballList->getNumFireballs() >= 5)
         return;
 
-    
+    timeSinceLastShoot = sf::seconds(0.f);
+    shootingDelayTimer = sf::seconds(DEFAULT_SHOOTING_DELAY);
+    _isShootingFireball = true;
+    bool isFaceForward = p_body->isFaceForward();
+    sf::Vector2f fireball_spawnPoint = p_body->getPosition();
+    sf::Vector2f playerSize = p_body->getSize();
+    sf::Vector2f fireballSize = Fireball::getFireballSize();
+
+    int sign = (!isFaceForward) ? -1 : 1;
+    fireball_spawnPoint.y -= (playerSize.y - fireballSize.y) / 2.f;
+    fireball_spawnPoint.x += sign * (playerSize.x + fireballSize.x) / 2.f;
+
+    p_fireballList->addAFireball(new mario::entity::Fireball(fireball_spawnPoint, isFaceForward));
 }
 
 /* =================================================================================================================================================================== */
 
+void mario::entity::Player::explosionFireballAtPos(int idx) {
+    p_fireballList->getFireballAtPos(idx)->exploding();
+    addScoreToPlayer(500, false);
+}
+
 mario::entity::Fireball* mario::entity::Player::getFireballAtPos(int idx) const {
-    return fireballs[idx];
+    return p_fireballList->getFireballAtPos(idx);
 }
 
 int mario::entity::Player::getNumberFireballs() const {
-    return fireballs.size();
+    return p_fireballList->getNumFireballs();
 }
 
 /* =================================================================================================================================================================== */
@@ -83,19 +102,37 @@ void mario::entity::Player::rotateDirection() {
 /* =================================================================================================================================================================== */
 
 void mario::entity::Player::managePlayerAnimation() {
+    if(playerBehavior == PlayerBehavior::Invincible) { // use a variable x, change x from x to x + 1 when anytime call to managePlayerAnimation, using  
+        if(!p_body->isOnGround()) { // change texture to jumping
+            p_stateManager->setAnimation(p_animation, getPrefixBehavior(), "jump[0]");
+        } else {
+            if(p_body->isNotMoving()) { // change texture to idle
+                p_stateManager->setAnimation(p_animation, getPrefixBehavior(), "idle[0]");
+            } else 
+                if(p_animation->getAnimationState() == false) { // change to run animation
+                    p_stateManager->setAnimation(p_animation, getPrefixBehavior(), "idle[0]");
+                }
+           
+            hasPlayedJumpSound_ = false; 
+        }
+
+        p_animation->setAnimationState(true);
+    }
+
     if(playerBehavior != PlayerBehavior::Normal)
         return;
 
     if(!p_body->isOnGround()) { // change texture to jumping
-            p_stateManager->setAnimation(p_animation, "jump[0]");
+            p_stateManager->setAnimation(p_animation, getPrefixBehavior(), "jump[0]");
             p_animation->setAnimationState(false);
         } else {
             if(p_body->isNotMoving()) { // change texture to idle
-                p_stateManager->setAnimation(p_animation, "idle[0]");
+                bool isInShootingAnimation = (timeSinceLastShoot <= sf::seconds(0.1f));
+                p_stateManager->setAnimation(p_animation, getPrefixBehavior(), (isInShootingAnimation ? "shoot[0]" : "idle[0]"));
                 p_animation->setAnimationState(false);
             } else 
                 if(p_animation->getAnimationState() == false) { // change to run animation
-                    p_stateManager->setAnimation(p_animation, "idle[0]");
+                    p_stateManager->setAnimation(p_animation, getPrefixBehavior(), "idle[0]");
                     p_animation->setAnimationState(true);
                 }
                 
@@ -324,11 +361,17 @@ void mario::entity::Player::update(const sf::RenderWindow *window, float dt) {
     updatePlayerBehavior(dt);
     p_animation->update(window, dt);
     // p_body->updateSize(p_animation);
-    if(playerBehavior != PlayerBehavior::TransformBTS && playerBehavior != PlayerBehavior::TransformSTB)
+    if(playerBehavior != PlayerBehavior::TransformBTS && playerBehavior != PlayerBehavior::TransformSTB) {
         p_body->update(dt);
+        p_fireballList->update(window, dt);
+        shootingDelayTimer = std::max(sf::seconds(0), shootingDelayTimer - sf::seconds(dt));
+        timeSinceLastShoot += sf::seconds(dt);
+    }
     
     if(p_animation->isFaceForward() != p_body->isFaceForward())
         rotateDirection();
+
+    _isShootingFireball = false;
 }
 
 void mario::entity::Player::updateToLevelState(mario::resource::LevelState &levelState) {
@@ -341,11 +384,13 @@ void mario::entity::Player::updateToLevelState(mario::resource::LevelState &leve
 }
 
 void mario::entity::Player::handleEvent(const sf::RenderWindow *window, const sf::Event &event) {
+    p_fireballList->handleEvent(window, event);
 }
 
 void mario::entity::Player::render(sf::RenderWindow *window) {
     Entity::render(window);
     popUpScoreList->render(window);
+    p_fireballList->render(window);
 }
 
 /* =================================================================================================================================================================== */
@@ -403,14 +448,15 @@ bool mario::entity::Player::canCollisionWithBlock() const {
 
 /* =================================================================================================================================================================== */
 
-void mario::entity::Player::addPopUpScore(int _score) {
+void mario::entity::Player::addScoreToPlayer(int _score, bool isPoppingUp) {
     score += _score;
-    popUpScoreList->addAPopUpText(p_body->getPosition(), std::to_string(_score));
+    if(isPoppingUp)
+        popUpScoreList->addAPopUpText(p_body->getPosition(), std::to_string(_score));
 }
 
 void mario::entity::Player::breakBrick() {
     soundManager.playSound(mario::event::SoundEvent::BLOCK_BREAK);
-    addPopUpScore(50);
+    addScoreToPlayer(50, false);
 }
 
 void mario::entity::Player::hitEmptyBlock() {
@@ -419,7 +465,7 @@ void mario::entity::Player::hitEmptyBlock() {
 
 void mario::entity::Player::collectCoin() {
     ++coinCount;
-    addPopUpScore(200);
+    addScoreToPlayer(200, true);
     
     soundManager.playSound(mario::event::SoundEvent::COIN_COLLECT);
 
@@ -435,19 +481,17 @@ void mario::entity::Player::collectCoinInBlock() {
 }
 
 void mario::entity::Player::collectRedMushroom() {
-    addPopUpScore(1000);
+    addScoreToPlayer(1000, true);
     if (getPlayerStateType() == player_state::PlayerStateType::Small) {
         changeState(player_state::PlayerStateType::Super);
         soundManager.playSound(mario::event::SoundEvent::POWER_UP);
     } else {
         // Already super or fire, give points instead
     }
-
-    std::cerr << "Collected Red Mushroom: " << score << " points\n";
 }
 
 void mario::entity::Player::collectFireFlower() {
-    addPopUpScore(1000);
+    addScoreToPlayer(1000, true);
     if (getPlayerStateType() == player_state::PlayerStateType::Small) {
         changeState(player_state::PlayerStateType::Super);
         soundManager.playSound(mario::event::SoundEvent::POWER_UP);
@@ -459,7 +503,7 @@ void mario::entity::Player::collectFireFlower() {
 
 void mario::entity::Player::collect1UpMushroom() {
     lives++;
-    addPopUpScore(1000);
+    addScoreToPlayer(1000, true);
     soundManager.playSound(mario::event::SoundEvent::ONE_UP);
 }
 
@@ -478,10 +522,19 @@ void mario::entity::Player::jumpOnEnemyHead() {
     soundManager.playSound(mario::event::SoundEvent::ENEMY_STOMP);
     
     scoreMultiplier = tempMult;
-    addPopUpScore(++scoreMultiplier * 100);
+    addScoreToPlayer(++scoreMultiplier * 100, true);
+}
+
+void mario::entity::Player::hitEnemyWithFireball(bool canEnemyDead) {
+    if(canEnemyDead)
+        addScoreToPlayer(100, true);
 }
 
 /* =================================================================================================================================================================== */
+
+std::string mario::entity::Player::getPrefixBehavior() const {
+    return (playerBehavior == PlayerBehavior::Invincible) ? "invincible-" : "";
+}
 
 mario::entity::PlayerBehavior mario::entity::Player::getPlayerBehavior() const {
     return playerBehavior;

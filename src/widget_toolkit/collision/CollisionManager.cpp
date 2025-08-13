@@ -84,7 +84,7 @@ namespace mario::entity {
     }
 
     void CollisionManager::checkCollisionPlayerWithBlocks(mario::entity::Player *&player, std::vector<Block*> &blocks, std::vector<Item*> &items) {
-        if(player->canCollisionWithBlock()) {        
+        if(player->canCollisionWithBlock()) {
             sf::Vector2f vel = player->getVelocity();
 
             for(const auto& block : groundBlocks) {
@@ -223,16 +223,44 @@ namespace mario::entity {
         }
 
         int numFireballs = player->getNumberFireballs();
-        for (int i = 0; i < numFireballs; ++i) {
-            mario::entity::Fireball *fireball = player->getFireballAtPos(i);
+        for (int j = 0; j < numFireballs; ++j) {
+            mario::entity::Fireball *fireball = player->getFireballAtPos(j);
+            if(fireball->isExploding())
+                continue;
 
-            int L, R;
-            findBlocksCollisions(L, R, fireball, blocks);
-    
             bool hasTopCollision = false;
             bool hasBottomCollision = false;
             bool hasLeftCollision = false;
             bool hasRightCollision = false;
+
+            sf::Vector2f vel = fireball->getVelocity();
+            for(const auto& block : groundBlocks) {
+                if(!block->isExist()) continue;
+                SideCollision side = findCollisionSide(fireball, block);
+                if(side != SideCollision::None) {
+                    switch (side) {
+                        case SideCollision::Top:
+                            hasTopCollision = true;
+                            break;
+                        case SideCollision::Bottom:
+                            hasBottomCollision = true;
+                            break;
+                        case SideCollision::Left:
+                           hasLeftCollision = true;
+                            break;
+                        case SideCollision::Right:
+                            hasRightCollision = true;
+                            break;
+                        default:
+                            break;
+                    }
+
+                    fixPosition(fireball, block, side);
+                }
+            }
+
+            int L, R;
+            findBlocksCollisions(L, R, fireball, blocks);
     
             for(int i = L; i <= R; ++i){
                 auto& block = blocks[i];
@@ -263,7 +291,6 @@ namespace mario::entity {
                 fixPosition(fireball, block, side);
             }
 
-            sf::Vector2f vel = fireball->getVelocity();
             if(hasTopCollision || hasBottomCollision)
                 vel.y = 0.f;
     
@@ -272,7 +299,7 @@ namespace mario::entity {
     
             fireball->setVelocity(vel);
             if(hasLeftCollision || hasRightCollision)
-                fireball->exploding();
+                player->explosionFireballAtPos(j);
         }
     }
 
@@ -427,19 +454,26 @@ namespace mario::entity {
                         default:
                             break;
                     }
+
                     fixPosition(player, enemy, side);
                 }
             }
 
             // fireballs and enemies
             int numFireballs = player->getNumberFireballs();
-            for (int i = 0; i < numFireballs; ++i) {
-                mario::entity::Fireball *fireball = player->getFireballAtPos(i);
-                SideCollision side = findCollisionSide(player, enemy);
+            for (int j = 0; j < numFireballs; ++j) {
+                mario::entity::Fireball *fireball = player->getFireballAtPos(j);
+                if(fireball->isExploding())
+                    continue;
+
+                SideCollision side = findCollisionSide(fireball, enemy);
                 if (side == SideCollision::None)
                     continue;
 
                 enemy->reactCollision(side ^ 1, Collision(Collision::Type::Fireball));
+                player->hitEnemyWithFireball(!enemy->getIsPlayerDeadWhenCollisionT());
+                player->explosionFireballAtPos(j);
+                break;
             }
         }
     }

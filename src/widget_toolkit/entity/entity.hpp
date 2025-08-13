@@ -47,8 +47,8 @@ namespace mario::entity {
                     p_animation->renderWithPosition(window, p_body->getPosition());
                 
                 bool isRenderWithHitbox = true;
-                if(p_body && isRenderWithHitbox)
-                    p_body->renderHitboxRect(window);
+                //if(p_body && isRenderWithHitbox)
+                //    p_body->renderHitboxRect(window);
             }
 
             void setPosition(sf::Vector2f pos) {
