@@ -104,5 +104,15 @@ namespace mario::entity {
             
             void setJumpSoundPlayed(bool played);
             bool hasPlayedJumpSound() const;
+
+            void handleNetworkCollision(const sf::Vector2f& otherPosition);
+            void syncNetworkState(const sf::Vector2f& position, const sf::Vector2f& velocity);
+    
+            bool _isRemotePlayer = false;
+
+            int getScore() { return score;}
+            int getCoins() { return coinCount; }
+            int getLives() { return lives; }
+            void setRemote(bool isRemote) { _isRemotePlayer = isRemote; } 
     };
 }

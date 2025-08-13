@@ -21,6 +21,10 @@ namespace mario::entity {
         EnemyBehavior behavior;
         float detectionRange;
         bool isActive;
+        bool isDeadFlag = false;
+        bool networkNotified = false;
+        int networkId = -1;
+        bool isNetwork = false;
         bool isPlayerDeadWhenCollisionLF = true;
         bool isPlayerDeadWhenCollisionT = false;
         bool isCheckCollisionWithBlock = true;
@@ -174,6 +178,15 @@ namespace mario::entity {
             }
         }
 
+        // Network methods
+        void setNetworkId(int id) { networkId = id; }
+        int getNetworkId() const { return networkId; }
+        void setNetworkNotified(bool notified) { networkNotified = notified; }
+        bool isNetworkNotified() const { return networkNotified; }
+        void setDead(bool dead) { isDeadFlag = dead; }
+        bool isDead() const { return isDeadFlag; }
+        void setNetwork(bool network) { isNetwork = network; }
+        bool getIsNetwork() const { return isNetwork; }
         void setIsPlayerDeadWhenCollisionLF(bool check) {
             isPlayerDeadWhenCollisionLF = check;
         }

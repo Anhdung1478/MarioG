@@ -7,42 +7,18 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-include(FetchContent)
-FetchContent_Declare(SFML
-    GIT_REPOSITORY https://github.com/SFML/SFML.git
-    GIT_TAG 3.0.1
-    GIT_SHALLOW ON
-    EXCLUDE_FROM_ALL
-    SYSTEM)
-FetchContent_MakeAvailable(SFML)
+set(SFML_ROOT "C:/SFML")
+set(CMAKE_PREFIX_PATH "${SFML_ROOT}/lib/cmake/SFML" ${CMAKE_PREFIX_PATH})
 
-include(FetchContent)
-FetchContent_Declare(
-    eventpp
-    GIT_REPOSITORY https://github.com/wqking/eventpp
-    GIT_TAG        d2db8af2a46c79f8dc75759019fba487948e9442 # v0.1.3
-)
-FetchContent_MakeAvailable(eventpp)
-include(FetchContent)
-FetchContent_Declare(SFML
-    GIT_REPOSITORY https://github.com/SFML/SFML.git
-    GIT_TAG 3.0.1
-    GIT_SHALLOW ON
-    EXCLUDE_FROM_ALL
-    SYSTEM)
-FetchContent_MakeAvailable(SFML)
+set(SFML_STATIC_LIBRARIES ON)
 
-include(FetchContent)
-FetchContent_Declare(
-    eventpp
-    GIT_REPOSITORY https://github.com/wqking/eventpp
-    GIT_TAG        d2db8af2a46c79f8dc75759019fba487948e9442 # v0.1.3
-)
-FetchContent_MakeAvailable(eventpp)
+find_package(SFML 3.0 REQUIRED COMPONENTS System Window Graphics Audio Network)
+
+set(EVENTPP_DIR "C:/eventpp")
 
 # Thêm file nguồn
 file(GLOB_RECURSE SOURCE_FILES "src/*.cpp")
 add_executable(MARIOG ${SOURCE_FILES})
 
 # Link libraries
-target_link_libraries(MARIOG PRIVATE SFML::Graphics SFML::Window SFML::System SFML::Audio eventpp::eventpp)
+target_link_libraries(MARIOG PRIVATE SFML::Graphics SFML::Window SFML::System SFML::Audio SFML::Network eventpp::eventpp)

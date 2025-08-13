@@ -29,6 +29,8 @@ namespace mario::entity {
             bool isMoving = true;
             ItemType type;
             bool isCollectedFlag = false;
+            bool networkNotified = false;
+            int networkId = -1;
             MovementType movementType;
 
             float floatAmptitude = 5.0f;
@@ -36,6 +38,13 @@ namespace mario::entity {
             float OriginalY;
 
             void collect() { isCollectedFlag = true; }
+            void setCollected(bool collected) { isCollectedFlag = collected; }
+            
+            // Network methods
+            void setNetworkId(int id) { networkId = id; }
+            int getNetworkId() const { return networkId; }
+            void setNetworkNotified(bool notified) { networkNotified = notified; }
+            bool isNetworkNotified() const { return networkNotified; }
 
             Item(ItemType itemType,
                 const std::string& jsonPath, const std::string& texturePath, 

@@ -556,4 +556,23 @@ bool mario::entity::Player::hasPlayedJumpSound() const {
     return hasPlayedJumpSound_; 
 }
 
+void mario::entity::Player::handleNetworkCollision(const sf::Vector2f& otherPosition) {
+    if (_isRemotePlayer) return;
+    
+    sf::Vector2f direction = p_body->getPosition() - otherPosition;
+    float distance = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+    
+    if (distance < 50.f) { // Collision threshold
+        direction /= distance; // Normalize
+        p_body->setVelocity(p_body->getVelocity() + direction * 5.f); // Push effect
+    }
+}
+
+void mario::entity::Player::syncNetworkState(const sf::Vector2f& position, const sf::Vector2f& velocity) {
+    if (!_isRemotePlayer) return;
+    
+    p_body->setPosition(position);
+    p_body->setVelocity(velocity);
+}
+
 #undef FILE_PATH

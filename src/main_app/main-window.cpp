@@ -3,6 +3,7 @@
 #include "main-window.hpp"
 #include "pages/settings.hpp"
 #include "pages/levels.hpp"
+#include "pages/mode-select.hpp"
 
 mario::MainWindow::~MainWindow() {
 }
@@ -47,7 +48,7 @@ void mario::MainWindow::run() {
     window = new sf::RenderWindow(sf::VideoMode(sf::Vector2u(initScreenWidth, initScreenHeight)), title, sf::Style::Default, sf::State::Windowed, settings);
     //window->setFramerateLimit(fixedFPS);
 
-    changePage(std::make_shared<pages::MainMenuPage>(*this)); // Initialize with main-menu page
+    changePage(std::make_shared<pages::ModeSelectPage>(*this)); // Initialize with ModeSelectPage
     isRunning = true;
 
     sf::Time accumulate = sf::seconds(0);

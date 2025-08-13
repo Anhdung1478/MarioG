@@ -22,6 +22,9 @@
 #include "../../widget_toolkit/entity/enemy/koopa.hpp"
 #include "../../widget_toolkit/entity/enemy/piranha.hpp"
 
+#include "../../widget_toolkit/networking/NetworkManager.hpp"
+#include "../../widget_toolkit/networking/GameMode.hpp"
+
 namespace mario::pages {
     class LevelsPage : public Page {
         private:
@@ -88,8 +91,28 @@ namespace mario::pages {
 
             bool isSettingsPressed = false;
             void removeCollectedItems();
+            //bool _gameOver = false;
+            std::shared_ptr<NetworkManager> networkManager;
+            GameMode gameMode;
+            mario::entity::Player *remotePlayer;
+            sf::Clock networkUpdateTimer;
+            // Add these new members:
+            bool gameOverReceivedForLocal = false;  // replaces old gameOverReceived for local only
+            bool remotePlayerDead = false;          // track remote death without ending game
+            static constexpr float NETWORK_UPDATE_INTERVAL = 1.0f/30.0f; // 30 FPS network updates
+            
+            // Add these new method declarations:
+            void handleNetworkUpdates(float dt);
+            void handleRemoteItemCollection(int itemId, const sf::Vector2f& position);
+            void handleRemoteEnemyDefeat(int enemyId, const sf::Vector2f& position);
+            void checkItemCollection();
+            void checkEnemyDefeats();
+            sf::Vector2f remoteTargetPos = sf::Vector2f(150.f, 400.f);;
+            sf::Vector2f remoteTargetVel = sf::Vector2f(0.f, 0.f);;
+            
         public:
-            LevelsPage(MainWindow &context, mario::resource::LevelState state);
+            LevelsPage(MainWindow &context, mario::resource::LevelState state, 
+                        std::shared_ptr<NetworkManager> networkManager = nullptr, GameMode mode = GameMode::SinglePlayer);
             ~LevelsPage();
 
             void update(const sf::RenderWindow *window, float dt) override;
@@ -106,6 +129,10 @@ namespace mario::pages {
 
             // Pause Game
             bool isPaused() const;
+            
+            // Game over state
+            bool isGameOver() const { return gameOverReceivedForLocal; }
+            void setGameOver(bool state) { gameOverReceivedForLocal = state; }
 
             // void addEnemy(mario::entity::Enemy* enemy) { 
             //     enemies.push_back(enemy);

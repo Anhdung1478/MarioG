@@ -1,5 +1,6 @@
 #include <bits/stdc++.h>
 #include "main-window.hpp"
+#include "../widget_toolkit/networking/NetworkManager.hpp"
 /*#include <windows.h>
 #include <psapi.h>*/
 
@@ -22,14 +23,47 @@ void printMemoryUsage() {
     }*/
 }
 
-int main() {
-    mario::MainWindow mainWindow;
+int main(int argc, char* argv[]) {
+    NetworkManager network;
+
+    if (argc >= 2) {
+        std::string mode = argv[1];
+        if (mode == "server" && argc == 3) {
+            unsigned short port = static_cast<unsigned short>(std::stoi(argv[2]));
+            if (!network.startServer(port)) {
+                std::cerr << "Failed to start server\n";
+                return 1;
+            }
+            std::cout << "Server started on port " << port << std::endl;
+        } 
+        else if (mode == "client" && argc == 4) {
+            std::string ip = argv[2];
+            unsigned short port = static_cast<unsigned short>(std::stoi(argv[3]));
+            if (!network.connectToServer(ip, port)) {
+                std::cerr << "Failed to connect to server\n";
+                return 1;
+            }
+            std::cout << "Connected to " << ip << ":" << port << std::endl;
+        } 
+        else {
+            std::cout << "Usage:\n";
+            std::cout << "  MARIOG.exe server <port>\n";
+            std::cout << "  MARIOG.exe client <ip> <port>\n";
+            return 0;
+        }
+    }
+
+    // Always run the game loop after setting up network
+    mario::MainWindow mainWindow; 
     mainWindow.run();
 
     // Memory usage after window closes (resources might be deallocated)
     std::cout << "\n--- Memory Usage After Window Closes ---" << std::endl;
     printMemoryUsage();
     std::cout << "--------------------------------------" << std::endl;
+    
+    // Cleanup
+    network.stop();
 
     return 0;
 }
