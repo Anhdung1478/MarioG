@@ -215,10 +215,13 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
                 if (!enemy->shouldDelete()) {
                     mario::entity::Piranha* piranha = dynamic_cast<mario::entity::Piranha*>(enemy);
                     mario::entity::Lakitu* lakitu = dynamic_cast<mario::entity::Lakitu*>(enemy);
-                    if (piranha) {
+                    mario::entity::Ball* ball = dynamic_cast<mario::entity::Ball*>(enemy);
+                    if(piranha) {
                         piranha->updateWithPlayer(window, dt, p_player);
                     } else if(lakitu) {
-                        lakitu->updateWithPlayer(window, dt, p_player);
+                        lakitu->updateWithPlayer(window, dt, p_player, enemies);
+                    } else if(ball) {
+                        ball->updateWithPlayer(window, dt, p_player);
                     } else {
                         enemy->update(window, dt);
                     }

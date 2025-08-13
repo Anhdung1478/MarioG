@@ -19,7 +19,7 @@ namespace mario::entity {
         LakituState lastState;
 
         static constexpr float HORIZONTAL_OFFSET = 100.f;
-        static constexpr float DROP_INTERVAL = 3.0f;
+        static constexpr float DROP_INTERVAL = 3.f;
         static constexpr float DROP_THRESHOLD = 10.f;
         float dropCooldown = DROP_INTERVAL;
 
@@ -52,7 +52,7 @@ namespace mario::entity {
                 body->setVelocity({0.f, 0.f});
             }
             
-            setIsCheckCollisionWithBlock(false); // Lakitu không bị block cản
+            setIsCheckCollisionWithBlock(false); // Lakitu has no collision with block
             initializeAnimations(FILE_PATH"enemy.json", FILE_PATH"enemy.png", {2.5f, 2.5f});
         }
 
@@ -60,7 +60,7 @@ namespace mario::entity {
             
         }
 
-        void updateBehavior(float dt, const Player* player) {
+        void updateBehavior(float dt, const Player* player, std::vector<Enemy*>& enemies) {
             if (!getActive() || !player) return;
 
             DynamicBox* body = dynamic_cast<DynamicBox*>(p_body);
@@ -77,13 +77,22 @@ namespace mario::entity {
                         p_animation->rotate();
                     }
                 }
+
+                // Logic để thả Ball
+                dropCooldown -= dt;
+                if (dropCooldown <= 0.f && currentState == LakituState::Flying) {
+                    // Tạo Ball tại vị trí ngay dưới Lakitu
+                    sf::Vector2f ballPosition = body->getPosition() + sf::Vector2f(0.f, 48.f); // Dưới Lakitu 48 pixel
+                    enemies.push_back(new Ball(ballPosition));
+                    dropCooldown = DROP_INTERVAL; // Reset cooldown
+                }
             }
         }
 
-        void updateWithPlayer(const sf::RenderWindow* window, float dt, const Player* player) {
+        void updateWithPlayer(const sf::RenderWindow* window, float dt, const Player* player, std::vector<Enemy*>& enemies) {
             if (shouldDelete()) return;
 
-            updateBehavior(dt, player);
+            updateBehavior(dt, player, enemies);
             
             p_animation->update(window, dt);
             p_body->updateSize(p_animation);
@@ -91,7 +100,7 @@ namespace mario::entity {
         }
 
         void update(const sf::RenderWindow* window, float dt) override {
-            updateWithPlayer(window, dt, nullptr);
+            // updateWithPlayer(window, dt, nullptr);
         }
     };
 
