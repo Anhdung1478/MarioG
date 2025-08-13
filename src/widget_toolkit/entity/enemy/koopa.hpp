@@ -226,8 +226,9 @@ namespace mario::entity {
                 float pushSpeed = 1000.f;
                 p_body->setVelocity({p_body->getVelocity().x < 0 ? -pushSpeed : pushSpeed, p_body->getVelocity().y});
                 //std::cout << "After: " << p_body->getVelocity().x << std::endl;
-                //std::cout << "Before: " << p_body->getVelocity().x << std::endl;
+                // std::cout << "Before: " << p_body->getVelocity().x << std::endl;
                 //std::cout << "UPDATE: " << p_body->getVelocity().x << std::endl;
+                
             }
         }
 

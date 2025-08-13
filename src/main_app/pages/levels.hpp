@@ -44,7 +44,7 @@ namespace mario::pages {
             sf::Sprite *backgroundSprite;
 
             mario::entity::Block* testBlock;
-            // mario::entity::FireWorks* testFireWorks;
+            mario::entity::FireWorks* testFireWorks;
       
             Camera camera;
             mario::entity::Player *p_player;
@@ -133,5 +133,9 @@ namespace mario::pages {
             // Game over state
             bool isGameOver() const { return gameOverReceivedForLocal; }
             void setGameOver(bool state) { gameOverReceivedForLocal = state; }
+
+            // void addEnemy(mario::entity::Enemy* enemy) { 
+            //     enemies.push_back(enemy);
+            // }
     };
 }
