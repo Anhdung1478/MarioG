@@ -307,45 +307,66 @@ namespace mario::entity {
         for (auto& enemy : enemies) {
             mario::entity::Piranha* piranha = dynamic_cast<mario::entity::Piranha*>(enemy);
             if(!piranha) {
+                bool hasTopCollisionF = false;
+                bool hasBottomCollisionF = false;
+                bool hasLeftCollisionF = false;
+                bool hasRightCollisionF = false;
 
-                bool hasTopCollision = false;
-                bool hasBottomCollision = false;
-                bool hasLeftCollision = false;
-                bool hasRightCollision = false;
-
-                sf::Vector2f vel = enemy->getVelocity();
                 for(const auto& block : groundBlocks) {
                     if(!block->isExist()) continue;
+
                     SideCollision side = findCollisionSide(enemy, block);
                     if(side != SideCollision::None) {
                         enemy->reactCollision(side, Collision(Collision::Type::Wall));
                         switch (side) {
                             case SideCollision::Top:
-                                vel.y = 0.f;
+                                hasTopCollisionF = true;
                                 break;
                             case SideCollision::Bottom:
                                 if(enemy->getIsCheckCollisionWithBlock()) {
-                                    hasBottomCollision = true;
+                                    hasBottomCollisionF = true;
                                 } else {
-                                    hasBottomCollision = false;
+                                    hasBottomCollisionF = false;
                                 }
                                 break;
                             case SideCollision::Left:
-                                vel.x = 0.f;
+                                hasLeftCollisionF = true;
                                 break;
                             case SideCollision::Right:
-                                vel.x = 0.f;
+                                hasRightCollisionF = true;
                                 break;
                             default:
                                 break;
                         }
 
-                        fixPosition(enemy, block, side);
+                        if(enemy->getIsCheckCollisionWithBlock()) {
+                            fixPosition(enemy, block, side);
+                        }
                     }
+                }
+                sf::Vector2f vel = enemy->getVelocity();
+                if (hasBottomCollisionF) {
+                    vel.y = -10.f;
+                    enemy->setOnGround(true);
+                } else {
+                    enemy->setOnGround(false);
+                }
+
+                if (hasTopCollisionF) {
+                    vel.y = 0.f;
+                }
+            
+                if (hasLeftCollisionF || hasRightCollisionF) {
+                    vel.x = 0.f;
                 }
 
                 int L, R;
                 findBlocksCollisions(L, R, enemy, blocks);                
+
+                bool hasTopCollision = false;
+                bool hasBottomCollision = false;
+                bool hasLeftCollision = false;
+                bool hasRightCollision = false;
 
                 for (int i = L; i < R; ++i) {
                     auto& block = blocks[i];
@@ -382,7 +403,7 @@ namespace mario::entity {
 
                 if (hasBottomCollision) {
                     vel.y = -10.f;
-                    enemy->setOnGround(true); // Đặt trạng thái trên mặt đất
+                    enemy->setOnGround(true);
                 } else {
                     enemy->setOnGround(false);
                 }
@@ -415,10 +436,8 @@ namespace mario::entity {
                             break;
                         case SideCollision::Bottom:
                             if(enemy->getIsPlayerDeadWhenCollisionT()) {
-                                // std::cout << 2 << std::endl;
                                 player->beingHit();
                             } else {
-                                // std::cout << 1 << std::endl;
                                 player->jumpOnEnemyHead();
                             }
                             break;

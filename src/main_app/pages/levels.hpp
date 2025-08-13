@@ -41,7 +41,7 @@ namespace mario::pages {
             sf::Sprite *backgroundSprite;
 
             mario::entity::Block* testBlock;
-            // mario::entity::FireWorks* testFireWorks;
+            mario::entity::FireWorks* testFireWorks;
       
             Camera camera;
             mario::entity::Player *p_player;
@@ -106,5 +106,9 @@ namespace mario::pages {
 
             // Pause Game
             bool isPaused() const;
+
+            // void addEnemy(mario::entity::Enemy* enemy) { 
+            //     enemies.push_back(enemy);
+            // }
     };
 }

@@ -4,7 +4,8 @@
 #include "../../widget_toolkit/resource/SoundManager.hpp"
 
 mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::LevelState state) : Page(context), camera({1280, 720}), currLevelState(state), backgroundSprite(nullptr) {
-    p_player = new mario::entity::Player(sf::Vector2f(100, 400), state.characterType, state.stateType);
+    p_player = new mario::entity::Player(sf::Vector2f(100, 400), state.characterType, state.stateType, context.getSoundManager());
+
     p_inputManager = std::make_unique<mario::input::InputManager>(context);
 
     tileMap = std::make_unique<mario::entity::TileMap>("../../asset/maps/tiles-8.json", "../../asset/maps/Map_" + std::to_string(currLevelState.level) + ".json", currLevelState.level, currLevelState.level-1);
@@ -29,8 +30,9 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
     // tileMap->createBlock(blocks, backgroundBlocks);
     // testBlock = new mario::entity::BackgroundBlock(sf::Vector2f(100, 500), sf::Vector2f(16, 16), "enemies-flag[0]");
     // testBlock = new mario::entity::BackgroundBlock(sf::Vector2f(100, 500), sf::Vector2f(16, 16), std::to_string(390), {"390", 1, 171, 16, 16});
-    // testFireWorks = new mario::entity::FireWorks(sf::Vector2f(500, 200), sf::Vector2f(500, 500), "fireworks[0]");
-    // testFireWorks->setShowFireworks(true);
+    // testFireWorks = new mario::entity::FireWorks(boundWorldSize - sf::Vector2f(500, 500), sf::Vector2f(450, 250));
+    testFireWorks = new mario::entity::FireWorks(sf::Vector2f(7800, 170), sf::Vector2f(680, 300));
+    testFireWorks->setShowFireworks(true);
 
 
 
@@ -212,8 +214,14 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
             for(auto &enemy : enemies) {
                 if (!enemy->shouldDelete()) {
                     mario::entity::Piranha* piranha = dynamic_cast<mario::entity::Piranha*>(enemy);
-                    if (piranha) {
+                    mario::entity::Lakitu* lakitu = dynamic_cast<mario::entity::Lakitu*>(enemy);
+                    mario::entity::Ball* ball = dynamic_cast<mario::entity::Ball*>(enemy);
+                    if(piranha) {
                         piranha->updateWithPlayer(window, dt, p_player);
+                    } else if(lakitu) {
+                        lakitu->updateWithPlayer(window, dt, p_player, enemies);
+                    } else if(ball) {
+                        ball->updateWithPlayer(window, dt, p_player);
                     } else {
                         enemy->update(window, dt);
                     }
@@ -244,8 +252,9 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
             collisionManager.checkCollisionPlayerWithEnemies(p_player, enemies);
             collisionManager.checkCollisionPlayerWithItems(p_player, items);
             collisionManager.checkCollisionItemsWithBlocks(items, blocks);
-
-            // testFireWorks->update(window, dt);
+            collisionManager.checkCollisionEnemyWithEnemy(enemies);
+            testFireWorks->update(window, dt);
+          
             // auto measure = [](auto&& func, const std::string& name) {
             //     auto start = std::chrono::high_resolution_clock::now();
             //     func();
@@ -536,6 +545,7 @@ void mario::pages::LevelsPage::renderLevelState(sf::RenderWindow *window, mario:
 
 void mario::pages::LevelsPage::render(sf::RenderWindow *window) {
     window->draw(*backgroundSprite);
+    testFireWorks->render(window);
     // std::cout << "Position's player: " << p_player->getPosition().x << ", " << p_player->getPosition().y << "\n";
     camera.applyTo(*window);
 
@@ -627,7 +637,6 @@ void mario::pages::LevelsPage::render(sf::RenderWindow *window) {
         }
     }
 
-    // testFireWorks->render(window);
 
     p_player->render(window);
 
