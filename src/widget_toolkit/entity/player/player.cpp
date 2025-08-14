@@ -52,7 +52,7 @@ void mario::entity::Player::move(bool isMoveRight, bool isReleased) {
 }
 
 void mario::entity::Player::shotFireball(bool isReleased) {
-    if(!_canMove || p_stateManager->getCurrentState() != player_state::PlayerStateType::Fire || shootingDelayTimer > sf::seconds(0.f) || p_fireballList->getNumFireballs() >= 5)
+    if(!_canMove || isReleased || p_stateManager->getCurrentState() != player_state::PlayerStateType::Fire || shootingDelayTimer > sf::seconds(0.f) || p_fireballList->getNumFireballs() >= 5)
         return;
 
     timeSinceLastShoot = sf::seconds(0.f);
@@ -206,6 +206,12 @@ void mario::entity::Player::changePlayerBehavior(PlayerBehavior newBehavior) {
     if(playerBehavior == PlayerBehavior::Climbing) {
         _canCollisionWithEnemy = _canCollisionWithItem = true;
         togglePlayerMove(true);
+        p_body->setAcceleration(sf::Vector2f(p_body->getAcceleration().x, 980.f));
+    }
+
+    if(playerBehavior == PlayerBehavior::FinishLevel) {
+        _canCollisionWithEnemy = _canCollisionWithItem = true;
+        togglePlayerMove(true);
     }
 
     if(playerBehavior == PlayerBehavior::Dying) {
@@ -250,13 +256,7 @@ void mario::entity::Player::changePlayerBehavior(PlayerBehavior newBehavior) {
 
         _isTransforming = true;
         behaviorTimer = sf::seconds(1.5f);
-        p_animation->clearAnimationStep();
-
-        std::string currPlayerStateID = p_stateManager->getCurrentPlayerStateID();
-        for (int i = 0; i < 15; ++i)
-            p_animation->addAnimationStep(currPlayerStateID + ".hit[" + std::to_string(i) + "]");
-
-        p_animation->setAnimationState(true);
+        p_stateManager->setBeingHitAnimation(p_animation);
     }
 
     if(newBehavior == PlayerBehavior::Invincible) {
@@ -268,6 +268,16 @@ void mario::entity::Player::changePlayerBehavior(PlayerBehavior newBehavior) {
     if(newBehavior == PlayerBehavior::Climbing) {
         _canCollisionWithEnemy = _canCollisionWithItem = false;
         togglePlayerMove(false);
+
+        p_body->resetJump();
+        p_body->setVelocity(sf::Vector2f(0.f, 400.f));
+        p_body->setAcceleration(sf::Vector2f(p_body->getAcceleration().x, 0.f));
+        p_stateManager->setClimbingAnimation(p_animation);
+    }
+
+    if(newBehavior == PlayerBehavior::FinishLevel) {
+        _canCollisionWithEnemy = _canCollisionWithItem = false;
+        togglePlayerMove(false);
     }
 
     if(newBehavior == PlayerBehavior::Dying) { 
@@ -277,15 +287,11 @@ void mario::entity::Player::changePlayerBehavior(PlayerBehavior newBehavior) {
         
         _isAlive = false;
         togglePlayerMove(false);
-        
         behaviorTimer = sf::seconds(3);
-        p_animation->clearAnimationStep();
         
+        p_body->resetJump();
         p_body->setVelocity(sf::Vector2f(0.f, 0.f));
-        p_body->jump(false);
-
         p_stateManager->setDeadAnimation(p_animation);
-        p_animation->setAnimationState(false);
     }
 
     if(newBehavior == PlayerBehavior::AlreadyDead) {
@@ -395,8 +401,18 @@ void mario::entity::Player::render(sf::RenderWindow *window) {
 
 /* =================================================================================================================================================================== */
 
-void toggleClimbingBehavior(bool isFinished) {
-    
+void mario::entity::Player::startClimbingBehavior(int flagXPos) {
+    if(p_body->isFaceForward() != p_animation->isFaceForward())
+        rotateDirection();
+
+    if(getPosition().x > flagXPos)
+        setPosition(sf::Vector2f(flagXPos, getPosition().y));
+
+    changePlayerBehavior(PlayerBehavior::Climbing);
+}
+
+void mario::entity::Player::finishClimbingBehavior() {
+    changePlayerBehavior(PlayerBehavior::FinishLevel);
 }
 
 /* =================================================================================================================================================================== */
@@ -575,7 +591,8 @@ void mario::entity::Player::handleNetworkCollision(const sf::Vector2f& otherPosi
 }
 
 void mario::entity::Player::syncNetworkState(const sf::Vector2f& position, const sf::Vector2f& velocity) {
-    if (!_isRemotePlayer) return;
+    if (!_isRemotePlayer) 
+        return;
     
     p_body->setPosition(position);
     p_body->setVelocity(velocity);

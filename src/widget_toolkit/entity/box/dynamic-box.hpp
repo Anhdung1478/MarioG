@@ -138,6 +138,10 @@ namespace mario::entity {
                 acceleration = acc;
             }
 
+            sf::Vector2f getAcceleration() const override {
+                return acceleration;
+            }
+
             void setGravityEnabled(bool enabled) {
                 acceleration.y = enabled ? 980.f : 0.f;
             }

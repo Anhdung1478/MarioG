@@ -44,17 +44,20 @@ namespace mario::entity {
                 position += offset;
             }
 
-            virtual sf::Vector2f getVelocity() const = 0;
+            virtual void setOnGround(bool isOnGround) = 0;
             virtual void setVelocity(sf::Vector2f vel) = 0;
             virtual void setAcceleration(sf::Vector2f acc) = 0;
+
             virtual void move(bool isMoveRight, bool isReleased) = 0;
             virtual void jump(bool isReleased) = 0;
-            virtual void setOnGround(bool isOnGround) = 0;
             virtual void update(float dt) = 0;
-            virtual bool isNotMoving() const = 0;
-            virtual bool isFaceForward() const = 0;
-            virtual bool isOnGround() const = 0;
             virtual void resetJump() = 0;
+            
+            virtual sf::Vector2f getAcceleration() const = 0;
+            virtual sf::Vector2f getVelocity() const = 0;
+            virtual bool isFaceForward() const = 0;
+            virtual bool isNotMoving() const = 0;
+            virtual bool isOnGround() const = 0;
 
             void renderHitboxRect(sf::RenderWindow *window) {
                 sf::FloatRect hitbox = getHitbox();

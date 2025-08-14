@@ -27,11 +27,15 @@ namespace mario::entity {
             void setAcceleration(sf::Vector2f acc) override {
             }
 
+            sf::Vector2f getAcceleration() const override {
+                return sf::Vector2f(0.f, 0.f);
+            }
+
             void setVelocity(sf::Vector2f vel) override {
             }
 
             sf::Vector2f getVelocity() const override {
-                return sf::Vector2f(0, 0);
+                return sf::Vector2f(0.f, 0.f);
             }
 
             bool isNotMoving() const override {
