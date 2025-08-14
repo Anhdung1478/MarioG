@@ -83,7 +83,7 @@ namespace mario::entity::player_state {
                 return currStateType;
             }
 
-            virtual void setAnimation(Animation *p_animation, const std::string &ID) = 0;
+            virtual void setAnimation(Animation *p_animation, const std::string &prefixSpriteID, const std::string &ID) = 0;
             virtual void setDeadAnimation(Animation *p_animation) = 0;
             virtual std::string getCurrentPlayerStateID() const = 0;
             virtual std::string getNextPlayerStateID() const = 0;

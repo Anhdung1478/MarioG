@@ -19,6 +19,7 @@
 #include "../enemy/koopa.hpp"
 #include "../enemy/piranha.hpp"
 #include "../blockfactory.hpp"
+#include "../enemy/lakitu.hpp"
   
 namespace mario::entity {
     

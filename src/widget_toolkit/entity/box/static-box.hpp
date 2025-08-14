@@ -24,6 +24,9 @@ namespace mario::entity {
             void resetJump() override {
             }
 
+            void setAcceleration(sf::Vector2f acc) override {
+            }
+
             void setVelocity(sf::Vector2f vel) override {
             }
 

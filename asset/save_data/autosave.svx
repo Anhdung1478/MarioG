@@ -1,5 +1,5 @@
 Level= 1
-Lives= 3
+Lives= 2
 Coins= 0
 Score= 0
 CharacterType= 0

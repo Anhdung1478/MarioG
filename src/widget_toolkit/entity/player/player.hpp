@@ -8,24 +8,29 @@
 #include "luigi-state-manager.hpp"
 #include "../../resource/LevelState.hpp"
 #include "../item/item.hpp"
-#include "fireball.hpp"
+#include "fireball-list.hpp"
 #include "../../controls/popup-text-list.hpp"
+#include "../../resource/SoundManager.hpp"
 
 namespace mario::entity {
     static constexpr sf::Vector2f PLAYER_SCALE = sf::Vector2f(2.5f, 2.5f);
     static constexpr float ANIMATION_TIME_BETWEEN_STEP_WHEN_BEING_HIT = 1.f / 10.f;
     static constexpr float ANIMATION_TIME_BETWEEN_STEP_WHEN_TRANSFORM_TO_BIG = 1.f / 10.f;
     static constexpr float ANIMATION_TIME_BETWEEN_STEP_IN_NORMAL_BEHAVIOR = 1.f / 10.f;
+    static constexpr float DEFAULT_SHOOTING_DELAY = 0.3f;
 
     class Player : public Entity {
         private:
-            mario::entity::player_state::PlayerStateManager *p_stateManager;
+            mario::audio::SoundManager& soundManager; // for sound effects
+
+            player_state::PlayerStateManager *p_stateManager;
             CharacterListType _characterType;
             PlayerBehavior playerBehavior;
 
-            std::vector<Fireball*> fireballs;
+            std::unique_ptr<FireballList> p_fireballList;
             mario::PopUpTextList *popUpScoreList;
 
+            sf::Time timeSinceLastShoot = sf::seconds(10);
             sf::Time shootingDelayTimer;
             sf::Time behaviorTimer;
             bool _isOnGround;
@@ -33,18 +38,19 @@ namespace mario::entity {
             bool hasPlayedJumpSound_ = false; // For sound effect
             bool _canMove = true, _isAlive = true, _isDeadAlready = false;
             bool _canCollisionWithEnemy = true, _canCollisionWithItem = true, _canCollisionWithBlock = true;
-            bool _isTransforming = false;
+            bool _isTransforming = false, _isShootingFireball = false;
 
             int score = 0;
             int lives = 0;
             int coinCount = 0;
             int scoreMultiplier = 0;
 
+            void addScoreToPlayer(int _score, bool isPoppingUp);  // pop up score when getting some new score
             void managePlayerAnimation(); // manage Animation for Player (idle, run or jump animation)
             void updatePlayerBehavior(float dt); // update for Player Behavior (some behavior will change when ran out of time)
 
         public:
-            Player(sf::Vector2f spawnPoint, CharacterListType characterType, player_state::PlayerStateType stateType);
+            Player(sf::Vector2f spawnPoint, CharacterListType characterType, player_state::PlayerStateType stateType, mario::audio::SoundManager& soundManager);
             ~Player() override;
             
             void rotateDirection();
@@ -55,6 +61,7 @@ namespace mario::entity {
             void move(bool isMoveRight, bool isReleased);
             void shotFireball(bool isReleased);
 
+            void explosionFireballAtPos(int idx);
             int getNumberFireballs() const;
             Fireball* getFireballAtPos(int idx) const;
         
@@ -66,6 +73,8 @@ namespace mario::entity {
             void setOnGround(bool isOnGround);
             void togglePlayerMove(bool canMove); // toggle turn on/off movement of Player (when turn off, Player won't be able to move)
             void resetJump();
+
+            void toggleClimbingBehavior(bool isFinished); // toggle turn on/off climbing behavior of Player (when turn on, Player will climbing from top of flag to ground)
 
             void beingHit(); // being hit by enemy or entity like level trap
             void changePlayerBehavior(PlayerBehavior newBehavior); // change Player behavior to newBehavior
@@ -79,17 +88,18 @@ namespace mario::entity {
             bool canCollisionWithItem() const;
             bool canCollisionWithBlock() const;
 
-            void addPopUpScore(int score);  // pop up score when getting some new score
-            void breakBrick();           // appear when Player break the brick block
-            void hitEmptyBlock();        // appear when Player hit the empty block 
-            void collectCoin();          // appear when Player collect a coin in map
-            void collectCoinInBlock();   // appear when Player collect a coin in block when break or hit it    
-            void collectRedMushroom();   // appear when Player collect a Red Mushroom
-            void collectFireFlower();    // appear when Player collect a Fire Flower
-            void collect1UpMushroom();   // appear when Player collect a 1-Up Mushroom
-            void collectStarman();       // appear when Player collect a Starman
-            void jumpOnEnemyHead();      // appear when Player jump on an enemy head an kill it
+            void breakBrick();                                    // appear when Player break the brick block
+            void hitEmptyBlock();                                 // appear when Player hit the empty block 
+            void collectCoin();                                   // appear when Player collect a coin in map
+            void collectCoinInBlock();                            // appear when Player collect a coin in block when break or hit it    
+            void collectRedMushroom();                            // appear when Player collect a Red Mushroom
+            void collectFireFlower();                             // appear when Player collect a Fire Flower
+            void collect1UpMushroom();                            // appear when Player collect a 1-Up Mushroom
+            void collectStarman();                                // appear when Player collect a Starman
+            void jumpOnEnemyHead();                               // appear when Player jump on an enemy head an kill it
+            void hitEnemyWithFireball(bool canEnemyDead);         // appear when Player shot fireball and hit enemy
 
+            std::string getPrefixBehavior() const;
             PlayerBehavior getPlayerBehavior() const;
             CharacterListType getCharacterType() const;
             player_state::PlayerStateType getPlayerStateType() const;
@@ -103,7 +113,7 @@ namespace mario::entity {
             // IMPORTANT
             bool _isRemotePlayer = false;
 
-            int getScore() { return score;}
+            int getScore() { return score; }
             int getCoins() { return coinCount; }
             int getLives() { return lives; }
             void setRemote(bool isRemote) { _isRemotePlayer = isRemote; } 
