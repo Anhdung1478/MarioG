@@ -20,7 +20,7 @@ mario::pages::GameOverPage::~GameOverPage() {
 void mario::pages::GameOverPage::update(const sf::RenderWindow *window, float dt) {
     delayTimeBeforeBackToMainMenu -= sf::seconds(dt);
     if(delayTimeBeforeBackToMainMenu <= sf::seconds(0))
-        _context->changePage(std::make_shared<mario::pages::MainMenuPage>(*_context));
+        _context->changePage(std::make_shared<pages::ModeSelectPage>(*_context));
 }
 
 void mario::pages::GameOverPage::handleEvent(const sf::RenderWindow *window, const sf::Event &event) {

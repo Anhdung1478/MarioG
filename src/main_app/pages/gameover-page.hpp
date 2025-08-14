@@ -3,6 +3,7 @@
 #include<bits/stdc++.h>
 #include "page.hpp"
 #include "main-menu.hpp"
+#include "mode-select.hpp"
 
 namespace mario::pages {
     class GameOverPage : public Page {

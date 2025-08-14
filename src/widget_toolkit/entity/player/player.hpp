@@ -100,6 +100,7 @@ namespace mario::entity {
             void handleNetworkCollision(const sf::Vector2f& otherPosition);
             void syncNetworkState(const sf::Vector2f& position, const sf::Vector2f& velocity);
     
+            // IMPORTANT
             bool _isRemotePlayer = false;
 
             int getScore() { return score;}
