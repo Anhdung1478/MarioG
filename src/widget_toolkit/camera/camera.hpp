@@ -166,6 +166,7 @@ public:
         followEntity(player, deltaTime);
     }
 
+    /*
     void followTwoEntities(const mario::entity::Entity& entity1, const mario::entity::Entity& entity2, float deltaTime, float maxDistanceForZoom = 300.0f, float minZoom = 0.5f, float maxZoom = 1.0f) {
         if (!hasMapBounds) {
             // Default to following first entity if no map bounds are set
@@ -225,8 +226,72 @@ public:
         
         view.setCenter(newPos);
     }
+    */
+
+    // New followTwoEntities
+    void followTwoEntities(const mario::entity::Entity& entity1, const mario::entity::Entity& entity2, float deltaTime,
+                       float maxDistanceForZoom = 600.0f, float minZoom = 0.8f, float maxZoom = 1.2f) {
+        if (!hasMapBounds) {
+            followEntity(entity1, deltaTime);
+            return;
+        }
+
+        sf::Vector2f pos1 = entity1.getPosition();
+        sf::Vector2f pos2 = entity2.getPosition();
+        sf::Vector2f center = (pos1 + pos2) * 0.5f;
+
+        float distance = std::sqrt(std::pow(pos2.x - pos1.x, 2) + std::pow(pos2.y - pos1.y, 2));
+
+        // Normalize distance into [0,1] relative to maxDistanceForZoom
+        float t = std::clamp(distance / maxDistanceForZoom, 0.f, 1.f);
+
+        // We want zoom to be 1.0 when players are close, and increase/decrease smoothly.
+        // Map t to a zoom factor between minZoom and maxZoom (minZoom < 1 = zoomed-in, maxZoom > 1 = zoomed-out)
+        float desiredZoom = minZoom + t * (maxZoom - minZoom);
+
+        // Smoothly approach desired zoom
+        float viewWidth = static_cast<float>(windowSize.x);
+        float viewHeight = static_cast<float>(windowSize.y);
+        float currentZoom = view.getSize().x / viewWidth;
+        float lerpSpeed = 5.0f * deltaTime;
+        float newZoom = currentZoom + (desiredZoom - currentZoom) * lerpSpeed;
+
+        // Apply new size stably
+        view.setSize(sf::Vector2f(viewWidth * newZoom, viewHeight * newZoom));
+
+        // target slightly above center
+        sf::Vector2f targetPos = center - sf::Vector2f(0.f, 50.f);
+
+        // smoothing center
+        sf::Vector2f currentPos = view.getCenter();
+        sf::Vector2f newPos = currentPos + (targetPos - currentPos) * (smoothFactor * deltaTime);
+
+        // clamp to map bounds
+        sf::Vector2f viewSizeNow = view.getSize();
+        float halfW = viewSizeNow.x / 2.f;
+        float halfH = viewSizeNow.y / 2.f;
+
+        newPos.x = std::max(mapBounds.position.x + halfW,
+                            std::min(mapBounds.position.x + mapBounds.size.x - halfW, newPos.x));
+        newPos.y = std::max(mapBounds.position.y + halfH,
+                            std::min(mapBounds.position.y + mapBounds.size.y - halfH, newPos.y));
+
+        view.setCenter(newPos);
+    }
+
 
     void followPosition(const sf::Vector2f& position, float deltaTime) {
+        sf::Vector2f desired = position;
+        // If map bounds exist, clamp desired to be within bounds considering half view
+        if (hasMapBounds) {
+            sf::Vector2f viewSize = view.getSize();
+            float halfW = viewSize.x / 2.f;
+            float halfH = viewSize.y / 2.f;
+            desired.x = std::max(mapBounds.position.x + halfW,
+                                std::min(mapBounds.position.x + mapBounds.size.x - halfW, desired.x));
+            desired.y = std::max(mapBounds.position.y + halfH,
+                                std::min(mapBounds.position.y + mapBounds.size.y - halfH, desired.y));
+        }
         setTarget(position);
         update(deltaTime);
     }

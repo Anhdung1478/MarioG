@@ -204,6 +204,8 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
     }
 
     sf::FloatRect cameraBounds = camera.getCameraBounds();
+    
+    // Clean up deleted objects
     for (auto it = enemies.begin(); it != enemies.end();) {
         if ((*it)->shouldDelete()) {
             delete *it;
@@ -251,13 +253,21 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
 
         // Update remote player for multiplayer
         if (gameMode != GameMode::SinglePlayer && remotePlayer) {
-            sf::Vector2f currentPos = remotePlayer->getPosition();
-            remotePlayer->syncNetworkState(
-                currentPos + (remoteTargetPos - currentPos) * 0.2f,
-                remoteTargetVel
-            );
-            collisionManager.checkCollisionPlayerWithBlocks(remotePlayer, blocks, items);
-            remotePlayer->update(window, dt);
+            if (remotePlayerDead) {
+                remotePlayer = nullptr;
+            } else {
+                sf::Vector2f currentPos = remotePlayer->getPosition();
+                remotePlayer->syncNetworkState(
+                    currentPos + (remoteTargetPos - currentPos) * 0.2f,
+                    remoteTargetVel
+                );
+                collisionManager.checkCollisionPlayerWithBlocks(remotePlayer, blocks, items);
+                remotePlayer->update(window, dt);
+                if (remotePlayer->isDead() && !remotePlayerDead) {
+                    remotePlayerDead = true;
+                    // Don't remove immediately, let the death animation play
+                }
+            }
         }
 
         if(!p_player->isTransforming()) {
@@ -361,7 +371,7 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
         //         p_player->setPosition(p_player->getPosition() + diff * 5.f);
         //         remotePlayer->setPosition(remotePlayer->getPosition() - diff * 5.f);
         //     }
-        //  }
+        // }
 
             // Camera logic - simplified to avoid weird zooming
             if (gameMode != GameMode::SinglePlayer && remotePlayer) {
@@ -375,8 +385,8 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
                                         std::pow(player1Pos.y - player2Pos.y, 2));
                 
                 // If players are reasonably close (within screen bounds), follow center point
-                if (distance < 600.0f) {
-                    camera.followPosition(centerPoint, dt);
+                if (distance < 1200.0f) {
+                    camera.followTwoEntities(*p_player, *remotePlayer, dt, 600.0f, 0.9f, 1.1f);
                 } else {
                     // If too far apart, just follow local player
                     camera.followEntity(*p_player, dt);
@@ -393,22 +403,32 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
             removeCollectedItems();
 
             // Handle player death
-            if(p_player->isDead()) {
-                if (gameMode != GameMode::SinglePlayer && networkManager) {
-                    // Send game over message to other player
-                    networkManager->sendGameOver();
-                }
-
-                if(currLevelState.num_lives > 0) {
-                    currLevelState = mario::resource::LevelState(currLevelState.level, currLevelState.num_lives - 1, currLevelState.score, currLevelState.coins, currLevelState.characterType);
-                    _context->changePage(std::make_shared<mario::pages::LevelsPage>(*_context, currLevelState, networkManager, gameMode));
+            if (p_player->isDead()) {
+                if (p_player->isInBehavior(mario::entity::PlayerBehavior::Dying)) {
+                    // Still in death animation, keep updating
                 } else {
-                    camera.resetToDefaultView();
-                    _context->changePage(std::make_shared<mario::pages::GameOverPage>(*_context));
+                    // Death animation finished, handle game over
+                    if (gameMode != GameMode::SinglePlayer && networkManager) {
+                        networkManager->sendGameOver();
+                    }
+                    
+                    if (gameMode != GameMode::SinglePlayer) {
+                        camera.resetToDefaultView();
+                        _context->changePage(std::make_shared<mario::pages::GameOverPage>(*_context));
+                    } else {          
+                        if(currLevelState.num_lives > 0) {
+                            currLevelState = mario::resource::LevelState(currLevelState.level, currLevelState.num_lives - 1, currLevelState.score, currLevelState.coins, currLevelState.characterType);
+                            _context->changePage(std::make_shared<mario::pages::LevelsPage>(*_context, currLevelState, networkManager, gameMode));
+                        } else {
+                            camera.resetToDefaultView();
+                            _context->changePage(std::make_shared<mario::pages::GameOverPage>(*_context));
+                        }
+                    }
                 }
             }
         }
     }
+
 
     // Check for hover state / UI hover logic
     sf::Vector2i mousePos = sf::Mouse::getPosition(*window);
