@@ -15,7 +15,7 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
       remotePlayerDead(false) {
     
     // Initialize player with the correct character type and state
-    p_player = new mario::entity::Player(sf::Vector2f(7850, 400), state.characterType, state.stateType, context.getSoundManager());
+    p_player = new mario::entity::Player(sf::Vector2f(7550, 0), state.characterType, state.stateType, context.getSoundManager());
 
     p_inputManager = std::make_unique<mario::input::InputManager>(context);
 
