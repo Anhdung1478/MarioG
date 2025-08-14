@@ -7,6 +7,12 @@
 namespace mario::entity {
     #define FILE_PATH "../../asset/sprites/"
 
+    enum class GoombaType {
+        Brown,
+        Blue,
+        Grey
+    };
+
     class Goomba : public Enemy {
     protected:
         enum class GoombaState {
@@ -15,16 +21,27 @@ namespace mario::entity {
             DeadSpecial
         };
 
+        GoombaType goombaType;
+        std::string typePrefix;
         GoombaState currentState;
         GoombaState lastState;
         float verticalVelocity = 0.f;
         const float jumpForce = -450.f;
         const float gravity = 600.f;
         
+        std::string getTypePrefix() const {
+            switch (goombaType) {
+                case GoombaType::Brown: return "goomba-new-brown";
+                case GoombaType::Blue: return "goomba-new-blue";
+                case GoombaType::Grey: return "goomba-new-grey";
+                default: return "goomba-new-brown";
+            }
+        }
+
         void loadWalkingAnimations() {
             p_animation->clearAnimationStep();
             for(int i = 0; i < 4; ++i) {
-                std::string spriteID = "goomba-new.walking[" + std::to_string(i) + "]";
+                std::string spriteID = getTypePrefix() + ".walking[" + std::to_string(i) + "]";
                 try {
                     p_animation->addAnimationStep(spriteID);
                 } catch (const std::out_of_range& e) {
@@ -37,7 +54,7 @@ namespace mario::entity {
         void loadDeadAnimations() {
             p_animation->clearAnimationStep();
             for(int i = 0; i < 3; ++i) {
-                std::string spriteID = "goomba-new.dead[" + std::to_string(i) + "]";
+                std::string spriteID = getTypePrefix() + ".dead[" + std::to_string(i) + "]";
                 try {
                     p_animation->addAnimationStep(spriteID);
                 } catch (const std::out_of_range& e) {
@@ -49,7 +66,7 @@ namespace mario::entity {
 
         void loadDeadSpecialAnimations() {
             p_animation->clearAnimationStep();
-            std::string spriteID = "goomba-new.dead-special[0]";
+            std::string spriteID = getTypePrefix() + ".dead-special[0]";
             try {
                 p_animation->addAnimationStep(spriteID);
             } catch (const std::out_of_range& e) {
@@ -59,28 +76,32 @@ namespace mario::entity {
         }
 
         void initializeAnimations(const std::string& jsonPath, const std::string& texturePath,
-        sf::Vector2f scale) override {
+                                    sf::Vector2f scale) override {
             p_animation->loadSheet(jsonPath, texturePath);
             currentState = GoombaState::Walking;
             lastState = GoombaState::Walking;
             loadWalkingAnimations();
             try {
-                p_animation->setSpriteAnimation("goomba-new.walking[0]");
+                p_animation->setSpriteAnimation(getTypePrefix() + ".walking[0]");
             } catch (const std::out_of_range& e) {
-                std::cerr << "Error setting sprite: goomba-new.walking[0] - " << e.what() << "\n";
+                std::cerr << "Error setting sprite: " << getTypePrefix() + ".walking[0] - " << e.what() << "\n";
             }
             p_animation->setAnimationState(true);
         }
 
         std::string getDeadSpriteID() const override {
-            return "goomba-new.dead[0]";
+            return getTypePrefix() + ".dead[0]";
         }
 
     public:
-        Goomba(sf::Vector2f startPosition)
-            : Enemy(FILE_PATH"enemy.json", FILE_PATH"enemy.png", {2.3f, 2.3f}, "goomba-new.walking[0]", 
-                startPosition, {44.f, 54.f}, "Patrol"),
-                currentState(GoombaState::Walking), lastState(GoombaState::Walking) {
+        Goomba(sf::Vector2f startPosition, GoombaType type)
+            : Enemy(FILE_PATH"enemy.json", FILE_PATH"enemy.png", {2.3f, 2.3f}, 
+                ((type == GoombaType::Brown) ? "goomba-new-brown" : 
+                     (type == GoombaType::Blue) ? "goomba-new-blue" : "goomba-new-grey") + std::string(".walking[0]"),
+                     startPosition, {44.f, 54.f}, "Patrol"),
+                goombaType(type),
+                currentState(GoombaState::Walking),
+                lastState(GoombaState::Walking) {
             initializeAnimations(FILE_PATH"enemy.json", FILE_PATH"enemy.png", {2.3f, 2.3f});
         }
 
@@ -90,9 +111,9 @@ namespace mario::entity {
                 p_animation->setAnimationState(true);
                 loadDeadAnimations();
                 try{
-                    p_animation->setSpriteAnimation("goomba-new.dead[0]");
+                    p_animation->setSpriteAnimation(getTypePrefix() + ".dead[0]");
                 } catch (const std::out_of_range& e) {
-                    std::cerr << "Error setting sprite: goomba-new.dead[0] - " << e.what() << "\n";
+                    std::cerr << "Error setting sprite: " << getTypePrefix() + ".dead[0] - " << e.what() << "\n";
                 }
 
                 lastState = GoombaState::Walking;
@@ -117,30 +138,34 @@ namespace mario::entity {
                     }
                 }
             } else if(collision.isWithFireball()) {
-                currentState = GoombaState::Dead;
-                loadDeadAnimations();
+                currentState = GoombaState::DeadSpecial;
+                loadDeadSpecialAnimations();
                 try {
-                    p_animation->setSpriteAnimation("goomba-new.dead[0]");
+                    p_animation->setSpriteAnimation(getTypePrefix() + ".dead-special[0]");
                 } catch (const std::out_of_range& e) {
-                    std::cerr << "Error setting sprite: goomba-new.dead[0] - " << e.what() << "\n";
+                    std::cerr << "Error setting sprite: " << getTypePrefix() + ".dead-special[0] - " << e.what() << "\n";
                 }
-                p_animation->setAnimationState(true);
-                lastState = GoombaState::Dead;
+                p_animation->setAnimationState(false);
+                verticalVelocity = jumpForce;
+                lastState = GoombaState::DeadSpecial;
                 setActive(true);
+                setIsCheckCollisionWithEnemy(false);
+                setIsCheckCollisionWithPlayer(false);
             } else if(collision.isWithBrick()) {
 
             } else if(collision.isWithEnemy()) {
                 currentState = GoombaState::DeadSpecial;
                 loadDeadSpecialAnimations();
                 try {
-                    p_animation->setSpriteAnimation("goomba-new.dead-special[0]");
+                    p_animation->setSpriteAnimation(getTypePrefix() + ".dead-special[0]");
                 } catch (const std::out_of_range& e) {
-                    std::cerr << "Error setting sprite: goomba-new.dead-special[0] - " << e.what() << "\n";
+                    std::cerr << "Error setting sprite: " << getTypePrefix() + ".dead-special[0] - " << e.what() << "\n";
                 }
                 p_animation->setAnimationState(false);
                 verticalVelocity = jumpForce;
                 lastState = GoombaState::DeadSpecial;
                 setActive(true);
+                setIsCheckCollisionWithEnemy(false);
             }
             else {
                 p_body->move(p_body->isFaceForward(), false); // continue
@@ -168,18 +193,18 @@ namespace mario::entity {
                 if(currentState == GoombaState::Walking && lastState != GoombaState::Walking) {
                     loadWalkingAnimations();
                     try {
-                        p_animation->setSpriteAnimation("goomba-new.walking[0]");
+                        p_animation->setSpriteAnimation(getTypePrefix() + ".walking[0]");
                     } catch (const std::out_of_range& e) {
-                        std::cerr << "Error setting sprite: goomba-new.walking[0] - " << e.what() << "\n";
+                        std::cerr << "Error setting sprite: " << getTypePrefix() + ".walking[0] - " << e.what() << "\n";
                     }
                     p_animation->setAnimationState(true);
                     lastState = GoombaState::Walking;
                 } else if (currentState == GoombaState::Dead && lastState != GoombaState::Dead) {
                     loadDeadAnimations();
                     try {
-                        p_animation->setSpriteAnimation("goomba-new.dead[0]");
+                        p_animation->setSpriteAnimation(getTypePrefix() + ".dead[0]");
                     } catch (const std::out_of_range& e) {
-                        std::cerr << "Error setting sprite: goomba-new.dead[0] - " << e.what() << "\n";
+                        std::cerr << "Error setting sprite: " << getTypePrefix() + ".dead[0] - " << e.what() << "\n";
                     }
                     p_animation->setAnimationState(true);
                     lastState = GoombaState::Dead;
@@ -203,6 +228,4 @@ namespace mario::entity {
             }
         }
     };
-
-    #undef FILE_PATH
 }

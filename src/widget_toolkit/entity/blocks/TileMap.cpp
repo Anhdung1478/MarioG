@@ -210,7 +210,7 @@ namespace mario::entity {
 
                     else if(layerName == "Enemies"){
                         if (objType == "goomba"){
-                            enemies.push_back(new mario::entity::Goomba(sf::Vector2f(x, y-100)));
+                            enemies.push_back(new mario::entity::Goomba(sf::Vector2f(x, y-100), mario::entity::GoombaType::Brown));
                         }
                         else if (objType == "red-koopa"){
                             enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(x, y-100), mario::entity::KoopaType::Red, false));
@@ -235,7 +235,6 @@ namespace mario::entity {
                 // std::cout << '\n';
             }
         }
-
         // posX = x + size / 2 - 8
         // posY = y + 16
         if(levelState == 1){

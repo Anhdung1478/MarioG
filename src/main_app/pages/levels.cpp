@@ -18,7 +18,7 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
     p_player = new mario::entity::Player(sf::Vector2f(7550, 0), state.characterType, state.stateType, context.getSoundManager());
 
     p_inputManager = std::make_unique<mario::input::InputManager>(context);
-
+    
     // Initialize remote player for multiplayer mode
     if (gameMode != GameMode::SinglePlayer && networkManager) {
         remotePlayer = new mario::entity::Player(
@@ -36,7 +36,7 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
     tileMap = std::make_unique<mario::entity::TileMap>("../../asset/maps/tiles-8.json", "../../asset/maps/Map_" + std::to_string(currLevelState.level) + ".json", currLevelState.level, currLevelState.level-1);
     tileMap->loadObjects(enemies, items, blocks, groundBlocks, backgroundBlocks, flagPole);
     collisionManager.loadGroundBlocks(groundBlocks);
-
+    // enemies.push_back(std::make_shared<InverseGoomba>(Vector2f(500, 400)));
 
     // Generate unique IDs for items and enemies for network sync
     for (size_t i = 0; i < items.size(); ++i) {
