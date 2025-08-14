@@ -44,7 +44,6 @@ namespace mario::entity {
 
                 _isRunning = true;
                 _isMoveRight = isMoveRight;
-                // std::cout << (isMoveRight ? "Moving right" : "Moving left") << ", " << "Velocity X: " << velocity.x << '\n';
             }
 
             void jump(bool _isReleased) override {
@@ -144,6 +143,14 @@ namespace mario::entity {
 
             void setIsFaceForward(bool isFaceForward) {
                 _isFaceForward = isFaceForward;
+            }
+
+            void setGravityDirection(float dir) {
+                acceleration.y = std::abs(acceleration.y) * dir;
+            }
+
+            float getGravityDirection() const {
+                return (acceleration.y >= 0) ? 1.0f : -1.0f;
             }
     };
 }
