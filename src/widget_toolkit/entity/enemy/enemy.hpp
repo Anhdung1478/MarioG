@@ -28,6 +28,8 @@ namespace mario::entity {
         bool isPlayerDeadWhenCollisionLF = true;
         bool isPlayerDeadWhenCollisionT = false;
         bool isCheckCollisionWithBlock = true;
+        bool isCheckCollisionWithEnemy = true;
+        bool isCheckCollisionWithPlayer = true;
 
         void patrol(float dt) {
             DynamicBox* body = dynamic_cast<DynamicBox*>(p_body);
@@ -209,6 +211,22 @@ namespace mario::entity {
 
         bool getIsCheckCollisionWithBlock() {
             return isCheckCollisionWithBlock;
+        }
+
+        void setIsCheckCollisionWithEnemy(bool check) {
+            isCheckCollisionWithEnemy = check;
+        }
+
+        bool getIsCheckCollisionWithEnemy() {
+            return isCheckCollisionWithEnemy;
+        }
+
+        void setIsCheckCollisionWithPlayer(bool check) {
+            isCheckCollisionWithPlayer = check;
+        }
+
+        bool getIsCheckCollisionWithPlayer() {
+            return isCheckCollisionWithPlayer;
         }
     };
     
