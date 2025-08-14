@@ -166,6 +166,71 @@ public:
         followEntity(player, deltaTime);
     }
 
+    void followTwoEntities(const mario::entity::Entity& entity1, const mario::entity::Entity& entity2, float deltaTime, float maxDistanceForZoom = 300.0f, float minZoom = 0.5f, float maxZoom = 1.0f) {
+        if (!hasMapBounds) {
+            // Default to following first entity if no map bounds are set
+            followEntity(entity1, deltaTime);
+            return;
+        }
+
+        // Get positions of both entities
+        sf::Vector2f pos1 = entity1.getPosition();
+        sf::Vector2f pos2 = entity2.getPosition();
+        
+        // Calculate center point between the two entities
+        sf::Vector2f center = (pos1 + pos2) * 0.5f;
+        
+        // Calculate distance between entities
+        float distance = std::sqrt(
+            std::pow(pos2.x - pos1.x, 2) + 
+            std::pow(pos2.y - pos1.y, 2)
+        );
+        
+        // Calculate desired zoom level based on distance between players
+        float viewWidth = static_cast<float>(windowSize.x);
+        float viewHeight = static_cast<float>(windowSize.y);
+        
+        // Calculate required zoom to fit both players with some padding
+        float requiredZoomX = distance / (viewWidth * 0.4f);  // 40% of screen width
+        float requiredZoomY = distance / (viewHeight * 0.4f); // 40% of screen height
+        float requiredZoom = std::max(requiredZoomX, requiredZoomY);
+        
+        // Clamp zoom level
+        float zoom = std::clamp(requiredZoom, minZoom, maxZoom);
+        
+        // Apply smooth zooming
+        float currentZoom = view.getSize().x / viewWidth;
+        float zoomSpeed = 5.0f * deltaTime;
+        float newZoom = currentZoom + (zoom - currentZoom) * zoomSpeed;
+        
+        // Set the new view
+        view.setSize(sf::Vector2f(viewWidth, viewHeight) * newZoom);
+        
+        // Set target position to center between players, slightly above them
+        sf::Vector2f targetPos = center - sf::Vector2f(0.0f, 50.0f);
+        
+        // Update camera position with smoothing
+        sf::Vector2f currentPos = view.getCenter();
+        sf::Vector2f newPos = currentPos + (targetPos - currentPos) * (smoothFactor * deltaTime);
+        
+        // Apply map bounds
+        sf::Vector2f viewSize = view.getSize();
+        float halfViewWidth = viewSize.x / 2.0f;
+        float halfViewHeight = viewSize.y / 2.0f;
+        
+        newPos.x = std::max(mapBounds.position.x + halfViewWidth,
+                           std::min(mapBounds.position.x + mapBounds.size.x - halfViewWidth, newPos.x));
+        newPos.y = std::max(mapBounds.position.y + halfViewHeight,
+                           std::min(mapBounds.position.y + mapBounds.size.y - halfViewHeight, newPos.y));
+        
+        view.setCenter(newPos);
+    }
+
+    void followPosition(const sf::Vector2f& position, float deltaTime) {
+        setTarget(position);
+        update(deltaTime);
+    }
+
     bool isInCorner() const {
         return isInCornerMode;
     }

@@ -87,7 +87,6 @@ namespace mario::entity {
         file >> mapJson;
         file.close();
         
-        sprites.clear();
         // Load tile layer
         for (const auto& layerJson : mapJson["layers"]) {
             if (layerJson["type"] == "tilelayer") {
@@ -97,46 +96,7 @@ namespace mario::entity {
                 break;
             }
         }
-
-        for (int y = 0; y < mapHeight; ++y) {
-            for (int x = 0; x < mapWidth; ++x) {
-                int tileId = tileIds[y * mapWidth + x];
-                
-                if (tileId == 0) continue; // Empty tile
-                
-                // Adjust for 1-based indexing in Tiled
-                tileId -= 1;
-
-                // std::cout << "Tile ID: " << tileId << " at (" << x << ", " << y << ")" << std::endl;
-                SpriteData2 spriteData;
-                spriteData.id = std::to_string(tileId);
-                spriteData.x = x * 16 + margin + x * spacing;
-                spriteData.y = y * 16 + margin + y * spacing;
-                spriteData.z = 16;
-                spriteData.t = 16;
-                tileSprites[tileId] = spriteData;
-            }
-        }
         
-        /*
-        for (const auto& layerJson : mapJson["layers"]) {
-            if (layerJson["type"] == "objectgroup" && layerJson["name"] == "Items") {
-                for (const auto& obj : layerJson["objects"]) {
-                    ObjectData objData;
-                    objData.gid = obj["gid"];
-                    objData.x = obj["x"];
-                    objData.y = obj["y"];
-                    objData.width = obj["width"];
-                    objData.height = obj["height"];
-                    objData.name = obj["name"];
-
-                    objects.push_back(objData);
-                }
-                break;
-            }
-        }
-        */
-    
         // Load objects
         for (const auto& layerJson : mapJson["layers"]) {
             if (layerJson["type"] == "objectgroup") {
@@ -165,7 +125,13 @@ namespace mario::entity {
         return true;
     }
 
-    bool TileMap::loadObjects(std::vector<mario::entity::Enemy*> &enemies, std::vector<Item*> &items, std::vector<mario::entity::Block*> &blocks, std::vector<mario::entity::Block*>& groundBlocks, std::vector<mario::entity::Block*>& backgroundBlocks) {
+    bool TileMap::loadObjects(std::vector<mario::entity::Enemy*> &enemies, 
+                              std::vector<Item*> &items, 
+                              std::vector<mario::entity::Block*> &blocks, 
+                              std::vector<mario::entity::Block*>& groundBlocks, 
+                              std::vector<mario::entity::Block*>& backgroundBlocks, 
+                              mario::entity::FlagPole* &flagPole) 
+    {
         std::ifstream file(mapPath);
         if (!file.is_open()) {
             std::cerr << "Failed to open map file: " << mapPath << std::endl;
@@ -236,30 +202,34 @@ namespace mario::entity {
                             }
                         }
                     }
+
                     else if(layerName == "Background"){
-                        backgroundBlocks.push_back(new BackgroundBlock(sf::Vector2f(x, y), sf::Vector2f(16, 16), objName));
-                    }
-                    
-                    if (objType == "goomba"){
-                        enemies.push_back(new mario::entity::Goomba(sf::Vector2f(x, y-100)));
-                    }
-                    else if (objType == "red-koopa"){
-                        enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(x, y-100), mario::entity::KoopaType::Red, false));
-                    }
-                    else if (objType == "red-koopa-fly"){
-                        enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(x, y-100), mario::entity::KoopaType::Red, true));
-                    }
-                    else if (objType == "green-koopa"){
-                        enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(x, y-100), mario::entity::KoopaType::Green, false));
-                    }
-                    else if (objType == "green-koopa-fly"){
-                        enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(x, y-100), mario::entity::KoopaType::Green, true));
-                    }
-                    else if (objType == "piranha-plant"){
-                        enemies.push_back(new mario::entity::PiranhaGreen(sf::Vector2f(x, y)));
-                    }
-                    else if (objType == "lakitu"){
-                        // enemies.push_back(new mario::entity::Lakitu(sf::Vector2f(x, y)));
+                        if(objName == "enemies-flag[0]") flagPole->addEnemiesFlag(sf::Vector2f(x, y));
+                        else if (objName == "win-flag[0]") flagPole->addAlliesFlag(sf::Vector2f(x, y));
+                    }      
+
+                    else if(layerName == "Enemies"){
+                        if (objType == "goomba"){
+                            enemies.push_back(new mario::entity::Goomba(sf::Vector2f(x, y-100)));
+                        }
+                        else if (objType == "red-koopa"){
+                            enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(x, y-100), mario::entity::KoopaType::Red, false));
+                        }
+                        else if (objType == "red-koopa-fly"){
+                            enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(x, y-100), mario::entity::KoopaType::Red, true));
+                        }
+                        else if (objType == "green-koopa"){
+                            enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(x, y-100), mario::entity::KoopaType::Green, false));
+                        }
+                        else if (objType == "green-koopa-fly"){
+                            enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(x, y-100), mario::entity::KoopaType::Green, true));
+                        }
+                        else if (objType == "piranha-plant"){
+                            enemies.push_back(new mario::entity::PiranhaGreen(sf::Vector2f(x, y)));
+                        }
+                        else if (objType == "lakitu"){
+                            enemies.push_back(new mario::entity::Lakitu(sf::Vector2f(x, y-40)));
+                        }
                     }
                 }
                 // std::cout << '\n';
@@ -311,9 +281,45 @@ namespace mario::entity {
             blocks.push_back(new SolidBlock("../../asset/maps/Image/Map_3.png", sf::Vector2f(2016 + 8, 208 + 32), sf::Vector2f(32, 48), "pipe", {"pipe", 2016, 208, 32, 48}));
             blocks.push_back(new SolidBlock("../../asset/maps/Image/Map_3.png", sf::Vector2f(2080 + 8, 176 + 64), sf::Vector2f(32, 80), "pipe", {"pipe", 2080, 176, 32, 80}));
             blocks.push_back(new SolidBlock("../../asset/maps/Image/Map_3.png", sf::Vector2f(2816 + 8, 208 + 32), sf::Vector2f(32, 48), "pipe", {"pipe", 2816, 208, 32, 48}));
-
         }
 
+        // FlagPole
+        for (int y = 0; y < mapHeight; ++y) {
+            for (int x = 0; x < mapWidth; ++x) {
+                int tileId = tileIds[y * mapWidth + x];
+                if (tileId == 0) continue; // Empty tile
+                // Adjust for 1-based indexing in Tiled
+                tileId -= 1;
+                switch (tileId) {
+                    case 312:
+                        flagPole->addFlagPole(
+                            sf::Vector2f(x * tileWidth, y * tileHeight),
+                            sf::Vector2f(2, 16),
+                            "flag-pole[0]"
+                        );
+                        break;
+                    case 313:
+                        flagPole->addFlagPole(
+                            sf::Vector2f(x * tileWidth, y * tileHeight),
+                            sf::Vector2f(2, 16),
+                            "flag-pole[1]"
+                        );
+                        break;
+                    case 276:
+                        flagPole->addFlagPole(
+                            sf::Vector2f(x * tileWidth, y * tileHeight),
+                            sf::Vector2f(2, 16),
+                            "flag-pole[2]"
+                        );
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+
+        // Create Blocks
         for (int y = 0; y < mapHeight; ++y) {
             for (int x = 0; x < mapWidth; ++x) {
                 int tileId = tileIds[y * mapWidth + x];

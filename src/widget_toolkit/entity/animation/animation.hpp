@@ -151,6 +151,10 @@ namespace mario::entity {
                 p_sprite->setPosition(pos);
             }
 
+            sf::Vector2f getPosition() const {
+                return p_sprite->getPosition();
+            }
+
             void setVelocity(sf::Vector2f v) {
                 velocity = v;
             }
