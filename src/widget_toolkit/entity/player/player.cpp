@@ -52,7 +52,7 @@ void mario::entity::Player::move(bool isMoveRight, bool isReleased) {
 }
 
 void mario::entity::Player::shotFireball(bool isReleased) {
-    if(!_canMove || p_stateManager->getCurrentState() != player_state::PlayerStateType::Fire || shootingDelayTimer > sf::seconds(0.f) || p_fireballList->getNumFireballs() >= 5)
+    if(!_canMove || isReleased || p_stateManager->getCurrentState() != player_state::PlayerStateType::Fire || shootingDelayTimer > sf::seconds(0.f) || p_fireballList->getNumFireballs() >= 5)
         return;
 
     timeSinceLastShoot = sf::seconds(0.f);
