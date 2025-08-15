@@ -28,5 +28,8 @@ FetchContent_MakeAvailable(eventpp)
 file(GLOB_RECURSE SOURCE_FILES "src/*.cpp")
 add_executable(MARIOG ${SOURCE_FILES})
 
+target_include_directories(MARIOG PRIVATE "C:/eventpp/include")
+
 # Link libraries
-target_link_libraries(MARIOG PRIVATE SFML::Graphics SFML::Window SFML::System SFML::Audio SFML::Network eventpp::eventpp)
+target_link_libraries(MARIOG PRIVATE SFML::Graphics SFML::Window SFML::System SFML::Audio SFML::Network)
+target_include_directories(MARIOG PRIVATE "${EVENTPP_DIR}/include")

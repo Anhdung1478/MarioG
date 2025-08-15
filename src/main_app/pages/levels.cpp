@@ -15,7 +15,7 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
       remotePlayerDead(false) {
     
     // Initialize player with the correct character type and state
-    p_player = new mario::entity::Player(sf::Vector2f(100, 400), state.characterType, state.stateType, context.getSoundManager());
+    p_player = new mario::entity::Player(sf::Vector2f(7550, 0), state.characterType, state.stateType, context.getSoundManager());
 
     p_inputManager = std::make_unique<mario::input::InputManager>(context);
     
@@ -32,8 +32,9 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
     }
 
     // Load level and other game elements
+    flagPole = new mario::entity::FlagPole();
     tileMap = std::make_unique<mario::entity::TileMap>("../../asset/maps/tiles-8.json", "../../asset/maps/Map_" + std::to_string(currLevelState.level) + ".json", currLevelState.level, currLevelState.level-1);
-    tileMap->loadObjects(enemies, items, blocks, groundBlocks, backgroundBlocks);
+    tileMap->loadObjects(enemies, items, blocks, groundBlocks, backgroundBlocks, flagPole);
     collisionManager.loadGroundBlocks(groundBlocks);
     // enemies.push_back(std::make_shared<InverseGoomba>(Vector2f(500, 400)));
 
@@ -279,6 +280,9 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
                 // }
             }
 
+            if(flagPole->getWinState()) testFireWorks->update(window, dt);
+            flagPole->update(window, dt);
+
             for(auto &enemy : enemies) {
                 if (!enemy->shouldDelete()) {
                     mario::entity::Piranha* piranha = dynamic_cast<mario::entity::Piranha*>(enemy);
@@ -302,8 +306,6 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
                 }
             }
 
-            //testItem->update(window, dt);
-            // Update items directly from vector
             for(auto &item : items) {
                 if (item && !item->isCollected()) {
                     item->update(window, dt);
@@ -323,34 +325,14 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
             collisionManager.checkCollisionPlayerWithItems(p_player, items);
             collisionManager.checkCollisionItemsWithBlocks(items, blocks);
             collisionManager.checkCollisionEnemyWithEnemy(enemies);
-            testFireWorks->update(window, dt);
-        
+            flagPole->reactToCollision(p_player);
+
             // Check for item collection and notify network
             checkItemCollection();
             
             // Check for enemy defeats and notify network
             checkEnemyDefeats();
-          
-            // auto measure = [](auto&& func, const std::string& name) {
-            //     auto start = std::chrono::high_resolution_clock::now();
-            //     func();
-            //     auto end = std::chrono::high_resolution_clock::now();
-
-            //     auto elapsedMicro = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-
-            //     if(elapsedMicro > 100){
-            //         std::cout << name << ": " << elapsedMicro << " ms" << "\n";
-            //     }
-            // };
-
-            // collisionManager.updateCameraBounds(cameraBounds);
-            // measure([&]{ collisionManager.checkCollisionPlayerWithBlocks(p_player, blocks, items); }, "Player-Blocks");
-            // measure([&]{ collisionManager.checkCollisionEnemyWithBlocks(enemies, blocks); }, "Enemy-Blocks");
-            // measure([&]{ collisionManager.checkCollisionPlayerWithEnemies(p_player, enemies); }, "Player-Enemies");
-            // measure([&]{ collisionManager.checkCollisionPlayerWithItems(p_player, items); }, "Player-Items");
-            // measure([&]{ collisionManager.checkCollisionItemsWithBlocks(items, blocks); }, "Items-Blocks");
-
-
+        
 
             // for (auto* enemy : enemies) {
             //     mario::entity::Enemy* enemyPtr = dynamic_cast<mario::entity::Enemy*>(enemy);
@@ -753,7 +735,7 @@ void mario::pages::LevelsPage::rePositionTextToMiddle(sf::Text &text, int rectX,
 
 void mario::pages::LevelsPage::render(sf::RenderWindow *window) {
     window->draw(*backgroundSprite);
-    testFireWorks->render(window);
+    if(flagPole->getWinState())testFireWorks->render(window);
     // std::cout << "Position's player: " << p_player->getPosition().x << ", " << p_player->getPosition().y << "\n";
     camera.applyTo(*window);
 
@@ -788,11 +770,14 @@ void mario::pages::LevelsPage::render(sf::RenderWindow *window) {
     }
 
     // testBlock->render(window);
+
     for(auto &block : groundBlocks){
         if (block->getHitbox().findIntersection(cameraBounds)) {
             block->render(window);
         }
     }
+
+    flagPole->render(window);
 
     for (auto &backgroundBlock : backgroundBlocks) {
         if (backgroundBlock->getHitbox().findIntersection(cameraBounds)) {

@@ -285,5 +285,68 @@
       {"x": 750, "y": 473, "width": 15, "height": 31},
       {"x": 771, "y": 473, "width": 15, "height": 31}
     ]
+  },
+
+  "enter-fortress-door":{
+    "luigi-small":[
+      {"x": 7, "y": 230, "width": 12, "height": 15},
+      {"x": 27, "y": 229, "width": 14, "height": 16},
+      {"x": 48, "y": 229, "width": 14, "height": 16},
+      {"x": 71, "y": 230, "width": 11, "height": 15},
+      {"x": 92, "y": 230, "width": 11, "height": 15},
+      {"x": 113, "y": 230, "width": 11, "height": 15},
+      {"x": 133, "y": 230, "width": 12, "height": 15},
+      {"x": 154, "y": 230, "width": 12, "height": 15},
+      {"x": 175, "y": 230, "width": 12, "height": 15},
+      {"x": 196, "y": 230, "width": 12, "height": 15},
+      {"x": 216, "y": 229, "width": 14, "height": 16},
+      {"x": 237, "y": 229, "width": 14, "height": 16},
+      {"x": 258, "y": 229, "width": 14, "height": 16},
+      {"x": 281, "y": 230, "width": 11, "height": 15},
+      {"x": 302, "y": 230, "width": 11, "height": 15},
+      {"x": 322, "y": 230, "width": 12, "height": 15},
+      {"x": 342, "y": 229, "width": 14, "height": 16},
+      {"x": 365, "y": 230, "width": 11, "height": 15}
+    ],
+    "luigi-super":[
+      {"x": 385, "y": 208, "width": 16, "height": 30},
+      {"x": 406, "y": 208, "width": 16, "height": 31},
+      {"x": 427, "y": 208, "width": 16, "height": 31},
+      {"x": 449, "y": 208, "width": 14, "height": 31},
+      {"x": 471, "y": 208, "width": 14, "height": 31},
+      {"x": 492, "y": 208, "width": 14, "height": 31},
+      {"x": 511, "y": 208, "width": 16, "height": 30},
+      {"x": 532, "y": 208, "width": 16, "height": 30},
+      {"x": 553, "y": 208, "width": 16, "height": 30},
+      {"x": 574, "y": 208, "width": 16, "height": 30},
+      {"x": 595, "y": 208, "width": 16, "height": 31},
+      {"x": 616, "y": 208, "width": 16, "height": 31},
+      {"x": 637, "y": 208, "width": 16, "height": 31},
+      {"x": 660, "y": 208, "width": 14, "height": 31},
+      {"x": 681, "y": 208, "width": 14, "height": 31},
+      {"x": 700, "y": 208, "width": 16, "height": 30},
+      {"x": 721, "y": 208, "width": 16, "height": 31},
+      {"x": 744, "y": 208, "width": 14, "height": 31}
+    ],
+    "luigi-fire":[
+      {"x": 771, "y": 295, "width": 16, "height": 30},
+      {"x": 792, "y": 295, "width": 16, "height": 31},
+      {"x": 813, "y": 295, "width": 16, "height": 31},
+      {"x": 835, "y": 295, "width": 14, "height": 31},
+      {"x": 857, "y": 295, "width": 14, "height": 31},
+      {"x": 878, "y": 295, "width": 14, "height": 31},
+      {"x": 897, "y": 295, "width": 16, "height": 30},
+      {"x": 918, "y": 295, "width": 16, "height": 30},
+      {"x": 939, "y": 295, "width": 16, "height": 30},
+      {"x": 960, "y": 295, "width": 16, "height": 30},
+      {"x": 981, "y": 295, "width": 16, "height": 31},
+      {"x": 1002, "y": 295, "width": 16, "height": 31},
+      {"x": 1023, "y": 295, "width": 16, "height": 31},
+      {"x": 1046, "y": 295, "width": 14, "height": 31},
+      {"x": 1067, "y": 295, "width": 14, "height": 31},
+      {"x": 1086, "y": 295, "width": 16, "height": 30},
+      {"x": 1107, "y": 295, "width": 16, "height": 31},
+      {"x": 1130, "y": 295, "width": 14, "height": 31}
+    ]
   }
 }
