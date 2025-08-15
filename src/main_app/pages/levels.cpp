@@ -63,11 +63,12 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
     float scaleX = boundWorldSize.x / backgroundTexture.getSize().x;
     float scaleY = boundWorldSize.y / backgroundTexture.getSize().y;
     backgroundSprite->setScale({scaleX, scaleY});
+    std::cout << "Bound World: " << boundWorldSize.x << ", " << boundWorldSize.y << '\n'; 
     // tileMap->createBlock(blocks, backgroundBlocks);
     // testBlock = new mario::entity::BackgroundBlock(sf::Vector2f(100, 500), sf::Vector2f(16, 16), "enemies-flag[0]");
     // testBlock = new mario::entity::BackgroundBlock(sf::Vector2f(100, 500), sf::Vector2f(16, 16), std::to_string(390), {"390", 1, 171, 16, 16});
     // testFireWorks = new mario::entity::FireWorks(boundWorldSize - sf::Vector2f(500, 500), sf::Vector2f(450, 250));
-    testFireWorks = new mario::entity::FireWorks(sf::Vector2f(7800, 170), sf::Vector2f(680, 300));
+    testFireWorks = new mario::entity::FireWorks(sf::Vector2f(boundWorldSize.x - 720, 170), sf::Vector2f(680, 300));
     testFireWorks->setShowFireworks(true);
 
 

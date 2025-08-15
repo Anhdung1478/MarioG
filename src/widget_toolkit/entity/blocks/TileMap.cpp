@@ -209,8 +209,14 @@ namespace mario::entity {
                     }      
 
                     else if(layerName == "Enemies"){
-                        if (objType == "goomba"){
+                        if (objType == "goomba-brown"){
                             enemies.push_back(new mario::entity::Goomba(sf::Vector2f(x, y-100), mario::entity::GoombaType::Brown));
+                        }
+                        else if (objType == "goomba-blue"){
+                            enemies.push_back(new mario::entity::Goomba(sf::Vector2f(x, y-100), mario::entity::GoombaType::Blue));
+                        }
+                        else if (objType == "goomba-grey"){
+                            enemies.push_back(new mario::entity::Goomba(sf::Vector2f(x, y-100), mario::entity::GoombaType::Grey));
                         }
                         else if (objType == "red-koopa"){
                             enemies.push_back(new mario::entity::KoopaPatrol(sf::Vector2f(x, y-100), mario::entity::KoopaType::Red, false));
