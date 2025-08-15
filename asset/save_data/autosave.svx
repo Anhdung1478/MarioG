@@ -1,6 +1,0 @@
-Level= 1
-Lives= 2
-Coins= 0
-Score= 900
-CharacterType= 0
-StateType= 0
