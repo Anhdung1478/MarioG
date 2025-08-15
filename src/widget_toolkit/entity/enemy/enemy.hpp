@@ -22,12 +22,26 @@ namespace mario::entity {
         float detectionRange;
         bool isActive;
         bool isDeadFlag = false;
-        bool networkNotified = false;
-        int networkId = -1;
-        bool isNetwork = false;
+        
         bool isPlayerDeadWhenCollisionLF = true;
         bool isPlayerDeadWhenCollisionT = false;
         bool isCheckCollisionWithBlock = true;
+
+        bool hasNetworkAuthority = false;  // Does this client control this enemy?
+        bool isNetworkControlled = false;  // Is this enemy controlled by network?
+        bool isNetworked = false;
+        bool networkNotified = false;
+        int networkId = -1;
+
+        sf::Vector2f networkTargetPos;     
+        sf::Vector2f networkTargetVel;  
+        sf::Vector2f lastNetworkPos;
+        sf::Vector2f lastNetworkVel;
+        float networkStateAge = 0.0f;
+        uint64_t networkTimestamp = 0; 
+        float networkInterpFactor = 0.15f;
+
+        static constexpr float MAX_NETWORK_STATE_AGE = 0.5f; // 500ms timeout
 
         void patrol(float dt) {
             DynamicBox* body = dynamic_cast<DynamicBox*>(p_body);
@@ -125,17 +139,33 @@ namespace mario::entity {
             }
         }
 
+        void setNetworkAuthority(bool hasAuth) { 
+            hasNetworkAuthority = hasAuth;
+            isNetworkControlled = !hasAuth;
+        }
+        
+        bool hasAuthority() const { return hasNetworkAuthority; }
+        bool isNetworkedControlled() const { return isNetworkControlled; }
+
         void update(const sf::RenderWindow* window, float dt) override {
-            if(!p_body->isOnGround()) {
-                p_animation->setAnimationState(false);
-                p_animation->setSpriteAnimation(getDeadSpriteID());
+            networkStateAge += dt;
+
+            if (hasNetworkAuthority) {
+                if(!p_body->isOnGround()) {
+                    p_animation->setAnimationState(false);
+                    p_animation->setSpriteAnimation(getDeadSpriteID());
+                } else {
+                    p_animation->setAnimationState(true);
+                }
+                updateBehavior(dt);
+                p_body->update(dt);
             } else {
-                p_animation->setAnimationState(true);
-            }
-            updateBehavior(dt);
+                updateNetworkInterpolation(dt);
+                if (networkStateAge > MAX_NETWORK_STATE_AGE) {
+                    p_body->update(dt);
+                }
+            } 
             p_animation->update(window, dt);
-            p_body->update(dt);
-            // p_body->updateSize(p_animation);
         }
 
         void handleEvent(const sf::RenderWindow* window, const sf::Event& event) override {
@@ -178,6 +208,20 @@ namespace mario::entity {
             }
         }
 
+        std::string getCurrentSpriteId() const {
+            if (p_animation) {
+                return p_animation->getSpriteId(); 
+            }
+            return ""; 
+        }
+
+        bool isFaceForward() const {
+            if (p_animation) {
+                return p_animation->isFaceForward();
+            }
+            return true;
+        }
+
         // Network methods
         void setNetworkId(int id) { networkId = id; }
         int getNetworkId() const { return networkId; }
@@ -185,8 +229,8 @@ namespace mario::entity {
         bool isNetworkNotified() const { return networkNotified; }
         void setDead(bool dead) { isDeadFlag = dead; }
         bool isDead() const { return isDeadFlag; }
-        void setNetwork(bool network) { isNetwork = network; }
-        bool getIsNetwork() const { return isNetwork; }
+        void setNetwork(bool network) { isNetworked = network; }
+        bool getIsNetwork() const { return isNetworked; }
         void setIsPlayerDeadWhenCollisionLF(bool check) {
             isPlayerDeadWhenCollisionLF = check;
         }
@@ -209,6 +253,70 @@ namespace mario::entity {
 
         bool getIsCheckCollisionWithBlock() {
             return isCheckCollisionWithBlock;
+        }
+
+        void syncNetworkState(const sf::Vector2f& pos, const sf::Vector2f& vel, 
+                             bool alive, bool active, const std::string& spriteId, 
+                             bool faceForward, uint64_t timestamp) 
+        {
+            if (hasNetworkAuthority) return; // Ignore if we're the host or owner
+
+            isNetworked = true;
+            networkTimestamp = timestamp;
+            networkStateAge = 0.0f;
+
+            DynamicBox* body = dynamic_cast<DynamicBox*>(p_body);
+            if (body) {
+                sf::Vector2f currentPos = body->getPosition();
+
+                // Snap if far away, otherwise smooth
+                float dx = std::abs(currentPos.x - pos.x);
+                float dy = std::abs(currentPos.y - pos.y);
+                if (dx > 50.f || dy > 50.f) {
+                    body->setPosition(pos); // Hard snap for big errors
+                } else {
+                    body->setPosition(currentPos + (pos - currentPos) * 0.4f); // Smooth catch-up
+                }
+
+                // Always overwrite velocity
+                body->setVelocity(vel);
+            }
+
+            // Sync alive/active state
+            isDeadFlag = !alive;
+            setActive(active);
+
+            // Update animation state immediately
+            if (!spriteId.empty() && p_animation) {
+                p_animation->setSpriteAnimation(spriteId);
+                if (p_animation->isFaceForward() != faceForward) {
+                    p_animation->rotate();
+                }
+            }
+        }
+
+        void updateNetworkInterpolation(float dt) {
+            if (!isNetworkControlled || networkStateAge > MAX_NETWORK_STATE_AGE) return;
+
+            DynamicBox* body = dynamic_cast<DynamicBox*>(p_body);
+            if (!body) return;
+
+            sf::Vector2f currentPos = body->getPosition();
+            float distance = std::sqrt(
+                std::pow(networkTargetPos.x - currentPos.x, 2) + 
+                std::pow(networkTargetPos.y - currentPos.y, 2)
+            );
+
+            if (distance > 100.0f) {
+                // Large desync → snap
+                body->setPosition(networkTargetPos);
+                body->setVelocity(networkTargetVel);
+            } else {
+                // Smooth interpolation
+                float interpFactor = std::min(1.0f, networkInterpFactor * (dt * 60.0f));
+                body->setPosition(currentPos + (networkTargetPos - currentPos) * interpFactor);
+                body->setVelocity(networkTargetVel);
+            }
         }
     };
     
