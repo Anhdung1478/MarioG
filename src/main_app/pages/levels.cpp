@@ -128,7 +128,7 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
         std::make_unique<sf::Font>(*font), // Copy font
         sf::Vector2f(panelCenter.x + 80, panelCenter.y - 50),
         std::string("Music"), // Explicitly convert to std::string
-        sf::Vector2f(0.5f, 0.5f),
+        sf::Vector2f(0.3f, 0.3f),
         0.0f, 100.0f, // Add minValue and maxValue
         _context->getSoundManager().getMusicVolume()
     );
@@ -139,7 +139,7 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
         std::make_unique<sf::Font>(*font), // Copy font
         sf::Vector2f(panelCenter.x + 80, panelCenter.y + 50),
         std::string("SFX"), // Explicitly convert to std::string
-        sf::Vector2f(0.5f, 0.5f),
+        sf::Vector2f(0.3f, 0.3f),
         0.0f, 100.0f, // Add minValue and maxValue
         _context->getSoundManager().getSoundVolume()
     );
