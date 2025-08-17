@@ -41,6 +41,10 @@ mario::audio::SoundManager& mario::MainWindow::getSoundManager() {
     return soundManager;
 }
 
+NetworkManager& mario::MainWindow::getNetworkManager() {
+    return networkManager;
+}
+
 void mario::MainWindow::run() {
     sf::ContextSettings settings;
     settings.antiAliasingLevel = 0.0f;
@@ -63,26 +67,30 @@ void mario::MainWindow::run() {
 
         //std::cerr << deltaTime.asSeconds() << ' ' << timeStep.asSeconds() << '\n';
         while (const std::optional event = window->pollEvent()) {
-            if(event->is<sf::Event::Closed>()) {
+            if(event->is<sf::Event::Closed>())
                 isRunning = false;
-            }
 
-            if(event->is<sf::Event::Resized>()) {
+            if(event->is<sf::Event::Resized>())
                 window->setSize(sf::Vector2u(initScreenWidth, initScreenHeight));
-            }
 
-            if(content) {
+            if(event->is<sf::Event::FocusGained>())
+                isFocusOn = true;
+
+            if(event->is<sf::Event::FocusLost>())
+                isFocusOn = false;
+
+            if(content && isFocusOn)
                 content->handleEvent(window, *event); // Pass the event to the current content page
-            }
         }
 
         accumulate -= timeStep;
-        if (content) {
+        if (content && isFocusOn)
             content->update(window, timeStep.asSeconds());
-        }
 
-        render(window);
-        if (_deferredStateChange) {
+        if(isFocusOn)
+            render(window);
+        
+        if(_deferredStateChange) {
             _deferredStateChange();
             _deferredStateChange = nullptr;
         }

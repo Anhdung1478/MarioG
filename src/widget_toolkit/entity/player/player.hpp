@@ -11,6 +11,7 @@
 #include "fireball-list.hpp"
 #include "../../controls/popup-text-list.hpp"
 #include "../../resource/SoundManager.hpp"
+#include "../../networking/NetworkManager.hpp"
 
 namespace mario::entity {
     static constexpr sf::Vector2f PLAYER_SCALE = sf::Vector2f(2.5f, 2.5f);
@@ -22,6 +23,7 @@ namespace mario::entity {
     class Player : public Entity {
         private:
             mario::audio::SoundManager& soundManager; // for sound effects
+            NetworkManager& networkManager;
 
             player_state::PlayerStateManager *p_stateManager;
             CharacterListType _characterType;
@@ -40,26 +42,32 @@ namespace mario::entity {
             bool _canCollisionWithEnemy = true, _canCollisionWithItem = true, _canCollisionWithBlock = true;
             bool _isTransforming = false, _isShootingFireball = false;
 
-            int score = 0;
-            int lives = 0;
-            int coinCount = 0;
+            int score = 0, addedScore = 0;
+            int lives = 0, addedLives = 0;
+            int coinCount = 0, addedCoinCount = 0;
             int scoreMultiplier = 0;
 
-            void addScoreToPlayer(int _score, bool isPoppingUp);  // pop up score when getting some new score
             void managePlayerAnimation(); // manage Animation for Player (idle, run or jump animation)
             void updatePlayerBehavior(float dt); // update for Player Behavior (some behavior will change when ran out of time)
 
+            int _networkPlayerId = -1;
         public:
-            Player(sf::Vector2f spawnPoint, CharacterListType characterType, player_state::PlayerStateType stateType, mario::audio::SoundManager& soundManager);
+            Player(sf::Vector2f spawnPoint, CharacterListType characterType, player_state::PlayerStateType stateType, mario::audio::SoundManager& soundManager, NetworkManager& networkManager);
             ~Player() override;
+
+            void loadDataFrom(const mario::resource::LevelState &levelState);
             
             void rotateDirection();
             sf::Vector2f getVelocity() const;
             void setVelocity(sf::Vector2f vel);
             
             void jump(bool isReleased);
-            void move(bool isMoveRight, bool isReleased);
+            void jumpByANumberOfJumps(bool isReleased, int numJumps);
+            void moveLeft(bool isReleased);
+            void moveRight(bool isReleased);
             void shotFireball(bool isReleased);
+            void resetJump();
+            void resetMove();
 
             void explosionFireballAtPos(int idx);
             int getNumberFireballs() const;
@@ -72,9 +80,9 @@ namespace mario::entity {
             void updateToLevelState(mario::resource::LevelState &levelState);
             void setOnGround(bool isOnGround);
             void togglePlayerMove(bool canMove); // toggle turn on/off movement of Player (when turn off, Player won't be able to move)
-            void resetJump();
 
-            void toggleClimbingBehavior(bool isFinished); // toggle turn on/off climbing behavior of Player (when turn on, Player will climbing from top of flag to ground)
+            void startClimbingBehavior(int flagXPos); // start climbing behavior of Player (Player will climbing from this position of the flag to ground)
+            void finishClimbingBehavior();            // finish climbing behavior of Player
 
             void beingHit(); // being hit by enemy or entity like level trap
             void changePlayerBehavior(PlayerBehavior newBehavior); // change Player behavior to newBehavior
@@ -88,6 +96,7 @@ namespace mario::entity {
             bool canCollisionWithItem() const;
             bool canCollisionWithBlock() const;
 
+            void addScoreToPlayer(int _score, bool isPoppingUp);  // pop up score when getting some new score
             void breakBrick();                                    // appear when Player break the brick block
             void hitEmptyBlock();                                 // appear when Player hit the empty block 
             void collectCoin();                                   // appear when Player collect a coin in map
@@ -110,6 +119,15 @@ namespace mario::entity {
             void handleNetworkCollision(const sf::Vector2f& otherPosition);
             void syncNetworkState(const sf::Vector2f& position, const sf::Vector2f& velocity);
     
+            void setFaceForward(bool faceForward) { 
+                p_body->setFaceForward(faceForward);
+                if (p_animation->isFaceForward() != faceForward) {
+                    rotateDirection();
+                }
+            }
+
+            void requestStateChange(player_state::PlayerStateType newStateType);
+
             // IMPORTANT
             bool _isRemotePlayer = false;
 
@@ -117,5 +135,8 @@ namespace mario::entity {
             int getCoins() { return coinCount; }
             int getLives() { return lives; }
             void setRemote(bool isRemote) { _isRemotePlayer = isRemote; } 
+
+            void setNetworkPlayerId(int id) { _networkPlayerId = id; }
+            int  getNetworkPlayerId() const { return _networkPlayerId; }
     };
 }

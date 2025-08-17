@@ -9,10 +9,12 @@ namespace mario::entity {
     
     class Animation : public IScreenElement {
         private:
-            float TIME_BETWEEN_STEP = 1.f / 10.f;
+            static constexpr float DEFAULT_TIME_BETWEEN_STEP = 0.1f;
+            float TIME_BETWEEN_STEP = DEFAULT_TIME_BETWEEN_STEP;
             float FLICKER_DELAY = 0.1f;
 
             TextureManager& p_textureResource = TextureManager::getInstance();
+            std::string currentSpriteId;
             std::vector<SpriteData> animationSteps;
             sf::Sprite *p_sprite;
             sf::Vector2f scale;
@@ -25,6 +27,7 @@ namespace mario::entity {
             int step = 0;
             bool _isFaceForward = true;
             bool _isRunning = true, _isFlicker = false, _isInvisible = false;
+            bool flippedVertical = false;
             
             void setAnimationStep(int x) {
                 if(animationSteps.size() == 0) {
@@ -114,6 +117,10 @@ namespace mario::entity {
                 return _isRunning;
             }
 
+            std::string getSpriteId() const {
+                return currentSpriteId;
+            }
+
             void setSpriteVisible(bool isVisible) {
                 if(isVisible) {
                     p_sprite->setColor(sf::Color(255, 255, 255, 255)); // is visible
@@ -145,6 +152,10 @@ namespace mario::entity {
             
             void setTimeBetweenStep(float time) {
                 TIME_BETWEEN_STEP = time;
+            }
+
+            void resetTimeBetweenStepToDefault() {
+                TIME_BETWEEN_STEP = DEFAULT_TIME_BETWEEN_STEP;
             }
 
             void setPosition(sf::Vector2f pos) {
@@ -211,6 +222,13 @@ namespace mario::entity {
             void renderWithPosition(sf::RenderWindow *window, sf::Vector2f pos) {
                 p_sprite->setPosition(pos);
                 render(window);
+            }
+
+            void flipVertical(bool enable) {
+                sf::Vector2f scale = p_sprite->getScale();
+                scale.y = (enable ? -std::abs(scale.y) : std::abs(scale.y));
+                p_sprite->setScale(scale);
+                flippedVertical = enable;
             }
     };
 }

@@ -44,18 +44,30 @@ namespace mario::entity {
                 position += offset;
             }
 
-            virtual sf::Vector2f getVelocity() const = 0;
+            virtual void setOnGround(bool isOnGround) = 0;
             virtual void setVelocity(sf::Vector2f vel) = 0;
             virtual void setAcceleration(sf::Vector2f acc) = 0;
-            virtual void move(bool isMoveRight, bool isReleased) = 0;
-            virtual void jump(bool isReleased) = 0;
-            virtual void setOnGround(bool isOnGround) = 0;
-            virtual void update(float dt) = 0;
-            virtual bool isNotMoving() const = 0;
-            virtual bool isFaceForward() const = 0;
-            virtual bool isOnGround() const = 0;
-            virtual void resetJump() = 0;
 
+            virtual void move(bool isMoveRight, bool isReleased) = 0;
+            virtual void moveLeft(bool isReleased) = 0;
+            virtual void moveRight(bool isReleased) = 0;
+            virtual void jump(bool _isReleased) = 0;
+            virtual void jumpByANumberOfJumps(bool _isReleased, int numJumps) = 0;
+            virtual void update(float dt) = 0;
+            virtual void resetJump() = 0;
+<<<<<<< HEAD
+            virtual void setFaceForward(bool faceForward) = 0;
+            
+=======
+            virtual void resetMove() = 0;
+            
+            virtual sf::Vector2f getAcceleration() const = 0;
+            virtual sf::Vector2f getVelocity() const = 0;
+            virtual bool isFaceForward() const = 0;
+            virtual bool isNotMoving() const = 0;
+            virtual bool isOnGround() const = 0;
+
+>>>>>>> origin/item/multiplayer
             void renderHitboxRect(sf::RenderWindow *window) {
                 sf::FloatRect hitbox = getHitbox();
                 sf::Vector2f _pos = hitbox.position;

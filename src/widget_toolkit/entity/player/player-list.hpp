@@ -15,7 +15,8 @@ namespace mario::entity {
         TransformBTS = 3,  // appear when Player transform from Super/Fire to Small
         Invincible = 4,    // appear when Player loot the Star Item, Player become Invincible, kill all Enemy touch him and be unable to die except the case Player jump out of map
         Climbing = 5,      // appear when Player finish the level and are climbing on the flag
-        Dying = 6,         // appear when Player in Small State being hit and dead, this Behavior should run the Dying Animation of Player
-        AlreadyDead = 7,   // appear when Player finish Dying Animation, and dead already
+        FinishLevel = 6,   // appear when Player finish climbing on the flag and go to the castle
+        Dying = 7,         // appear when Player in Small State being hit and dead, this Behavior should run the Dying Animation of Player
+        AlreadyDead = 8,   // appear when Player finish Dying Animation, and dead already
     };
 }

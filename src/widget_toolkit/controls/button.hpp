@@ -88,20 +88,30 @@ namespace mario {
             }
                 
             void render(sf::RenderWindow *window) override {
+                sf::Color buttonColor;
                 if(!enabled) {
-
-                    return;
+                    buttonColor = sf::Color(128, 128, 128, 128);
+                } else {
+                    buttonColor = (state == ButtonState::Pressed) ? sf::Color::Green : 
+                        ((state == ButtonState::Hover) ? sf::Color::Yellow : sf::Color(49, 139, 23, 255));
                 }
-
-                sf::Color buttonColor = (state == ButtonState::Pressed) ? sf::Color::Green : 
-                    ((state == ButtonState::Hover) ? sf::Color::Yellow : sf::Color(49, 139, 23, 255));
 
                 drawRoundedRectangle(window, buttonRect, buttonColor);
 
-                if(selected) {
-                    sf::CircleShape triangle(5);
-                    triangle.setPosition(sf::Vector2f(buttonRect.position.x - 30, buttonRect.position.y));
-                    triangle.setFillColor(sf::Color::White);
+                if(enabled && selected) {
+                    /*sf::CircleShape circle(5);
+                    circle.setPosition(sf::Vector2f(buttonRect.position.x - 30, buttonRect.position.y));
+                    circle.setFillColor(sf::Color::White);*/
+
+                    sf::ConvexShape triangle;
+                    triangle.setPointCount(3); // A triangle has 3 points
+
+                    // Define the positions of the three vertices
+                    triangle.setPoint(0, sf::Vector2f(buttonRect.position.x - 30, buttonRect.position.y + 4));
+                    triangle.setPoint(1, sf::Vector2f(buttonRect.position.x - 20, buttonRect.position.y + buttonRect.size.y / 2.f));
+                    triangle.setPoint(2, sf::Vector2f(buttonRect.position.x - 30, buttonRect.position.y - 4 + buttonRect.size.y));
+
+                    triangle.setFillColor(sf::Color::White); // Set fill color
                     window->draw(triangle);
                 }
 
@@ -112,6 +122,14 @@ namespace mario {
                 text.setFillColor(sf::Color(239, 139, 54, 255));
                 text.setPosition(sf::Vector2f(int(buttonRect.position.x + (buttonRect.size.x - textLenX) / 2.f), int(buttonRect.position.y - 4 + (buttonRect.size.y - textLenY) / 2.f)));
                 window->draw(text); 
+            }
+
+            void setEnableState(bool _enable) {
+                enabled = _enable;
+            }
+
+            bool isEnabled() const {
+                return enabled;
             }
     };
 }

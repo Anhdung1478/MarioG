@@ -4,6 +4,7 @@
 #include "gameover-page.hpp"
 
 #include "../../widget_toolkit/entity/player/player.hpp"
+#include "../../widget_toolkit/entity/player/player-state.hpp"
 #include "../../widget_toolkit/command/input-manager.hpp"
 #include "../../widget_toolkit/entity/blocks/TileMap.hpp"
 #include "../../widget_toolkit/resource/LevelState.hpp"
@@ -37,6 +38,7 @@ namespace mario::pages {
             std::vector<mario::entity::Block*> backgroundBlocks;
             std::vector<mario::entity::Enemy*> enemies;
             std::vector<mario::entity::Item*> items;  // Direct item management
+            mario::entity::FlagPole* flagPole;
             mario::entity::Item* testItem;
 
             // Background
@@ -100,13 +102,17 @@ namespace mario::pages {
             bool gameOverReceivedForLocal = false;  // replaces old gameOverReceived for local only
             bool remotePlayerDead = false;          // track remote death without ending game
             static constexpr float NETWORK_UPDATE_INTERVAL = 1.0f/30.0f; // 30 FPS network updates
-            
+            float enemyStateSendInterval = 0.1f; // seconds (100 ms)
+            float enemyStateSendAccumulator = 0.0f;
+
             // Add these new method declarations:
             void handleNetworkUpdates(float dt);
             void handleRemoteItemCollection(int itemId, const sf::Vector2f& position);
             void handleRemoteEnemyDefeat(int enemyId, const sf::Vector2f& position);
+            void handleRemotePlayerPowerupState(int playerId, int powerupState);
             void checkItemCollection();
             void checkEnemyDefeats();
+            void sendEnemyState();
             sf::Vector2f remoteTargetPos = sf::Vector2f(150.f, 400.f);;
             sf::Vector2f remoteTargetVel = sf::Vector2f(0.f, 0.f);;
             

@@ -71,9 +71,9 @@ namespace mario::entity {
             else{
                 createFragments();
                 setExist(false);
+                player->breakBrick();
                 // break the brick block
             }
-            player->breakBrick();
         }    
         else if (typeOfItem == 0) { // Coin
             if (numberOfCoins == 0) return -1;

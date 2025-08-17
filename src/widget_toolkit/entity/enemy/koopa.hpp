@@ -189,6 +189,7 @@ namespace mario::entity {
                 verticalVelocity = jumpForce;
                 lastState = KoopaState::DeadSpecial;
                 setActive(true);
+                setIsCheckCollisionWithEnemy(false);
             } else if(collision.isWithWall() && (side == SideCollision::Left || side == SideCollision::Right)) {
                 DynamicBox* body = dynamic_cast<DynamicBox*>(p_body);
                 if(body) {
@@ -206,12 +207,19 @@ namespace mario::entity {
                     }
                 }
             } else if(collision.isWithFireball()) {
-                currentState = KoopaState::Shell;
-                loadShellAnimations();
-                p_animation->setSpriteAnimation(typePrefix + "knocked-out[0]");
-                p_animation->setAnimationState(true);
-                lastState = KoopaState::Shell;
+                currentState = KoopaState::DeadSpecial;
+                loadDeadSpecialAnimations();
+                try {
+                    p_animation->setSpriteAnimation(typePrefix + "dead-special[0]");
+                } catch (const std::out_of_range& e) {
+                    std::cerr << "Error setting sprite: goomba-new.dead-special[0] - " << e.what() << "\n";
+                }
+                p_animation->setAnimationState(false);
+                verticalVelocity = jumpForce;
+                lastState = KoopaState::DeadSpecial;
                 setActive(false);
+                setIsCheckCollisionWithEnemy(false);
+                setIsCheckCollisionWithPlayer(false);
             } else if(collision.isWithBrick()) {
                 DynamicBox* body = dynamic_cast<DynamicBox*>(p_body);
                 if(body) {

@@ -5,6 +5,18 @@
 #include "settings.hpp"
 
 mario::pages::MainMenuPage::MainMenuPage(mario::MainWindow &context) : Page(context) {
+    // Create a file to store autosave
+    // Define the path for the new directory
+    std::filesystem::path newDirPath = "../../asset/save_data"; 
+
+    // Attempt to create the directory
+    if (std::filesystem::create_directory(newDirPath)) {
+        std::cerr << "Directory '" << newDirPath << "' created successfully." << std::endl;
+    } else {
+        // This 'else' block covers cases where creation fails or the directory already exists.
+        std::cerr << "Failed to create directory '" << newDirPath << "' or it already exists." << std::endl;
+    }
+
     p_font = std::make_unique<sf::Font>("../../asset/fonts/Cascadia.ttf");
     p_marioFont = std::make_unique<sf::Font>("../../asset/fonts/SuperMario256.ttf");
 
@@ -36,6 +48,7 @@ mario::pages::MainMenuPage::MainMenuPage(mario::MainWindow &context) : Page(cont
         _context->changePage(std::make_shared<mario::pages::LevelsPage>(*_context, p_levelDataManager->loadAutoSaveLevelData()));
     });
 
+    p_continueButton = p_button;
     p_menuButtonListNode->buttonList.push_back(p_button);
 
     p_button = new mario::Button("Settings");
@@ -79,7 +92,7 @@ mario::pages::MainMenuPage::MainMenuPage(mario::MainWindow &context) : Page(cont
 void mario::pages::MainMenuPage::handleEvent(const sf::RenderWindow *window, const sf::Event &event) {
     if (_isMenuVisible == false && (event.is<sf::Event::KeyPressed>() || event.is<sf::Event::MouseButtonPressed>())) {
         _isMenuVisible = true;
-        p_currButtonList->delay_time = 0.3f;
+        p_currButtonList->delay_time = BUTTON_DELAY_TIME;
     }
 
     if(_isMenuVisible && p_currButtonList != nullptr) {
@@ -90,6 +103,10 @@ void mario::pages::MainMenuPage::handleEvent(const sf::RenderWindow *window, con
 void mario::pages::MainMenuPage::update(const sf::RenderWindow *window, float dt) {
     if(_isMenuVisible && p_currButtonList != nullptr) {
         p_currButtonList->update(window, dt);
+    }
+
+    if(p_levelDataManager->checkExistAutoSave() != p_continueButton->isEnabled()) {
+        p_continueButton->setEnableState(!p_continueButton->isEnabled());
     }
 }
 

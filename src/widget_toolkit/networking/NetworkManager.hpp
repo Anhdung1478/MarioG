@@ -19,15 +19,27 @@ struct NetworkMessage {
         PlayerWin = 3,
         ItemCollected = 4,
         EnemyDefeated = 5,
-        ConnectionTest = 6
+        ConnectionTest = 6,
+        EnemyState = 7,
+        EnemyAuthority = 8,
+        PlayerPowerupState = 9
     };
     
     Type type;
     sf::Vector2f position;
     sf::Vector2f velocity;
+    sf::Vector2f enemyPosition;
+    sf::Vector2f enemyVelocity;
     int itemId = -1;
+    int enemyNetworkId = -1;
     int enemyId = -1;
     int playerId = -1;  // Add player ID for game over/win messages
+    bool isAlive = true;
+    bool isActive = true;
+    uint64_t timestamp = 0;
+    std::string spriteId;
+    bool faceForward = true;
+    int powerupState = 0;
 };
 
 class NetworkManager {
@@ -58,8 +70,10 @@ public:
     bool sendGameOver();
     bool sendPlayerWin();
     bool sendItemCollected(int itemId, const sf::Vector2f& position);
-    bool sendEnemyDefeated(int enemyId, const sf::Vector2f& position);
-
+    bool sendEnemyDefeated(int enemyNetworkId, const sf::Vector2f& position);
+    bool sendEnemyState(int enemyId, const sf::Vector2f& pos, const sf::Vector2f& vel, bool alive,
+                                    bool active, const std::string& spriteId, bool faceForward);
+    bool sendPlayerPowerupState(int playerId, int powerupState);
 private:
     void receiverLoop();
 

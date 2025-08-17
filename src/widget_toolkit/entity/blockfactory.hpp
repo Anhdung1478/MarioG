@@ -6,6 +6,8 @@
 #include "blocks/Brick.hpp"
 #include "blocks/BackgroundBlock.hpp"
 #include "blocks/InvisibleBlock.hpp"
+#include "blocks/FireWorks.hpp"
+#include "blocks/FlagPole.hpp"
 
 namespace mario::entity {
     class BlockFactory {
@@ -73,6 +75,19 @@ namespace mario::entity {
                         return nullptr;
                     case 168:
                         return nullptr;
+
+                    // Flag Pole
+                    case 276:
+                        return nullptr;
+                    case 312:
+                        return nullptr;
+                    case 313:
+                        return nullptr;
+                    case 390:
+                        return nullptr;
+                    case 429:
+                        return nullptr;
+
 
                     // Stair blocks
                     case 351:
@@ -174,8 +189,23 @@ namespace mario::entity {
                         return new BackgroundBlock(spawnPoint, sf::Vector2f(16, 16), "grass[1][0]");
                     case 80:
                         return new BackgroundBlock(spawnPoint, sf::Vector2f(16, 16), "grass[2][0]");
-                    case 120: // Coin
-                        break;
+                    
+                    // Coin
+                    case 120:
+                        return nullptr;
+
+                    // Flag Pole
+                    case 276:
+                        return nullptr;
+                    case 312:
+                        return nullptr;
+                    case 313:
+                        return nullptr;
+                    case 390:
+                        return nullptr;
+                    case 429:
+                        return nullptr;
+
                     default:
                         int _x = tileID % tilesetColumns;
                         int _y = tileID / tilesetColumns;

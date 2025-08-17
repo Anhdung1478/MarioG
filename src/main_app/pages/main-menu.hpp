@@ -12,6 +12,8 @@ const int NUM_LEVELS = 3;
 namespace mario::pages {
     class MainMenuPage : public Page {
         private:
+            static constexpr float BUTTON_DELAY_TIME = 0.1f;
+
             std::unique_ptr<sf::Font> p_font;
             std::unique_ptr<sf::Font> p_marioFont;
             std::unique_ptr<sf::Text> p_title;
@@ -19,6 +21,8 @@ namespace mario::pages {
 
             mario::ButtonListNode *p_newGameButtonListNode;
             mario::ButtonListNode *p_menuButtonListNode;
+
+            mario::Button *p_continueButton;
 
             std::unique_ptr<mario::ButtonList> p_currButtonList;
 

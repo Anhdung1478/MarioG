@@ -24,7 +24,7 @@ SettingsPage::SettingsPage(MainWindow& context) : Page(context) {
         std::make_unique<sf::Font>(*p_font),
         sf::Vector2f(pos.x + 80, pos.y - 50),
         std::string("Music"),
-        sf::Vector2f(0.5f, 0.5f),
+        sf::Vector2f(0.3f, 0.3f),
         0.0f, 100.0f,
         _context->getSoundManager().getMusicVolume()
     );
@@ -39,7 +39,7 @@ SettingsPage::SettingsPage(MainWindow& context) : Page(context) {
         std::make_unique<sf::Font>(*p_font),
         sf::Vector2f(pos.x + 80, pos.y + 50),
         std::string("SFX"),
-        sf::Vector2f(0.5f, 0.5f),
+        sf::Vector2f(0.3f, 0.3f),
         0.0f, 100.0f,
         _context->getSoundManager().getSoundVolume()
     );

@@ -169,7 +169,8 @@ bool NetworkManager::sendPlayerState(const sf::Vector2f& position, const sf::Vec
 
 bool NetworkManager::sendGameOver() {
     sf::Packet packet;
-    packet << static_cast<uint8_t>(NetworkMessage::GameOver);
+    int playerId = (role_ == NetworkRole::Server) ? 0 : 1;
+    packet << static_cast<uint8_t>(NetworkMessage::GameOver) << playerId;
     return sendPacket(packet);
 }
 
@@ -190,6 +191,22 @@ bool NetworkManager::sendEnemyDefeated(int enemyId, const sf::Vector2f& position
     sf::Packet packet;
     packet << static_cast<uint8_t>(NetworkMessage::EnemyDefeated)
            << enemyId << position.x << position.y;
+    return sendPacket(packet);
+}
+
+bool NetworkManager::sendEnemyState(int enemyId, const sf::Vector2f& pos, const sf::Vector2f& vel, bool alive,
+                                    bool active, const std::string& spriteId, bool faceForward) {
+    sf::Packet packet;
+    packet << static_cast<uint8_t>(NetworkMessage::EnemyState)
+           << enemyId << pos.x << pos.y
+           << vel.x << vel.y << alive << active << spriteId << faceForward;
+    return sendPacket(packet);
+}
+
+bool NetworkManager::sendPlayerPowerupState(int playerId, int powerupState) {
+    sf::Packet packet;
+    packet << static_cast<uint8_t>(NetworkMessage::PlayerPowerupState)
+           << playerId << powerupState;
     return sendPacket(packet);
 }
 
@@ -216,7 +233,23 @@ std::unique_ptr<NetworkMessage> NetworkManager::pollMessage() {
                 return nullptr;
             }
             break;
-            
+        case NetworkMessage::EnemyState:
+            if (!(packet >> msg->enemyId
+                    >> msg->enemyPosition.x >> msg->enemyPosition.y
+                    >> msg->enemyVelocity.x >> msg->enemyVelocity.y
+                    >> msg->isAlive
+                    >> msg->isActive
+                    >> msg->spriteId
+                    >> msg->faceForward)) {
+                std::cerr << "[Network] Failed to extract enemy state data\n";
+                return nullptr;
+            }
+            break;
+        case NetworkMessage::PlayerPowerupState:
+            if (!(packet >> msg->playerId >> msg->powerupState)) {
+                std::cerr << "[Network] failed to extract powerup state data\n";
+            }
+            break;
         case NetworkMessage::ItemCollected:
             if (!(packet >> msg->itemId >> msg->position.x >> msg->position.y)) {
                 std::cerr << "[Network] failed to extract item collected data\n";
