@@ -55,7 +55,8 @@ namespace mario::entity {
             virtual bool isFaceForward() const = 0;
             virtual bool isOnGround() const = 0;
             virtual void resetJump() = 0;
-
+            virtual void setFaceForward(bool faceForward) = 0;
+            
             void renderHitboxRect(sf::RenderWindow *window) {
                 sf::FloatRect hitbox = getHitbox();
                 sf::Vector2f _pos = hitbox.position;

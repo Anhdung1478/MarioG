@@ -15,7 +15,13 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
       remotePlayerDead(false) {
     
     // Initialize player with the correct character type and state
-    p_player = new mario::entity::Player(sf::Vector2f(100, 400), state.characterType, state.stateType, context.getSoundManager());
+    p_player = new mario::entity::Player(
+        sf::Vector2f(100, 400), 
+        state.characterType, 
+        state.stateType, 
+        context.getSoundManager(), 
+        context.getNetworkManager()
+    );
 
     p_inputManager = std::make_unique<mario::input::InputManager>(context);
 
@@ -26,11 +32,21 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
             state.characterType == mario::entity::CharacterListType::Mario ? 
                 mario::entity::CharacterListType::Luigi : mario::entity::CharacterListType::Mario,
             state.stateType, 
-            context.getSoundManager()
+            context.getSoundManager(),
+            context.getNetworkManager()
         );
         remotePlayer->setRemote(true);
     }
 
+    if (gameMode != GameMode::SinglePlayer) {
+        if (gameMode == GameMode::Host) {
+            p_player->setNetworkPlayerId(0);
+            if (remotePlayer) remotePlayer->setNetworkPlayerId(1);
+        } else {
+            p_player->setNetworkPlayerId(1);
+            if (remotePlayer) remotePlayer->setNetworkPlayerId(0);
+        }
+    }
     // Load level and other game elements
     tileMap = std::make_unique<mario::entity::TileMap>("../../asset/maps/tiles-8.json", "../../asset/maps/Map_" + std::to_string(currLevelState.level) + ".json", currLevelState.level, currLevelState.level-1);
     tileMap->loadObjects(enemies, items, blocks, groundBlocks, backgroundBlocks);
@@ -642,6 +658,11 @@ void mario::pages::LevelsPage::handleNetworkUpdates(float dt) {
                 if (remotePlayer) {
                     remoteTargetPos = msg->position;
                     remoteTargetVel = msg->velocity;
+                    if (remoteTargetVel.x > 0) {
+                        remotePlayer->setFaceForward(true);
+                    } else if (remoteTargetVel.x < 0) {
+                        remotePlayer->setFaceForward(false);
+                    }
                 }
                 break;
             case NetworkMessage::EnemyState:
@@ -660,6 +681,11 @@ void mario::pages::LevelsPage::handleNetworkUpdates(float dt) {
                             break;
                         }
                     }
+                }
+                break;
+            case NetworkMessage::PlayerPowerupState:
+                if (msg->playerId != localPlayerId) {
+                    handleRemotePlayerPowerupState(msg->playerId, msg->powerupState);
                 }
                 break;
             case NetworkMessage::ItemCollected:
@@ -708,6 +734,36 @@ void mario::pages::LevelsPage::handleRemoteEnemyDefeat(int enemyId, const sf::Ve
             }
             break;
         }
+    }
+}
+
+void mario::pages::LevelsPage::handleRemotePlayerPowerupState(int playerId, int powerupState) {
+    int localPlayerId = (gameMode == GameMode::Host) ? 0 : 1;
+
+    // Ignore invalid states
+    mario::entity::player_state::PlayerStateType newState;
+    switch (powerupState) {
+        case 0: newState = mario::entity::player_state::PlayerStateType::Small; break;
+        case 1: newState = mario::entity::player_state::PlayerStateType::Super; break;
+        case 2: newState = mario::entity::player_state::PlayerStateType::Fire; break;
+        default:
+            std::cerr << "[Network] Invalid powerup state received: " << powerupState << "\n";
+            return;
+    }
+
+    // Only apply state changes to the remote player, never to local player
+    if (playerId != localPlayerId && remotePlayer) {
+        auto currentState = remotePlayer->getPlayerStateType();
+        if (currentState != newState) {
+            std::cout << "[Network] Remote player " << playerId << " changing from " 
+                     << static_cast<int>(currentState) << " to " << powerupState << "\n";
+            
+            // Use direct state change for remote player (bypass network sending)
+            remotePlayer->_isRemotePlayer = true; // Ensure it's marked as remote
+            remotePlayer->changeState(newState);
+        }
+    } else {
+        std::cout << "[Network] Ignoring powerup message for local player " << localPlayerId << "\n";
     }
 }
 

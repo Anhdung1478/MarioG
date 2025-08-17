@@ -4,6 +4,7 @@
 #include "gameover-page.hpp"
 
 #include "../../widget_toolkit/entity/player/player.hpp"
+#include "../../widget_toolkit/entity/player/player-state.hpp"
 #include "../../widget_toolkit/command/input-manager.hpp"
 #include "../../widget_toolkit/entity/blocks/TileMap.hpp"
 #include "../../widget_toolkit/resource/LevelState.hpp"
@@ -107,6 +108,7 @@ namespace mario::pages {
             void handleNetworkUpdates(float dt);
             void handleRemoteItemCollection(int itemId, const sf::Vector2f& position);
             void handleRemoteEnemyDefeat(int enemyId, const sf::Vector2f& position);
+            void handleRemotePlayerPowerupState(int playerId, int powerupState);
             void checkItemCollection();
             void checkEnemyDefeats();
             void sendEnemyState();

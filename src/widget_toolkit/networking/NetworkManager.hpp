@@ -21,7 +21,8 @@ struct NetworkMessage {
         EnemyDefeated = 5,
         ConnectionTest = 6,
         EnemyState = 7,
-        EnemyAuthority = 8
+        EnemyAuthority = 8,
+        PlayerPowerupState = 9
     };
     
     Type type;
@@ -38,6 +39,7 @@ struct NetworkMessage {
     uint64_t timestamp = 0;
     std::string spriteId;
     bool faceForward = true;
+    int powerupState = 0;
 };
 
 class NetworkManager {
@@ -71,6 +73,7 @@ public:
     bool sendEnemyDefeated(int enemyNetworkId, const sf::Vector2f& position);
     bool sendEnemyState(int enemyId, const sf::Vector2f& pos, const sf::Vector2f& vel, bool alive,
                                     bool active, const std::string& spriteId, bool faceForward);
+    bool sendPlayerPowerupState(int playerId, int powerupState);
 private:
     void receiverLoop();
 

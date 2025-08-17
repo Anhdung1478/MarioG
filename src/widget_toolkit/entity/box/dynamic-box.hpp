@@ -126,6 +126,10 @@ namespace mario::entity {
                 return _isFaceForward;
             }
 
+            void setFaceForward(bool faceForward) {
+                _isFaceForward = faceForward;
+            }
+
             void setVelocity(sf::Vector2f vel) override {
                 velocity = vel;
             }
