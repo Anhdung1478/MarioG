@@ -137,30 +137,13 @@ void mario::entity::Player::rotateDirection() {
 /* =================================================================================================================================================================== */
 
 void mario::entity::Player::managePlayerAnimation() {
-    if(playerBehavior == PlayerBehavior::Invincible) { // use a variable x, change x from x to x + 1 when anytime call to managePlayerAnimation, using  
-        if(!p_body->isOnGround()) { // change texture to jumping
-            p_stateManager->setAnimation(p_animation, getPrefixBehavior(), "jump[0]");
-        } else {
-            if(p_body->isNotMoving()) { // change texture to idle
-                p_stateManager->setAnimation(p_animation, getPrefixBehavior(), "idle[0]");
-            } else 
-                if(p_animation->getAnimationState() == false) { // change to run animation
-                    p_stateManager->setAnimation(p_animation, getPrefixBehavior(), "idle[0]");
-                }
-           
-            hasPlayedJumpSound_ = false; 
-        }
-
-        p_animation->setAnimationState(true);
-    }
-
-    if(playerBehavior != PlayerBehavior::Normal)
+    if(playerBehavior != PlayerBehavior::Normal && playerBehavior != PlayerBehavior::Invincible)
         return;
 
     if(!p_body->isOnGround()) { // change texture to jumping
             p_stateManager->setAnimation(p_animation, getPrefixBehavior(), "jump[0]");
             p_animation->setAnimationState(false);
-        } else {
+        } else
             if(p_body->isNotMoving()) { // change texture to idle
                 bool isInShootingAnimation = (timeSinceLastShoot <= sf::seconds(0.2f));
                 p_stateManager->setAnimation(p_animation, getPrefixBehavior(), (isInShootingAnimation ? "shoot[0]" : "idle[0]"));
@@ -170,9 +153,6 @@ void mario::entity::Player::managePlayerAnimation() {
                     p_stateManager->setAnimation(p_animation, getPrefixBehavior(), "idle[0]");
                     p_animation->setAnimationState(true);
                 }
-                
-            hasPlayedJumpSound_ = false;
-        }
 
     hasPlayedJumpSound_ = false;
 }
@@ -275,15 +255,7 @@ void mario::entity::Player::changePlayerBehavior(PlayerBehavior newBehavior) {
         soundManager.playSound(mario::event::SoundEvent::POWER_UP);
         _isTransforming = true;
         behaviorTimer = sf::seconds(1.f);
-        p_animation->clearAnimationStep();
-
-        std::string currPlayerStateID = p_stateManager->getCurrentPlayerStateID();
-        std::string nextPlayerStateID = p_stateManager->getNextPlayerStateID();
-        std::string prefixIDAnimation = currPlayerStateID + "." + "become-" + nextPlayerStateID;
-        for (int i = 0; i < 10; ++i)
-            p_animation->addAnimationStep(prefixIDAnimation + "[" + std::to_string(i) + "]");
-
-        p_animation->setAnimationState(true);
+        p_stateManager->setTransformToSuperAnimation(p_animation);
     }
 
     if(newBehavior == PlayerBehavior::TransformBTS) {
@@ -464,6 +436,8 @@ void mario::entity::Player::startClimbingBehavior(int flagXPos) {
 }
 
 void mario::entity::Player::finishClimbingBehavior() {
+    rotateDirection();
+    setPosition(sf::Vector2f(getPosition().x + 40, getPosition().y));
     changePlayerBehavior(PlayerBehavior::FinishLevel);
 }
 

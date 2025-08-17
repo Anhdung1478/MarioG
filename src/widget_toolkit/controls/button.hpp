@@ -99,9 +99,19 @@ namespace mario {
                 drawRoundedRectangle(window, buttonRect, buttonColor);
 
                 if(enabled && selected) {
-                    sf::CircleShape triangle(5);
-                    triangle.setPosition(sf::Vector2f(buttonRect.position.x - 30, buttonRect.position.y));
-                    triangle.setFillColor(sf::Color::White);
+                    /*sf::CircleShape circle(5);
+                    circle.setPosition(sf::Vector2f(buttonRect.position.x - 30, buttonRect.position.y));
+                    circle.setFillColor(sf::Color::White);*/
+
+                    sf::ConvexShape triangle;
+                    triangle.setPointCount(3); // A triangle has 3 points
+
+                    // Define the positions of the three vertices
+                    triangle.setPoint(0, sf::Vector2f(buttonRect.position.x - 30, buttonRect.position.y + 4));
+                    triangle.setPoint(1, sf::Vector2f(buttonRect.position.x - 20, buttonRect.position.y + buttonRect.size.y / 2.f));
+                    triangle.setPoint(2, sf::Vector2f(buttonRect.position.x - 30, buttonRect.position.y - 4 + buttonRect.size.y));
+
+                    triangle.setFillColor(sf::Color::White); // Set fill color
                     window->draw(triangle);
                 }
 

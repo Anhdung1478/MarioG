@@ -13,7 +13,7 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
       remotePlayer(nullptr),
       gameOverReceivedForLocal(false),
       remotePlayerDead(false) {
-        
+
     // Initialize player with the correct character type and state
     p_player = new mario::entity::Player(sf::Vector2f(100, 200), state.characterType, state.stateType, context.getSoundManager());
     
@@ -913,7 +913,6 @@ void mario::pages::LevelsPage::render(sf::RenderWindow *window) {
         sfxSlider->render(*window);
     }
 
-    std::cerr << currLevelState.level << ' ' << currLevelState.coins << ' ' << currLevelState.score << ' ' << currLevelState.num_lives << '\n';
     renderLevelState(window, currLevelState);
 }
 

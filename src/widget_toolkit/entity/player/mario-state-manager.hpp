@@ -59,6 +59,18 @@ namespace mario::entity::player_state {
                 p_animation->setAnimationState(true);
             }
 
+            void setTransformToSuperAnimation(Animation *p_animation) override {
+                p_animation->clearAnimationStep();
+
+                std::string currPlayerStateID = getCurrentPlayerStateID();
+                std::string nextPlayerStateID = getNextPlayerStateID();
+                std::string prefixIDAnimation = currPlayerStateID + "." + "become-" + nextPlayerStateID;
+                for (int i = 0; i < 10; ++i)
+                    p_animation->addAnimationStep(prefixIDAnimation + "[" + std::to_string(i) + "]");
+
+                p_animation->setAnimationState(true);
+            }
+
             std::string getCurrentPlayerStateID() const override {
                 return MARIO_TYPE_STR[int(currStateType)];
             }
