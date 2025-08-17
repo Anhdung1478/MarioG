@@ -13,13 +13,16 @@ namespace mario {
         private:
             static constexpr float DEFAULT_DELAY_TIME_AFTER_CLICK_BUTTON = 3.f / 10.f;
             static constexpr float DEFAULT_DELAY_TIME_AFTER_MOVE_BUTTON = 15.f / 100.f;
+
             ButtonListNode *p_curListNode;
             ButtonList *p_prvList;
+
             int curr_button = 0;
             
         public:
             float delay_time = 0.f;
-            ButtonList(ButtonListNode *p_cur = nullptr, ButtonList *p_prv = nullptr) : curr_button(0), p_prvList(p_prv), p_curListNode(p_cur) {};
+
+            ButtonList(ButtonListNode *p_cur = nullptr, ButtonList *p_prv = nullptr) : curr_button(0), p_prvList(p_prv), p_curListNode(p_cur) {}
 
             void update(const sf::RenderWindow *window, float dt) override {
                 if(delay_time > 0.f || p_curListNode == nullptr) {

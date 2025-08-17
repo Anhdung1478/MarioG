@@ -3,6 +3,7 @@
 #include "../widget_toolkit/networking/NetworkManager.hpp"
 /*#include <windows.h>
 #include <psapi.h>*/
+#include "../widget_toolkit/controls/button-list.hpp"
 
 void printMemoryUsage() {
     /*PROCESS_MEMORY_COUNTERS_EX pmc;
@@ -23,7 +24,18 @@ void printMemoryUsage() {
     }*/
 }
 
+void initalizeForStaticMember() {
+    sf::Texture *button_texture = new sf::Texture();
+    if(!button_texture->loadFromFile("../../asset/sprites/main_menu_button_mushroom.png")) {
+        std::cerr << "Could not load texture for main menu button mushroom !!\n";
+    }
+    
+    mario::Button::p_texture = button_texture;
+}
+
 int main(int argc, char* argv[]) {
+    initalizeForStaticMember();
+
     NetworkManager network;
 
     if (argc >= 2) {

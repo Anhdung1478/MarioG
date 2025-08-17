@@ -22,23 +22,29 @@ namespace mario {
             ButtonState state;
 
         public:
+            static sf::Texture *p_texture;
+            sf::Sprite *p_sprite;
+
             std::string buttonText;
             sf::FloatRect buttonRect;
             ButtonListNode *p_nodeOnButton;
 
             eventpp::CallbackList<void()> Click;
             int fontSize;
-            bool enabled, selected;
+            bool enabled = true, selected = false;
 
             // New Constructor: add by vql
             Button(sf::Font& fontRef, const std::string& buttText)
                 : fontSize(20), enabled(true), selected(false), buttonText(buttText) {
-                font = std::make_unique<sf::Font>(fontRef);
-                p_nodeOnButton = nullptr;
-            }
+                    font = std::make_unique<sf::Font>(fontRef);
+                    p_nodeOnButton = nullptr;
+                }
 
             Button(std::string buttText = "") : fontSize(20), enabled(true), selected(false), buttonText(buttText) {
                 font = std::make_unique<sf::Font>("../../asset/fonts/SuperMario256.ttf");
+                p_sprite = new sf::Sprite(*p_texture);
+                p_sprite->setOrigin(sf::Vector2f(p_sprite->getGlobalBounds().size.x, p_sprite->getGlobalBounds().size.y / 2.f));
+                p_sprite->setScale(sf::Vector2f(0.05f, 0.05f));
                 p_nodeOnButton = nullptr;
             }
 
@@ -50,6 +56,10 @@ namespace mario {
                 fontSize = button.fontSize;
                 enabled = button.enabled;
                 selected = button.selected;
+            }
+
+            ~Button() {
+                delete p_sprite;
             }
             
             void update(const sf::RenderWindow *window, float dt) override {
@@ -99,11 +109,7 @@ namespace mario {
                 drawRoundedRectangle(window, buttonRect, buttonColor);
 
                 if(enabled && selected) {
-                    /*sf::CircleShape circle(5);
-                    circle.setPosition(sf::Vector2f(buttonRect.position.x - 30, buttonRect.position.y));
-                    circle.setFillColor(sf::Color::White);*/
-
-                    sf::ConvexShape triangle;
+                    /*sf::ConvexShape triangle;
                     triangle.setPointCount(3); // A triangle has 3 points
 
                     // Define the positions of the three vertices
@@ -112,7 +118,10 @@ namespace mario {
                     triangle.setPoint(2, sf::Vector2f(buttonRect.position.x - 30, buttonRect.position.y - 4 + buttonRect.size.y));
 
                     triangle.setFillColor(sf::Color::White); // Set fill color
-                    window->draw(triangle);
+                    window->draw(triangle);*/
+
+                    p_sprite->setPosition(sf::Vector2f(buttonRect.position.x, buttonRect.position.y + buttonRect.size.y / 2.f));
+                    window->draw(*p_sprite);
                 }
 
                 sf::Text text(*font, buttonText, fontSize);

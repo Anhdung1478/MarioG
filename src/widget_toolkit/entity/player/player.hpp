@@ -120,7 +120,7 @@ namespace mario::entity {
             void syncNetworkState(const sf::Vector2f& position, const sf::Vector2f& velocity);
     
             void setFaceForward(bool faceForward) { 
-                p_body->setFaceForward(faceForward);
+                p_body->setIsFaceForward(faceForward);
                 if (p_animation->isFaceForward() != faceForward) {
                     rotateDirection();
                 }

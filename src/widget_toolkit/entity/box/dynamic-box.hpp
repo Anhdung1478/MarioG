@@ -152,12 +152,12 @@ namespace mario::entity {
                 return _isOnGround;
             }
 
-            bool isFaceForward() const override {
-                return _isFaceForward;
+            void setIsFaceForward(bool faceForward) override {
+                _isFaceForward = faceForward;
             }
 
-            void setFaceForward(bool faceForward) {
-                _isFaceForward = faceForward;
+            bool isFaceForward() const override {
+                return _isFaceForward;
             }
 
             void setVelocity(sf::Vector2f vel) override {
@@ -178,10 +178,6 @@ namespace mario::entity {
 
             void setGravityEnabled(bool enabled) {
                 acceleration.y = enabled ? 980.f : 0.f;
-            }
-
-            void setIsFaceForward(bool isFaceForward) {
-                _isFaceForward = isFaceForward;
             }
 
             void setGravityDirection(float dir) {

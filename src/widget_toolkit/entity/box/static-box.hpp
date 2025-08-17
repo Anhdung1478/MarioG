@@ -61,12 +61,12 @@ namespace mario::entity {
                 return true;
             }
             
+            void setIsFaceForward(bool faceForward) override {
+            }
+
             bool isFaceForward() const override {
                 return true;
             }
 
-            void setFaceForward(bool faceForward) override {
-                
-            }
     };
 }
