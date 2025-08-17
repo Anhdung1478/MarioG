@@ -88,17 +88,17 @@ namespace mario {
             }
                 
             void render(sf::RenderWindow *window) override {
+                sf::Color buttonColor;
                 if(!enabled) {
-
-                    return;
+                    buttonColor = sf::Color(128, 128, 128, 128);
+                } else {
+                    buttonColor = (state == ButtonState::Pressed) ? sf::Color::Green : 
+                        ((state == ButtonState::Hover) ? sf::Color::Yellow : sf::Color(49, 139, 23, 255));
                 }
-
-                sf::Color buttonColor = (state == ButtonState::Pressed) ? sf::Color::Green : 
-                    ((state == ButtonState::Hover) ? sf::Color::Yellow : sf::Color(49, 139, 23, 255));
 
                 drawRoundedRectangle(window, buttonRect, buttonColor);
 
-                if(selected) {
+                if(enabled && selected) {
                     sf::CircleShape triangle(5);
                     triangle.setPosition(sf::Vector2f(buttonRect.position.x - 30, buttonRect.position.y));
                     triangle.setFillColor(sf::Color::White);
@@ -112,6 +112,14 @@ namespace mario {
                 text.setFillColor(sf::Color(239, 139, 54, 255));
                 text.setPosition(sf::Vector2f(int(buttonRect.position.x + (buttonRect.size.x - textLenX) / 2.f), int(buttonRect.position.y - 4 + (buttonRect.size.y - textLenY) / 2.f)));
                 window->draw(text); 
+            }
+
+            void setEnableState(bool _enable) {
+                enabled = _enable;
+            }
+
+            bool isEnabled() const {
+                return enabled;
             }
     };
 }

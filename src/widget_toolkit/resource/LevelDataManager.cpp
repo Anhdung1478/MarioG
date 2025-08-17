@@ -12,6 +12,10 @@ void mario::resource::LevelDataManager::update(float dt, LevelState levelData) {
     }
 }
 
+bool mario::resource::LevelDataManager::checkExistAutoSave() {
+    return (fopen(defaultAutoSaveFilePath.c_str(), "r"));
+}
+
 void mario::resource::LevelDataManager::autoSave(LevelState levelData) {
     saveLevelDataIntoFile(levelData, defaultAutoSaveFilePath);
 }
@@ -66,6 +70,7 @@ mario::resource::LevelState decryptDataFromFile(std::ifstream &ifst) {
     assert(strTemp == "StateType=");
     levelData.stateType = mario::entity::player_state::PlayerStateType(intTemp);
 
+    levelData.times = sf::seconds(mario::resource::LevelState::DEFAULT_LEVEL_TIME[levelData.level]);
     return levelData;
 }
 

@@ -13,9 +13,15 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
       remotePlayer(nullptr),
       gameOverReceivedForLocal(false),
       remotePlayerDead(false) {
-    
+        
     // Initialize player with the correct character type and state
     p_player = new mario::entity::Player(sf::Vector2f(100, 200), state.characterType, state.stateType, context.getSoundManager());
+    
+    if(gameMode == GameMode::SinglePlayer) {
+        p_player->loadDataFrom(currLevelState);
+        ofstream ofs("../../asset/save_data/autosave.svx");
+        ofs << " ";
+    }
 
     p_inputManager = std::make_unique<mario::input::InputManager>(context);
     
@@ -177,7 +183,8 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
 /* ========================================================================================================================================================================== */
 
 void mario::pages::LevelsPage::autoSave() {
-    p_levelDataManager->autoSave(currLevelState);
+    if(gameMode == GameMode::SinglePlayer)
+        p_levelDataManager->autoSave(currLevelState);
 }
 
 mario::pages::LevelsPage::~LevelsPage() {
@@ -495,7 +502,7 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
 /* ========================================================================================================================================================================== */
 
 void mario::pages::LevelsPage::handleEvent(const sf::RenderWindow *window, const sf::Event &event) {
-    if (const auto key = event.getIf<sf::Event::KeyPressed>(); key && key->code == sf::Keyboard::Key::Escape && !isSettingsOpen) {
+    if (const auto key = event.getIf<sf::Event::KeyPressed>(); (key && key->code == sf::Keyboard::Key::Escape && !isSettingsOpen || !_isPaused && event.is<sf::Event::FocusLost>())) {
         _isPaused = !_isPaused;
         if(_isPaused) {
             _context->getSoundManager().playSound(mario::event::SoundEvent::GAME_PAUSE);
@@ -905,9 +912,9 @@ void mario::pages::LevelsPage::render(sf::RenderWindow *window) {
         musicSlider->render(*window);
         sfxSlider->render(*window);
     }
-  
-    renderLevelState(window, currLevelState);   
 
+    std::cerr << currLevelState.level << ' ' << currLevelState.coins << ' ' << currLevelState.score << ' ' << currLevelState.num_lives << '\n';
+    renderLevelState(window, currLevelState);
 }
 
 void mario::pages::LevelsPage::removeCollectedItems() {

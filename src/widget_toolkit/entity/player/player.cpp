@@ -32,6 +32,14 @@ mario::entity::Player::~Player() {
 
 /* =================================================================================================================================================================== */
 
+void mario::entity::Player::loadDataFrom(const mario::resource::LevelState &levelState) {
+    coinCount = levelState.coins;
+    lives = levelState.num_lives;
+    score = levelState.score;
+}
+
+/* =================================================================================================================================================================== */
+
 void mario::entity::Player::jump(bool isReleased) {
     if(!_canMove)
         return;
@@ -42,6 +50,18 @@ void mario::entity::Player::jump(bool isReleased) {
     }
 
     p_body->jump(isReleased);
+}
+
+void mario::entity::Player::jumpByANumberOfJumps(bool isReleased, int numJumps) {
+    if(!_canMove)
+        return;
+
+    if (!isReleased && p_body->isOnGround()) {
+        soundManager.playSound(mario::event::SoundEvent::PLAYER_JUMP); // Phát âm thanh nhảy
+        hasPlayedJumpSound_ = true;
+    }
+
+    p_body->jumpByANumberOfJumps(isReleased, numJumps);
 }
 
 void mario::entity::Player::resetJump() {
@@ -413,12 +433,12 @@ void mario::entity::Player::update(const sf::RenderWindow *window, float dt) {
 }
 
 void mario::entity::Player::updateToLevelState(mario::resource::LevelState &levelState) {
-    levelState.coins += coinCount;
-    levelState.num_lives += lives + levelState.coins / 100;
-    levelState.score += score;
+    levelState.coins += addedCoinCount;
+    levelState.num_lives += addedLives + levelState.coins / 100;
+    levelState.score += addedScore;
     levelState.coins %= 100;
 
-    lives = coinCount = score = 0;
+    addedCoinCount = addedScore = addedLives = 0;
 }
 
 void mario::entity::Player::handleEvent(const sf::RenderWindow *window, const sf::Event &event) {
@@ -500,6 +520,7 @@ bool mario::entity::Player::canCollisionWithBlock() const {
 
 void mario::entity::Player::addScoreToPlayer(int _score, bool isPoppingUp) {
     score += _score;
+    addedScore += _score;
     if(isPoppingUp)
         popUpScoreList->addAPopUpText(p_body->getPosition(), std::to_string(_score));
 }
@@ -514,7 +535,7 @@ void mario::entity::Player::hitEmptyBlock() {
 }
 
 void mario::entity::Player::collectCoin() {
-    ++coinCount;
+    ++coinCount, ++addedCoinCount;
     addScoreToPlayer(200, true);
     
     soundManager.playSound(mario::event::SoundEvent::COIN_COLLECT);
@@ -552,7 +573,7 @@ void mario::entity::Player::collectFireFlower() {
 }
 
 void mario::entity::Player::collect1UpMushroom() {
-    lives++;
+    lives++, ++addedLives;
     addScoreToPlayer(1000, true);
     soundManager.playSound(mario::event::SoundEvent::ONE_UP);
 }
@@ -567,7 +588,7 @@ void mario::entity::Player::jumpOnEnemyHead() {
     resetJump();
     setOnGround(true);
     hasPlayedJumpSound_ = false;
-    jump(false);
+    jumpByANumberOfJumps(false, 1);
 
     soundManager.playSound(mario::event::SoundEvent::ENEMY_STOMP);
     
