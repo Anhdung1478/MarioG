@@ -15,7 +15,7 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
       remotePlayerDead(false) {
     
     // Initialize player with the correct character type and state
-    p_player = new mario::entity::Player(sf::Vector2f(7550, 0), state.characterType, state.stateType, context.getSoundManager());
+    p_player = new mario::entity::Player(sf::Vector2f(100, 200), state.characterType, state.stateType, context.getSoundManager());
 
     p_inputManager = std::make_unique<mario::input::InputManager>(context);
     
@@ -470,7 +470,7 @@ void mario::pages::LevelsPage::handleEvent(const sf::RenderWindow *window, const
         } else {
             _context->getSoundManager().resumeBackgroundMusic();
             if(p_player) {
-                p_player->move(false, true);
+                p_player->resetMove();
             }
             for (auto* enemy : enemies) {
                 mario::entity::Enemy* enemyPtr = dynamic_cast<mario::entity::Enemy*>(enemy);
@@ -499,7 +499,7 @@ void mario::pages::LevelsPage::handleEvent(const sf::RenderWindow *window, const
                 } else {
                     _context->getSoundManager().resumeBackgroundMusic();
                     if (p_player) {
-                        p_player->move(false, true);
+                        p_player->resetMove();
                     }
                     for (auto* enemy : enemies) {
                         mario::entity::Enemy* enemyPtr = dynamic_cast<mario::entity::Enemy*>(enemy);
@@ -542,7 +542,7 @@ void mario::pages::LevelsPage::handleEvent(const sf::RenderWindow *window, const
 
     if(!_isPaused) {
         p_player->handleEvent(window, event);
-        p_inputManager->handleEvent(*p_player, event);   
+        p_inputManager->handleEvent(p_player, event);
         tileMap->handleEvent(window, event);
         for (auto &enemy : enemies) {
             enemy->handleEvent(window, event);
