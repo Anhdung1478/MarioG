@@ -467,7 +467,7 @@ void mario::pages::LevelsPage::handleEvent(const sf::RenderWindow *window, const
         } else {
             _context->getSoundManager().resumeBackgroundMusic();
             if(p_player) {
-                p_player->move(false, true);
+                p_player->resetMove();
             }
             for (auto* enemy : enemies) {
                 mario::entity::Enemy* enemyPtr = dynamic_cast<mario::entity::Enemy*>(enemy);
@@ -496,7 +496,7 @@ void mario::pages::LevelsPage::handleEvent(const sf::RenderWindow *window, const
                 } else {
                     _context->getSoundManager().resumeBackgroundMusic();
                     if (p_player) {
-                        p_player->move(false, true);
+                        p_player->resetMove();
                     }
                     for (auto* enemy : enemies) {
                         mario::entity::Enemy* enemyPtr = dynamic_cast<mario::entity::Enemy*>(enemy);
@@ -539,7 +539,7 @@ void mario::pages::LevelsPage::handleEvent(const sf::RenderWindow *window, const
 
     if(!_isPaused) {
         p_player->handleEvent(window, event);
-        p_inputManager->handleEvent(*p_player, event);   
+        p_inputManager->handleEvent(p_player, event);
         tileMap->handleEvent(window, event);
         for (auto &enemy : enemies) {
             enemy->handleEvent(window, event);

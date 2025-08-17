@@ -44,11 +44,26 @@ void mario::entity::Player::jump(bool isReleased) {
     p_body->jump(isReleased);
 }
 
-void mario::entity::Player::move(bool isMoveRight, bool isReleased) {
+void mario::entity::Player::resetJump() {
+    p_body->resetJump();
+}
+
+void mario::entity::Player::moveLeft(bool isReleased) {
     if(!_canMove)
         return;
 
-    p_body->move(isMoveRight, isReleased);
+    p_body->moveLeft(isReleased);
+}
+
+void mario::entity::Player::moveRight(bool isReleased) {
+    if(!_canMove)
+        return;
+
+    p_body->moveRight(isReleased);
+}
+
+void mario::entity::Player::resetMove() {
+    p_body->resetMove();
 }
 
 void mario::entity::Player::shotFireball(bool isReleased) {
@@ -162,8 +177,8 @@ void mario::entity::Player::togglePlayerMove(bool canMove) {
 
     if(!canMove) { // released all Player's button
         jump(true);
-        move(0, true);
-        move(1, true);
+        moveLeft(true);
+        moveRight(true);
         shotFireball(true);
     }
     
@@ -423,10 +438,6 @@ void mario::entity::Player::setOnGround(bool isOnGround) {
     p_body->setOnGround(isOnGround);
     if(isOnGround)
         scoreMultiplier = 0;
-}
-
-void mario::entity::Player::resetJump() {
-    p_body->resetJump();
 }
 
 void mario::entity::Player::beingHit() {

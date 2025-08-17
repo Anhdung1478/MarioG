@@ -57,8 +57,11 @@ namespace mario::entity {
             void setVelocity(sf::Vector2f vel);
             
             void jump(bool isReleased);
-            void move(bool isMoveRight, bool isReleased);
+            void moveLeft(bool isReleased);
+            void moveRight(bool isReleased);
             void shotFireball(bool isReleased);
+            void resetJump();
+            void resetMove();
 
             void explosionFireballAtPos(int idx);
             int getNumberFireballs() const;
@@ -71,7 +74,6 @@ namespace mario::entity {
             void updateToLevelState(mario::resource::LevelState &levelState);
             void setOnGround(bool isOnGround);
             void togglePlayerMove(bool canMove); // toggle turn on/off movement of Player (when turn off, Player won't be able to move)
-            void resetJump();
 
             void startClimbingBehavior(int flagXPos); // start climbing behavior of Player (Player will climbing from this position of the flag to ground)
             void finishClimbingBehavior();            // finish climbing behavior of Player
