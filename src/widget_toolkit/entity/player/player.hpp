@@ -52,8 +52,6 @@ namespace mario::entity {
             Player(sf::Vector2f spawnPoint, CharacterListType characterType, player_state::PlayerStateType stateType, mario::audio::SoundManager& soundManager);
             ~Player() override;
             
-            void addScoreToPlayer(int _score, bool isPoppingUp);  // pop up score when getting some new score
-
             void rotateDirection();
             sf::Vector2f getVelocity() const;
             void setVelocity(sf::Vector2f vel);
