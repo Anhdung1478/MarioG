@@ -18,8 +18,8 @@ namespace mario::entity {
             int jumpRemaining, maxJumps;
 
             
-            bool _isJumpping, _isFaceForward, _isMoveRight, _isOnGround, hitCelling;
-            bool _isRunning;
+            bool _isJumpping, _isFaceForward, _isOnGround, hitCelling;
+            bool _isRunningLeft, _isRunningRight;
 
         public:
             DynamicBox(sf::Vector2f _pos, sf::Vector2f _size, float acc = 1000.f, float maxVX = 300.f, float _jumpForce = -280.f, int _maxJump = 2) 
@@ -31,20 +31,40 @@ namespace mario::entity {
                 velocity = sf::Vector2f(0, 0);
 
                 _isFaceForward = true;
-                _isJumpping = _isRunning = false;
+                _isJumpping = _isRunningLeft = _isRunningRight = false;
             }
 
             ~DynamicBox() override = default;
 
             void move(bool isMoveRight, bool isReleased) override {
                 if(isReleased) {
-                    _isRunning = false;
+                    _isRunningLeft = _isRunningRight = false;
                     return;
                 }
 
-                _isRunning = true;
-                _isMoveRight = isMoveRight;
-                // std::cout << (isMoveRight ? "Moving right" : "Moving left") << ", " << "Velocity X: " << velocity.x << '\n';
+                if(isMoveRight) {
+                    _isRunningRight = true;
+                } else {
+                    _isRunningLeft = true;
+                }
+            }
+
+            void moveLeft(bool isReleased) override {
+                if(isReleased) {
+                    _isRunningLeft = false;
+                    return;
+                }
+
+                _isRunningLeft = true;
+            }
+
+            void moveRight(bool isReleased) override {
+                if(isReleased) {
+                    _isRunningRight = false;
+                    return;
+                }
+
+                _isRunningRight = true;
             }
 
             void jump(bool _isReleased) override {
@@ -57,31 +77,32 @@ namespace mario::entity {
                     velocity.y = 0.f;
                     jumpRemaining = maxJumps;
                     timeUntilNextJump = sf::seconds(0.f);
-                    
                     _isJumpping = true;
                 }
             }
 
             void update(float dt) override {
-                if(_isRunning) {
-                    if(_isMoveRight != (velocity.x > 0.f)) {
-                        if(_isMoveRight) {
+                if(_isRunningLeft != _isRunningRight) {
+                    if(_isRunningRight != (velocity.x > 0.f)) {
+                        if(_isRunningRight) {
                             velocity.x = std::min(velocity.x + 2 * acceleration.x * dt, maxVelocityX);
                         } else {
                             velocity.x = std::max(velocity.x - 2 * acceleration.x * dt, -maxVelocityX);
                         }
                     } else {
-                        if(_isMoveRight) {
+                        if(_isRunningRight) {
                             velocity.x = std::min(velocity.x + acceleration.x * dt, maxVelocityX);
                         } else {
                             velocity.x = std::max(velocity.x - acceleration.x * dt, -maxVelocityX);
                         }
                     }
 
-                    _isFaceForward = (velocity.x > 0.f);
                 } else
                     if(abs(velocity.x) > 0.f)
                         velocity.x += ((velocity.x > 0.f) ? -1 : +1) * std::min(acceleration.x * 2 * dt, abs(velocity.x));
+                
+                if(abs(velocity.x) > 0.f)
+                    _isFaceForward = (velocity.x > 0.f);
                 
                 if(_isJumpping) {
                     timeUntilNextJump -= sf::seconds(dt);
@@ -103,6 +124,11 @@ namespace mario::entity {
                 position.x += velocity.x * dt;
                 position.y += velocity.y * dt;
                 _isOnGround = false;
+            }
+
+            void resetMove() override {
+                velocity.x = 0.f;
+                _isRunningLeft = _isRunningRight = false;
             }
 
             void resetJump() override {
@@ -138,12 +164,24 @@ namespace mario::entity {
                 acceleration = acc;
             }
 
+            sf::Vector2f getAcceleration() const override {
+                return acceleration;
+            }
+
             void setGravityEnabled(bool enabled) {
                 acceleration.y = enabled ? 980.f : 0.f;
             }
 
             void setIsFaceForward(bool isFaceForward) {
                 _isFaceForward = isFaceForward;
+            }
+
+            void setGravityDirection(float dir) {
+                acceleration.y = std::abs(acceleration.y) * dir;
+            }
+
+            float getGravityDirection() const {
+                return (acceleration.y >= 0) ? 1.0f : -1.0f;
             }
     };
 }

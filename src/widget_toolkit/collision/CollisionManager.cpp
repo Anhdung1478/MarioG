@@ -423,6 +423,8 @@ namespace mario::entity {
 
     void CollisionManager::checkCollisionPlayerWithEnemies(Player *&player, std::vector<Enemy*> &enemies) {
         for (auto& enemy : enemies) {
+            if(!enemy->getIsCheckCollisionWithPlayer()) continue;
+
             if(player->canCollisionWithEnemy()) {
                 SideCollision side = findCollisionSide(player, enemy);
                 if (side != SideCollision::None) {
@@ -496,7 +498,7 @@ namespace mario::entity {
     void CollisionManager::checkCollisionEnemyWithEnemy(std::vector<Enemy*> &enemies) {
         for (size_t i = 0; i < enemies.size(); ++i) {
         auto& enemyA = enemies[i];
-        if (!enemyA->isExist()) continue;
+        if (!enemyA->isExist() || !enemyA->getIsCheckCollisionWithEnemy()) continue;
 
         mario::entity::Piranha* piranhaA = dynamic_cast<mario::entity::Piranha*>(enemyA);
         if (piranhaA) continue;
@@ -507,7 +509,7 @@ namespace mario::entity {
 
         for (size_t j = i + 1; j < enemies.size(); ++j) {
             auto& enemyB = enemies[j];
-            if (!enemyB->isExist()) continue;
+            if (!enemyB->isExist() || !enemyB->getIsCheckCollisionWithEnemy()) continue;
 
             // skip Piranha
             mario::entity::Piranha* piranhaB = dynamic_cast<mario::entity::Piranha*>(enemyB);

@@ -65,9 +65,9 @@ namespace mario::entity {
                     startPosition, {32.f, 32.f}, ""), 
               currentState(BallState::FreeFall), lastState(BallState::FreeFall), moveRight(false) {
             
-            if (auto body = dynamic_cast<DynamicBox*>(p_body)) {
+            if(auto body = dynamic_cast<DynamicBox*>(p_body)) {
                 body->setGravityEnabled(true);
-                body->setAcceleration({700.f, 920.f}); // tốc độ rơi hợp lý
+                body->setAcceleration({700.f, 920.f}); 
             }
 
             setIsCheckCollisionWithBlock(true);
@@ -76,11 +76,11 @@ namespace mario::entity {
         }
 
         void reactCollision(int side, const Collision& collision) override {
-            if (collision.isWithWall() && (side == SideCollision::Bottom) && currentState == BallState::FreeFall) {
+            if(collision.isWithWall() && (side == SideCollision::Bottom) && currentState == BallState::FreeFall) {
                 currentState = BallState::Walking;
                 initializeAnimations(FILE_PATH"enemy.json", FILE_PATH"enemy.png", {2.5f, 2.5f});
 
-            } else if (collision.isWithWall() && (side == SideCollision::Left || side == SideCollision::Right) && currentState == BallState::Walking) {
+            } else if(collision.isWithWall() && (side == SideCollision::Left || side == SideCollision::Right) && currentState == BallState::Walking) {
                 DynamicBox* body = dynamic_cast<DynamicBox*>(p_body);
                 if(body) {
                     if(side == SideCollision::Left) {
@@ -96,7 +96,7 @@ namespace mario::entity {
                         p_animation->rotate();
                     }
                 }
-            } else if (collision.isWithEnemy()) {
+            } else if(collision.isWithEnemy()) {
                 currentState = BallState::DeadSpecial;
                 loadDeadSpecialAnimations();
                 try {
@@ -108,11 +108,25 @@ namespace mario::entity {
                 verticalVelocity = jumpForce;
                 lastState = BallState::DeadSpecial;
                 setActive(true);
+                setIsCheckCollisionWithEnemy(false);
+            } else if(collision.isWithFireball()) {
+                currentState = BallState::DeadSpecial;
+                loadDeadSpecialAnimations();
+                try {
+                    p_animation->setSpriteAnimation("ball.dead-special[0]");
+                } catch (const std::out_of_range& e) {
+                    std::cerr << "Error setting sprite: ball.dead-special[0] - " << e.what() << "\n";
+                }
+                p_animation->setAnimationState(false);
+                verticalVelocity = jumpForce;
+                lastState = BallState::DeadSpecial;
+                setActive(true);
+                setIsCheckCollisionWithEnemy(false);
             }
         }
 
         void updateBehavior(float dt, const Player* player) {
-            if (!getActive() || !player) return;
+            if(!getActive() || !player) return;
             
             if(p_body->getPosition().y > 1000.f) {
                 if(currentState != BallState::DeadSpecial) {
@@ -127,8 +141,8 @@ namespace mario::entity {
                     shouldBeDeleted = true;
                     lastState = BallState::DeadSpecial;
                 }
-            } else if (currentState == BallState::Walking && lastState != BallState::Walking) {
-                if (auto body = dynamic_cast<DynamicBox*>(p_body)) {
+            } else if(currentState == BallState::Walking && lastState != BallState::Walking) {
+                if(auto body = dynamic_cast<DynamicBox*>(p_body)) {
                     moveRight = player->getPosition().x > body->getPosition().x;
                     body->setVelocity({moveRight ? 150.f : -150.f, 0.f});
                     body->setIsFaceForward(moveRight);
@@ -138,8 +152,8 @@ namespace mario::entity {
                     }
                 }
                 lastState = BallState::Walking;
-            } else if (currentState == BallState::Walking && lastState == BallState::Walking) {
-                if (auto body = dynamic_cast<DynamicBox*>(p_body)) {
+            } else if(currentState == BallState::Walking && lastState == BallState::Walking) {
+                if(auto body = dynamic_cast<DynamicBox*>(p_body)) {
                     body->move(moveRight, false);
                     body->setIsFaceForward(moveRight);
                     
@@ -149,15 +163,16 @@ namespace mario::entity {
                 }
             }
 
-            if (currentState == BallState::DeadSpecial) {
+            if(currentState == BallState::DeadSpecial) {
                 verticalVelocity += gravity * dt;
                 p_body->setPosition(sf::Vector2f(p_body->getPosition().x, p_body->getPosition().y + verticalVelocity * dt));
                 setIsCheckCollisionWithBlock(false);
+                setIsCheckCollisionWithPlayer(false);
             } 
         }
 
         void updateWithPlayer(const sf::RenderWindow* window, float dt, const Player* player) {
-            if (shouldDelete()) return;
+            if(shouldDelete()) return;
 
             updateBehavior(dt, player);
             p_animation->update(window, dt);

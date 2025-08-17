@@ -8,7 +8,7 @@
  "margin":0,
  "name":"enemies",
  "spacing":0,
- "tilecount":7,
+ "tilecount":9,
  "tiledversion":"1.11.2",
  "tileheight":46,
  "tiles":[
@@ -18,7 +18,7 @@
          "image":"Image\/Enemies\/enemies.png",
          "imageheight":232,
          "imagewidth":404,
-         "type":"goomba",
+         "type":"goomba-brown",
          "width":16,
          "x":23,
          "y":174
@@ -88,6 +88,28 @@
          "width":16,
          "x":327,
          "y":123
+        }, 
+        {
+         "height":16,
+         "id":10,
+         "image":"..\/MarioG\/asset\/sprites\/enemies.png",
+         "imageheight":232,
+         "imagewidth":404,
+         "type":"goomba-blue",
+         "width":16,
+         "x":23,
+         "y":193
+        }, 
+        {
+         "height":16,
+         "id":11,
+         "image":"..\/MarioG\/asset\/sprites\/enemies.png",
+         "imageheight":232,
+         "imagewidth":404,
+         "type":"goomba-grey",
+         "width":16,
+         "x":23,
+         "y":212
         }],
  "tilewidth":30,
  "type":"tileset",

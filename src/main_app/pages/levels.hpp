@@ -37,6 +37,7 @@ namespace mario::pages {
             std::vector<mario::entity::Block*> backgroundBlocks;
             std::vector<mario::entity::Enemy*> enemies;
             std::vector<mario::entity::Item*> items;  // Direct item management
+            mario::entity::FlagPole* flagPole;
             mario::entity::Item* testItem;
 
             // Background

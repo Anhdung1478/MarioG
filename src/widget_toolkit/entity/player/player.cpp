@@ -36,7 +36,7 @@ void mario::entity::Player::jump(bool isReleased) {
     if(!_canMove)
         return;
 
-    if (!isReleased && !hasPlayedJumpSound_) {
+    if (!isReleased && p_body->isOnGround()) {
         soundManager.playSound(mario::event::SoundEvent::PLAYER_JUMP); // Phát âm thanh nhảy
         hasPlayedJumpSound_ = true;
     }
@@ -44,15 +44,30 @@ void mario::entity::Player::jump(bool isReleased) {
     p_body->jump(isReleased);
 }
 
-void mario::entity::Player::move(bool isMoveRight, bool isReleased) {
+void mario::entity::Player::resetJump() {
+    p_body->resetJump();
+}
+
+void mario::entity::Player::moveLeft(bool isReleased) {
     if(!_canMove)
         return;
 
-    p_body->move(isMoveRight, isReleased);
+    p_body->moveLeft(isReleased);
+}
+
+void mario::entity::Player::moveRight(bool isReleased) {
+    if(!_canMove)
+        return;
+
+    p_body->moveRight(isReleased);
+}
+
+void mario::entity::Player::resetMove() {
+    p_body->resetMove();
 }
 
 void mario::entity::Player::shotFireball(bool isReleased) {
-    if(!_canMove || p_stateManager->getCurrentState() != player_state::PlayerStateType::Fire || shootingDelayTimer > sf::seconds(0.f) || p_fireballList->getNumFireballs() >= 5)
+    if(!_canMove || isReleased || p_stateManager->getCurrentState() != player_state::PlayerStateType::Fire || shootingDelayTimer > sf::seconds(0.f) || p_fireballList->getNumFireballs() >= 5)
         return;
 
     timeSinceLastShoot = sf::seconds(0.f);
@@ -127,7 +142,7 @@ void mario::entity::Player::managePlayerAnimation() {
             p_animation->setAnimationState(false);
         } else {
             if(p_body->isNotMoving()) { // change texture to idle
-                bool isInShootingAnimation = (timeSinceLastShoot <= sf::seconds(0.1f));
+                bool isInShootingAnimation = (timeSinceLastShoot <= sf::seconds(0.2f));
                 p_stateManager->setAnimation(p_animation, getPrefixBehavior(), (isInShootingAnimation ? "shoot[0]" : "idle[0]"));
                 p_animation->setAnimationState(false);
             } else 
@@ -162,8 +177,8 @@ void mario::entity::Player::togglePlayerMove(bool canMove) {
 
     if(!canMove) { // released all Player's button
         jump(true);
-        move(0, true);
-        move(1, true);
+        moveLeft(true);
+        moveRight(true);
         shotFireball(true);
     }
     
@@ -204,6 +219,13 @@ void mario::entity::Player::changePlayerBehavior(PlayerBehavior newBehavior) {
     }
 
     if(playerBehavior == PlayerBehavior::Climbing) {
+        _canCollisionWithEnemy = _canCollisionWithItem = true;
+        togglePlayerMove(true);
+        p_body->setAcceleration(sf::Vector2f(p_body->getAcceleration().x, 980.f));
+        p_animation->resetTimeBetweenStepToDefault();
+    }
+
+    if(playerBehavior == PlayerBehavior::FinishLevel) {
         _canCollisionWithEnemy = _canCollisionWithItem = true;
         togglePlayerMove(true);
     }
@@ -250,13 +272,7 @@ void mario::entity::Player::changePlayerBehavior(PlayerBehavior newBehavior) {
 
         _isTransforming = true;
         behaviorTimer = sf::seconds(1.5f);
-        p_animation->clearAnimationStep();
-
-        std::string currPlayerStateID = p_stateManager->getCurrentPlayerStateID();
-        for (int i = 0; i < 15; ++i)
-            p_animation->addAnimationStep(currPlayerStateID + ".hit[" + std::to_string(i) + "]");
-
-        p_animation->setAnimationState(true);
+        p_stateManager->setBeingHitAnimation(p_animation);
     }
 
     if(newBehavior == PlayerBehavior::Invincible) {
@@ -268,6 +284,17 @@ void mario::entity::Player::changePlayerBehavior(PlayerBehavior newBehavior) {
     if(newBehavior == PlayerBehavior::Climbing) {
         _canCollisionWithEnemy = _canCollisionWithItem = false;
         togglePlayerMove(false);
+
+        p_body->resetJump();
+        p_body->setVelocity(sf::Vector2f(0.f, 200.f));
+        p_body->setAcceleration(sf::Vector2f(p_body->getAcceleration().x, 0.f));
+        p_stateManager->setClimbingAnimation(p_animation);
+        p_animation->setTimeBetweenStep(0.2f);
+    }
+
+    if(newBehavior == PlayerBehavior::FinishLevel) {
+        _canCollisionWithEnemy = _canCollisionWithItem = false;
+        togglePlayerMove(false);
     }
 
     if(newBehavior == PlayerBehavior::Dying) { 
@@ -277,15 +304,11 @@ void mario::entity::Player::changePlayerBehavior(PlayerBehavior newBehavior) {
         
         _isAlive = false;
         togglePlayerMove(false);
-        
         behaviorTimer = sf::seconds(3);
-        p_animation->clearAnimationStep();
         
+        p_body->resetJump();
         p_body->setVelocity(sf::Vector2f(0.f, 0.f));
-        p_body->jump(false);
-
         p_stateManager->setDeadAnimation(p_animation);
-        p_animation->setAnimationState(false);
     }
 
     if(newBehavior == PlayerBehavior::AlreadyDead) {
@@ -410,8 +433,18 @@ void mario::entity::Player::render(sf::RenderWindow *window) {
 
 /* =================================================================================================================================================================== */
 
-void toggleClimbingBehavior(bool isFinished) {
-    
+void mario::entity::Player::startClimbingBehavior(int flagXPos) {
+    if(p_body->isFaceForward() != p_animation->isFaceForward())
+        rotateDirection();
+
+    if(getPosition().x > flagXPos)
+        setPosition(sf::Vector2f(flagXPos, getPosition().y));
+
+    changePlayerBehavior(PlayerBehavior::Climbing);
+}
+
+void mario::entity::Player::finishClimbingBehavior() {
+    changePlayerBehavior(PlayerBehavior::FinishLevel);
 }
 
 /* =================================================================================================================================================================== */
@@ -420,10 +453,6 @@ void mario::entity::Player::setOnGround(bool isOnGround) {
     p_body->setOnGround(isOnGround);
     if(isOnGround)
         scoreMultiplier = 0;
-}
-
-void mario::entity::Player::resetJump() {
-    p_body->resetJump();
 }
 
 void mario::entity::Player::beingHit() {
@@ -590,7 +619,8 @@ void mario::entity::Player::handleNetworkCollision(const sf::Vector2f& otherPosi
 }
 
 void mario::entity::Player::syncNetworkState(const sf::Vector2f& position, const sf::Vector2f& velocity) {
-    if (!_isRemotePlayer) return;
+    if (!_isRemotePlayer) 
+        return;
     
     p_body->setPosition(position);
     p_body->setVelocity(velocity);

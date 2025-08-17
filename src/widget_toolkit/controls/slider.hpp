@@ -21,7 +21,7 @@ namespace mario {
             sf::Vector2f position;
 
             bool isDragging = false;
-
+            std::unique_ptr<sf::RectangleShape> highlightRect;
             // Callback function
             std::function<void(float)> onValueChanged;
 

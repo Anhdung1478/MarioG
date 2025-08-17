@@ -79,7 +79,7 @@ mario::pages::MainMenuPage::MainMenuPage(mario::MainWindow &context) : Page(cont
 void mario::pages::MainMenuPage::handleEvent(const sf::RenderWindow *window, const sf::Event &event) {
     if (_isMenuVisible == false && (event.is<sf::Event::KeyPressed>() || event.is<sf::Event::MouseButtonPressed>())) {
         _isMenuVisible = true;
-        p_currButtonList->delay_time = 0.3f;
+        p_currButtonList->delay_time = BUTTON_DELAY_TIME;
     }
 
     if(_isMenuVisible && p_currButtonList != nullptr) {
