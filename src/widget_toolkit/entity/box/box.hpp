@@ -51,7 +51,8 @@ namespace mario::entity {
             virtual void move(bool isMoveRight, bool isReleased) = 0;
             virtual void moveLeft(bool isReleased) = 0;
             virtual void moveRight(bool isReleased) = 0;
-            virtual void jump(bool isReleased) = 0;
+            virtual void jump(bool _isReleased) = 0;
+            virtual void jumpByANumberOfJumps(bool _isReleased, int numJumps) = 0;
             virtual void update(float dt) = 0;
             virtual void resetJump() = 0;
 <<<<<<< HEAD

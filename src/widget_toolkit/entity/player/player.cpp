@@ -33,6 +33,14 @@ mario::entity::Player::~Player() {
 
 /* =================================================================================================================================================================== */
 
+void mario::entity::Player::loadDataFrom(const mario::resource::LevelState &levelState) {
+    coinCount = levelState.coins;
+    lives = levelState.num_lives;
+    score = levelState.score;
+}
+
+/* =================================================================================================================================================================== */
+
 void mario::entity::Player::jump(bool isReleased) {
     if(!_canMove)
         return;
@@ -43,6 +51,18 @@ void mario::entity::Player::jump(bool isReleased) {
     }
 
     p_body->jump(isReleased);
+}
+
+void mario::entity::Player::jumpByANumberOfJumps(bool isReleased, int numJumps) {
+    if(!_canMove)
+        return;
+
+    if (!isReleased && p_body->isOnGround()) {
+        soundManager.playSound(mario::event::SoundEvent::PLAYER_JUMP); // Phát âm thanh nhảy
+        hasPlayedJumpSound_ = true;
+    }
+
+    p_body->jumpByANumberOfJumps(isReleased, numJumps);
 }
 
 void mario::entity::Player::resetJump() {
@@ -118,30 +138,13 @@ void mario::entity::Player::rotateDirection() {
 /* =================================================================================================================================================================== */
 
 void mario::entity::Player::managePlayerAnimation() {
-    if(playerBehavior == PlayerBehavior::Invincible) { // use a variable x, change x from x to x + 1 when anytime call to managePlayerAnimation, using  
-        if(!p_body->isOnGround()) { // change texture to jumping
-            p_stateManager->setAnimation(p_animation, getPrefixBehavior(), "jump[0]");
-        } else {
-            if(p_body->isNotMoving()) { // change texture to idle
-                p_stateManager->setAnimation(p_animation, getPrefixBehavior(), "idle[0]");
-            } else 
-                if(p_animation->getAnimationState() == false) { // change to run animation
-                    p_stateManager->setAnimation(p_animation, getPrefixBehavior(), "idle[0]");
-                }
-           
-            hasPlayedJumpSound_ = false; 
-        }
-
-        p_animation->setAnimationState(true);
-    }
-
-    if(playerBehavior != PlayerBehavior::Normal)
+    if(playerBehavior != PlayerBehavior::Normal && playerBehavior != PlayerBehavior::Invincible)
         return;
 
     if(!p_body->isOnGround()) { // change texture to jumping
             p_stateManager->setAnimation(p_animation, getPrefixBehavior(), "jump[0]");
             p_animation->setAnimationState(false);
-        } else {
+        } else
             if(p_body->isNotMoving()) { // change texture to idle
                 bool isInShootingAnimation = (timeSinceLastShoot <= sf::seconds(0.2f));
                 p_stateManager->setAnimation(p_animation, getPrefixBehavior(), (isInShootingAnimation ? "shoot[0]" : "idle[0]"));
@@ -151,9 +154,6 @@ void mario::entity::Player::managePlayerAnimation() {
                     p_stateManager->setAnimation(p_animation, getPrefixBehavior(), "idle[0]");
                     p_animation->setAnimationState(true);
                 }
-                
-            hasPlayedJumpSound_ = false;
-        }
 
     hasPlayedJumpSound_ = false;
 }
@@ -256,15 +256,7 @@ void mario::entity::Player::changePlayerBehavior(PlayerBehavior newBehavior) {
         soundManager.playSound(mario::event::SoundEvent::POWER_UP);
         _isTransforming = true;
         behaviorTimer = sf::seconds(1.f);
-        p_animation->clearAnimationStep();
-
-        std::string currPlayerStateID = p_stateManager->getCurrentPlayerStateID();
-        std::string nextPlayerStateID = p_stateManager->getNextPlayerStateID();
-        std::string prefixIDAnimation = currPlayerStateID + "." + "become-" + nextPlayerStateID;
-        for (int i = 0; i < 10; ++i)
-            p_animation->addAnimationStep(prefixIDAnimation + "[" + std::to_string(i) + "]");
-
-        p_animation->setAnimationState(true);
+        p_stateManager->setTransformToSuperAnimation(p_animation);
     }
 
     if(newBehavior == PlayerBehavior::TransformBTS) {
@@ -442,12 +434,12 @@ void mario::entity::Player::update(const sf::RenderWindow *window, float dt) {
 }
 
 void mario::entity::Player::updateToLevelState(mario::resource::LevelState &levelState) {
-    levelState.coins += coinCount;
-    levelState.num_lives += lives + levelState.coins / 100;
-    levelState.score += score;
+    levelState.coins += addedCoinCount;
+    levelState.num_lives += addedLives + levelState.coins / 100;
+    levelState.score += addedScore;
     levelState.coins %= 100;
 
-    lives = coinCount = score = 0;
+    addedCoinCount = addedScore = addedLives = 0;
 }
 
 void mario::entity::Player::handleEvent(const sf::RenderWindow *window, const sf::Event &event) {
@@ -473,6 +465,8 @@ void mario::entity::Player::startClimbingBehavior(int flagXPos) {
 }
 
 void mario::entity::Player::finishClimbingBehavior() {
+    rotateDirection();
+    setPosition(sf::Vector2f(getPosition().x + 40, getPosition().y));
     changePlayerBehavior(PlayerBehavior::FinishLevel);
 }
 
@@ -529,6 +523,7 @@ bool mario::entity::Player::canCollisionWithBlock() const {
 
 void mario::entity::Player::addScoreToPlayer(int _score, bool isPoppingUp) {
     score += _score;
+    addedScore += _score;
     if(isPoppingUp)
         popUpScoreList->addAPopUpText(p_body->getPosition(), std::to_string(_score));
 }
@@ -543,7 +538,7 @@ void mario::entity::Player::hitEmptyBlock() {
 }
 
 void mario::entity::Player::collectCoin() {
-    ++coinCount;
+    ++coinCount, ++addedCoinCount;
     addScoreToPlayer(200, true);
     
     soundManager.playSound(mario::event::SoundEvent::COIN_COLLECT);
@@ -582,7 +577,7 @@ void mario::entity::Player::collectFireFlower() {
 }
 
 void mario::entity::Player::collect1UpMushroom() {
-    lives++;
+    lives++, ++addedLives;
     addScoreToPlayer(1000, true);
     soundManager.playSound(mario::event::SoundEvent::ONE_UP);
 }
@@ -597,7 +592,7 @@ void mario::entity::Player::jumpOnEnemyHead() {
     resetJump();
     setOnGround(true);
     hasPlayedJumpSound_ = false;
-    jump(false);
+    jumpByANumberOfJumps(false, 1);
 
     soundManager.playSound(mario::event::SoundEvent::ENEMY_STOMP);
     

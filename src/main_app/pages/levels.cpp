@@ -13,7 +13,7 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
       remotePlayer(nullptr),
       gameOverReceivedForLocal(false),
       remotePlayerDead(false) {
-    
+
     // Initialize player with the correct character type and state
     p_player = new mario::entity::Player(
         sf::Vector2f(100, 400), 
@@ -22,6 +22,12 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
         context.getSoundManager(), 
         context.getNetworkManager()
     );
+    
+    if(gameMode == GameMode::SinglePlayer) {
+        p_player->loadDataFrom(currLevelState);
+        ofstream ofs("../../asset/save_data/autosave.svx");
+        ofs << " ";
+    }
 
     p_inputManager = std::make_unique<mario::input::InputManager>(context);
     
@@ -96,7 +102,7 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
     // testBlock = new mario::entity::BackgroundBlock(sf::Vector2f(100, 500), sf::Vector2f(16, 16), "enemies-flag[0]");
     // testBlock = new mario::entity::BackgroundBlock(sf::Vector2f(100, 500), sf::Vector2f(16, 16), std::to_string(390), {"390", 1, 171, 16, 16});
     // testFireWorks = new mario::entity::FireWorks(boundWorldSize - sf::Vector2f(500, 500), sf::Vector2f(450, 250));
-    testFireWorks = new mario::entity::FireWorks(sf::Vector2f(boundWorldSize.x - 720, 170), sf::Vector2f(680, 300));
+    testFireWorks = new mario::entity::FireWorks(sf::Vector2f(boundWorldSize.x - 1000, 50), sf::Vector2f(1000, 350));
     testFireWorks->setShowFireworks(true);
 
 
@@ -193,7 +199,8 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
 /* ========================================================================================================================================================================== */
 
 void mario::pages::LevelsPage::autoSave() {
-    p_levelDataManager->autoSave(currLevelState);
+    if(gameMode == GameMode::SinglePlayer)
+        p_levelDataManager->autoSave(currLevelState);
 }
 
 mario::pages::LevelsPage::~LevelsPage() {
@@ -310,7 +317,7 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
             }
 
             if(flagPole->getWinState()) testFireWorks->update(window, dt);
-            flagPole->update(window, dt);
+            flagPole->update(window, dt, p_player);
 
             for(auto &enemy : enemies) {
                 if (!enemy->shouldDelete()) {
@@ -511,7 +518,7 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
 /* ========================================================================================================================================================================== */
 
 void mario::pages::LevelsPage::handleEvent(const sf::RenderWindow *window, const sf::Event &event) {
-    if (const auto key = event.getIf<sf::Event::KeyPressed>(); key && key->code == sf::Keyboard::Key::Escape && !isSettingsOpen) {
+    if (const auto key = event.getIf<sf::Event::KeyPressed>(); (key && key->code == sf::Keyboard::Key::Escape && !isSettingsOpen || !_isPaused && event.is<sf::Event::FocusLost>())) {
         _isPaused = !_isPaused;
         if(_isPaused) {
             _context->getSoundManager().playSound(mario::event::SoundEvent::GAME_PAUSE);
@@ -961,9 +968,8 @@ void mario::pages::LevelsPage::render(sf::RenderWindow *window) {
         musicSlider->render(*window);
         sfxSlider->render(*window);
     }
-  
-    renderLevelState(window, currLevelState);   
 
+    renderLevelState(window, currLevelState);
 }
 
 void mario::pages::LevelsPage::removeCollectedItems() {

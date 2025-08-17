@@ -68,6 +68,10 @@ namespace mario::entity {
             }
 
             void jump(bool _isReleased) override {
+                jumpByANumberOfJumps(_isReleased, maxJumps);
+            }
+
+            void jumpByANumberOfJumps(bool _isReleased, int numJumps) override {
                 if(_isReleased) {
                     _isJumpping = false;
                     return;
@@ -75,7 +79,7 @@ namespace mario::entity {
 
                 if(_isOnGround) {
                     velocity.y = 0.f;
-                    jumpRemaining = maxJumps;
+                    jumpRemaining = numJumps;
                     timeUntilNextJump = sf::seconds(0.f);
                     _isJumpping = true;
                 }
@@ -108,7 +112,7 @@ namespace mario::entity {
                     timeUntilNextJump -= sf::seconds(dt);
                     if(timeUntilNextJump <= sf::seconds(0.f)) {
                         velocity.y += jumpForce;
-                        timeUntilNextJump = sf::seconds(0.0001f);
+                        timeUntilNextJump = sf::seconds(0.00001f);
 
                         --jumpRemaining;
                         if(jumpRemaining == 0)

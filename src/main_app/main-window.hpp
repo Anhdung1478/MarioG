@@ -26,7 +26,7 @@ namespace mario {
             const std::string title = "Mario Visualization";
             const sf::Time timeStep = sf::seconds(1.0f / fixedFPS);
             sf::Clock clock;
-            bool isRunning = true;
+            bool isRunning = true, isFocusOn = true;
             
             // SoundManager
             mario::audio::SoundManager soundManager;

@@ -24,6 +24,9 @@ namespace mario::entity {
             void jump(bool _isReleased) override {
             }
 
+            void jumpByANumberOfJumps(bool _isReleased, int numpJumps) override {
+            }
+
             void update(float dt) override {
             }
 
