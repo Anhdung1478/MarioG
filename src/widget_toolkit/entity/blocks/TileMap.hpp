@@ -2,13 +2,6 @@
 
 #include <algorithm>
 
-#include "Block.hpp"
-#include "Brick.hpp"
-#include "QuestionBlock.hpp"
-#include "SolidBlock.hpp"
-#include "BackgroundBlock.hpp"
-#include "InvisibleBlock.hpp"
-#include "FireWorks.hpp"
 #include "../player/player.hpp"
 #include "../../resource/json.hpp"
 #include "../../interfaces.hpp"
@@ -34,8 +27,6 @@ namespace mario::entity {
         std::vector<int> tileIds; // Store tile IDs for rendering
         std::vector<int> objectIds; // Store object IDs for rendering
         std::vector<ObjectData> objects; // Store object data for item spawning
-        std::vector<SpriteData2> sprites; // Store sprite data for rendering
-        std::unordered_map<int, SpriteData2> tileSprites; // Store sprites for each tile ID
         std::string mapPath;
         std::string tilesetPath;
 
@@ -57,7 +48,11 @@ namespace mario::entity {
 
         bool loadTileset(const std::string &tilesetPath);
         bool loadMap(const std::string &mapPath);
-        bool loadObjects(std::vector<mario::entity::Enemy*> &enemies, std::vector<Item*> &items, std::vector<mario::entity::Block*> &blocks, std::vector<mario::entity::Block*> &groundBlocks, std::vector<mario::entity::Block*> &backgroundBlocks);
+        bool loadObjects(std::vector<mario::entity::Enemy*> &enemies, 
+                         std::vector<Item*> &items, std::vector<mario::entity::Block*> &blocks, 
+                         std::vector<mario::entity::Block*> &groundBlocks, 
+                         std::vector<mario::entity::Block*> &backgroundBlocks, 
+                         mario::entity::FlagPole* &flagPole);
 
         void createBlock(std::vector<Block*> &blocks, std::vector<Block*> &backgroundBlocks);
         void sortBlocks(std::vector<Block*> &blocks);

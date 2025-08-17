@@ -47,7 +47,6 @@ namespace mario::entity {
             int coinCount = 0;
             int scoreMultiplier = 0;
 
-            void addScoreToPlayer(int _score, bool isPoppingUp);  // pop up score when getting some new score
             void managePlayerAnimation(); // manage Animation for Player (idle, run or jump animation)
             void updatePlayerBehavior(float dt); // update for Player Behavior (some behavior will change when ran out of time)
 
@@ -56,13 +55,18 @@ namespace mario::entity {
             Player(sf::Vector2f spawnPoint, CharacterListType characterType, player_state::PlayerStateType stateType, mario::audio::SoundManager& soundManager, NetworkManager& networkManager);
             ~Player() override;
             
+            void addScoreToPlayer(int _score, bool isPoppingUp);  // pop up score when getting some new score
+
             void rotateDirection();
             sf::Vector2f getVelocity() const;
             void setVelocity(sf::Vector2f vel);
             
             void jump(bool isReleased);
-            void move(bool isMoveRight, bool isReleased);
+            void moveLeft(bool isReleased);
+            void moveRight(bool isReleased);
             void shotFireball(bool isReleased);
+            void resetJump();
+            void resetMove();
 
             void explosionFireballAtPos(int idx);
             int getNumberFireballs() const;
@@ -75,9 +79,9 @@ namespace mario::entity {
             void updateToLevelState(mario::resource::LevelState &levelState);
             void setOnGround(bool isOnGround);
             void togglePlayerMove(bool canMove); // toggle turn on/off movement of Player (when turn off, Player won't be able to move)
-            void resetJump();
 
-            void toggleClimbingBehavior(bool isFinished); // toggle turn on/off climbing behavior of Player (when turn on, Player will climbing from top of flag to ground)
+            void startClimbingBehavior(int flagXPos); // start climbing behavior of Player (Player will climbing from this position of the flag to ground)
+            void finishClimbingBehavior();            // finish climbing behavior of Player
 
             void beingHit(); // being hit by enemy or entity like level trap
             void changePlayerBehavior(PlayerBehavior newBehavior); // change Player behavior to newBehavior
@@ -91,6 +95,7 @@ namespace mario::entity {
             bool canCollisionWithItem() const;
             bool canCollisionWithBlock() const;
 
+            void addScoreToPlayer(int _score, bool isPoppingUp);  // pop up score when getting some new score
             void breakBrick();                                    // appear when Player break the brick block
             void hitEmptyBlock();                                 // appear when Player hit the empty block 
             void collectCoin();                                   // appear when Player collect a coin in map

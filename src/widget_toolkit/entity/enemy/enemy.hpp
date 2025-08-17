@@ -26,6 +26,8 @@ namespace mario::entity {
         bool isPlayerDeadWhenCollisionLF = true;
         bool isPlayerDeadWhenCollisionT = false;
         bool isCheckCollisionWithBlock = true;
+        bool isCheckCollisionWithEnemy = true;
+        bool isCheckCollisionWithPlayer = true;
 
         bool hasNetworkAuthority = false;  // Does this client control this enemy?
         bool isNetworkControlled = false;  // Is this enemy controlled by network?
@@ -253,6 +255,22 @@ namespace mario::entity {
 
         bool getIsCheckCollisionWithBlock() {
             return isCheckCollisionWithBlock;
+        }
+
+        void setIsCheckCollisionWithEnemy(bool check) {
+            isCheckCollisionWithEnemy = check;
+        }
+
+        bool getIsCheckCollisionWithEnemy() {
+            return isCheckCollisionWithEnemy;
+        }
+
+        void setIsCheckCollisionWithPlayer(bool check) {
+            isCheckCollisionWithPlayer = check;
+        }
+
+        bool getIsCheckCollisionWithPlayer() {
+            return isCheckCollisionWithPlayer;
         }
 
         void syncNetworkState(const sf::Vector2f& pos, const sf::Vector2f& vel, 

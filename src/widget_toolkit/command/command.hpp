@@ -8,40 +8,39 @@ namespace mario::input { // Command pattern
     class Command {
         public:
             virtual ~Command() = default;
-            virtual void execute(mario::entity::Player &player, bool isReleased) = 0; // isReleased = 1 -> key is released, isReleased = 0 -> key is pressed
+            virtual void execute(mario::entity::Player *player, bool isReleased) = 0; // isReleased = 1 -> key is released, isReleased = 0 -> key is pressed
     };
 
     class JumpCommand : public Command {
         public: 
-            JumpCommand(MainWindow& context) : context_(context) {}
-            void execute(mario::entity::Player &player, bool isReleased) override {
-                player.jump(isReleased);
-
-                // if(!player.hasPlayedJumpSound()) {
-                //     context_.getSoundManager().playSound(mario::event::SoundEvent::PLAYER_JUMP);
-                //     player.setJumpSoundPlayed(true);
-                // }
+            JumpCommand() {}
+            void execute(mario::entity::Player *player, bool isReleased) override {
+                player->jump(isReleased);
             }
-        private:
-            MainWindow& context_;
     };
 
-    class MoveCommand : public Command {
-        private:
-            bool _isForward;
-
+    class MoveLeftCommand : public Command {
         public: 
-            MoveCommand(bool isForward) : _isForward(isForward) {}
+            MoveLeftCommand() {}
 
-            void execute(mario::entity::Player &player, bool isReleased) override {
-                player.move(_isForward, isReleased);
+            void execute(mario::entity::Player *player, bool isReleased) override {
+                player->moveLeft(isReleased);
+            }
+    };
+
+    class MoveRightCommand : public Command {
+        public: 
+            MoveRightCommand() {}
+
+            void execute(mario::entity::Player *player, bool isReleased) override {
+                player->moveRight(isReleased);
             }
     };
     
     class FireCommand : public Command {
         public: 
-            void execute(mario::entity::Player &player, bool isReleased) override {
-                player.shotFireball(isReleased);
+            void execute(mario::entity::Player *player, bool isReleased) override {
+                player->shotFireball(isReleased);
             }
     };
 }
