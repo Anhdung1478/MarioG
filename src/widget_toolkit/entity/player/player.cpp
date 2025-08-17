@@ -379,6 +379,21 @@ void mario::entity::Player::update(const sf::RenderWindow *window, float dt) {
         }
     }
 
+    if(!_isAlive && playerBehavior == PlayerBehavior::Dying) {
+        // Continue falling animation after death
+        p_body->update(dt);
+        p_animation->update(window, dt);
+        
+        // Let the death animation play out before marking as dead
+        if(behaviorTimer > sf::Time::Zero) {
+            behaviorTimer -= sf::seconds(dt);
+            if(behaviorTimer <= sf::Time::Zero) {
+                changePlayerBehavior(PlayerBehavior::AlreadyDead);
+            }
+        }
+        return;
+    }
+
     popUpScoreList->update(window, dt);
 
     updatePlayerBehavior(dt);
@@ -441,7 +456,7 @@ void mario::entity::Player::setOnGround(bool isOnGround) {
 }
 
 void mario::entity::Player::beingHit() {
-    if(playerBehavior != PlayerBehavior::Normal)
+    if(playerBehavior != PlayerBehavior::Normal || playerBehavior == PlayerBehavior::Dying)
         return;
 
     if(getPlayerStateType() == player_state::PlayerStateType::Small) {

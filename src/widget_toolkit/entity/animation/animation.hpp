@@ -26,6 +26,7 @@ namespace mario::entity {
             int step = 0;
             bool _isFaceForward = true;
             bool _isRunning = true, _isFlicker = false, _isInvisible = false;
+            bool flippedVertical = false;
             
             void setAnimationStep(int x) {
                 if(animationSteps.size() == 0) {
@@ -216,6 +217,13 @@ namespace mario::entity {
             void renderWithPosition(sf::RenderWindow *window, sf::Vector2f pos) {
                 p_sprite->setPosition(pos);
                 render(window);
+            }
+
+            void flipVertical(bool enable) {
+                sf::Vector2f scale = p_sprite->getScale();
+                scale.y = (enable ? -std::abs(scale.y) : std::abs(scale.y));
+                p_sprite->setScale(scale);
+                flippedVertical = enable;
             }
     };
 }
