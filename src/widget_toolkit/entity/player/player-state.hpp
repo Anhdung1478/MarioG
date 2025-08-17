@@ -84,6 +84,7 @@ namespace mario::entity::player_state {
             }
 
             virtual void setAnimation(Animation *p_animation, const std::string &prefixSpriteID, const std::string &ID) = 0;
+            virtual void setTransformToSuperAnimation(Animation *p_animation) = 0;
             virtual void setBeingHitAnimation(Animation *p_animation) = 0;
             virtual void setClimbingAnimation(Animation *p_animation) = 0;
             virtual void setDeadAnimation(Animation *p_animation) = 0;

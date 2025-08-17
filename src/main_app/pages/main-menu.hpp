@@ -22,6 +22,8 @@ namespace mario::pages {
             mario::ButtonListNode *p_newGameButtonListNode;
             mario::ButtonListNode *p_menuButtonListNode;
 
+            mario::Button *p_continueButton;
+
             std::unique_ptr<mario::ButtonList> p_currButtonList;
 
             std::unique_ptr<mario::resource::LevelDataManager> p_levelDataManager;

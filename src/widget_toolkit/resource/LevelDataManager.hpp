@@ -16,6 +16,7 @@ namespace mario::resource {
             
         public:
             LevelDataManager();
+            bool checkExistAutoSave();
             void autoSave(LevelState levelData);
             void update(float dt, LevelState levelData);
             void saveLevelDataIntoFile(LevelState levelData, const std::string &fileName);

@@ -40,9 +40,9 @@ namespace mario::entity {
             bool _canCollisionWithEnemy = true, _canCollisionWithItem = true, _canCollisionWithBlock = true;
             bool _isTransforming = false, _isShootingFireball = false;
 
-            int score = 0;
-            int lives = 0;
-            int coinCount = 0;
+            int score = 0, addedScore = 0;
+            int lives = 0, addedLives = 0;
+            int coinCount = 0, addedCoinCount = 0;
             int scoreMultiplier = 0;
 
             void managePlayerAnimation(); // manage Animation for Player (idle, run or jump animation)
@@ -51,12 +51,15 @@ namespace mario::entity {
         public:
             Player(sf::Vector2f spawnPoint, CharacterListType characterType, player_state::PlayerStateType stateType, mario::audio::SoundManager& soundManager);
             ~Player() override;
+
+            void loadDataFrom(const mario::resource::LevelState &levelState);
             
             void rotateDirection();
             sf::Vector2f getVelocity() const;
             void setVelocity(sf::Vector2f vel);
             
             void jump(bool isReleased);
+            void jumpByANumberOfJumps(bool isReleased, int numJumps);
             void moveLeft(bool isReleased);
             void moveRight(bool isReleased);
             void shotFireball(bool isReleased);
