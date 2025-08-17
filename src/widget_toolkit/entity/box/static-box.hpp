@@ -15,6 +15,12 @@ namespace mario::entity {
             void move(bool _isMoveRight, bool _isReleased) override {
             }
 
+            void moveLeft(bool _isReleased) override {
+            }
+
+            void moveRight(bool _isReleased) override {
+            }
+
             void jump(bool _isReleased) override {
             }
 
@@ -23,15 +29,22 @@ namespace mario::entity {
 
             void resetJump() override {
             }
+            
+            void resetMove() override {
+            }
 
             void setAcceleration(sf::Vector2f acc) override {
+            }
+
+            sf::Vector2f getAcceleration() const override {
+                return sf::Vector2f(0.f, 0.f);
             }
 
             void setVelocity(sf::Vector2f vel) override {
             }
 
             sf::Vector2f getVelocity() const override {
-                return sf::Vector2f(0, 0);
+                return sf::Vector2f(0.f, 0.f);
             }
 
             bool isNotMoving() const override {

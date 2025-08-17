@@ -9,10 +9,12 @@ namespace mario::entity {
     
     class Animation : public IScreenElement {
         private:
-            float TIME_BETWEEN_STEP = 1.f / 10.f;
+            static constexpr float DEFAULT_TIME_BETWEEN_STEP = 0.1f;
+            float TIME_BETWEEN_STEP = DEFAULT_TIME_BETWEEN_STEP;
             float FLICKER_DELAY = 0.1f;
 
             TextureManager& p_textureResource = TextureManager::getInstance();
+            std::string currentSpriteId;
             std::vector<SpriteData> animationSteps;
             sf::Sprite *p_sprite;
             sf::Vector2f scale;
@@ -115,6 +117,10 @@ namespace mario::entity {
                 return _isRunning;
             }
 
+            std::string getSpriteId() const {
+                return currentSpriteId;
+            }
+
             void setSpriteVisible(bool isVisible) {
                 if(isVisible) {
                     p_sprite->setColor(sf::Color(255, 255, 255, 255)); // is visible
@@ -146,6 +152,10 @@ namespace mario::entity {
             
             void setTimeBetweenStep(float time) {
                 TIME_BETWEEN_STEP = time;
+            }
+
+            void resetTimeBetweenStepToDefault() {
+                TIME_BETWEEN_STEP = DEFAULT_TIME_BETWEEN_STEP;
             }
 
             void setPosition(sf::Vector2f pos) {

@@ -193,6 +193,15 @@ bool NetworkManager::sendEnemyDefeated(int enemyId, const sf::Vector2f& position
     return sendPacket(packet);
 }
 
+bool NetworkManager::sendEnemyState(int enemyId, const sf::Vector2f& pos, const sf::Vector2f& vel, bool alive,
+                                    bool active, const std::string& spriteId, bool faceForward) {
+    sf::Packet packet;
+    packet << static_cast<uint8_t>(NetworkMessage::EnemyState)
+           << enemyId << pos.x << pos.y
+           << vel.x << vel.y << alive << active << spriteId << faceForward;
+    return sendPacket(packet);
+}
+
 std::unique_ptr<NetworkMessage> NetworkManager::pollMessage() {
     sf::Packet packet;
     if (!pollPacket(packet)) {
@@ -216,7 +225,18 @@ std::unique_ptr<NetworkMessage> NetworkManager::pollMessage() {
                 return nullptr;
             }
             break;
-            
+        case NetworkMessage::EnemyState:
+            if (!(packet >> msg->enemyId
+                    >> msg->enemyPosition.x >> msg->enemyPosition.y
+                    >> msg->enemyVelocity.x >> msg->enemyVelocity.y
+                    >> msg->isAlive
+                    >> msg->isActive
+                    >> msg->spriteId
+                    >> msg->faceForward)) {
+                std::cerr << "[Network] Failed to extract enemy state data\n";
+                return nullptr;
+            }
+            break;
         case NetworkMessage::ItemCollected:
             if (!(packet >> msg->itemId >> msg->position.x >> msg->position.y)) {
                 std::cerr << "[Network] failed to extract item collected data\n";
