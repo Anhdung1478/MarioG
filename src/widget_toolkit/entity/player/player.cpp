@@ -36,7 +36,7 @@ void mario::entity::Player::jump(bool isReleased) {
     if(!_canMove)
         return;
 
-    if (!isReleased && !hasPlayedJumpSound_) {
+    if (!isReleased && p_body->isOnGround()) {
         soundManager.playSound(mario::event::SoundEvent::PLAYER_JUMP); // Phát âm thanh nhảy
         hasPlayedJumpSound_ = true;
     }
@@ -127,7 +127,7 @@ void mario::entity::Player::managePlayerAnimation() {
             p_animation->setAnimationState(false);
         } else {
             if(p_body->isNotMoving()) { // change texture to idle
-                bool isInShootingAnimation = (timeSinceLastShoot <= sf::seconds(0.1f));
+                bool isInShootingAnimation = (timeSinceLastShoot <= sf::seconds(0.2f));
                 p_stateManager->setAnimation(p_animation, getPrefixBehavior(), (isInShootingAnimation ? "shoot[0]" : "idle[0]"));
                 p_animation->setAnimationState(false);
             } else 
@@ -207,6 +207,7 @@ void mario::entity::Player::changePlayerBehavior(PlayerBehavior newBehavior) {
         _canCollisionWithEnemy = _canCollisionWithItem = true;
         togglePlayerMove(true);
         p_body->setAcceleration(sf::Vector2f(p_body->getAcceleration().x, 980.f));
+        p_animation->resetTimeBetweenStepToDefault();
     }
 
     if(playerBehavior == PlayerBehavior::FinishLevel) {
@@ -270,9 +271,10 @@ void mario::entity::Player::changePlayerBehavior(PlayerBehavior newBehavior) {
         togglePlayerMove(false);
 
         p_body->resetJump();
-        p_body->setVelocity(sf::Vector2f(0.f, 400.f));
+        p_body->setVelocity(sf::Vector2f(0.f, 200.f));
         p_body->setAcceleration(sf::Vector2f(p_body->getAcceleration().x, 0.f));
         p_stateManager->setClimbingAnimation(p_animation);
+        p_animation->setTimeBetweenStep(0.2f);
     }
 
     if(newBehavior == PlayerBehavior::FinishLevel) {

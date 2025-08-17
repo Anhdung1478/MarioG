@@ -15,7 +15,7 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
       remotePlayerDead(false) {
     
     // Initialize player with the correct character type and state
-    p_player = new mario::entity::Player(sf::Vector2f(7850, 0), state.characterType, state.stateType, context.getSoundManager());
+    p_player = new mario::entity::Player(sf::Vector2f(100, 200), state.characterType, state.stateType, context.getSoundManager());
 
     p_inputManager = std::make_unique<mario::input::InputManager>(context);
 
@@ -391,10 +391,6 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
             currLevelState.stateType = p_player->getPlayerStateType();
             p_levelDataManager->update(dt, currLevelState);
             removeCollectedItems();
-
-            if(p_player->getPosition().x >= 7940) {
-                p_player->startClimbingBehavior(7940);
-            }
 
             // Handle player death
             if(p_player->isDead()) {
