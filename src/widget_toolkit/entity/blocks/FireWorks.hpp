@@ -29,7 +29,7 @@ namespace mario::entity {
                 sprite.setPosition(tempPos);
                 sprite.setScale(sf::Vector2f(2.5f, 2.5f));
                 // Random float between 0 and 2
-                timeStart = rand() % 20000 / 10000.f;
+                timeStart = rand() % 1500 / 1000.f;
                 animationTimer = 0.0f;
             }
 
@@ -57,7 +57,7 @@ namespace mario::entity {
             void update(float dt){
                 if(frameID >= 4){
                     frameID = -1;
-                    timeStart = rand() % 20000 / 10000.f;
+                    timeStart = rand() % 1500 / 1000.f;
                     tempPos = position + sf::Vector2f(rand() % (int)size.x, rand() % (int)size.y);
                     sprite.setPosition(tempPos);
                 }                

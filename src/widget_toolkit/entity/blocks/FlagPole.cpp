@@ -40,8 +40,10 @@ namespace mario::entity {
         alliesFlagAnimation->addAnimationStep("win-flag[2]");
         alliesFlagAnimation->addAnimationStep("win-flag[3]");
         alliesFlagAnimation->setTimeBetweenStep(1/7.0f);
-        alliesFlagAnimation->setPosition(pos);
         alliesFlagAnimation->setAnimationState(true);
+        startPosAlliesFlag = pos + sf::Vector2f(0.0f, 40.0f);
+        alliesFlagAnimation->setPosition(startPosAlliesFlag);
+        finalPosAlliesFlag = pos;
     }
 
     void FlagPole::addFlagPole(sf::Vector2f pos, sf::Vector2f size, std::string name) {
@@ -53,8 +55,8 @@ namespace mario::entity {
         } else if(name == "flag-pole[2]") {
             newFlagPole = new BackgroundBlock(pos, size, name, {"flag-pole[2]", 59, 120, 2, 16});
         }
-        if(pos.y < startPosition.y) startPosition = pos;
-        if(pos.y > finalPosition.y) finalPosition = pos;
+        if(pos.y < startPosEnemiesFlag.y) startPosEnemiesFlag = pos;
+        if(pos.y > finalPosEnemiesFlag.y) finalPosEnemiesFlag = pos;
         flagPoles.push_back(newFlagPole);
     }
 
@@ -68,17 +70,19 @@ namespace mario::entity {
                     isClimbing = true;
                     // player->toggleClimbingBehavior(true);
                     player->setPosition(sf::Vector2f(pole->getPosition().x - pole->getSize().x/2.0f - player->getSize().x/2.0f, player->getPosition().y));
-                    player->addScoreToPlayer(((int)flagPoles.size() - i)  * 100, true);
+                    player->startClimbingBehavior(pole->getPosition().x);
+                    player->addScoreToPlayer(((int)flagPoles.size() - i + 1)  * 100, true);
                 }
             }
-            else if(player->getPosition().x >= finalPosition.x && player->getPosition().y >= startPosition.y - 40.0f){
+            else if(player->getPosition().x >= finalPosEnemiesFlag.x && player->getPosition().y >= startPosEnemiesFlag.y - 40.0f){
                 if(!isClimbing) {
                     i = flagPoles.size() - 1;
                     pole = flagPoles[i];
                     isClimbing = true;
                     // player->toggleClimbingBehavior(true);
                     player->setPosition(sf::Vector2f(pole->getPosition().x - pole->getSize().x/2.0f - player->getSize().x/2.0f, player->getPosition().y));
-                    player->addScoreToPlayer(((int)flagPoles.size() - 1)  * 100, true);
+                    player->startClimbingBehavior(pole->getPosition().x);
+                    player->addScoreToPlayer(((int)flagPoles.size() - 1 + 1)  * 100, true);
                 }
             }
         }
@@ -89,22 +93,34 @@ namespace mario::entity {
         return isWin;
     }
 
-    void FlagPole::update(const sf::RenderWindow *window, float dt) {
+    void FlagPole::update(const sf::RenderWindow *window, float dt, Player* player) {
         if(isClimbing){
-            // moving slow enemies Flag from startPosition to finalPosition
-            enemiesFlagAnimation->setPosition(sf::Vector2f(
-                enemiesFlagAnimation->getPosition().x,
-                enemiesFlagAnimation->getPosition().y + 150.0f * dt
-            ));
-            if(enemiesFlagAnimation->getPosition().y >= finalPosition.y) {
+            if(enemiesFlagAnimation->getPosition().y >= finalPosEnemiesFlag.y) {
                 isClimbing = false;
                 isWin = true;
-                enemiesFlagAnimation->setPosition(sf::Vector2f(enemiesFlagAnimation->getPosition().x, finalPosition.y));
-                // player->toggleClimbingBehavior(false);
+                enemiesFlagAnimation->setPosition(sf::Vector2f(enemiesFlagAnimation->getPosition().x, finalPosEnemiesFlag.y));
+                player->finishClimbingBehavior();
+            }
+            else {
+                enemiesFlagAnimation->setPosition(sf::Vector2f(
+                    enemiesFlagAnimation->getPosition().x,
+                    enemiesFlagAnimation->getPosition().y + 150.0f * dt
+                ));
             }
         }
         enemiesFlagAnimation->update(window, dt);
-        if(isWin) alliesFlagAnimation->update(window, dt);
+        if(isWin) {
+            if(alliesFlagAnimation->getPosition().y <= finalPosAlliesFlag.y) {
+                alliesFlagAnimation->setPosition(sf::Vector2f(alliesFlagAnimation->getPosition().x, finalPosAlliesFlag.y));
+            }
+            else {
+                alliesFlagAnimation->setPosition(sf::Vector2f(
+                    alliesFlagAnimation->getPosition().x,
+                    alliesFlagAnimation->getPosition().y - 15.0f * dt
+                ));
+            }
+            alliesFlagAnimation->update(window, dt);
+        }
     }
 
     void FlagPole::handleEvent(const sf::RenderWindow *window, const sf::Event &event) {
