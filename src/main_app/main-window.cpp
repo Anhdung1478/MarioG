@@ -41,6 +41,10 @@ mario::audio::SoundManager& mario::MainWindow::getSoundManager() {
     return soundManager;
 }
 
+NetworkManager& mario::MainWindow::getNetworkManager() {
+    return networkManager;
+}
+
 void mario::MainWindow::run() {
     sf::ContextSettings settings;
     settings.antiAliasingLevel = 0.0f;

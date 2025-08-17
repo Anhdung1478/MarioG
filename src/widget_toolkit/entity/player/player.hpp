@@ -11,6 +11,7 @@
 #include "fireball-list.hpp"
 #include "../../controls/popup-text-list.hpp"
 #include "../../resource/SoundManager.hpp"
+#include "../../networking/NetworkManager.hpp"
 
 namespace mario::entity {
     static constexpr sf::Vector2f PLAYER_SCALE = sf::Vector2f(2.5f, 2.5f);
@@ -22,6 +23,7 @@ namespace mario::entity {
     class Player : public Entity {
         private:
             mario::audio::SoundManager& soundManager; // for sound effects
+            NetworkManager& networkManager;
 
             player_state::PlayerStateManager *p_stateManager;
             CharacterListType _characterType;
@@ -48,8 +50,9 @@ namespace mario::entity {
             void managePlayerAnimation(); // manage Animation for Player (idle, run or jump animation)
             void updatePlayerBehavior(float dt); // update for Player Behavior (some behavior will change when ran out of time)
 
+            int _networkPlayerId = -1;
         public:
-            Player(sf::Vector2f spawnPoint, CharacterListType characterType, player_state::PlayerStateType stateType, mario::audio::SoundManager& soundManager);
+            Player(sf::Vector2f spawnPoint, CharacterListType characterType, player_state::PlayerStateType stateType, mario::audio::SoundManager& soundManager, NetworkManager& networkManager);
             ~Player() override;
 
             void loadDataFrom(const mario::resource::LevelState &levelState);
@@ -116,6 +119,15 @@ namespace mario::entity {
             void handleNetworkCollision(const sf::Vector2f& otherPosition);
             void syncNetworkState(const sf::Vector2f& position, const sf::Vector2f& velocity);
     
+            void setFaceForward(bool faceForward) { 
+                p_body->setFaceForward(faceForward);
+                if (p_animation->isFaceForward() != faceForward) {
+                    rotateDirection();
+                }
+            }
+
+            void requestStateChange(player_state::PlayerStateType newStateType);
+
             // IMPORTANT
             bool _isRemotePlayer = false;
 
@@ -123,5 +135,8 @@ namespace mario::entity {
             int getCoins() { return coinCount; }
             int getLives() { return lives; }
             void setRemote(bool isRemote) { _isRemotePlayer = isRemote; } 
+
+            void setNetworkPlayerId(int id) { _networkPlayerId = id; }
+            int  getNetworkPlayerId() const { return _networkPlayerId; }
     };
 }

@@ -1,10 +1,11 @@
 #include<bits/stdc++.h>
 #include "player.hpp"
+#include "../../networking/NetworkManager.hpp"
 
 #define FILE_PATH "../../asset/sprites/"
 
-mario::entity::Player::Player(sf::Vector2f spawnPoint, CharacterListType characterType, player_state::PlayerStateType stateType, mario::audio::SoundManager& soundManager)
-             : _characterType(characterType), _isAlive(true), soundManager(soundManager) {
+mario::entity::Player::Player(sf::Vector2f spawnPoint, CharacterListType characterType, player_state::PlayerStateType stateType, mario::audio::SoundManager& soundManager, NetworkManager& networkManager)
+             : _characterType(characterType), _isAlive(true), soundManager(soundManager), networkManager(networkManager) {
     _isDeadAlready = false;
     playerBehavior = PlayerBehavior::Normal;
 
@@ -328,6 +329,34 @@ void mario::entity::Player::changeState(player_state::PlayerStateType newStateTy
             changePlayerBehavior(PlayerBehavior::Normal);
             p_stateManager->changeToFireState(p_animation, p_body);
         }
+
+    // Only send network update for local player state changes
+    if (!_isRemotePlayer) {
+        int powerupState = 0;
+        switch (newStateType) {
+            case player_state::PlayerStateType::Small:
+                powerupState = 0;
+                break;
+            case player_state::PlayerStateType::Super:
+                powerupState = 1;
+                break;
+            case player_state::PlayerStateType::Fire:
+                powerupState = 2;
+                break;
+        }
+        // Use the correct network player ID
+        networkManager.sendPlayerPowerupState(_networkPlayerId, powerupState);
+    }
+}
+
+void mario::entity::Player::requestStateChange(player_state::PlayerStateType newStateType) {
+    if (_isRemotePlayer) return;  // Don't process for remote players
+    
+    auto currentState = getPlayerStateType();
+    if (currentState == newStateType) return;
+    
+    // Apply the state change locally
+    changeState(newStateType);  // This will now handle the network update
 }
 
 /* =================================================================================================================================================================== */
@@ -342,19 +371,19 @@ void mario::entity::Player::update(const sf::RenderWindow *window, float dt) {
         // change state for debugging
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Num1)) {
             std::cerr << "CALL TO FUNCTION CHANGE TO SMALL STATE\n";
-            changeState(player_state::PlayerStateType::Small);
+            requestStateChange(player_state::PlayerStateType::Small);
             std::cerr << "SUCCESFULLY\n";
         }
     
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Num2)) {
             std::cerr << "CALL TO FUNCTION CHANGE TO SUPER STATE\n";
-            changeState(player_state::PlayerStateType::Super);
+            requestStateChange(player_state::PlayerStateType::Super);
             std::cerr << "SUCCESFULLY\n";
         }
     
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Num3)) {
             std::cerr << "CALL TO FUNCTION CHANGE TO FIRE STATE\n";
-            changeState(player_state::PlayerStateType::Fire);
+            requestStateChange(player_state::PlayerStateType::Fire);
             std::cerr << "SUCCESFULLY\n";
         }
 
@@ -528,20 +557,21 @@ void mario::entity::Player::collectCoinInBlock() {
 void mario::entity::Player::collectRedMushroom() {
     addScoreToPlayer(1000, true);
     if (getPlayerStateType() == player_state::PlayerStateType::Small) {
-        changeState(player_state::PlayerStateType::Super);
+        requestStateChange(player_state::PlayerStateType::Super);
         soundManager.playSound(mario::event::SoundEvent::POWER_UP);
     } else {
         // Already super or fire, give points instead
+        addScoreToPlayer(1000, true);
     }
 }
 
 void mario::entity::Player::collectFireFlower() {
     addScoreToPlayer(1000, true);
     if (getPlayerStateType() == player_state::PlayerStateType::Small) {
-        changeState(player_state::PlayerStateType::Super);
+        requestStateChange(player_state::PlayerStateType::Super);
         soundManager.playSound(mario::event::SoundEvent::POWER_UP);
     } else if(getPlayerStateType() == player_state::PlayerStateType::Super) {
-        changeState(player_state::PlayerStateType::Fire);
+        requestStateChange(player_state::PlayerStateType::Fire);
         soundManager.playSound(mario::event::SoundEvent::POWER_UP);
     }
 }
@@ -619,6 +649,12 @@ void mario::entity::Player::syncNetworkState(const sf::Vector2f& position, const
     
     p_body->setPosition(position);
     p_body->setVelocity(velocity);
+
+    if (velocity.x > 0.1f) {
+        setFaceForward(true);
+    } else if (velocity.x < -0.1f) {
+        setFaceForward(false);
+    }
 }
 
 #undef FILE_PATH

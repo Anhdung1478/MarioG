@@ -7,6 +7,7 @@
 #include "../widget_toolkit/entity/box/static-box.hpp"
 #include "../widget_toolkit/resource/SoundManager.hpp"
 #include "../widget_toolkit/entity/player/player.hpp"
+#include "../widget_toolkit/networking/NetworkManager.hpp"
 
 #define DEFAULT_FPS 60
 #define DEFAULT_WIN_WIDTH 1280
@@ -29,6 +30,9 @@ namespace mario {
             
             // SoundManager
             mario::audio::SoundManager soundManager;
+
+            // NetworkManager
+            NetworkManager networkManager;
             
         public:
             ~MainWindow() override;
@@ -42,5 +46,6 @@ namespace mario {
             // Use for sound manager
             void setPageMusic(std::shared_ptr<Page> page);
             mario::audio::SoundManager& getSoundManager();
+            NetworkManager& getNetworkManager();
     };
 }

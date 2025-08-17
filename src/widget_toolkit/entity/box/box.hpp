@@ -55,6 +55,10 @@ namespace mario::entity {
             virtual void jumpByANumberOfJumps(bool _isReleased, int numJumps) = 0;
             virtual void update(float dt) = 0;
             virtual void resetJump() = 0;
+<<<<<<< HEAD
+            virtual void setFaceForward(bool faceForward) = 0;
+            
+=======
             virtual void resetMove() = 0;
             
             virtual sf::Vector2f getAcceleration() const = 0;
@@ -63,6 +67,7 @@ namespace mario::entity {
             virtual bool isNotMoving() const = 0;
             virtual bool isOnGround() const = 0;
 
+>>>>>>> origin/item/multiplayer
             void renderHitboxRect(sf::RenderWindow *window) {
                 sf::FloatRect hitbox = getHitbox();
                 sf::Vector2f _pos = hitbox.position;

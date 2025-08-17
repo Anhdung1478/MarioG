@@ -64,5 +64,9 @@ namespace mario::entity {
             bool isFaceForward() const override {
                 return true;
             }
+
+            void setFaceForward(bool faceForward) override {
+                
+            }
     };
 }
