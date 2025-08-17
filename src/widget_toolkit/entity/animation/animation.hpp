@@ -14,6 +14,7 @@ namespace mario::entity {
             float FLICKER_DELAY = 0.1f;
 
             TextureManager& p_textureResource = TextureManager::getInstance();
+            std::string currentSpriteId;
             std::vector<SpriteData> animationSteps;
             sf::Sprite *p_sprite;
             sf::Vector2f scale;
@@ -114,6 +115,10 @@ namespace mario::entity {
 
             bool getAnimationState() const {
                 return _isRunning;
+            }
+
+            std::string getSpriteId() const {
+                return currentSpriteId;
             }
 
             void setSpriteVisible(bool isVisible) {

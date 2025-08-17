@@ -47,6 +47,18 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
     for (size_t i = 0; i < enemies.size(); ++i) {
         if (enemies[i]) {
             enemies[i]->setNetworkId(static_cast<int>(i));
+            if (gameMode == GameMode::SinglePlayer) {
+                // Single player - local authority for all enemies
+                enemies[i]->setNetworkAuthority(true);
+            } else if (gameMode == GameMode::Host) {
+                // Host controls ALL enemies
+                enemies[i]->setNetworkAuthority(true);
+                std::cout << "[Network] Host has authority over enemy " << i << "\n";
+            } else if (gameMode == GameMode::Client) {
+                // Client receives ALL enemy states from host
+                enemies[i]->setNetworkAuthority(false);
+                std::cout << "[Network] Client will receive enemy " << i << " from host\n";
+            }
         }
     }    
 
@@ -297,6 +309,27 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
                         ball->updateWithPlayer(window, dt, p_player);
                     } else {
                         enemy->update(window, dt);
+                    }
+                }
+            }
+
+            if (gameMode != GameMode::SinglePlayer && networkManager) {
+                enemyStateSendAccumulator += dt;
+                if (enemyStateSendAccumulator >= enemyStateSendInterval) {
+                    enemyStateSendAccumulator = 0.f;
+                    
+                    for (auto &enemy : enemies) {
+                        if (enemy && !enemy->shouldDelete()) {
+                            networkManager->sendEnemyState(
+                                enemy->getNetworkId(),
+                                enemy->getPosition(),
+                                enemy->getVelocity(),
+                                !enemy->isDead(),
+                                enemy->getActive(),
+                                enemy->getCurrentSpriteId(), 
+                                enemy->isFaceForward()       
+                            );
+                        }
                     }
                 }
             }
@@ -594,7 +627,24 @@ void mario::pages::LevelsPage::handleNetworkUpdates(float dt) {
                     remoteTargetVel = msg->velocity;
                 }
                 break;
-
+            case NetworkMessage::EnemyState:
+                if (gameMode == GameMode::Client) {
+                    for (auto &enemy : enemies) {
+                        if (enemy && enemy->getNetworkId() == msg->enemyId) {
+                            enemy->syncNetworkState(
+                                msg->enemyPosition, 
+                                msg->enemyVelocity,
+                                msg->isAlive,
+                                msg->isActive,
+                                msg->spriteId,
+                                msg->faceForward,
+                                msg->timestamp
+                            );
+                            break;
+                        }
+                    }
+                }
+                break;
             case NetworkMessage::ItemCollected:
                 handleRemoteItemCollection(msg->itemId, msg->position);
                 break;
