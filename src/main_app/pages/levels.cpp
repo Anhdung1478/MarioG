@@ -16,7 +16,7 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
 
     // Initialize player with the correct character type and state
     p_player = new mario::entity::Player(
-        sf::Vector2f(100, 50), 
+        sf::Vector2f(7500, 50), 
         state.characterType, 
         state.stateType,
         state.level,
@@ -84,7 +84,7 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
                 std::cout << "[Network] Client will receive enemy " << i << " from host\n";
             }
         }
-    }    
+    }
 
     if (!backgroundTexture.loadFromFile("../../asset/maps/MapBackground/map_" + std::to_string(currLevelState.level) + "_background.png")) {
         std::cout << "Failed to load background texture for level " << currLevelState.level << "\n";
@@ -496,6 +496,18 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
             collisionManager.updateCameraBounds(cameraBounds);
 
             // handle collision
+            if(currLevelState.level == 1 && p_player->getPosition().x >= 8180) {
+                p_player->setPosition(sf::Vector2f(8180, p_player->getPosition().y));
+                p_player->enterFortressDoor();
+            }
+            else if(currLevelState.level == 2 && p_player->getPosition().x >= 7540) {
+                p_player->setPosition(sf::Vector2f(7540, p_player->getPosition().y));
+                p_player->enterFortressDoor();
+            }
+            else if(currLevelState.level == 3 && p_player->getPosition().x >= 8340) {
+                p_player->setPosition(sf::Vector2f(8340, p_player->getPosition().y));
+                p_player->enterFortressDoor();
+            }
             collisionManager.checkCollisionEnemyWithBlocks(enemies, blocks);
             collisionManager.checkCollisionPlayerWithEnemies(p_player, enemies);
             collisionManager.checkCollisionPlayerWithItems(p_player, items);

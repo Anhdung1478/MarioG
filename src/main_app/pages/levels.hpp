@@ -40,6 +40,8 @@ namespace mario::pages {
             std::vector<mario::entity::Item*> items;  // Direct item management
             mario::entity::FlagPole* flagPole;
             mario::entity::Item* testItem;
+            sf::IntRect fortressDoor;
+            sf::Vector2f fortressDoorPosition;
 
             // Background
             sf::Texture backgroundTexture;
