@@ -113,13 +113,23 @@ namespace mario::pages {
             void checkItemCollection();
             void checkEnemyDefeats();
             void sendEnemyState();
+
             sf::Vector2f remoteTargetPos = sf::Vector2f(150.f, 400.f);;
             sf::Vector2f remoteTargetVel = sf::Vector2f(0.f, 0.f);;
             
         public:
             LevelsPage(MainWindow &context, mario::resource::LevelState state, 
                         std::shared_ptr<NetworkManager> networkManager = nullptr, GameMode mode = GameMode::SinglePlayer);
+            
             ~LevelsPage();
+
+            void handlePlayerDeath();
+            void cleanUpDeletedObject();
+            void checkForPlayerFinishLevel();
+            void updateCameraLogic(float dt);
+            void updateBlocksEnemiesAndItems(const sf::RenderWindow *window, float dt);
+            void updateRemotePlayerForMultiplayer(const sf::RenderWindow *window, float dt);
+            void checkMenuButtonHoverLogic(const sf::RenderWindow *window);
 
             void update(const sf::RenderWindow *window, float dt) override;
             void handleEvent(const sf::RenderWindow *window, const sf::Event &event) override;

@@ -15,7 +15,7 @@ namespace mario::input { // Command pattern
         public: 
             JumpCommand() {}
             void execute(mario::entity::Player *player, bool isReleased) override {
-                player->jump(isReleased);
+                player->jump(isReleased, true);
             }
     };
 
@@ -24,7 +24,7 @@ namespace mario::input { // Command pattern
             MoveLeftCommand() {}
 
             void execute(mario::entity::Player *player, bool isReleased) override {
-                player->moveLeft(isReleased);
+                player->moveLeft(isReleased, true);
             }
     };
 
@@ -33,14 +33,14 @@ namespace mario::input { // Command pattern
             MoveRightCommand() {}
 
             void execute(mario::entity::Player *player, bool isReleased) override {
-                player->moveRight(isReleased);
+                player->moveRight(isReleased, true);
             }
     };
     
     class FireCommand : public Command {
         public: 
             void execute(mario::entity::Player *player, bool isReleased) override {
-                player->shotFireball(isReleased);
+                player->shotFireball(isReleased, true);
             }
     };
 }
