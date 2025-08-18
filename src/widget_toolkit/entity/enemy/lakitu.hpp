@@ -71,18 +71,23 @@ namespace mario::entity {
 
                 bool moveRight = targetX > currentX;
                 if (distanceToTarget > 1.f) {
-                    body->move(moveRight, false);
+                    if(moveRight) {
+                        body->moveLeft(true);
+                        body->moveRight(false);
+                    } else {
+                        body->moveRight(true);
+                        body->moveLeft(false);
+                    }
+                    // body->move(moveRight, false);
 
                     if (p_animation->isFaceForward() != moveRight) {
                         p_animation->rotate();
                     }
                 }
 
-                // Logic để thả Ball
                 dropCooldown -= dt;
                 if (dropCooldown <= 0.f && currentState == LakituState::Flying) {
-                    // Tạo Ball tại vị trí ngay dưới Lakitu
-                    sf::Vector2f ballPosition = body->getPosition() + sf::Vector2f(0.f, 48.f); // Dưới Lakitu 48 pixel
+                    sf::Vector2f ballPosition = body->getPosition() + sf::Vector2f(0.f, 48.f); 
                     enemies.push_back(new Ball(ballPosition));
                     dropCooldown = DROP_INTERVAL; // Reset cooldown
                 }

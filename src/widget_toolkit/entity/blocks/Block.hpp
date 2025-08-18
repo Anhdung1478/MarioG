@@ -15,7 +15,7 @@ enum SideCollision {
 struct Collision {
     enum class Type {
         Player = 0,
-        InvinciblePlayer = 2,
+        InvinciblePlayer = 1,
         Fireball = 2,
         Wall = 3,
         Brick = 4,
@@ -29,6 +29,7 @@ struct Collision {
     bool isWithFireball() const { return type == Type::Fireball; }
     bool isWithBrick() const { return type == Type::Brick; }
     bool isWithEnemy() const { return type == Type::Enemy; }
+    bool isWithInvinciblePlayer() const { return type == Type::InvinciblePlayer; }
 };
 
 namespace mario::entity {

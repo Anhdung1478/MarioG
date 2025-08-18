@@ -36,18 +36,18 @@ namespace mario::entity {
 
             ~DynamicBox() override = default;
 
-            void move(bool isMoveRight, bool isReleased) override {
-                if(isReleased) {
-                    _isRunningLeft = _isRunningRight = false;
-                    return;
-                }
+            // void move(bool isMoveRight, bool isReleased) override {
+                // if(isReleased) {
+                //     _isRunningLeft = _isRunningRight = false;
+                //     return;
+                // }
 
-                if(isMoveRight) {
-                    _isRunningRight = true;
-                } else {
-                    _isRunningLeft = true;
-                }
-            }
+                // if(isMoveRight) {
+                //     _isRunningRight = true;
+                // } else {
+                //     _isRunningLeft = true;
+                // }
+            // }
 
             void moveLeft(bool isReleased) override {
                 if(isReleased) {

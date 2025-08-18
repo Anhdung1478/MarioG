@@ -48,7 +48,7 @@ namespace mario::entity {
             virtual void setVelocity(sf::Vector2f vel) = 0;
             virtual void setAcceleration(sf::Vector2f acc) = 0;
 
-            virtual void move(bool isMoveRight, bool isReleased) = 0;
+            virtual void move(bool isMoveRight, bool isReleased) {};
             virtual void moveLeft(bool isReleased) = 0;
             virtual void moveRight(bool isReleased) = 0;
             virtual void jump(bool _isReleased) = 0;

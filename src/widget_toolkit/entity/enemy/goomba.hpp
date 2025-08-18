@@ -127,10 +127,16 @@ namespace mario::entity {
                 DynamicBox* body = dynamic_cast<DynamicBox*>(p_body);
                 if(body) {
                     if(side == SideCollision::Left) {
-                        body->move(true, false); // Move right if hit from left
+                        // Move right if hit from left
+                        body->moveLeft(true);
+                        body->moveRight(false);
+                        // body->move(true, false); 
                         body->setIsFaceForward(true);
                     } else if(side == SideCollision::Right) {
-                        body->move(false, false); // Move left if hit from right
+                        // Move left if hit from right
+                        body->moveRight(true);
+                        body->moveLeft(false);
+                        // body->move(false, false); 
                         body->setIsFaceForward(false);
                     }
                     if(p_animation->isFaceForward() != body->isFaceForward()) {
@@ -151,8 +157,20 @@ namespace mario::entity {
                 setActive(true);
                 setIsCheckCollisionWithEnemy(false);
                 setIsCheckCollisionWithPlayer(false);
-            } else if(collision.isWithBrick()) {
-
+            } else if(collision.isWithInvinciblePlayer()) {
+                currentState = GoombaState::DeadSpecial;
+                loadDeadSpecialAnimations();
+                try {
+                    p_animation->setSpriteAnimation(getTypePrefix() + ".dead-special[0]");
+                } catch (const std::out_of_range& e) {
+                    std::cerr << "Error setting sprite: " << getTypePrefix() + ".dead-special[0] - " << e.what() << "\n";
+                }
+                p_animation->setAnimationState(false);
+                verticalVelocity = jumpForce;
+                lastState = GoombaState::DeadSpecial;
+                setActive(true);
+                setIsCheckCollisionWithEnemy(false);
+                setIsCheckCollisionWithPlayer(false);
             } else if(collision.isWithEnemy()) {
                 currentState = GoombaState::DeadSpecial;
                 loadDeadSpecialAnimations();
@@ -168,7 +186,15 @@ namespace mario::entity {
                 setIsCheckCollisionWithEnemy(false);
             }
             else {
-                p_body->move(p_body->isFaceForward(), false); // continue
+                // continue
+                if(p_body->isFaceForward()) {
+                    p_body->moveLeft(true);
+                    p_body->moveRight(false);
+                } else {
+                    p_body->moveRight(true);
+                    p_body->moveLeft(false);
+                }
+                // p_body->move(p_body->isFaceForward(), false); 
             }
         }
 

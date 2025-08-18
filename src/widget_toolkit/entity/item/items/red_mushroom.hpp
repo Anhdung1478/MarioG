@@ -42,7 +42,9 @@ namespace mario::entity {
             : Item(ItemType::RedMushroom, jsonPath, texturePath, scale, spriteID, position, size, velocity) {
                 movementType = MovementType::Walking;
                 emergenceStartPos = position;
-                p_body->move(true, false);
+                p_body->moveLeft(true);
+                p_body->moveRight(false);
+                // fix move function
             }
 
         void onCollect(Entity* collector) override {
