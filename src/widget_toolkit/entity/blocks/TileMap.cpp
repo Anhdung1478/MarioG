@@ -192,7 +192,7 @@ namespace mario::entity {
                         }
                         else if (objName == "starman"){
                             if(objType == "brick"){
-                                // blocks.push_back(new Brick(sf::Vector2f(x, y), sf::Vector2f(16, 16), "brick-block", 4, themeID));
+                                blocks.push_back(new Brick(sf::Vector2f(x, y), sf::Vector2f(16, 16), "brick-block", 4, themeID));
                             }
                             if(objType == "question"){
                                 // blocks.push_back(new QuestionBlock(sf::Vector2f(x, y), sf::Vector2f(16, 16), "question-block[0]", 4, themeID));

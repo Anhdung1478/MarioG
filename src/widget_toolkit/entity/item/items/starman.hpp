@@ -1,6 +1,6 @@
 #pragma once
 #include "../item.hpp"
-#include "../../player.hpp"
+#include "../../player/player.hpp"
 
 namespace mario::entity {
     class Starman : public Item {
@@ -8,7 +8,12 @@ namespace mario::entity {
         Starman(const std::string& jsonPath, const std::string& texturePath, 
                 sf::Vector2f scale, const std::string& spriteID, 
                 sf::Vector2f position, sf::Vector2f size, sf::Vector2f velocity)
-            : Item(ItemType::Starman, jsonPath, texturePath, scale, spriteID, position, size, velocity) {}
+            : Item(ItemType::Starman, jsonPath, texturePath, scale, spriteID, position, size, velocity) {
+                p_animation->addAnimationStep("starman[0]");
+                p_animation->addAnimationStep("starman[1]");
+                p_animation->addAnimationStep("starman[2]");
+                p_animation->setAnimationState(true);
+            }
 
         void onCollect(Entity* collector) override {
             if (Player* player = dynamic_cast<Player*>(collector)) {
@@ -19,7 +24,7 @@ namespace mario::entity {
         void update(const sf::RenderWindow* window, float dt) override {
             if (!isCollected()) {
                 if (p_body) p_body->update(dt); // Might be static, but physics can still apply
-            //     if (p_animation) p_animation->update(window, dt);
+                if (p_animation) p_animation->update(window, dt);
             }
         }
 

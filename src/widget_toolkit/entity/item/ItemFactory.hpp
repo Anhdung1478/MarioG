@@ -4,6 +4,7 @@
 #include "items/fireflower.hpp"
 #include "items/oneup_mushroom.hpp"
 #include "items/red_mushroom.hpp"
+#include "items/starman.hpp"
 #include "item.hpp"
 
 namespace mario::entity {

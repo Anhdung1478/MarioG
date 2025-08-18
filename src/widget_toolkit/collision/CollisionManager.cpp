@@ -182,15 +182,15 @@ namespace mario::entity {
                         ));
                     } 
                     else if(typeOfItem == 4) { // Starman
-                        // items.push_back(new Starman(
-                        //     "../../asset/sprites/starman.json",
-                        //     "../../asset/maps/Image/tiles-8.png",
-                        //     sf::Vector2f(2.5f, 2.5f),
-                        //     "starman[0]",
-                        //     sf::Vector2f(500.f, 500.f),
-                        //     sf::Vector2f(16.f, 16.f),
-                        //     sf::Vector2f(0.f, 0.f)
-                        // ));
+                        items.push_back(new Starman(
+                            "../../asset/sprites/starman.json",
+                            "../../asset/maps/Image/tiles-8.png",
+                            sf::Vector2f(2.5f, 2.5f),
+                            "starman[0]",
+                            sf::Vector2f(block->getPosition().x, block->getPosition().y - block->getSize().y/2.0f),
+                            sf::Vector2f(16.f, 16.f),
+                            sf::Vector2f(0.f, 0.f)
+                        ));
                     } 
                 }
             }
