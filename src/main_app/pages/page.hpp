@@ -2,6 +2,7 @@
 
 #include "../main-window.hpp"
 #include "../../widget_toolkit/interfaces.hpp"
+#include "../../widget_toolkit/networking/GameMode.hpp"
 
 namespace mario {
     class Page : public IScreenElement { // State pattern
@@ -25,6 +26,8 @@ namespace mario {
                 text.setFillColor(sf::Color::White);
                 text.setPosition(sf::Vector2f(int((rectX - textLenX) / 2.0), rectY));
             }
+
+            //virtual GameMode getGameMode() = 0;
             
             bool getPaused() const { return false; }
 

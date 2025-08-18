@@ -8,10 +8,9 @@
 namespace mario::entity {
     
     class Animation : public IScreenElement {
-        private:
+        protected:
             static constexpr float DEFAULT_TIME_BETWEEN_STEP = 0.1f;
             float TIME_BETWEEN_STEP = DEFAULT_TIME_BETWEEN_STEP;
-            float FLICKER_DELAY = 0.1f;
 
             TextureManager& p_textureResource = TextureManager::getInstance();
             std::string currentSpriteId;
@@ -22,11 +21,10 @@ namespace mario::entity {
             bool loop = true;
 
             sf::Time animationTimer;
-            sf::Time flickerTimer;
             
             int step = 0;
             bool _isFaceForward = true;
-            bool _isRunning = true, _isFlicker = false, _isInvisible = false;
+            bool _isRunning = true, _isInvisible = false;
             bool flippedVertical = false;
             
             void setAnimationStep(int x) {
@@ -51,7 +49,7 @@ namespace mario::entity {
                     step = 0;
                     if(!loop) {
                         _isRunning = false;
-                        animationTimer = sf::seconds(0.f);
+                        animationTimer = sf::seconds(TIME_BETWEEN_STEP);
                     }
                 }
             }
@@ -109,7 +107,7 @@ namespace mario::entity {
                 _isRunning = running;
                 if(_isRunning) {
                     setAnimationStep(0);
-                    animationTimer = sf::seconds(0.f);
+                    animationTimer = sf::seconds(TIME_BETWEEN_STEP);
                 }
             }
 
@@ -119,23 +117,6 @@ namespace mario::entity {
 
             std::string getSpriteId() const {
                 return currentSpriteId;
-            }
-
-            void setSpriteVisible(bool isVisible) {
-                if(isVisible) {
-                    p_sprite->setColor(sf::Color(255, 255, 255, 255)); // is visible
-                } else {
-                    p_sprite->setColor(sf::Color(255, 255, 255, 0)); // is invisible
-                }
-            }
-
-            void setFlicker(bool isOn) {
-                _isFlicker = isOn;
-                setSpriteVisible(true);
-            }
-
-            bool isFlicker() const {
-                return _isFlicker;
             }
 
             int getStep() const {
@@ -194,19 +175,10 @@ namespace mario::entity {
 
             void update(const sf::RenderWindow *window, float dt) override {
                 if(_isRunning) {
-                    animationTimer += sf::seconds(dt);
-                    if(animationTimer >= sf::seconds(TIME_BETWEEN_STEP)) {
-                        animationTimer -= sf::seconds(TIME_BETWEEN_STEP);
+                    animationTimer -= sf::seconds(dt);
+                    if(animationTimer <= sf::Time::Zero) {
+                        animationTimer = sf::seconds(TIME_BETWEEN_STEP);
                         performNextAnimation();
-                    }
-                }
-
-                if(_isFlicker) {
-                    flickerTimer += sf::seconds(dt);
-                    if(flickerTimer >= sf::seconds(FLICKER_DELAY)) {
-                        flickerTimer -= sf::seconds(FLICKER_DELAY);
-                        _isInvisible = 1 - _isInvisible;
-                        setSpriteVisible(!_isInvisible);
                     }
                 }
             }
@@ -230,5 +202,12 @@ namespace mario::entity {
                 p_sprite->setScale(scale);
                 flippedVertical = enable;
             }
+
+            virtual void addInvincibleAnimationStep(const std::string &spriteID) {}
+            virtual void setFlicker(bool isOn) {}
+            virtual bool isFlicker() const { return false; }
+            virtual void setInvincible(bool isOn) {}
+            virtual bool isInvincible() const { return false; }
+            virtual int getIDInvincible() const { return 0; }
     };
 }

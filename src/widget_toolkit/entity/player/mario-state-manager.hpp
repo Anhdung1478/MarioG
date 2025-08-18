@@ -71,6 +71,17 @@ namespace mario::entity::player_state {
                 p_animation->setAnimationState(true);
             }
 
+            void setInvincibleWalkAnimation(Animation *p_animation) override {
+                std::string prefixAnimationID = "invincible-" + getCurrentPlayerStateID() + ".";
+                for (int i = 0; i < 8; ++i)
+                    p_animation->addInvincibleAnimationStep(prefixAnimationID + "walk[" + std::to_string(i) + "]");
+                    
+                for (int i = 0; i < 4; ++i)
+                    p_animation->addInvincibleAnimationStep(prefixAnimationID + "idle[" + std::to_string(i) + "]");
+
+                p_animation->setAnimationState(true);
+            }
+
             std::string getCurrentPlayerStateID() const override {
                 return MARIO_TYPE_STR[int(currStateType)];
             }

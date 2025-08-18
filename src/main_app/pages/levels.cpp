@@ -18,7 +18,8 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
     p_player = new mario::entity::Player(
         sf::Vector2f(100, 400), 
         state.characterType, 
-        state.stateType, 
+        state.stateType,
+        state.level,
         context.getSoundManager(), 
         context.getNetworkManager()
     );
@@ -37,7 +38,8 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
             sf::Vector2f(200, 400),  // Different starting position than local player
             state.characterType == mario::entity::CharacterListType::Mario ? 
                 mario::entity::CharacterListType::Luigi : mario::entity::CharacterListType::Mario,
-            state.stateType, 
+            state.stateType,
+            state.level,
             context.getSoundManager(),
             context.getNetworkManager()
         );
@@ -518,7 +520,8 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
 /* ========================================================================================================================================================================== */
 
 void mario::pages::LevelsPage::handleEvent(const sf::RenderWindow *window, const sf::Event &event) {
-    if (const auto key = event.getIf<sf::Event::KeyPressed>(); (key && key->code == sf::Keyboard::Key::Escape && !isSettingsOpen || !_isPaused && event.is<sf::Event::FocusLost>())) {
+    if (const auto key = event.getIf<sf::Event::KeyPressed>(); (key && key->code == sf::Keyboard::Key::Escape && !isSettingsOpen 
+      || !_isPaused && event.is<sf::Event::FocusLost>() && gameMode == GameMode::SinglePlayer)) {
         _isPaused = !_isPaused;
         if(_isPaused) {
             _context->getSoundManager().playSound(mario::event::SoundEvent::GAME_PAUSE);

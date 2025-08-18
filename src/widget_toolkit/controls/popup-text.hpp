@@ -20,7 +20,10 @@ namespace mario {
                     p_font = std::make_unique<sf::Font>(fontPath);
                     p_text = std::make_unique<sf::Text>(*p_font, text, fontSize);
                     p_text->setPosition(spawnPoint);
+
                     p_text->setFillColor(textColor);
+                    p_text->setOutlineThickness(1.f);
+                    p_text->setOutlineColor(sf::Color(29, 49, 59, 255));
                 }
 
             ~PopUpText() override {};

@@ -23,6 +23,8 @@ namespace mario::entity {
                 
                 p_body = new DynamicBox(spawnPoint, FIREBALL_GLOBAL_SIZE, 0.f, 400.f, -200.f, 1);
                 p_body->setVelocity(sf::Vector2f((_isFaceForward ? 1 : -1) * 400.f, 0.f));
+                p_body->setOnGround(false);
+
                 loadRollAnimation();
             }
 
@@ -45,27 +47,28 @@ namespace mario::entity {
             }
 
             void exploding() {
-                if(!_isExploding) {
-                    _isExploding = true;
-                    loadExplodingAnimation();
-                    setVelocity(sf::Vector2f(0.f, 0.f));
-                    p_body->setAcceleration(sf::Vector2f(0.f, 0.f));
+                if(_isExploding)
+                    return;
 
-                    // re pos fireball explosion to middle
-                    sf::Vector2f deltaMove = sf::Vector2f(0.f, 0.f);
-                    sf::Vector2f fireballSize = getFireballSize();
-                    sf::Vector2f fireballExplosionSize = getFireballExplosionSize();
-                    //deltaMove.x = (-fireballSize.x + fireballExplosionSize.y) / 4.f;
-                    deltaMove.y = (-fireballSize.y + fireballExplosionSize.y) / 2.f;
+                _isExploding = true;
+                loadExplodingAnimation();
+                setVelocity(sf::Vector2f(0.f, 0.f));
+                p_body->setAcceleration(sf::Vector2f(0.f, 0.f));
 
-                    sf::Vector2f pos = p_body->getPosition();
-                    pos.x += deltaMove.x, pos.y += deltaMove.y;
-                    p_body->setPosition(pos);
+                // re pos fireball explosion to middle
+                sf::Vector2f deltaMove = sf::Vector2f(0.f, 0.f);
+                sf::Vector2f fireballSize = getFireballSize();
+                sf::Vector2f fireballExplosionSize = getFireballExplosionSize();
+                //deltaMove.x = (-fireballSize.x + fireballExplosionSize.y) / 4.f;
+                deltaMove.y = (-fireballSize.y + fireballExplosionSize.y) / 2.f;
 
-                    pos = p_animation->getPosition();
-                    pos.x += deltaMove.x, pos.y += deltaMove.y;
-                    p_animation->setPosition(pos);
-                }
+                sf::Vector2f pos = p_body->getPosition();
+                pos.x += deltaMove.x, pos.y += deltaMove.y;
+                p_body->setPosition(pos);
+
+                pos = p_animation->getPosition();
+                pos.x += deltaMove.x, pos.y += deltaMove.y;
+                p_animation->setPosition(pos);
             }
             
             void setOnGround(bool isOnGround) {

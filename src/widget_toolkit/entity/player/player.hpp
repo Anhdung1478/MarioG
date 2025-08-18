@@ -1,6 +1,7 @@
 #pragma once
 
 #include<bits/stdc++.h>
+#include "../animation/player_animation.hpp"
 #include "../entity.hpp"
 #include "player-list.hpp"
 #include "../box/dynamic-box.hpp"
@@ -19,6 +20,7 @@ namespace mario::entity {
     static constexpr float ANIMATION_TIME_BETWEEN_STEP_WHEN_TRANSFORM_TO_BIG = 1.f / 10.f;
     static constexpr float ANIMATION_TIME_BETWEEN_STEP_IN_NORMAL_BEHAVIOR = 1.f / 10.f;
     static constexpr float DEFAULT_SHOOTING_DELAY = 0.3f;
+    static constexpr float INVINCIBLE_BEHAVIOR_DELAY_TIME_BETWEEN_SWAPPING_COLOR = 1.f / 20.f;
 
     class Player : public Entity {
         private:
@@ -51,8 +53,9 @@ namespace mario::entity {
             void updatePlayerBehavior(float dt); // update for Player Behavior (some behavior will change when ran out of time)
 
             int _networkPlayerId = -1;
+
         public:
-            Player(sf::Vector2f spawnPoint, CharacterListType characterType, player_state::PlayerStateType stateType, mario::audio::SoundManager& soundManager, NetworkManager& networkManager);
+            Player(sf::Vector2f spawnPoint, CharacterListType characterType, player_state::PlayerStateType stateType, int level, mario::audio::SoundManager& soundManager, NetworkManager& networkManager);
             ~Player() override;
 
             void loadDataFrom(const mario::resource::LevelState &levelState);
@@ -90,6 +93,7 @@ namespace mario::entity {
 
             bool isDead() const;
             bool isShadow() const;
+            bool isInvincible() const;
             bool isTransforming() const;
             bool isInBehavior(PlayerBehavior behavior) const;
             bool canCollisionWithEnemy() const;
