@@ -82,6 +82,16 @@ namespace mario::entity::player_state {
                 p_animation->setAnimationState(true);
             }
 
+            void setEnterFortressAnimation(Animation *p_animation) override {
+                p_animation->clearAnimationStep();
+
+                std::string prefixAnimationID = "enter-fortress-door." + getCurrentPlayerStateID();
+                for (int i = 0; i < 18; ++i)
+                    p_animation->addAnimationStep(prefixAnimationID + "[" + std::to_string(i) + "]");
+
+                p_animation->setAnimationState(true);
+            }
+
             std::string getCurrentPlayerStateID() const override {
                 return MARIO_TYPE_STR[int(currStateType)];
             }

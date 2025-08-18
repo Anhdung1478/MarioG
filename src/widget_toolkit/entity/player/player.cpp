@@ -44,8 +44,8 @@ void mario::entity::Player::loadDataFrom(const mario::resource::LevelState &leve
 
 /* =================================================================================================================================================================== */
 
-void mario::entity::Player::jump(bool isReleased) {
-    if(!_canMove)
+void mario::entity::Player::jump(bool isReleased, bool isCallByCommand) {
+    if(!_canMove && isCallByCommand)
         return;
 
     if (!isReleased && p_body->isOnGround()) {
@@ -57,9 +57,6 @@ void mario::entity::Player::jump(bool isReleased) {
 }
 
 void mario::entity::Player::jumpByANumberOfJumps(bool isReleased, int numJumps) {
-    if(!_canMove)
-        return;
-
     if (!isReleased && p_body->isOnGround()) {
         soundManager.playSound(mario::event::SoundEvent::PLAYER_JUMP); // Phát âm thanh nhảy
         hasPlayedJumpSound_ = true;
@@ -72,15 +69,15 @@ void mario::entity::Player::resetJump() {
     p_body->resetJump();
 }
 
-void mario::entity::Player::moveLeft(bool isReleased) {
-    if(!_canMove)
+void mario::entity::Player::moveLeft(bool isReleased, bool isCallByCommand) {
+    if(!_canMove && isCallByCommand)
         return;
 
     p_body->moveLeft(isReleased);
 }
 
-void mario::entity::Player::moveRight(bool isReleased) {
-    if(!_canMove)
+void mario::entity::Player::moveRight(bool isReleased, bool isCallByCommand) {
+    if(!_canMove && isCallByCommand)
         return;
 
     p_body->moveRight(isReleased);
@@ -90,8 +87,8 @@ void mario::entity::Player::resetMove() {
     p_body->resetMove();
 }
 
-void mario::entity::Player::shotFireball(bool isReleased) {
-    if(!_canMove || isReleased || p_stateManager->getCurrentState() != player_state::PlayerStateType::Fire || shootingDelayTimer > sf::seconds(0.f) || p_fireballList->getNumFireballs() >= 5)
+void mario::entity::Player::shotFireball(bool isReleased, bool isCallByCommand) {
+    if(!_canMove && isCallByCommand || isReleased || p_stateManager->getCurrentState() != player_state::PlayerStateType::Fire || shootingDelayTimer > sf::seconds(0.f) || p_fireballList->getNumFireballs() >= 5)
         return;
 
     timeSinceLastShoot = sf::seconds(0.f);
@@ -172,6 +169,9 @@ void mario::entity::Player::updatePlayerBehavior(float dt) {
 
         if(playerBehavior == PlayerBehavior::Dying)
             changePlayerBehavior(PlayerBehavior::AlreadyDead);
+
+        if(playerBehavior == PlayerBehavior::EnterFortress)
+            changePlayerBehavior(PlayerBehavior::FinishLevel);
     }
 }
 
@@ -180,10 +180,10 @@ void mario::entity::Player::togglePlayerMove(bool canMove) {
         return;
 
     if(!canMove) { // released all Player's button
-        jump(true);
-        moveLeft(true);
-        moveRight(true);
-        shotFireball(true);
+        jump(true, false);
+        moveLeft(true, false);
+        moveRight(true, false);
+        shotFireball(true, false);
     }
     
     _canMove = canMove;
@@ -230,16 +230,29 @@ void mario::entity::Player::changePlayerBehavior(PlayerBehavior newBehavior) {
         p_animation->resetTimeBetweenStepToDefault();
     }
 
+    if(playerBehavior == PlayerBehavior::GoToFortress) {
+        _canCollisionWithEnemy = _canCollisionWithItem = true;
+        togglePlayerMove(true);
+        resetMove();
+        resetJump();
+    }
+
+    if(playerBehavior == PlayerBehavior::EnterFortress) {
+        _canCollisionWithEnemy = _canCollisionWithItem = true;
+        togglePlayerMove(true);
+    }
+
     if(playerBehavior == PlayerBehavior::FinishLevel) {
         _canCollisionWithEnemy = _canCollisionWithItem = true;
         togglePlayerMove(true);
+
     }
 
     if(playerBehavior == PlayerBehavior::Dying) {
         _canCollisionWithEnemy = _canCollisionWithItem = _canCollisionWithBlock = true;
         _isAlive = true;
 
-        p_body->jump(true);
+        resetJump();
         togglePlayerMove(true);
     }
 
@@ -290,6 +303,21 @@ void mario::entity::Player::changePlayerBehavior(PlayerBehavior newBehavior) {
         p_animation->setTimeBetweenStep(0.2f);
     }
 
+    if(newBehavior == PlayerBehavior::GoToFortress) {
+        _canCollisionWithEnemy = _canCollisionWithItem = false;
+        togglePlayerMove(false);
+        
+        p_stateManager->loadCurrentStateAnimation(p_animation, p_body);
+    }
+
+    if(newBehavior == PlayerBehavior::EnterFortress) {
+        _canCollisionWithEnemy = _canCollisionWithItem = false;
+        togglePlayerMove(false);
+
+        behaviorTimer = sf::seconds(3.f);
+        p_stateManager->setEnterFortressAnimation(p_animation);
+    }
+
     if(newBehavior == PlayerBehavior::FinishLevel) {
         _canCollisionWithEnemy = _canCollisionWithItem = false;
         togglePlayerMove(false);
@@ -302,7 +330,7 @@ void mario::entity::Player::changePlayerBehavior(PlayerBehavior newBehavior) {
         
         _isAlive = false;
         togglePlayerMove(false);
-        behaviorTimer = sf::seconds(3);
+        behaviorTimer = sf::seconds(3.f);
         
         p_body->resetJump();
         p_body->resetMove();
@@ -411,21 +439,8 @@ void mario::entity::Player::update(const sf::RenderWindow *window, float dt) {
         }
     }
 
-    if(!_isAlive && playerBehavior == PlayerBehavior::Dying) {
-        // Continue falling animation after death
-        p_body->update(dt);
-        p_animation->update(window, dt);
-        
-        // Let the death animation play out before marking as dead
-        if(behaviorTimer > sf::Time::Zero) {
-            behaviorTimer -= sf::seconds(dt);
-            if(behaviorTimer <= sf::Time::Zero) {
-                changePlayerBehavior(PlayerBehavior::AlreadyDead);
-            }
-        }
-        
-        return;
-    }
+    if(playerBehavior == PlayerBehavior::GoToFortress)
+        moveRight(false, false);
 
     popUpScoreList->update(window, dt);
 
@@ -480,7 +495,11 @@ void mario::entity::Player::finishClimbingBehavior() {
     rotateDirection();
     p_body->setIsFaceForward(!p_body->isFaceForward());
     setPosition(sf::Vector2f(getPosition().x + 40, getPosition().y));
-    changePlayerBehavior(PlayerBehavior::FinishLevel);
+    changePlayerBehavior(PlayerBehavior::GoToFortress);
+}
+
+void mario::entity::Player::enterFortressDoor() {
+    changePlayerBehavior(PlayerBehavior::EnterFortress);
 }
 
 /* =================================================================================================================================================================== */
@@ -514,6 +533,10 @@ bool mario::entity::Player::isShadow() const {
 
 bool mario::entity::Player::isInvincible() const {
     return (playerBehavior == PlayerBehavior::Invincible);
+}
+
+bool mario::entity::Player::isFinishLevel() const {
+    return (playerBehavior == PlayerBehavior::FinishLevel);
 }
 
 bool mario::entity::Player::isTransforming() const {

@@ -64,11 +64,11 @@ namespace mario::entity {
             sf::Vector2f getVelocity() const;
             void setVelocity(sf::Vector2f vel);
             
-            void jump(bool isReleased);
+            void jump(bool isReleased, bool isCallByCommand);
             void jumpByANumberOfJumps(bool isReleased, int numJumps);
-            void moveLeft(bool isReleased);
-            void moveRight(bool isReleased);
-            void shotFireball(bool isReleased);
+            void moveLeft(bool isReleased, bool isCallByCommand);
+            void moveRight(bool isReleased, bool isCallByCommand);
+            void shotFireball(bool isReleased, bool isCallByCommand);
             void resetJump();
             void resetMove();
 
@@ -86,6 +86,8 @@ namespace mario::entity {
 
             void startClimbingBehavior(int flagXPos); // start climbing behavior of Player (Player will climbing from this position of the flag to ground)
             void finishClimbingBehavior();            // finish climbing behavior of Player
+            void enterFortressDoor();                 // start enter fortress behavior of Player
+
 
             void beingHit(); // being hit by enemy or entity like level trap
             void changePlayerBehavior(PlayerBehavior newBehavior); // change Player behavior to newBehavior
@@ -94,6 +96,7 @@ namespace mario::entity {
             bool isDead() const;
             bool isShadow() const;
             bool isInvincible() const;
+            bool isFinishLevel() const;
             bool isTransforming() const;
             bool isInBehavior(PlayerBehavior behavior) const;
             bool canCollisionWithEnemy() const;
