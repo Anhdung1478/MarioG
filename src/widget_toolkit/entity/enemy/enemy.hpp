@@ -16,6 +16,14 @@ namespace mario::entity {
         Piranha
     };
 
+    enum class EnemyType {
+        Goomba,
+        Koopa,
+        Piranha,
+        Lakitu,
+        Ball // released from Lakitu
+    };
+
     class Enemy : public Entity {
     private:
         EnemyBehavior behavior;
@@ -50,9 +58,13 @@ namespace mario::entity {
             if(body) {
                 float currentX = body->getPosition().x;
                 if((currentX < initialPosition.x - patrolRange)) {
-                    body->move(true, false); 
+                    body->moveLeft(true);
+                    body->moveRight(false);
+                    // body->move(true, false);
                 } else if ((currentX > initialPosition.x + patrolRange)) {
-                    body->move(false, false);
+                    body->moveRight(true);
+                    body->moveLeft(false);
+                    // body->move(false, false);
                 }
                 if (p_animation->isFaceForward() == body->isFaceForward()) {
                     p_animation->rotate();
@@ -66,9 +78,17 @@ namespace mario::entity {
                 float distance = std::abs(player->getPosition().x - body->getPosition().x);
                 if(distance <= detectionRange) {
                     bool moveRight = player->getPosition().x > body->getPosition().x;
-                    body->move(moveRight, false);
+                    body->moveLeft(true);
+                    body->moveRight(false);
+                    // body->move(true, false);
                 } else {
-                    body->move(body->isFaceForward(), true); // Stop move if player is go out of the range
+                    // Stop move if player is go out of the range
+                    if(body->isFaceForward()) {
+                        body->moveRight(true);
+                    } else {
+                        body->moveLeft(true);
+                    }
+                    // body->move(body->isFaceForward(), true); 
                 }
 
                 if (p_animation->isFaceForward() == body->isFaceForward()) {

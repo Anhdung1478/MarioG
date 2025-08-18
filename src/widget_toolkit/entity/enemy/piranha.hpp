@@ -168,7 +168,11 @@ namespace mario::entity {
         }
 
         void reactCollision(int side, const Collision& collision) override {
-            // !!!
+            if(collision.isWithInvinciblePlayer()) {
+                setIsCheckCollisionWithEnemy(false);
+                setIsCheckCollisionWithPlayer(false);
+                setShouldDelete(true);
+            }
         }
 
         void update(const sf::RenderWindow* window, float dt) override {
