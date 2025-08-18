@@ -11,6 +11,8 @@ class BackgroundBlock : public Block {
         BackgroundBlock();
         BackgroundBlock(const sf::Vector2f &pos, const sf::Vector2f &size, const std::string &name);
         BackgroundBlock(const sf::Vector2f &pos, const sf::Vector2f &size, const std::string &name, const SpriteData2& sprite);
+        BackgroundBlock(const std::string &imagePath, const sf::Vector2f &pos, const sf::Vector2f &size, const std::string &name, const SpriteData2 &sprite);
+
 
         ~BackgroundBlock();
 

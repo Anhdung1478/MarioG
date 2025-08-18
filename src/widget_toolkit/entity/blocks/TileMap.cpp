@@ -256,6 +256,9 @@ namespace mario::entity {
             blocks.push_back(new SolidBlock("../../asset/maps/Image/Map_1.png", sf::Vector2f(912 + 8, 192 + 48), sf::Vector2f(32, 64), "pipe", {"pipe", 912, 192, 32, 64}));
             blocks.push_back(new SolidBlock("../../asset/maps/Image/Map_1.png", sf::Vector2f(2608 + 8, 224 + 16), sf::Vector2f(32, 32), "pipe", {"pipe", 2608, 224, 32, 32}));
             blocks.push_back(new SolidBlock("../../asset/maps/Image/Map_1.png", sf::Vector2f(2864 + 8, 224 + 16), sf::Vector2f(32, 32), "pipe", {"pipe", 2864, 224, 32, 32}));
+
+            // background
+            backgroundBlocks.push_back(new BackgroundBlock("../../asset/maps/Image/Map_1.png", sf::Vector2f(3232 + 40, 176 + 64), sf::Vector2f(96, 80), "background", {"background", 3233, 176, 94, 80}));
         }
         else if (levelState == 2) {
             // ground
@@ -269,6 +272,9 @@ namespace mario::entity {
             blocks.push_back(new SolidBlock("../../asset/maps/Image/Map_2.png", sf::Vector2f(1648 + 8, 208 + 32), sf::Vector2f(32, 48), "pipe", {"pipe", 1648, 208, 32, 48}));
             blocks.push_back(new SolidBlock("../../asset/maps/Image/Map_2.png", sf::Vector2f(1744 + 8, 192 + 48), sf::Vector2f(32, 64), "pipe", {"pipe", 1744, 192, 32, 64}));
             blocks.push_back(new SolidBlock("../../asset/maps/Image/Map_2.png", sf::Vector2f(1840 + 8, 224 + 16), sf::Vector2f(32, 32), "pipe", {"pipe", 1840, 224, 32, 32}));
+
+            // background
+            backgroundBlocks.push_back(new BackgroundBlock("../../asset/maps/Image/Map_2.png", sf::Vector2f(2960 + 72, 128 + 112), sf::Vector2f(160, 128), "background", {"background", 2960, 128, 160, 128}));
         }
         else if (levelState == 3){
             // ground
@@ -286,6 +292,10 @@ namespace mario::entity {
             blocks.push_back(new SolidBlock("../../asset/maps/Image/Map_3.png", sf::Vector2f(2016 + 8, 208 + 32), sf::Vector2f(32, 48), "pipe", {"pipe", 2016, 208, 32, 48}));
             blocks.push_back(new SolidBlock("../../asset/maps/Image/Map_3.png", sf::Vector2f(2080 + 8, 176 + 64), sf::Vector2f(32, 80), "pipe", {"pipe", 2080, 176, 32, 80}));
             blocks.push_back(new SolidBlock("../../asset/maps/Image/Map_3.png", sf::Vector2f(2816 + 8, 208 + 32), sf::Vector2f(32, 48), "pipe", {"pipe", 2816, 208, 32, 48}));
+
+            // background
+            backgroundBlocks.push_back(new BackgroundBlock("../../asset/maps/Image/Map_3.png", sf::Vector2f(0 + 72, 80 + 160), sf::Vector2f(160, 176), "background", {"background", 0, 80, 160, 176}));
+            backgroundBlocks.push_back(new BackgroundBlock("../../asset/maps/Image/Map_3.png", sf::Vector2f(3264 + 72, 80 + 160), sf::Vector2f(160, 176), "background", {"background", 3264, 80, 160, 176}));
         }
 
         // FlagPole

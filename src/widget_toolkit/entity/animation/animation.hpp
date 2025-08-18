@@ -36,7 +36,9 @@ namespace mario::entity {
             }
 
             void setSprite(const SpriteData &data) {
-                p_sprite->setTexture(*data.texture);
+                if (&p_sprite->getTexture() != data.texture) {
+                    p_sprite->setTexture(*data.texture);
+                }
                 p_sprite->setTextureRect(sf::IntRect({data.x, data.y}, {data.z, data.t}));
                 p_sprite->setOrigin({data.z / 2.f, 1.f * data.t});
             }

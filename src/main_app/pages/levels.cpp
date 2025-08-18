@@ -16,7 +16,7 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
 
     // Initialize player with the correct character type and state
     p_player = new mario::entity::Player(
-        sf::Vector2f(7500, 50), 
+        sf::Vector2f(100, 200), 
         state.characterType, 
         state.stateType,
         state.level,
@@ -654,10 +654,6 @@ void mario::pages::LevelsPage::handleEvent(const sf::RenderWindow *window, const
         for (auto &enemy : enemies) {
             enemy->handleEvent(window, event);
         }
-        for(auto &block : blocks) {
-            block->handleEvent(window, event);
-        }
-        // tileMap->handleEvent(window, event);
     }
 }
 
