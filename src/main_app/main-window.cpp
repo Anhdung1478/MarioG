@@ -13,7 +13,15 @@ mario::MainWindow::MainWindow() {
     //window->setFramerateLimit(fixedFPS);
     isRunning = true;
 
-    p_marioCursor = std::make_unique<sf::Cursor>(sf::Cursor::Type::Arrow);
+    sf::Image marioCursorImage;
+    if(!marioCursorImage.loadFromFile("../../asset/sprites/mario-cursor.png"))
+        throw std::runtime_error("Failed to load texture from file: " + std::string("asset/sprites/mario-cursor.png"));
+
+    sf::Vector2u size = marioCursorImage.getSize();
+    sf::Vector2u hotspot(0, 0);
+
+    p_marioCursor = std::make_unique<sf::Cursor>(marioCursorImage.getPixelsPtr(), size, hotspot);
+    window->setMouseCursor(*p_marioCursor);
 }
 
 mario::MainWindow::~MainWindow() {
