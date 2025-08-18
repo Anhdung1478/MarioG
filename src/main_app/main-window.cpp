@@ -79,12 +79,15 @@ void mario::MainWindow::run() {
             if(event->is<sf::Event::FocusLost>())
                 isFocusOn = false;
 
-            if(content && isFocusOn)
+            if(!isFocusOn && (event->is<sf::Event::KeyPressed>() || event->is<sf::Event::KeyReleased>() || event->is<sf::Event::MouseMoved>() || event->is<sf::Event::MouseLeft>() || event->is<sf::Event::MouseButtonPressed>() || event->is<sf::Event::MouseButtonReleased>()))
+                continue;
+                
+            if(content)
                 content->handleEvent(window, *event); // Pass the event to the current content page
         }
 
         accumulate -= timeStep;
-        if (content && isFocusOn)
+        if (content)
             content->update(window, timeStep.asSeconds());
 
         if(isFocusOn)
