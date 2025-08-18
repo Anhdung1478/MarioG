@@ -190,7 +190,9 @@ namespace mario::entity {
             }
 
             void render(sf::RenderWindow *window) override {
-                window->draw(*p_sprite);
+                if(!_isInvisible) {
+                    window->draw(*p_sprite);
+                }
             }
 
             void renderWithPosition(sf::RenderWindow *window, sf::Vector2f pos) {
@@ -211,5 +213,12 @@ namespace mario::entity {
             virtual void setInvincible(bool isOn) {}
             virtual bool isInvincible() const { return false; }
             virtual int getIDInvincible() const { return 0; }
+            void setVisible(bool visible) {
+                _isInvisible = !visible;
+            }
+
+            bool isVisible() const {
+                return !_isInvisible;
+            }
     };
 }

@@ -122,6 +122,19 @@ namespace mario::entity {
                 lastState = BallState::DeadSpecial;
                 setActive(true);
                 setIsCheckCollisionWithEnemy(false);
+            } else if(collision.isWithInvinciblePlayer()) {
+                currentState = BallState::DeadSpecial;
+                loadDeadSpecialAnimations();
+                try {
+                    p_animation->setSpriteAnimation("ball.dead-special[0]");
+                } catch (const std::out_of_range& e) {
+                    std::cerr << "Error setting sprite: ball.dead-special[0] - " << e.what() << "\n";
+                }
+                p_animation->setAnimationState(false);
+                verticalVelocity = jumpForce;
+                lastState = BallState::DeadSpecial;
+                setActive(true);
+                setIsCheckCollisionWithEnemy(false);
             }
         }
 
@@ -154,7 +167,14 @@ namespace mario::entity {
                 lastState = BallState::Walking;
             } else if(currentState == BallState::Walking && lastState == BallState::Walking) {
                 if(auto body = dynamic_cast<DynamicBox*>(p_body)) {
-                    body->move(moveRight, false);
+                    if(moveRight) {
+                        body->moveLeft(true);
+                        body->moveRight(false);
+                    } else {
+                        body->moveRight(true);
+                        body->moveLeft(false);
+                    }
+                    // body->move(moveRight, false);
                     body->setIsFaceForward(moveRight);
                     
                     if (p_animation->isFaceForward() == moveRight) {

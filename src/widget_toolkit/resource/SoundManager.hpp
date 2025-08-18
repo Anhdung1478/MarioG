@@ -3,7 +3,7 @@
 #include <SFML/Audio.hpp>
 #include <iostream>
 #include <map>
-#include "../event.hpp"
+#include "../event/game-events.hpp"
 
 using namespace std;
 

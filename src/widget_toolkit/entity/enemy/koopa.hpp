@@ -194,13 +194,19 @@ namespace mario::entity {
                 DynamicBox* body = dynamic_cast<DynamicBox*>(p_body);
                 if(body) {
                     if(side == SideCollision::Left) {
-                        body->move(true, false); // Move right if hit from left
+                        // Move right if hit from left
+                        body->moveLeft(true);
+                        body->moveRight(false);
+                        // body->move(true, false); 
                         body->setIsFaceForward(true);
                     }
                     else if(side == SideCollision::Right) {
-                        body->move(false, false); // Move left if hit from right
+                        // Move left if hit from right
+                        body->moveRight(true);
+                        body->moveLeft(false);
+                        // body->move(false, false); 
                         body->setIsFaceForward(false);
-                        //std::cout << "COLLISION: " << body->getVelocity().x << std::endl;
+                        // std::cout << "COLLISION: " << body->getVelocity().x << std::endl;
                     }
                     if(p_animation->isFaceForward() != body->isFaceForward()) {
                         p_animation->rotate();
@@ -220,16 +226,30 @@ namespace mario::entity {
                 setActive(false);
                 setIsCheckCollisionWithEnemy(false);
                 setIsCheckCollisionWithPlayer(false);
-            } else if(collision.isWithBrick()) {
-                DynamicBox* body = dynamic_cast<DynamicBox*>(p_body);
-                if(body) {
-                    body->setVelocity({-body->getVelocity().x, body->getVelocity().y});
-                    if(p_animation->isFaceForward() == body->isFaceForward()) {
-                        p_animation->rotate();
-                    }
+            } else if(collision.isWithInvinciblePlayer()) {
+                currentState = KoopaState::DeadSpecial;
+                loadDeadSpecialAnimations();
+                try {
+                    p_animation->setSpriteAnimation(typePrefix + "dead-special[0]");
+                } catch (const std::out_of_range& e) {
+                    std::cerr << "Error setting sprite: goomba-new.dead-special[0] - " << e.what() << "\n";
                 }
+                p_animation->setAnimationState(false);
+                verticalVelocity = jumpForce;
+                lastState = KoopaState::DeadSpecial;
+                setActive(false);
+                setIsCheckCollisionWithEnemy(false);
+                setIsCheckCollisionWithPlayer(false);
             } else if(p_body->getPosition().x >= initialPosition.x - patrolRange && p_body->getPosition().x <= initialPosition.x + patrolRange){
-                p_body->move(p_body->isFaceForward(), false); // continue
+                // continue
+                if(p_body->isFaceForward()) {
+                    p_body->moveLeft(true);
+                    p_body->moveRight(false);
+                } else {
+                    p_body->moveRight(true);
+                    p_body->moveLeft(false);
+                }
+                // p_body->move(p_body->isFaceForward(), false); 
             } else if (!(collision.isWithWall() && (side == SideCollision::Left || side == SideCollision::Right)) && currentState == KoopaState::Shell && lastState == KoopaState::Shell && checkShell) {
                 float pushSpeed = 1000.f;
                 p_body->setVelocity({p_body->getVelocity().x < 0 ? -pushSpeed : pushSpeed, p_body->getVelocity().y});
