@@ -23,7 +23,7 @@ mario::pages::MainMenuPage::MainMenuPage(mario::MainWindow &context) : Page(cont
     p_levelDataManager = std::make_unique<mario::resource::LevelDataManager>();
     
     p_title = std::make_unique<sf::Text>(*p_marioFont, "Super Mario Bros", 50);
-    rePositionTextToMiddle(*p_title, 1280, 50);
+    rePositionTextToMiddle(*p_title, 1280, 180);
     p_title->setFillColor(sf::Color::White);
 
     p_showMenu = std::make_unique<sf::Text>(*p_marioFont, "Press any key to continue", 17);
@@ -105,6 +105,7 @@ void mario::pages::MainMenuPage::update(const sf::RenderWindow *window, float dt
         p_currButtonList->update(window, dt);
     }
 
+    std::cerr << "IS AUTO SAVE EXIST: " << p_levelDataManager->checkExistAutoSave() << '\n';
     if(p_levelDataManager->checkExistAutoSave() != p_continueButton->isEnabled()) {
         p_continueButton->setEnableState(!p_continueButton->isEnabled());
     }

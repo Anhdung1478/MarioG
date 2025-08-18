@@ -13,7 +13,15 @@ enum SideCollision {
 };
 
 struct Collision {
-    enum class Type { Player, Wall, Fireball, Brick, Enemy };
+    enum class Type {
+        Player = 0,
+        InvinciblePlayer = 2,
+        Fireball = 2,
+        Wall = 3,
+        Brick = 4,
+        Enemy = 5
+    };
+
     Type type;
     Collision(Type t) : type(t) {}
     bool isWithPlayer() const { return type == Type::Player; }

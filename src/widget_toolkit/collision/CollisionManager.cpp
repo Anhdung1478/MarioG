@@ -428,33 +428,43 @@ namespace mario::entity {
             if(player->canCollisionWithEnemy()) {
                 SideCollision side = findCollisionSide(player, enemy);
                 if (side != SideCollision::None) {
-                    enemy->reactCollision(side ^ 1, Collision(Collision::Type::Player));
+                    if(player->isInvincible()) {
+                        enemy->reactCollision(side ^ 1, Collision(Collision::Type::InvinciblePlayer));
+                    } else {
+                        enemy->reactCollision(side ^ 1, Collision(Collision::Type::Player));
+                    }
+
                     if(player->isShadow() && side != SideCollision::Bottom)
                         side = SideCollision::None;
     
+                    bool isPlayerBeingHit = false;
                     switch (side) {
                         case SideCollision::Top:
-                            player->beingHit();
+                            isPlayerBeingHit = true;
                             break;
                         case SideCollision::Bottom:
                             if(enemy->getIsPlayerDeadWhenCollisionT()) {
-                                player->beingHit();
+                                isPlayerBeingHit = true;
                             } else {
                                 player->jumpOnEnemyHead();
                             }
                             break;
                         case SideCollision::Left:
                             if(enemy->getIsPlayerDeadWhenCollisionLF()) {
-                                player->beingHit();
+                                isPlayerBeingHit = true;
                             }
                             break;
                         case SideCollision::Right:
                             if(enemy->getIsPlayerDeadWhenCollisionLF()) {
-                                player->beingHit();
+                                isPlayerBeingHit = true;
                             }
                             break;
                         default:
                             break;
+                    }
+
+                    if(isPlayerBeingHit && !player->isInvincible()) {
+                        player->beingHit();
                     }
 
                     fixPosition(player, enemy, side);

@@ -18,20 +18,25 @@ namespace mario {
 
     class Button : public IScreenElement {
         private:
+            static constexpr float CHOOSING_MUSHROOM_INVISIBLE_TIME = 1.f / 8.f;
+            static constexpr float CHOOSING_MUSHROOM_VISIBLE_TIME = 1.f / 4.f;
             std::unique_ptr<sf::Font> font;
             ButtonState state;
 
         public:
             static sf::Texture *p_texture;
-            sf::Sprite *p_sprite;
+            sf::Sprite *p_leftMushroomSprite, *p_rightMushroomSprite;
 
             std::string buttonText;
             sf::FloatRect buttonRect;
             ButtonListNode *p_nodeOnButton;
 
             eventpp::CallbackList<void()> Click;
+            sf::Time mushroomFlickerTimer;
+            
             int fontSize;
             bool enabled = true, selected = false;
+            bool isChoosingMushroomAppearing = true;
 
             // New Constructor: add by vql
             Button(sf::Font& fontRef, const std::string& buttText)
@@ -42,9 +47,17 @@ namespace mario {
 
             Button(std::string buttText = "") : fontSize(20), enabled(true), selected(false), buttonText(buttText) {
                 font = std::make_unique<sf::Font>("../../asset/fonts/SuperMario256.ttf");
-                p_sprite = new sf::Sprite(*p_texture);
-                p_sprite->setOrigin(sf::Vector2f(p_sprite->getGlobalBounds().size.x, p_sprite->getGlobalBounds().size.y / 2.f));
-                p_sprite->setScale(sf::Vector2f(0.05f, 0.05f));
+                p_leftMushroomSprite = new sf::Sprite(*p_texture);
+                p_rightMushroomSprite = new sf::Sprite(*p_texture);
+
+                p_leftMushroomSprite->setOrigin(sf::Vector2f(p_leftMushroomSprite->getLocalBounds().size.x / 2.f, p_leftMushroomSprite->getLocalBounds().size.y / 2.f));
+                p_leftMushroomSprite->setScale(sf::Vector2f(0.05f, 0.05f));
+                p_leftMushroomSprite->setRotation(sf::degrees(-90));
+
+                p_rightMushroomSprite->setOrigin(sf::Vector2f(p_rightMushroomSprite->getLocalBounds().size.x / 2.f, p_rightMushroomSprite->getLocalBounds().size.y / 2.f));
+                p_rightMushroomSprite->setScale(sf::Vector2f(0.05f, 0.05f));
+                p_rightMushroomSprite->setRotation(sf::degrees(-90));
+
                 p_nodeOnButton = nullptr;
             }
 
@@ -59,11 +72,18 @@ namespace mario {
             }
 
             ~Button() {
-                delete p_sprite;
+                delete p_leftMushroomSprite;
+                delete p_rightMushroomSprite;
             }
             
             void update(const sf::RenderWindow *window, float dt) override {
                 handleMouseInput(window);
+            
+                mushroomFlickerTimer -= sf::seconds(dt);
+                if(mushroomFlickerTimer <= sf::Time::Zero) {
+                    mushroomFlickerTimer = (isChoosingMushroomAppearing) ? sf::seconds(CHOOSING_MUSHROOM_INVISIBLE_TIME) : sf::seconds(CHOOSING_MUSHROOM_VISIBLE_TIME);
+                    isChoosingMushroomAppearing = 1 - isChoosingMushroomAppearing;
+                }
             }
 
             virtual void handleMouseInput(const sf::RenderWindow *window) {
@@ -103,32 +123,33 @@ namespace mario {
                     buttonColor = sf::Color(128, 128, 128, 128);
                 } else {
                     buttonColor = (state == ButtonState::Pressed) ? sf::Color::Green : 
-                        ((state == ButtonState::Hover) ? sf::Color::Yellow : sf::Color(49, 139, 23, 255));
+                        ((state == ButtonState::Hover) ? sf::Color(173, 255, 205, 255) : sf::Color(49, 139, 23, 255));
                 }
 
                 drawRoundedRectangle(window, buttonRect, buttonColor);
+                if(enabled && selected && isChoosingMushroomAppearing) {
+                    int mushroomXSize = p_leftMushroomSprite->getGlobalBounds().size.x;
+                    sf::Vector2f leftPos(buttonRect.position.x - mushroomXSize / 2.f, buttonRect.position.y + buttonRect.size.y / 2.f);
+                    sf::Vector2f rightPos(buttonRect.position.x + buttonRect.size.x + mushroomXSize / 2.f, buttonRect.position.y + buttonRect.size.y / 2.f);
 
-                if(enabled && selected) {
-                    /*sf::ConvexShape triangle;
-                    triangle.setPointCount(3); // A triangle has 3 points
-
-                    // Define the positions of the three vertices
-                    triangle.setPoint(0, sf::Vector2f(buttonRect.position.x - 30, buttonRect.position.y + 4));
-                    triangle.setPoint(1, sf::Vector2f(buttonRect.position.x - 20, buttonRect.position.y + buttonRect.size.y / 2.f));
-                    triangle.setPoint(2, sf::Vector2f(buttonRect.position.x - 30, buttonRect.position.y - 4 + buttonRect.size.y));
-
-                    triangle.setFillColor(sf::Color::White); // Set fill color
-                    window->draw(triangle);*/
-
-                    p_sprite->setPosition(sf::Vector2f(buttonRect.position.x, buttonRect.position.y + buttonRect.size.y / 2.f));
-                    window->draw(*p_sprite);
+                    p_leftMushroomSprite->setPosition(leftPos);
+                    p_rightMushroomSprite->setPosition(rightPos);
+                    window->draw(*p_leftMushroomSprite);
+                    window->draw(*p_rightMushroomSprite);
                 }
 
                 sf::Text text(*font, buttonText, fontSize);
                 float textLenX = text.getGlobalBounds().size.x;
                 float textLenY = text.getGlobalBounds().size.y;
 
-                text.setFillColor(sf::Color(239, 139, 54, 255));
+                sf::Color textColor;
+                if(state == ButtonState::Hover) {
+                    textColor = sf::Color(84, 40, 38, 255);
+                } else {
+                    textColor = (state == ButtonState::Inactive) ? sf::Color(243, 246, 251, 98) : sf::Color(239, 139, 54, 255);
+                }
+                
+                text.setFillColor(textColor);
                 text.setPosition(sf::Vector2f(int(buttonRect.position.x + (buttonRect.size.x - textLenX) / 2.f), int(buttonRect.position.y - 4 + (buttonRect.size.y - textLenY) / 2.f)));
                 window->draw(text); 
             }
