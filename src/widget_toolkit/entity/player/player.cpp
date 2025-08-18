@@ -512,6 +512,10 @@ bool mario::entity::Player::isShadow() const {
     return (playerBehavior == PlayerBehavior::Shadow);
 }
 
+bool mario::entity::Player::isInvincible() const {
+    return (playerBehavior == PlayerBehavior::Invincible);
+}
+
 bool mario::entity::Player::isTransforming() const {
     return _isTransforming;
 }

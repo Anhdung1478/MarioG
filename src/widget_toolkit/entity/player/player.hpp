@@ -53,7 +53,7 @@ namespace mario::entity {
             void updatePlayerBehavior(float dt); // update for Player Behavior (some behavior will change when ran out of time)
 
             int _networkPlayerId = -1;
-            
+
         public:
             Player(sf::Vector2f spawnPoint, CharacterListType characterType, player_state::PlayerStateType stateType, int level, mario::audio::SoundManager& soundManager, NetworkManager& networkManager);
             ~Player() override;
@@ -93,6 +93,7 @@ namespace mario::entity {
 
             bool isDead() const;
             bool isShadow() const;
+            bool isInvincible() const;
             bool isTransforming() const;
             bool isInBehavior(PlayerBehavior behavior) const;
             bool canCollisionWithEnemy() const;
