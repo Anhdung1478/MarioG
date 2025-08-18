@@ -106,6 +106,7 @@ void mario::pages::MainMenuPage::update(const sf::RenderWindow *window, float dt
     }
 
     std::cerr << "IS AUTO SAVE EXIST: " << p_levelDataManager->checkExistAutoSave() << '\n';
+    std::cerr << "Current path: " << std::filesystem::current_path() << '\n';
     if(p_levelDataManager->checkExistAutoSave() != p_continueButton->isEnabled()) {
         p_continueButton->setEnableState(!p_continueButton->isEnabled());
     }

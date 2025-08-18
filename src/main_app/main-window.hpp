@@ -18,13 +18,17 @@ namespace mario {
 
     class MainWindow : public IRenderable {
         private:
-            sf::RenderWindow *window;
-            std::shared_ptr<Page> content, content_to;
-            std::function<void()> _deferredStateChange = nullptr;
             const int fixedFPS = DEFAULT_FPS;
             const int initScreenWidth = DEFAULT_WIN_WIDTH, initScreenHeight = DEFAULT_WIN_HEIGHT;
             const std::string title = "Mario Visualization";
             const sf::Time timeStep = sf::seconds(1.0f / fixedFPS);
+
+            sf::RenderWindow *window;
+            std::shared_ptr<Page> content, content_to;
+            std::function<void()> _deferredStateChange = nullptr;
+
+            std::unique_ptr<sf::Cursor> p_marioCursor;
+
             sf::Clock clock;
             bool isRunning = true, isFocusOn = true;
             
@@ -35,6 +39,7 @@ namespace mario {
             NetworkManager networkManager;
             
         public:
+            MainWindow();
             ~MainWindow() override;
             void changePage(std::shared_ptr<Page> to);
             void render(sf::RenderWindow *window) override;

@@ -76,7 +76,7 @@ namespace mario::pages {
                 _statusText->setFillColor(sf::Color::Yellow);
                 
                 auto networkManager = std::make_shared<NetworkManager>();
-                if (networkManager->connectToServer("192.168.1.14", 54000)) {
+                if (networkManager->connectToServer("192.168.1.2", 54000)) {
                     _statusText->setString("Connected successfully!");
                     
                     mario::resource::LevelState levelState(

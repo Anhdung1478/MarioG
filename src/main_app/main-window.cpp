@@ -5,6 +5,17 @@
 #include "pages/levels.hpp"
 #include "pages/mode-select.hpp"
 
+mario::MainWindow::MainWindow() {
+    sf::ContextSettings settings;
+    settings.antiAliasingLevel = 4.0f;
+
+    window = new sf::RenderWindow(sf::VideoMode(sf::Vector2u(initScreenWidth, initScreenHeight)), title, sf::Style::Default, sf::State::Windowed, settings);
+    //window->setFramerateLimit(fixedFPS);
+    isRunning = true;
+
+    p_marioCursor = std::make_unique<sf::Cursor>(sf::Cursor::Type::Arrow);
+}
+
 mario::MainWindow::~MainWindow() {
 }
 
@@ -46,14 +57,7 @@ NetworkManager& mario::MainWindow::getNetworkManager() {
 }
 
 void mario::MainWindow::run() {
-    sf::ContextSettings settings;
-    settings.antiAliasingLevel = 0.0f;
-
-    window = new sf::RenderWindow(sf::VideoMode(sf::Vector2u(initScreenWidth, initScreenHeight)), title, sf::Style::Default, sf::State::Windowed, settings);
-    //window->setFramerateLimit(fixedFPS);
-
     changePage(std::make_shared<pages::ModeSelectPage>(*this)); // Initialize with ModeSelectPage
-    isRunning = true;
 
     sf::Time accumulate = sf::seconds(0);
     while (isRunning) {
@@ -79,10 +83,7 @@ void mario::MainWindow::run() {
             if(event->is<sf::Event::FocusLost>())
                 isFocusOn = false;
 
-            if(!isFocusOn && (event->is<sf::Event::KeyPressed>() || event->is<sf::Event::KeyReleased>() || event->is<sf::Event::MouseMoved>() || event->is<sf::Event::MouseLeft>() || event->is<sf::Event::MouseButtonPressed>() || event->is<sf::Event::MouseButtonReleased>()))
-                continue;
-                
-            if(content)
+            if(content && isFocusOn)
                 content->handleEvent(window, *event); // Pass the event to the current content page
         }
 
@@ -90,9 +91,7 @@ void mario::MainWindow::run() {
         if (content)
             content->update(window, timeStep.asSeconds());
 
-        if(isFocusOn)
-            render(window);
-        
+        render(window);
         if(_deferredStateChange) {
             _deferredStateChange();
             _deferredStateChange = nullptr;

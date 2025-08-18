@@ -13,7 +13,23 @@ void mario::resource::LevelDataManager::update(float dt, LevelState levelData) {
 }
 
 bool mario::resource::LevelDataManager::checkExistAutoSave() {
-    return (fopen(defaultAutoSaveFilePath.c_str(), "r"));
+    std::filesystem::path p = defaultAutoSaveFilePath;
+
+    // Avoid exceptions: use the error_code overload
+    std::error_code ec;
+    bool exists = std::filesystem::exists(p, ec);
+    bool is_file = std::filesystem::is_regular_file(p, ec);
+
+    if (!ec && exists && is_file) {
+        std::cerr << "File exists.\n";
+        return true;
+    } else if (ec) {
+        std::cerr << "Error checking file: " << ec.message() << "\n";
+    } else {
+        std::cerr << "File does not exist (or is not a regular file).\n";
+    }
+
+    return false;
 }
 
 void mario::resource::LevelDataManager::autoSave(LevelState levelData) {
