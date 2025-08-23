@@ -33,6 +33,8 @@ namespace mario::entity {
         float bouncingTimer = 0.0f;
         float bouncingDistance = 0.0f;
         void bouncingAnimation(float dt);
+
+        void changeToEmptyBlock();
     };
 
 } // namespace mario::entity
