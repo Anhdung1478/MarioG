@@ -96,8 +96,11 @@ void mario::MainWindow::run() {
         }
 
         accumulate -= timeStep;
-        if (content)
+        if (content) {
             content->update(window, timeStep.asSeconds());
+            content->updateCamera(timeStep.asSeconds());
+            content->applyCameraTo(*window);
+        }
 
         render(window);
         if(_deferredStateChange) {
