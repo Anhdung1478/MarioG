@@ -7,7 +7,8 @@ namespace mario::entity {
         : numberOfCoins(1), Block(pos, size, name), typeOfItem(_typeOfItem), themeID(_themeID) 
     {
         InitSpritesSheet();
-        p_animation = new mario::entity::Animation("../../asset/maps/Image/tiles-8.png", BLOCK_SCALE, sprites);
+        // p_animation = new mario::entity::Animation("../../asset/maps/Image/tiles-8.png", BLOCK_SCALE, sprites);
+        p_animation = new mario::entity::Animation("../../asset/maps/blocks/question.png", BLOCK_SCALE, sprites);
         p_animation->addAnimationStep("question-block[0]");
         p_animation->addAnimationStep("question-block[1]");
         p_animation->addAnimationStep("question-block[2]");
@@ -39,12 +40,9 @@ namespace mario::entity {
 
     void QuestionBlock::InitSpritesSheet(){
         sprites = {
-            {"question-block[0]", 1, 52, 16, 16},
-            {"question-block[1]", 18, 52, 16, 16},
-            {"question-block[2]", 35, 52, 16, 16},
-            {"empty-question-block[0]", 1, 69, 16, 16},
-            {"empty-question-block[1]", 35, 69, 16, 16},
-            {"empty-question-block[2]", 69, 69, 16, 16}
+            {"question-block[0]", 0, 0, 16, 16},
+            {"question-block[1]", 17, 0, 16, 16},
+            {"question-block[2]", 34, 0, 16, 16}
         };
         // coins_animation = new mario::entity::Animation("../../asset/maps/Image/items-coins.png", BLOCK_SCALE, {
         //     {"coin[0]", 12, 74, 2, 14},
@@ -57,17 +55,40 @@ namespace mario::entity {
         //     {"coin[7]", 150, 74, 20, 15},
         //     {"coin[8]", 172, 76, 18, 11}
         // });
-        coins_animation = new mario::entity::Animation("../../asset/maps/Image/items-coins.png", BLOCK_SCALE, {
-            {"coin[0]", 3, 73, 20, 16},
-            {"coin[1]", 24, 73, 20, 16},
-            {"coin[2]", 45, 73, 20, 16},
-            {"coin[3]", 66, 73, 20, 16},
-            {"coin[4]", 87, 73, 20, 16},
-            {"coin[5]", 108, 73, 20, 16},
-            {"coin[6]", 129, 73, 20, 16},
-            {"coin[7]", 150, 73, 20, 16},
-            {"coin[8]", 171, 73, 20, 16}
+        // coins_animation = new mario::entity::Animation("../../asset/maps/Image/items-coins.png", BLOCK_SCALE, {
+        //     {"coin[0]", 3, 73, 20, 16},
+        //     {"coin[1]", 24, 73, 20, 16},
+        //     {"coin[2]", 45, 73, 20, 16},
+        //     {"coin[3]", 66, 73, 20, 16},
+        //     {"coin[4]", 87, 73, 20, 16},
+        //     {"coin[5]", 108, 73, 20, 16},
+        //     {"coin[6]", 129, 73, 20, 16},
+        //     {"coin[7]", 150, 73, 20, 16},
+        //     {"coin[8]", 171, 73, 20, 16}
+        // });
+        coins_animation = new mario::entity::Animation("../../asset/maps/items/coin_effect.png", BLOCK_SCALE, {
+            {"coin[0]", 0, 0, 20, 16},
+            {"coin[1]", 21, 0, 20, 16},
+            {"coin[2]", 42, 0, 20, 16},
+            {"coin[3]", 63, 0, 20, 16},
+            {"coin[4]", 84, 0, 20, 16},
+            {"coin[5]", 105, 0, 20, 16},
+            {"coin[6]", 126, 0, 20, 16},
+            {"coin[7]", 147, 0, 20, 16},
+            {"coin[8]", 168, 0, 20, 16}
         });
+    }
+
+    void QuestionBlock::changeToEmptyBlock() {
+        delete p_animation;
+        name = "empty_block_" + std::to_string(themeID + 1) + ".png";
+        p_animation = new mario::entity::Animation(
+            "../../asset/maps/blocks/empty_block_" + std::to_string(themeID + 1) + ".png", 
+            BLOCK_SCALE, 
+            {"empty_block_" + std::to_string(themeID + 1) + ".png", 0, 0, 16, 16}
+        );
+        // p_animation->setSpriteAnimation(name);
+        p_animation->setAnimationState(false);
     }
 
     int QuestionBlock::reactToCollision(int side, Player* player) {
@@ -88,19 +109,19 @@ namespace mario::entity {
 
             if(numberOfCoins == 0){
                 p_animation->setAnimationState(false);
-                p_animation->setSpriteAnimation("empty-question-block[" + std::to_string(themeID) + "]");
+                changeToEmptyBlock();
             }
             player->collectCoinInBlock();
         }
         else if (typeOfItem == 1) { // Red-mushroom or Fire-flower
             if (player->getPlayerStateType() == player_state::PlayerStateType::Small) {// Spawn Red mushroom
                 p_animation->setAnimationState(false);
-                p_animation->setSpriteAnimation("empty-question-block[" + std::to_string(themeID) + "]");
+                changeToEmptyBlock();
                 typeOfItem = -1; // Mark as empty
                 return 1; 
             } else {// Spawn Fire flower
                 p_animation->setAnimationState(false);
-                p_animation->setSpriteAnimation("empty-question-block[" + std::to_string(themeID) + "]");
+                changeToEmptyBlock();
                 typeOfItem = -1; // Mark as empty
                 return 2;
             }
@@ -108,7 +129,7 @@ namespace mario::entity {
         }
         else if (typeOfItem == 3) {// Spawn one-up mushroom
             p_animation->setAnimationState(false);
-            p_animation->setSpriteAnimation("empty-question-block[" + std::to_string(themeID) + "]");
+            changeToEmptyBlock();
             typeOfItem = -1; // Mark as empty
             return 3;
         }

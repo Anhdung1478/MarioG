@@ -25,9 +25,11 @@ namespace mario::entity {
         int numberOfCoins = 0;
         mario::entity::Animation *coins_animation;
         std::vector<SpriteData2> sprites;
+        sf::Texture textureFragments;
 
         std::vector<mario::entity::BrickFragment> fragments;
         void createFragments();
+        void changeToEmptyBlock();
 
         sf::Vector2f originalPosition;
         bool isBouncing = false;
@@ -46,7 +48,7 @@ struct mario::entity::BrickFragment {
     float rotationSpeed;
 
     BrickFragment() = default;
-    BrickFragment(const sf::Vector2f& position, const sf::Texture& texture, sf::IntRect textureRect)
+    BrickFragment(const sf::Vector2f& position, sf::Texture& texture, sf::IntRect textureRect)
         : sprite(texture) {
         sprite.setTextureRect(textureRect);
 

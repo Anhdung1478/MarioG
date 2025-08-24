@@ -8,6 +8,7 @@
 #include "../widget_toolkit/resource/SoundManager.hpp"
 #include "../widget_toolkit/entity/player/player.hpp"
 #include "../widget_toolkit/networking/NetworkManager.hpp"
+#include "../widget_toolkit/camera/camera.hpp"
 
 #define DEFAULT_FPS 60
 #define DEFAULT_WIN_WIDTH 1280

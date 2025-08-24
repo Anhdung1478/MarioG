@@ -49,8 +49,7 @@ namespace mario::pages {
 
             mario::entity::Block* testBlock;
             mario::entity::FireWorks* testFireWorks;
-      
-            Camera camera;
+
             mario::entity::Player *p_player;
             mario::entity::CollisionManager collisionManager;
 

@@ -6,6 +6,7 @@
 
 class Camera {
 private:
+    static constexpr sf::Vector2u DEFAULT_WINDOW_SIZE = sf::Vector2u(1280, 720);
     sf::View view;
     sf::Vector2u windowSize;
     sf::Vector2f targetPosition;
@@ -16,14 +17,21 @@ private:
     bool hasMapBounds;
     float cornerThreshold;
     bool isInCornerMode;
+    bool isFollowingEntity;
 
 public:
-    Camera(sf::Vector2u windowSize)
+
+    Camera(sf::Vector2u windowSize = DEFAULT_WINDOW_SIZE)
         : windowSize(windowSize), smoothFactor(5.0f), hasBounds(false), hasMapBounds(false),
           cornerThreshold(100.0f), isInCornerMode(false) {
         view.setSize(sf::Vector2f(static_cast<float>(windowSize.x), static_cast<float>(windowSize.y)));
         view.setCenter(sf::Vector2f(static_cast<float>(windowSize.x) / 2.0f, static_cast<float>(windowSize.y) / 2.0f));
         targetPosition = view.getCenter();
+        isFollowingEntity = true;
+    }
+
+    Camera(const Camera &other_camera) : Camera(other_camera.windowSize) {
+
     }
 
     void setTarget(const sf::Vector2f& target) {
@@ -41,6 +49,9 @@ public:
     }
 
     void update(float deltaTime) {
+        if(!isFollowingEntity)
+            return;
+
         sf::Vector2f currentPos = view.getCenter();
         sf::Vector2f difference = targetPosition - currentPos;
         sf::Vector2f newPosition = currentPos + difference * smoothFactor * deltaTime;
@@ -164,6 +175,7 @@ public:
     template<typename PlayerType>
     void followPlayer(const PlayerType& player, float deltaTime) {
         followEntity(player, deltaTime);
+        isFollowingEntity = true;
     }
 
     /*
@@ -292,6 +304,7 @@ public:
             desired.y = std::max(mapBounds.position.y + halfH,
                                 std::min(mapBounds.position.y + mapBounds.size.y - halfH, desired.y));
         }
+
         setTarget(position);
         update(deltaTime);
     }
@@ -331,11 +344,13 @@ public:
     }
 
     void resetToDefaultView() {
-        view.setSize(static_cast<sf::Vector2f>(windowSize));
-        view.setCenter(static_cast<sf::Vector2f>(windowSize) / 2.f);
+        view.setSize(static_cast<sf::Vector2f>(DEFAULT_WINDOW_SIZE));
+        view.setCenter(static_cast<sf::Vector2f>(DEFAULT_WINDOW_SIZE) / 2.f);
         targetPosition = view.getCenter();
         removeBounds();
         removeMapBounds();
         isInCornerMode = false;
+        isFollowingEntity = false;
+        std::cerr << "AFTER SET CENTER:" << view.getSize().x << ' ' << view.getSize().y << ' ' << view.getCenter().x << ' ' << view.getCenter().y << '\n';
     }
 };

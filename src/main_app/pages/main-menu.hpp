@@ -31,6 +31,9 @@ namespace mario::pages {
             std::function<void()> _deferredStateChange;
             bool _isMenuVisible = false;
 
+            std::unique_ptr<sf::Texture> p_backgroundTexture;
+            std::unique_ptr<sf::Sprite> p_backgroundSprite;
+
         public:
             MainMenuPage(MainWindow &context);
 

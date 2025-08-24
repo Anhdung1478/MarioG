@@ -10,6 +10,7 @@ namespace mario::pages {
         private:
             std::unique_ptr<sf::Font> marioFont;
             std::unique_ptr<sf::Text> gameOverText;
+            std::unique_ptr<mario::resource::LevelDataManager> p_levelDataManager;
 
             sf::Time delayTimeBeforeBackToMainMenu;
 
