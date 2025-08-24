@@ -32,6 +32,22 @@ bool mario::resource::LevelDataManager::checkExistAutoSave() {
     return false;
 }
 
+void mario::resource::LevelDataManager::deleteAutoSaveFile() {
+    if(!checkExistAutoSave())
+        return;
+
+    // Remove the auto-save files
+    int status = std::remove(defaultAutoSaveFilePath.c_str());
+
+    // Check if the file has been successfully removed
+    if (status != 0) {
+        perror("Error deleting file");
+    }
+    else {
+        std::cout << "File successfully deleted" << '\n';
+    }
+}
+
 void mario::resource::LevelDataManager::autoSave(LevelState levelData) {
     saveLevelDataIntoFile(levelData, defaultAutoSaveFilePath);
 }

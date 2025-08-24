@@ -8,9 +8,12 @@ namespace mario {
     class Page : public IScreenElement { // State pattern
         protected:
             MainWindow *_context;
+            std::unique_ptr<Camera> p_camera;
         
         public:
-            Page(MainWindow &context) : _context(&context) { }
+            Page(MainWindow &context, sf::Vector2u cameraBounds = sf::Vector2u(1280, 720)) : _context(&context) {
+                p_camera = std::make_unique<Camera>(cameraBounds);
+            }
             
             void setContext(MainWindow *context) { _context = context; }
 
@@ -31,6 +34,8 @@ namespace mario {
             
             bool getPaused() const { return false; }
 
-            virtual ~Page() { }
+            virtual ~Page() { 
+                p_camera->resetToDefaultView();
+            }
     };
 }

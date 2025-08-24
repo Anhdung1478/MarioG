@@ -11,6 +11,9 @@ mario::pages::GameOverPage::GameOverPage(MainWindow &context) : Page(context) {
     sf::Vector2f textSize = gameOverText->getGlobalBounds().size;
     sf::Vector2f windowSize = _context->getWindowSize();
     gameOverText->setPosition(sf::Vector2f((windowSize.x - textSize.x) / 2.f, (windowSize.y - textSize.y) / 2.f));
+
+    p_levelDataManager = std::make_unique<mario::resource::LevelDataManager>();
+    p_levelDataManager->deleteAutoSaveFile();
 }
 
 mario::pages::GameOverPage::~GameOverPage() {

@@ -6,6 +6,7 @@
 
 class Camera {
 private:
+    static constexpr sf::Vector2u DEFAULT_WINDOW_SIZE = sf::Vector2u(1280, 720);
     sf::View view;
     sf::Vector2u windowSize;
     sf::Vector2f targetPosition;
@@ -18,12 +19,17 @@ private:
     bool isInCornerMode;
 
 public:
-    Camera(sf::Vector2u windowSize)
+
+    Camera(sf::Vector2u windowSize = DEFAULT_WINDOW_SIZE)
         : windowSize(windowSize), smoothFactor(5.0f), hasBounds(false), hasMapBounds(false),
           cornerThreshold(100.0f), isInCornerMode(false) {
         view.setSize(sf::Vector2f(static_cast<float>(windowSize.x), static_cast<float>(windowSize.y)));
         view.setCenter(sf::Vector2f(static_cast<float>(windowSize.x) / 2.0f, static_cast<float>(windowSize.y) / 2.0f));
         targetPosition = view.getCenter();
+    }
+
+    Camera(const Camera &other_camera) : Camera(other_camera.windowSize) {
+
     }
 
     void setTarget(const sf::Vector2f& target) {
@@ -331,8 +337,8 @@ public:
     }
 
     void resetToDefaultView() {
-        view.setSize(static_cast<sf::Vector2f>(windowSize));
-        view.setCenter(static_cast<sf::Vector2f>(windowSize) / 2.f);
+        view.setSize(static_cast<sf::Vector2f>(DEFAULT_WINDOW_SIZE));
+        view.setCenter(static_cast<sf::Vector2f>(DEFAULT_WINDOW_SIZE) / 2.f);
         targetPosition = view.getCenter();
         removeBounds();
         removeMapBounds();
