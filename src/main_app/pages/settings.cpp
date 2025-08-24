@@ -66,7 +66,6 @@ SettingsPage::SettingsPage(MainWindow& context) : Page(context) {
     sf::Vector2f leftSize = leftPanel->getSize();
     sf::Vector2f leftCenter = leftPos + leftSize / 2.f;
 
-    // Music Slider (trên, lệch lên 50px so với tâm)
     musicSlider = std::make_unique<Slider>(
         std::make_unique<sf::Texture>(*sliderBarTexture),
         std::make_unique<sf::Texture>(*sliderHandleTexture),
@@ -78,7 +77,10 @@ SettingsPage::SettingsPage(MainWindow& context) : Page(context) {
         _context->getSoundManager().getMusicVolume()
     );
 
-    // SFX Slider (dưới, lệch xuống 50px so với tâm)
+    musicSlider->setOnValueChanged([this](float value) {
+        _context->getSoundManager().adjustBackgroundMusicVolume(value);
+    });
+
     sfxSlider = std::make_unique<Slider>(
         std::make_unique<sf::Texture>(*sliderBarTexture),
         std::make_unique<sf::Texture>(*sliderHandleTexture),
@@ -90,6 +92,10 @@ SettingsPage::SettingsPage(MainWindow& context) : Page(context) {
         _context->getSoundManager().getSoundVolume()
     );
 
+    sfxSlider->setOnValueChanged([this](float value) {
+        _context->getSoundManager().adjustSoundEffectsVolume(value);
+    });
+    
     // Back Button (as sprite)
     backTexture = std::make_unique<sf::Texture>("../../asset/textures/home.png");
     backHoverTexture = std::make_unique<sf::Texture>("../../asset/textures/home-hover.png");
@@ -102,9 +108,8 @@ SettingsPage::SettingsPage(MainWindow& context) : Page(context) {
     sf::Vector2f rightSize = rightPanel->getSize();
     sf::Vector2f rightCenter = rightPos + rightSize / 2.f;
 
-    // Key bindings (stack dọc, cách nhau 50px)
     float spacing = 50.f;
-    int totalButtons = 4;  // số lượng key bindings bạn muốn hiển thị
+    int totalButtons = 4;
     float startY = rightCenter.y - (totalButtons - 1) * spacing / 2.f;
 
     keyBindings.clear();
@@ -113,7 +118,6 @@ SettingsPage::SettingsPage(MainWindow& context) : Page(context) {
     keyBindings.push_back(std::make_unique<KeyBindingButton>(p_font.get(), "Jump",       sf::Keyboard::Scan::Up,    sf::Vector2f(rightCenter.x - 170.f, startY + 2 * spacing)));
     keyBindings.push_back(std::make_unique<KeyBindingButton>(p_font.get(), "Fire",       sf::Keyboard::Scan::Z,    sf::Vector2f(rightCenter.x - 170.f, startY + 3 * spacing)));
 
-    // Confirm Button ngay dưới cùng, lệch xuống 70px so với cuối danh sách
     confirmButton = std::make_unique<sf::RectangleShape>(sf::Vector2f(100, 30));
     confirmButton->setOrigin(confirmButton->getSize() / 2.f);
     confirmButton->setPosition(sf::Vector2f(rightCenter.x, startY + 4 * spacing + 20));
@@ -121,14 +125,12 @@ SettingsPage::SettingsPage(MainWindow& context) : Page(context) {
     confirmButton->setOutlineColor(sf::Color::White);
     confirmButton->setOutlineThickness(1);
 
-    // Confirm Text căn giữa trong nút
     confirmText = std::make_unique<sf::Text>(*p_font, "OK", 20);
     confirmText->setFillColor(sf::Color::White);
     sf::FloatRect textRect = confirmText->getLocalBounds();
     confirmText->setOrigin(sf::Vector2f(textRect.position.x + textRect.size.x / 2.f, textRect.position.y + textRect.size.y / 2.f));
     confirmText->setPosition(confirmButton->getPosition());
 
-    // Read file keybindings.json
     std::ifstream file("../../src/widget_toolkit/keybindings.json");
     nlohmann::json config;
     if (!file.is_open() || file.peek() == std::ifstream::traits_type::eof()) {
