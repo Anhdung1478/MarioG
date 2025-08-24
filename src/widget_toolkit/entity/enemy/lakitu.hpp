@@ -11,8 +11,7 @@ namespace mario::entity {
     class Lakitu : public Enemy {
     protected:
         enum class LakituState {
-            Flying,
-            Dead
+            Flying
         };
 
         LakituState currentState;
@@ -22,6 +21,8 @@ namespace mario::entity {
         static constexpr float DROP_INTERVAL = 3.f;
         static constexpr float DROP_THRESHOLD = 10.f;
         float dropCooldown = DROP_INTERVAL;
+        const float CHASE_LIMIT = 7439.0f;
+        bool done = false;
 
         void initializeAnimations(const std::string& jsonPath, const std::string& texturePath, sf::Vector2f scale) override {
             p_animation->loadSheet(jsonPath, texturePath);
@@ -43,7 +44,7 @@ namespace mario::entity {
     public:
         Lakitu(sf::Vector2f startPosition)
             : Enemy(FILE_PATH"enemy.json", FILE_PATH"enemy.png", {2.5f, 2.5f}, "lakitu.flying[0]",
-                    startPosition, {48.f, 48.f}, "Chase"),
+                    startPosition, {48.f, 48.f}, ""),
               currentState(LakituState::Flying), lastState(LakituState::Flying) {
             
             if (auto body = dynamic_cast<DynamicBox*>(p_body)) {
@@ -69,7 +70,11 @@ namespace mario::entity {
                 float currentX = body->getPosition().x;
                 float distanceToTarget = std::abs(targetX - currentX);
 
-                bool moveRight = targetX > currentX;
+                if (currentX >= CHASE_LIMIT) {
+                    done = true;
+                }
+                bool moveRight = targetX > currentX && !done;
+                if(currentX >= CHASE_LIMIT) moveRight = false;
                 if (distanceToTarget > 1.f) {
                     if(moveRight) {
                         body->moveLeft(true);
@@ -77,7 +82,7 @@ namespace mario::entity {
                     } else {
                         body->moveRight(true);
                         body->moveLeft(false);
-                    }
+                    } 
                     // body->move(moveRight, false);
 
                     if (p_animation->isFaceForward() != moveRight) {
@@ -100,7 +105,7 @@ namespace mario::entity {
             updateBehavior(dt, player, enemies);
             
             p_animation->update(window, dt);
-            p_body->updateSize(p_animation);
+            // p_body->updateSize(p_animation);
             p_body->update(dt);
         }
 

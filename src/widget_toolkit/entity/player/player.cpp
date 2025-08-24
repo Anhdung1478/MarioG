@@ -26,7 +26,7 @@ mario::entity::Player::Player(sf::Vector2f spawnPoint, CharacterListType charact
         p_stateManager = new mario::entity::player_state::LuigiStateManager(p_animation, p_body, stateType);
     }
 
-    p_fireballList = std::make_unique<mario::entity::FireballList>();
+    p_fireballList = std::make_unique<mario::entity::FireballList>(soundManager);
 }
 
 mario::entity::Player::~Player() {
@@ -201,8 +201,6 @@ void mario::entity::Player::changePlayerBehavior(PlayerBehavior newBehavior) {
     }
 
     if(playerBehavior == PlayerBehavior::TransformSTB) {
-        soundManager.playSound(mario::event::SoundEvent::POWER_DOWN);
-
         _canCollisionWithEnemy = _canCollisionWithItem = true;
         p_stateManager->changeToSuperState(p_animation, p_body);
 
@@ -517,6 +515,7 @@ void mario::entity::Player::beingHit() {
     if(getPlayerStateType() == player_state::PlayerStateType::Small) {
         changePlayerBehavior(PlayerBehavior::Dying);
     } else {
+        soundManager.playSound(mario::event::SoundEvent::POWER_DOWN);
         changeState(player_state::PlayerStateType::Small);
     }
 }

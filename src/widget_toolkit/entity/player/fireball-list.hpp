@@ -1,14 +1,15 @@
 #pragma once
 
 #include "fireball.hpp"
+#include "../../resource/SoundManager.hpp"
 
 namespace mario::entity {
     class FireballList : public IScreenElement {
         private:
             std::vector<Fireball*> fireballs;
-        
+            mario::audio::SoundManager& soundManager;
         public:
-            FireballList() {
+            FireballList(mario::audio::SoundManager& soundManager) : soundManager(soundManager) {
                 fireballs.clear();
             }
 
@@ -18,6 +19,7 @@ namespace mario::entity {
             }
 
             void addAFireball(Fireball* fireball) {
+                soundManager.playSound(mario::event::SoundEvent::FIREBALL_THROW);
                 fireballs.push_back(fireball);
             }
 

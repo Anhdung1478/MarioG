@@ -16,7 +16,7 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
 
     // Initialize player with the correct character type and state
     p_player = new mario::entity::Player(
-        sf::Vector2f(100, 200), 
+        sf::Vector2f(100, 200),
         state.characterType, 
         state.stateType,
         state.level,
@@ -351,8 +351,10 @@ void mario::pages::LevelsPage::checkForPlayerFinishLevel() {
     if(p_player->isFinishLevel()) {
         if(++currLevelState.level > 3) {
             std::cerr << "Finish all level. Return to main menu.\n";
+
             _context->changePage(std::make_shared<mario::pages::MainMenuPage>(*_context));
         } else {
+            _context->getSoundManager().playSound(mario::event::SoundEvent::LEVEL_ENTER);
             _context->changePage(std::make_shared<mario::pages::LevelsPage>(*_context, currLevelState, networkManager, gameMode));
         }
     }
@@ -398,13 +400,16 @@ void mario::pages::LevelsPage::handlePlayerDeath() {
             
             if (gameMode != GameMode::SinglePlayer) {
                 camera.resetToDefaultView();
+                _context->getSoundManager().playSound(mario::event::SoundEvent::GAME_OVER);
                 _context->changePage(std::make_shared<mario::pages::GameOverPage>(*_context));
             } else {          
                 if(currLevelState.num_lives > 0) {
                     currLevelState = mario::resource::LevelState(currLevelState.level, currLevelState.num_lives - 1, currLevelState.score, currLevelState.coins, currLevelState.characterType);
+                    _context->getSoundManager().playSound(mario::event::SoundEvent::LEVEL_ENTER);
                     _context->changePage(std::make_shared<mario::pages::LevelsPage>(*_context, currLevelState, networkManager, gameMode));
                 } else {
                     camera.resetToDefaultView();
+                    _context->getSoundManager().playSound(mario::event::SoundEvent::GAME_OVER);
                     _context->changePage(std::make_shared<mario::pages::GameOverPage>(*_context));
                 }
             }
@@ -455,6 +460,7 @@ void mario::pages::LevelsPage::checkMenuButtonHoverLogic(const sf::RenderWindow 
 void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) {
     // Check for game over first
     if (gameOverReceivedForLocal || isGameOver()) {
+        _context->getSoundManager().playSound(mario::event::SoundEvent::GAME_OVER);
         _context->changePage(std::make_unique<GameOverPage>(*_context));
         return;
     }
@@ -550,6 +556,7 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
             && !p_player->isInBehavior(mario::entity::PlayerBehavior::FinishLevel)) {
                 currLevelState.update(dt);
                 if(currLevelState.times <= sf::seconds(0.f)) {
+                    _context->getSoundManager().playSound(mario::event::SoundEvent::TIME_WARNING);
                     p_player->changePlayerBehavior(mario::entity::PlayerBehavior::Dying);
                     currLevelState.times = sf::seconds(0.f);
                 }
@@ -573,16 +580,19 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
             collisionManager.updateCameraBounds(cameraBounds);
 
             // handle collision
-            if(currLevelState.level == 1 && p_player->getPosition().x >= 8180) {
+            if(currLevelState.level == 1 && p_player->getPosition().x >= 8180 && (p_player->getPlayerBehavior() != mario::entity::PlayerBehavior::EnterFortress)) {
                 p_player->setPosition(sf::Vector2f(8180, p_player->getPosition().y));
+                _context->getSoundManager().playSound(mario::event::SoundEvent::LEVEL_CLEAR);
                 p_player->enterFortressDoor();
             }
-            else if(currLevelState.level == 2 && p_player->getPosition().x >= 7540) {
+            else if(currLevelState.level == 2 && p_player->getPosition().x >= 7540 && (p_player->getPlayerBehavior() != mario::entity::PlayerBehavior::EnterFortress)) {
                 p_player->setPosition(sf::Vector2f(7540, p_player->getPosition().y));
+                _context->getSoundManager().playSound(mario::event::SoundEvent::LEVEL_CLEAR);
                 p_player->enterFortressDoor();
             }
-            else if(currLevelState.level == 3 && p_player->getPosition().x >= 8340) {
+            else if(currLevelState.level == 3 && p_player->getPosition().x >= 8340 && (p_player->getPlayerBehavior() != mario::entity::PlayerBehavior::EnterFortress)) {
                 p_player->setPosition(sf::Vector2f(8340, p_player->getPosition().y));
+                _context->getSoundManager().playSound(mario::event::SoundEvent::LEVEL_CLEAR);
                 p_player->enterFortressDoor();
             }
             collisionManager.checkCollisionEnemyWithBlocks(enemies, blocks);

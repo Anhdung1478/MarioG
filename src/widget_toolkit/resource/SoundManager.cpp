@@ -102,6 +102,15 @@ namespace mario::audio {
         }
     }
 
+    void SoundManager::stopSound(mario::event::SoundEvent event) {
+        auto it = sounds.find(event);
+        if (it != sounds.end()) {
+            it->second.stop();
+        } else {
+            cerr << "Sound for event " << static_cast<int>(event) << " not found!" << endl;
+        }
+    }
+
     void SoundManager::setBackgroundMusic(mario::event::BackgroundMusicState state) {
         if(!isMusicEnabled) {
             return;

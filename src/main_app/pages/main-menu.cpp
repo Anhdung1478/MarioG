@@ -45,6 +45,7 @@ mario::pages::MainMenuPage::MainMenuPage(mario::MainWindow &context) : Page(cont
     p_button->buttonRect = sf::FloatRect(sf::Vector2f(540, 540), sf::Vector2f(200, 30));
     p_button->p_nodeOnButton = nullptr;
     p_button->Click.append([this]() {
+        _context->getSoundManager().playSound(mario::event::SoundEvent::LEVEL_ENTER);
         _context->changePage(std::make_shared<mario::pages::LevelsPage>(*_context, p_levelDataManager->loadAutoSaveLevelData()));
     });
 

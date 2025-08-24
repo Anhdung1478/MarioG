@@ -52,6 +52,7 @@ namespace mario::entity {
         float networkInterpFactor = 0.15f;
 
         static constexpr float MAX_NETWORK_STATE_AGE = 0.5f; // 500ms timeout
+        const float CHASE_LIMIT = 7439.0f;
 
         void patrol(float dt) {
             DynamicBox* body = dynamic_cast<DynamicBox*>(p_body);
@@ -75,7 +76,9 @@ namespace mario::entity {
         void chase(float dt, const Player* player) {
             DynamicBox* body = dynamic_cast<DynamicBox*>(p_body);
             if(body && player) {
-                float distance = std::abs(player->getPosition().x - body->getPosition().x);
+                float distance = std::abs(player->getPosition().x - body->getPosition().x); 
+                float currentX = body->getPosition().x;
+                
                 if(distance <= detectionRange) {
                     bool moveRight = player->getPosition().x > body->getPosition().x;
                     body->moveLeft(true);

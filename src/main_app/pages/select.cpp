@@ -196,7 +196,8 @@ void mario::pages::SelectPage::handleEvent(const sf::RenderWindow *window, const
     if (trigger) {
         for (size_t i = 0; i < charFrameSprites.size(); i++) {
             if (charFrameSprites[i].getGlobalBounds().contains(clickPosition)) {
-                selectedFrame = static_cast<int>(i); 
+                selectedFrame = static_cast<int>(i);
+                _context->getSoundManager().playSound(mario::event::SoundEvent::LEVEL_ENTER);
                 _context->changePage(std::make_shared<mario::pages::LevelsPage>(
                     *_context,
                     mario::resource::LevelState(selectedLevel, 2, 0, 0, selectedFrame, 0)
