@@ -164,7 +164,7 @@ namespace mario::entity {
             p_animation->renderWithPosition(window, p_body->getPosition());
         }
         
-        p_body->renderHitboxRect(window);
+        // p_body->renderHitboxRect(window);
         // coins_animation->setSpriteAnimation("coin[6]");
         // coins_animation->render(window);
         if(coins_animation->getAnimationState()) {

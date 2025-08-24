@@ -6,7 +6,7 @@
 mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::LevelState state, 
                                    std::shared_ptr<NetworkManager> networkManager, GameMode mode) 
     : Page(context), 
-      camera({1280, 680}), 
+      camera({1280, 678}), 
       currLevelState(state),
       networkManager(networkManager),
       gameMode(mode),

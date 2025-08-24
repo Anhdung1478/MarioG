@@ -56,11 +56,13 @@ public:
                                      std::min(bounds.position.y + bounds.size.y - halfHeight, newPosition.y));
         }
 
+        newPosition.x = (int)newPosition.x;
+        newPosition.y = (int)newPosition.y;
         view.setCenter(newPosition);
     }
 
     void setSize(const sf::Vector2f& size) {
-        view.setSize(size);
+        view.setSize(sf::Vector2f((int)size.x, (int)size.y));
     }
 
     void setZoom(float zoom) {
@@ -319,6 +321,8 @@ public:
     }
 
     void applyTo(sf::RenderWindow& window) {
+        sf::Vector2f size = view.getSize();
+        view.setSize(sf::Vector2f((int)size.x, (int)size.y));
         window.setView(view);
     }
 
