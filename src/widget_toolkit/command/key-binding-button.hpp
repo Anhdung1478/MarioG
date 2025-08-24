@@ -31,10 +31,10 @@ public:
         keyText.setString(getKeyName(initialKey));
         keyText.setCharacterSize(20);
         keyText.setFillColor(sf::Color::White);
-        keyText.setPosition(position + sf::Vector2f(150, 0));
+        keyText.setPosition(position + sf::Vector2f(165, 0));
 
         buttonShape.setSize(sf::Vector2f(200, 30));
-        buttonShape.setPosition(position + sf::Vector2f(140, -5));
+        buttonShape.setPosition(position + sf::Vector2f(155, -5));
         buttonShape.setFillColor(sf::Color(50, 50, 50));
         buttonShape.setOutlineColor(sf::Color::White);
         buttonShape.setOutlineThickness(1);
@@ -79,10 +79,10 @@ public:
         return false;
     }
 
-    void render(sf::RenderWindow& window) const {
-        window.draw(buttonShape);
-        window.draw(actionText);
-        window.draw(keyText);
+    void render(sf::RenderTarget& target) const {
+        target.draw(buttonShape);
+        target.draw(actionText);
+        target.draw(keyText);
     }
 
     sf::Keyboard::Scan getCurrentKey() const { return currentKey; }

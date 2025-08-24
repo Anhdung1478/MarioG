@@ -467,6 +467,83 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
         handleNetworkUpdates(dt);
     }
     
+    if (backClicked) {
+        float t = backAnimClock.getElapsedTime().asSeconds();
+
+        if (t < backAnimDuration) {
+            float progress = t / backAnimDuration;
+            float scale = 0.9f - 0.1f * std::sin(progress * 3.14159f); 
+            homeSprite->setScale(sf::Vector2f(scale, scale));
+        } else {
+            homeSprite->setScale(sf::Vector2f(0.9f, 0.9f)); // reset scale
+            backClicked = false;
+
+            _isPaused = !_isPaused;
+            camera.resetToDefaultView();
+            _context->changePage(std::make_shared<mario::pages::MainMenuPage>(*_context));
+        }
+    } else {
+        homeSprite->setScale(sf::Vector2f(0.9f, 0.9f));
+    }
+
+    if (pauseClicked) {
+        float t = pauseAnimClock.getElapsedTime().asSeconds();
+
+        if (t < pauseAnimDuration) {
+            float progress = t / pauseAnimDuration;
+            float scale = 0.9f - 0.1f * std::sin(progress * 3.14159f); 
+            pauseSprite->setScale(sf::Vector2f(scale, scale));
+        } else {
+            pauseSprite->setScale(sf::Vector2f(0.9f, 0.9f)); // reset scale
+            pauseClicked = false;
+
+            _isPaused = !_isPaused;
+            if(_isPaused) {
+                _context->getSoundManager().playSound(mario::event::SoundEvent::GAME_PAUSE);
+                _context->getSoundManager().pauseBackgroundMusic();
+                isSettingsPressed = true;
+            } else {
+                _context->getSoundManager().resumeBackgroundMusic();
+                if (p_player) {
+                    p_player->resetMove();
+                }
+                for (auto* enemy : enemies) {
+                    mario::entity::Enemy* enemyPtr = dynamic_cast<mario::entity::Enemy*>(enemy);
+                    if (enemyPtr && !enemyPtr->getActive()) {
+                        enemyPtr->setActive(true); // Resume enemy activity
+                    }
+                }
+                isSettingsPressed = false;
+            }
+        }
+    } else {
+        pauseSprite->setScale(sf::Vector2f(0.9f, 0.9f));
+    }
+
+    if (settingsClicked) {
+        float t = settingsAnimClock.getElapsedTime().asSeconds();
+
+        if (t < settingsAnimDuration) {
+            float progress = t / settingsAnimDuration;
+            float scale = 0.9f - 0.1f * std::sin(progress * 3.14159f); 
+            settingsSprite->setScale(sf::Vector2f(scale, scale));
+        } else {
+            settingsSprite->setScale(sf::Vector2f(0.9f, 0.9f)); // reset scale
+            settingsClicked = false;
+
+            isSettingsOpen = !isSettingsOpen;
+            if(!isSettingsPressed) {
+                _isPaused = !_isPaused;
+            }
+            if(isSettingsOpen) {
+                _context->getSoundManager().playSound(mario::event::SoundEvent::GAME_PAUSE);
+                _isPaused = true;
+            }
+        }
+    } else {
+        settingsSprite->setScale(sf::Vector2f(0.9f, 0.9f));
+    }
+
     if(!_isPaused) {
         if(!p_player->isTransforming() && !p_player->isInBehavior(mario::entity::PlayerBehavior::Dying) && !p_player->isInBehavior(mario::entity::PlayerBehavior::Climbing)
             && !p_player->isInBehavior(mario::entity::PlayerBehavior::GoToFortress) && !p_player->isInBehavior(mario::entity::PlayerBehavior::EnterFortress)
@@ -598,46 +675,43 @@ void mario::pages::LevelsPage::handleEvent(const sf::RenderWindow *window, const
             sf::FloatRect settingsRectF = sf::FloatRect(settingsSprite->getPosition(), sf::Vector2f(settingsTexture->getSize().x * settingsSprite->getScale().x, settingsTexture->getSize().y * settingsSprite->getScale().y));
 
             if(pauseRectF.contains(sf::Vector2f(worldMousePos)) && !isSettingsOpen) {
-                _isPaused = !_isPaused;
-                if(_isPaused) {
-                    _context->getSoundManager().playSound(mario::event::SoundEvent::GAME_PAUSE);
-                    _context->getSoundManager().pauseBackgroundMusic();
-                    isSettingsPressed = true;
-                } else {
-                    _context->getSoundManager().resumeBackgroundMusic();
-                    if (p_player) {
-                        p_player->resetMove();
-                    }
-                    for (auto* enemy : enemies) {
-                        mario::entity::Enemy* enemyPtr = dynamic_cast<mario::entity::Enemy*>(enemy);
-                        if (enemyPtr && !enemyPtr->getActive()) {
-                            enemyPtr->setActive(true); // Resume enemy activity
-                        }
-                    }
-                    isSettingsPressed = false;
-                }
-            } else 
-                // if(homeRectF.contains(sf::Vector2f(mousePos))) {
-                //     _isPaused = !_isPaused;
-                //     camera.resetToDefaultView();
-                //     _context->changePage(std::make_shared<mario::pages::MainMenuPage>(*_context));
-                // } else 
-                //     if(settingsRectF.contains(sf::Vector2f(mousePos))) {
-                        
+                pauseClicked = true;
+                pauseAnimClock.restart();
+                // _isPaused = !_isPaused;
+                // if(_isPaused) {
+                //     _context->getSoundManager().playSound(mario::event::SoundEvent::GAME_PAUSE);
+                //     _context->getSoundManager().pauseBackgroundMusic();
+                //     isSettingsPressed = true;
+                // } else {
+                //     _context->getSoundManager().resumeBackgroundMusic();
+                //     if (p_player) {
+                //         p_player->resetMove();
+                //     }
+                //     for (auto* enemy : enemies) {
+                //         mario::entity::Enemy* enemyPtr = dynamic_cast<mario::entity::Enemy*>(enemy);
+                //         if (enemyPtr && !enemyPtr->getActive()) {
+                //             enemyPtr->setActive(true); // Resume enemy activity
+                //         }
+                //     }
+                //     isSettingsPressed = false;
+                // }
+            } else      
                 if(homeRectF.contains(sf::Vector2f(worldMousePos))) {
-                    _isPaused = !_isPaused;
-                    camera.resetToDefaultView();
-                    _context->changePage(std::make_shared<mario::pages::MainMenuPage>(*_context));
+                    backClicked = true;
+                    backAnimClock.restart();
+                    // _context->changePage(std::make_shared<mario::pages::MainMenuPage>(*_context));
                 } else 
                     if(settingsRectF.contains(sf::Vector2f(worldMousePos))) {
-                        isSettingsOpen = !isSettingsOpen;
-                        if(!isSettingsPressed) {
-                            _isPaused = !_isPaused;
-                        }
-                        if(isSettingsOpen) {
-                            _context->getSoundManager().playSound(mario::event::SoundEvent::GAME_PAUSE);
-                            _isPaused = true;
-                        }
+                        settingsClicked = true;
+                        settingsAnimClock.restart();
+                        // isSettingsOpen = !isSettingsOpen;
+                        // if(!isSettingsPressed) {
+                        //     _isPaused = !_isPaused;
+                        // }
+                        // if(isSettingsOpen) {
+                        //     _context->getSoundManager().playSound(mario::event::SoundEvent::GAME_PAUSE);
+                        //     _isPaused = true;
+                        // }
                     }
         } 
     }
