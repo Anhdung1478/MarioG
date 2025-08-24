@@ -381,8 +381,6 @@ void mario::pages::LevelsPage::updateCameraLogic(float dt) {
         // Single player mode - follow local player
         p_camera->followEntity(*p_player, dt);
     }
-
-    p_camera->update(dt);
 }
 
 // Handle player death

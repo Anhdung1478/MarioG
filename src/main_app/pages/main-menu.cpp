@@ -109,15 +109,11 @@ void mario::pages::MainMenuPage::handleEvent(const sf::RenderWindow *window, con
 }
 
 void mario::pages::MainMenuPage::update(const sf::RenderWindow *window, float dt) {
-    if(_isMenuVisible && p_currButtonList != nullptr) {
+    if(_isMenuVisible && p_currButtonList != nullptr)
         p_currButtonList->update(window, dt);
-    }
 
-    std::cerr << "IS AUTO SAVE EXIST: " << p_levelDataManager->checkExistAutoSave() << '\n';
-    std::cerr << "Current path: " << std::filesystem::current_path() << '\n';
-    if(p_levelDataManager->checkExistAutoSave() != p_continueButton->isEnabled()) {
+    if(p_levelDataManager->checkExistAutoSave() != p_continueButton->isEnabled())
         p_continueButton->setEnableState(!p_continueButton->isEnabled());
-    }
 }
 
 void mario::pages::MainMenuPage::render(sf::RenderWindow *window) {

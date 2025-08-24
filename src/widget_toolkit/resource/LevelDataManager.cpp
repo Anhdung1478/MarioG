@@ -20,14 +20,15 @@ bool mario::resource::LevelDataManager::checkExistAutoSave() {
     bool exists = std::filesystem::exists(p, ec);
     bool is_file = std::filesystem::is_regular_file(p, ec);
 
-    if (!ec && exists && is_file) {
-        std::cerr << "File exists.\n";
+    if(!ec && exists && is_file) {
+        //std::cerr << "Auto-save file exists.\n";
         return true;
-    } else if (ec) {
-        std::cerr << "Error checking file: " << ec.message() << "\n";
-    } else {
-        std::cerr << "File does not exist (or is not a regular file).\n";
-    }
+    } else 
+        if(ec) {
+            //std::cerr << "Error checking auto-save file: " << ec.message() << "\n";
+        } else {
+            //std::cerr << "Auto-save file does not exist (or is not a regular file).\n";
+        }
 
     return false;
 }
@@ -41,10 +42,9 @@ void mario::resource::LevelDataManager::deleteAutoSaveFile() {
 
     // Check if the file has been successfully removed
     if (status != 0) {
-        perror("Error deleting file");
-    }
-    else {
-        std::cout << "File successfully deleted" << '\n';
+        perror("Error deleting auto-save file");
+    } else {
+        //std::cout << "Auto-save file successfully deleted" << '\n';
     }
 }
 
