@@ -16,7 +16,9 @@ SettingsPage::SettingsPage(MainWindow& context) : Page(context) {
     backgroundSprite->setPosition(sf::Vector2f(0, 0));
 
     p_title = std::make_unique<sf::Text>(*p_font, "Settings", 60);
-    p_title->setFillColor(sf::Color::Black);
+    p_title->setFillColor(sf::Color(0xFF, 0xD7, 0x00));
+    p_title->setOutlineColor(sf::Color::Black);
+    p_title->setOutlineThickness(3.0f);
 
     sf::FloatRect titleBounds = p_title->getLocalBounds();
     p_title->setOrigin(sf::Vector2f(titleBounds.position.x + titleBounds.size.x / 2.f,

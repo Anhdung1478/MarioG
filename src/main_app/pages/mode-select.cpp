@@ -11,11 +11,25 @@ namespace mario::pages {
           marioFont(std::make_unique<sf::Font>("../../asset/fonts/SuperMario256.ttf")),
           _selectedLevel(1)  // Initialize _selectedLevel
     {
+        // Setup background
+        _backgroundTexture = std::make_unique<sf::Texture>();
+        if (!_backgroundTexture->loadFromFile("../../asset/sprites/mario-theme.png")) {
+            std::cerr << "Failed to load background image!" << std::endl;
+        }
+        _backgroundSprite = std::make_unique<sf::Sprite>(*_backgroundTexture);
+        
+        // Scale the sprite to fit the window size (1280x720)
+        float scaleX = 1280.0f / _backgroundTexture->getSize().x;
+        float scaleY = 720.0f / _backgroundTexture->getSize().y;
+        _backgroundSprite->setScale(sf::Vector2f(scaleX, scaleY));
+
         // Setup title text
         _titleText = std::make_unique<sf::Text>(*marioFont);
         _titleText->setString("Select Game Mode");
         _titleText->setCharacterSize(50);
-        _titleText->setFillColor(sf::Color::White);
+        _titleText->setFillColor(sf::Color(0xFF, 0xD7, 0x00)); // FFD700
+        _titleText->setOutlineColor(sf::Color::Black);
+        _titleText->setOutlineThickness(3.0f);
         _titleText->setPosition(sf::Vector2f(100.f, 100.f));
     
         // Setup mode instructions text
@@ -27,14 +41,18 @@ namespace mario::pages {
             "ESC - Back to Main Menu"
         );
         _modeText->setCharacterSize(30);
-        _modeText->setFillColor(sf::Color::White);
+        _modeText->setFillColor(sf::Color(0xFF, 0xD7, 0x00)); // FFD700
+        _modeText->setOutlineColor(sf::Color::Black);
+        _modeText->setOutlineThickness(2.0f);
         _modeText->setPosition(sf::Vector2f(100.f, 200.f));
         
         // Setup connection status text
         _statusText = std::make_unique<sf::Text>(*marioFont);
         _statusText->setString("");
         _statusText->setCharacterSize(25);
-        _statusText->setFillColor(sf::Color::Yellow);
+        _statusText->setFillColor(sf::Color(0xFF, 0xD7, 0x00)); // FFD700
+        _statusText->setOutlineColor(sf::Color::Black);
+        _statusText->setOutlineThickness(2.0f);
         _statusText->setPosition(sf::Vector2f(100.f, 500.f));
     }
     
@@ -102,6 +120,7 @@ namespace mario::pages {
 
     void ModeSelectPage::render(sf::RenderWindow* window) {
         if (window) {
+            window->draw(*_backgroundSprite);
             window->draw(*_titleText);
             window->draw(*_modeText);
             window->draw(*_statusText);
