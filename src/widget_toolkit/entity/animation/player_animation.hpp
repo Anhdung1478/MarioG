@@ -17,14 +17,6 @@ namespace mario::entity {
             int id_invincible = 0, invincible_step = 0;
             bool _isFlicker = false, _isInvincible = false;
 
-            void setSpriteVisible(bool isVisible) {
-                if(isVisible) {
-                    p_sprite->setColor(sf::Color(255, 255, 255, 255)); // is visible
-                } else {
-                    p_sprite->setColor(sf::Color(255, 255, 255, 0)); // is invisible
-                }
-            }
-
             void swapColorInvincibleAnimation() {
                 if(++id_invincible % 4 == 0)
                     id_invincible = 0;
@@ -46,7 +38,7 @@ namespace mario::entity {
             void setFlicker(bool isOn) override {
                 _isFlicker = isOn;
                 flickerTimer = sf::seconds(FLICKER_DELAY);
-                setSpriteVisible(true);
+                setVisible(true);
             }
 
             bool isFlicker() const override {
@@ -90,7 +82,7 @@ namespace mario::entity {
                     if(flickerTimer <= sf::Time::Zero) {
                         flickerTimer = sf::seconds(FLICKER_DELAY);
                         _isInvisible = 1 - _isInvisible;
-                        setSpriteVisible(!_isInvisible);
+                        setVisible(!_isInvisible);
                     }
                 }
 

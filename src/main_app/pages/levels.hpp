@@ -49,8 +49,7 @@ namespace mario::pages {
 
             mario::entity::Block* testBlock;
             mario::entity::FireWorks* testFireWorks;
-      
-            Camera camera;
+
             mario::entity::Player *p_player;
             mario::entity::CollisionManager collisionManager;
 
@@ -119,6 +118,17 @@ namespace mario::pages {
             sf::Vector2f remoteTargetPos = sf::Vector2f(150.f, 400.f);;
             sf::Vector2f remoteTargetVel = sf::Vector2f(0.f, 0.f);;
             
+            bool backClicked = false;
+            sf::Clock backAnimClock;
+            float backAnimDuration = 0.3f;
+
+            bool pauseClicked = false;
+            sf::Clock pauseAnimClock;
+            float pauseAnimDuration = 0.3f;
+
+            bool settingsClicked = false;
+            sf::Clock settingsAnimClock;
+            float settingsAnimDuration = 0.3f;
         public:
             LevelsPage(MainWindow &context, mario::resource::LevelState state, 
                         std::shared_ptr<NetworkManager> networkManager = nullptr, GameMode mode = GameMode::SinglePlayer);

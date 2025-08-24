@@ -4,49 +4,98 @@
 using namespace mario::pages;
 
 SettingsPage::SettingsPage(MainWindow& context) : Page(context) {
-    p_font = std::make_unique<sf::Font>("../../asset/fonts/Cascadia.ttf");
+    p_font = std::make_unique<sf::Font>("../../asset/fonts/SuperMario256.ttf");
+    
+    // Background texture and sprite
+    backgroundTexture = std::make_unique<sf::Texture>("../../asset/sprites/mario-theme.png");
+    backgroundSprite = std::make_unique<sf::Sprite>(*backgroundTexture);
+    sf::Vector2u windowSize = sf::Vector2u(1280, 720);
+    float bgScaleX = static_cast<float>(windowSize.x) / backgroundTexture->getSize().x;
+    float bgScaleY = static_cast<float>(windowSize.y) / backgroundTexture->getSize().y;
+    backgroundSprite->setScale(sf::Vector2f(bgScaleX, bgScaleY));
+    backgroundSprite->setPosition(sf::Vector2f(0, 0));
 
-    p_title = std::make_unique<sf::Text>(*p_font, "Settings", 40);
-    p_title->setPosition({540, 100});
-    p_title->setFillColor(sf::Color::White);
+    p_title = std::make_unique<sf::Text>(*p_font, "Settings", 60);
+    p_title->setFillColor(sf::Color(0xFF, 0xD7, 0x00));
+    p_title->setOutlineColor(sf::Color::Black);
+    p_title->setOutlineThickness(3.0f);
+
+    sf::FloatRect titleBounds = p_title->getLocalBounds();
+    p_title->setOrigin(sf::Vector2f(titleBounds.position.x + titleBounds.size.x / 2.f,
+                    titleBounds.position.y  + titleBounds.size.y / 2.f));
+    p_title->setPosition(sf::Vector2f(windowSize.x / 2.f, 80.f));
+
+    // Left Panel (Sliders)
+    leftPanel = std::make_unique<sf::RoundedRectangleShape>(sf::Vector2f(500, 400), 20.f, 20);
+    leftPanel->setFillColor(sf::Color(0, 0, 0, 180));
+    leftPanel->setPosition(sf::Vector2f(100, 200));
+    leftPanel->setOutlineThickness(2);
+    leftPanel->setOutlineColor(sf::Color::White);
+
+    // Right Panel (Key Bindings)
+    rightPanel = std::make_unique<sf::RoundedRectangleShape>(sf::Vector2f(500, 400), 20.f, 20);
+    rightPanel->setFillColor(sf::Color(0, 0, 0, 180));
+    rightPanel->setPosition(sf::Vector2f(680, 200));
+    rightPanel->setOutlineThickness(2);
+    rightPanel->setOutlineColor(sf::Color::White);
+
+    // Left Panel Title
+    leftPanelTitle = std::make_unique<sf::Text>(*p_font, "Volume", 30);
+    leftPanelTitle->setFillColor(sf::Color::White);
+    sf::FloatRect leftBounds = leftPanelTitle->getLocalBounds();
+    leftPanelTitle->setOrigin(sf::Vector2f(leftBounds.size.x / 2.f, leftBounds.size.y)); 
+    leftPanelTitle->setPosition(sf::Vector2f(leftPanel->getPosition().x + leftPanel->getSize().x / 2.f,
+                                leftPanel->getPosition().y + 50.f));
+
+    // Right Panel Title
+    rightPanelTitle = std::make_unique<sf::Text>(*p_font, "Key Configure", 30);
+    rightPanelTitle->setFillColor(sf::Color::White);
+    sf::FloatRect rightBounds = rightPanelTitle->getLocalBounds();
+    rightPanelTitle->setOrigin(sf::Vector2f(rightBounds.size.x / 2.f, rightBounds.size.y)); 
+    rightPanelTitle->setPosition(sf::Vector2f(rightPanel->getPosition().x + rightPanel->getSize().x / 2.f,
+                                rightPanel->getPosition().y + 50.f));
 
     // Slider textures
     sliderBarTexture = std::make_unique<sf::Texture>("../../asset/textures/slider-bar.png");
     sliderHandleTexture = std::make_unique<sf::Texture>("../../asset/textures/slider-handle.png");
 
-    sf::Vector2u windowSize =  sf::Vector2u(1280, 720);
     sf::Vector2f pos = {windowSize.x / 2.f, windowSize.y / 2.f};
 
-    // Music Slider
+    // Center of left panel
+    sf::Vector2f leftPos = leftPanel->getPosition();
+    sf::Vector2f leftSize = leftPanel->getSize();
+    sf::Vector2f leftCenter = leftPos + leftSize / 2.f;
+
     musicSlider = std::make_unique<Slider>(
         std::make_unique<sf::Texture>(*sliderBarTexture),
         std::make_unique<sf::Texture>(*sliderHandleTexture),
         std::make_unique<sf::Font>(*p_font),
-        sf::Vector2f(pos.x + 80, pos.y - 50),
-        std::string("Music"),
+        leftCenter + sf::Vector2f(80.f, -50.f + 10.f),
+        "Music",
         sf::Vector2f(0.3f, 0.3f),
         0.0f, 100.0f,
         _context->getSoundManager().getMusicVolume()
     );
+
     musicSlider->setOnValueChanged([this](float value) {
         _context->getSoundManager().adjustBackgroundMusicVolume(value);
     });
 
-    // SFX Slider
     sfxSlider = std::make_unique<Slider>(
         std::make_unique<sf::Texture>(*sliderBarTexture),
         std::make_unique<sf::Texture>(*sliderHandleTexture),
         std::make_unique<sf::Font>(*p_font),
-        sf::Vector2f(pos.x + 80, pos.y + 50),
-        std::string("SFX"),
+        leftCenter + sf::Vector2f(80.f, 50.f + 10.f),
+        "SFX",
         sf::Vector2f(0.3f, 0.3f),
         0.0f, 100.0f,
         _context->getSoundManager().getSoundVolume()
     );
+
     sfxSlider->setOnValueChanged([this](float value) {
         _context->getSoundManager().adjustSoundEffectsVolume(value);
     });
-
+    
     // Back Button (as sprite)
     backTexture = std::make_unique<sf::Texture>("../../asset/textures/home.png");
     backHoverTexture = std::make_unique<sf::Texture>("../../asset/textures/home-hover.png");
@@ -54,27 +103,34 @@ SettingsPage::SettingsPage(MainWindow& context) : Page(context) {
     backSprite->setPosition({20, 20});
     backSprite->setScale({1.f, 1.f});
 
-    // Key Bindings
-    sf::Vector2f keyPos = {pos.x + 280, pos.y - 300};
-    keyBindings.push_back(std::make_unique<KeyBindingButton>(p_font.get(), "Move Left", sf::Keyboard::Scan::Left, keyPos));
-    keyBindings.push_back(std::make_unique<KeyBindingButton>(p_font.get(), "Move Right", sf::Keyboard::Scan::Right, keyPos + sf::Vector2f(0, 50)));
-    keyBindings.push_back(std::make_unique<KeyBindingButton>(p_font.get(), "Jump", sf::Keyboard::Scan::Up, keyPos + sf::Vector2f(0, 100)));
-    keyBindings.push_back(std::make_unique<KeyBindingButton>(p_font.get(), "Fire", sf::Keyboard::Scan::Z, keyPos + sf::Vector2f(0, 150)));
+    // Center of right panel
+    sf::Vector2f rightPos = rightPanel->getPosition();
+    sf::Vector2f rightSize = rightPanel->getSize();
+    sf::Vector2f rightCenter = rightPos + rightSize / 2.f;
 
-    // Confirm Button
+    float spacing = 50.f;
+    int totalButtons = 4;
+    float startY = rightCenter.y - (totalButtons - 1) * spacing / 2.f;
+
+    keyBindings.clear();
+    keyBindings.push_back(std::make_unique<KeyBindingButton>(p_font.get(), "Move Left",  sf::Keyboard::Scan::Left,  sf::Vector2f(rightCenter.x - 170.f, startY + 0 * spacing)));
+    keyBindings.push_back(std::make_unique<KeyBindingButton>(p_font.get(), "Move Right", sf::Keyboard::Scan::Right, sf::Vector2f(rightCenter.x - 170.f, startY + 1 * spacing)));
+    keyBindings.push_back(std::make_unique<KeyBindingButton>(p_font.get(), "Jump",       sf::Keyboard::Scan::Up,    sf::Vector2f(rightCenter.x - 170.f, startY + 2 * spacing)));
+    keyBindings.push_back(std::make_unique<KeyBindingButton>(p_font.get(), "Fire",       sf::Keyboard::Scan::Z,    sf::Vector2f(rightCenter.x - 170.f, startY + 3 * spacing)));
+
     confirmButton = std::make_unique<sf::RectangleShape>(sf::Vector2f(100, 30));
-    confirmButton->setPosition(keyPos + sf::Vector2f(0, 200));
+    confirmButton->setOrigin(confirmButton->getSize() / 2.f);
+    confirmButton->setPosition(sf::Vector2f(rightCenter.x, startY + 4 * spacing + 20));
     confirmButton->setFillColor(sf::Color(50, 50, 50));
     confirmButton->setOutlineColor(sf::Color::White);
     confirmButton->setOutlineThickness(1);
-    // Confirm Text
+
     confirmText = std::make_unique<sf::Text>(*p_font, "OK", 20);
     confirmText->setFillColor(sf::Color::White);
     sf::FloatRect textRect = confirmText->getLocalBounds();
-    confirmText->setOrigin(sf::Vector2f(textRect.position.x + textRect.size.x / 2.0f, textRect.position.y + textRect.size.y / 2.0f));
-    confirmText->setPosition(confirmButton->getPosition() + sf::Vector2f(50, 15));
+    confirmText->setOrigin(sf::Vector2f(textRect.position.x + textRect.size.x / 2.f, textRect.position.y + textRect.size.y / 2.f));
+    confirmText->setPosition(confirmButton->getPosition());
 
-    // Read file keybindings.json
     std::ifstream file("../../src/widget_toolkit/keybindings.json");
     nlohmann::json config;
     if (!file.is_open() || file.peek() == std::ifstream::traits_type::eof()) {
@@ -133,11 +189,12 @@ void SettingsPage::handleEvent(const sf::RenderWindow* window, const sf::Event& 
                                 backTexture->getSize().y * backSprite->getScale().y));
 
                 if(backRect.contains(sf::Vector2f(mousePos))) {
-                    _context->changePage(std::make_shared<mario::pages::MainMenuPage>(*_context));
+                    backClicked = true;
+                    backAnimClock.restart();
                 }
 
                 sf::FloatRect confirmRect(keyBindings[0]->getPosition() + sf::Vector2f(0, 200), sf::Vector2f(100, 30));
-                if (confirmRect.contains(sf::Vector2f(mousePos))) {
+                if (confirmButton->getGlobalBounds().contains(sf::Vector2f(mousePos))) {
                     // Save key bindings to JSON
                     nlohmann::json config;
                     config["keybindings"]["move_left"] = static_cast<int>(keyBindings[0]->getCurrentKey());
@@ -146,6 +203,9 @@ void SettingsPage::handleEvent(const sf::RenderWindow* window, const sf::Event& 
                     config["keybindings"]["fire"] = static_cast<int>(keyBindings[3]->getCurrentKey());
                     std::ofstream file("../../src/widget_toolkit/keybindings.json");
                     if (file.is_open()) file << config.dump(4);
+
+                    confirmClicked = true;
+                    confirmFlashClock.restart();
                 }
             }
         }
@@ -158,7 +218,8 @@ void SettingsPage::handleEvent(const sf::RenderWindow* window, const sf::Event& 
                 sf::Vector2f(backTexture->getSize().x * backSprite->getScale().x,
                              backTexture->getSize().y * backSprite->getScale().y));
             if (backRect.contains(sf::Vector2f(mousePos))) {
-                _context->changePage(std::make_shared<mario::pages::MainMenuPage>(*_context));
+                backClicked = true;
+                backAnimClock.restart();
             }
         }
     }
@@ -183,16 +244,62 @@ void SettingsPage::update(const sf::RenderWindow* window, float dt) {
         backSprite->setTexture(*backTexture);
     }
 
-    sf::FloatRect confirmRect = sf::FloatRect(confirmButton->getPosition(), confirmButton->getSize());
-    if (confirmRect.contains(sf::Vector2f(mousePos))) {
-        confirmButton->setFillColor(sf::Color(70, 70, 70));
+    if (confirmClicked) {
+        float t = confirmFlashClock.getElapsedTime().asSeconds();
+
+        if (t < 0.3f) {
+            confirmButton->setFillColor(sf::Color(233, 241, 86, 200));
+        }
+
+        if (t < confirmAnimDuration) {
+            float progress = t / confirmAnimDuration;
+            float scale = 1.0f - 0.1f * std::sin(progress * 3.14159f); 
+            confirmButton->setScale(sf::Vector2f(scale, scale));
+        } else {
+            confirmButton->setScale(sf::Vector2f(1.f, 1.f)); // reset scale
+        }
+
+        if (t > 0.5f) {
+            confirmClicked = false;
+        }
     } else {
-        confirmButton->setFillColor(sf::Color(50, 50, 50));
+        if (confirmButton->getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
+            confirmButton->setFillColor(sf::Color(70, 70, 70));
+        } else {
+            confirmButton->setFillColor(sf::Color(50, 50, 50));
+        }
+        confirmButton->setScale(sf::Vector2f(1.f, 1.f));
     }
+
+    if (backClicked) {
+        float t = backAnimClock.getElapsedTime().asSeconds();
+
+        if (t < backAnimDuration) {
+            float progress = t / backAnimDuration;
+            float scale = 1.0f - 0.1f * std::sin(progress * 3.14159f); 
+            backSprite->setScale(sf::Vector2f(scale, scale));
+        } else {
+            backSprite->setScale(sf::Vector2f(1.f, 1.f)); // reset scale
+            backClicked = false;
+
+            _context->changePage(std::make_shared<mario::pages::MainMenuPage>(*_context));
+        }
+    } else {
+        backSprite->setScale(sf::Vector2f(1.f, 1.f));
+    }
+
 }
 
 void SettingsPage::render(sf::RenderWindow* window) {
+    window->draw(*backgroundSprite);
     window->draw(*p_title);
+
+    window->draw(*leftPanel);
+    window->draw(*rightPanel);
+
+    window->draw(*leftPanelTitle);
+    window->draw(*rightPanelTitle);
+
     musicSlider->render(*window);
     sfxSlider->render(*window);
 

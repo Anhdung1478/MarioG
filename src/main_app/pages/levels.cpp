@@ -5,8 +5,7 @@
 
 mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::LevelState state, 
                                    std::shared_ptr<NetworkManager> networkManager, GameMode mode) 
-    : Page(context), 
-      camera({1280, 678}), 
+    : Page(context, sf::Vector2u(1280, 680)),
       currLevelState(state),
       networkManager(networkManager),
       gameMode(mode),
@@ -16,7 +15,7 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
 
     // Initialize player with the correct character type and state
     p_player = new mario::entity::Player(
-        sf::Vector2f(100, 200), 
+        sf::Vector2f(100, 200),
         state.characterType, 
         state.stateType,
         state.level,
@@ -195,7 +194,7 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
     });
   
     p_levelDataManager = std::make_unique<mario::resource::LevelDataManager>();
-    camera.setMapBounds(tileMap->getWorldBounds());
+    p_camera->setMapBounds(tileMap->getWorldBounds());
 }
 
 /* ========================================================================================================================================================================== */
@@ -209,7 +208,6 @@ mario::pages::LevelsPage::~LevelsPage() {
     autoSave();
     delete p_player;
 
-    camera.resetToDefaultView();
     for (auto &enemy : enemies) {
         delete enemy;
     }
@@ -293,7 +291,9 @@ void mario::pages::LevelsPage::updateBlocksEnemiesAndItems(const sf::RenderWindo
         // }
     }
 
-    if(flagPole->getWinState()) testFireWorks->update(window, dt);
+    if(flagPole->getWinState()) 
+        testFireWorks->update(window, dt);
+    
     flagPole->update(window, dt, p_player);
 
     for(auto &enemy : enemies) {
@@ -351,8 +351,10 @@ void mario::pages::LevelsPage::checkForPlayerFinishLevel() {
     if(p_player->isFinishLevel()) {
         if(++currLevelState.level > 3) {
             std::cerr << "Finish all level. Return to main menu.\n";
+
             _context->changePage(std::make_shared<mario::pages::MainMenuPage>(*_context));
         } else {
+            _context->getSoundManager().playSound(mario::event::SoundEvent::LEVEL_ENTER);
             _context->changePage(std::make_shared<mario::pages::LevelsPage>(*_context, currLevelState, networkManager, gameMode));
         }
     }
@@ -372,17 +374,15 @@ void mario::pages::LevelsPage::updateCameraLogic(float dt) {
         
         // If players are reasonably close (within screen bounds), follow center point
         if (distance < 1200.0f) {
-            camera.followTwoEntities(*p_player, *remotePlayer, dt, 600.0f, 0.9f, 1.1f);
+            p_camera->followTwoEntities(*p_player, *remotePlayer, dt, 600.0f, 0.9f, 1.1f);
         } else {
             // If too far apart, just follow local player
-            camera.followEntity(*p_player, dt);
+            p_camera->followEntity(*p_player, dt);
         }
     } else {
         // Single player mode - follow local player
-        camera.followEntity(*p_player, dt);
+        p_camera->followEntity(*p_player, dt);
     }
-
-    camera.update(dt);
 }
 
 // Handle player death
@@ -397,14 +397,15 @@ void mario::pages::LevelsPage::handlePlayerDeath() {
             }
             
             if (gameMode != GameMode::SinglePlayer) {
-                camera.resetToDefaultView();
+                _context->getSoundManager().playSound(mario::event::SoundEvent::GAME_OVER);
                 _context->changePage(std::make_shared<mario::pages::GameOverPage>(*_context));
-            } else {          
+            } else {
                 if(currLevelState.num_lives > 0) {
                     currLevelState = mario::resource::LevelState(currLevelState.level, currLevelState.num_lives - 1, currLevelState.score, currLevelState.coins, currLevelState.characterType);
+                    _context->getSoundManager().playSound(mario::event::SoundEvent::LEVEL_ENTER);
                     _context->changePage(std::make_shared<mario::pages::LevelsPage>(*_context, currLevelState, networkManager, gameMode));
                 } else {
-                    camera.resetToDefaultView();
+                    _context->getSoundManager().playSound(mario::event::SoundEvent::GAME_OVER);
                     _context->changePage(std::make_shared<mario::pages::GameOverPage>(*_context));
                 }
             }
@@ -415,7 +416,7 @@ void mario::pages::LevelsPage::handlePlayerDeath() {
 // Check for hover state / UI hover logic
 void mario::pages::LevelsPage::checkMenuButtonHoverLogic(const sf::RenderWindow *window) {
     sf::Vector2i mousePos = sf::Mouse::getPosition(*window);
-    sf::Vector2f worldMousePos = camera.screenToWorld(mousePos, *window);
+    sf::Vector2f worldMousePos = p_camera->screenToWorld(mousePos, *window);
 
     sf::FloatRect pauseRect = sf::FloatRect(pauseSprite->getPosition(), 
         sf::Vector2f(pauseTexture->getSize().x * pauseSprite->getScale().x, 
@@ -455,11 +456,12 @@ void mario::pages::LevelsPage::checkMenuButtonHoverLogic(const sf::RenderWindow 
 void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) {
     // Check for game over first
     if (gameOverReceivedForLocal || isGameOver()) {
+        _context->getSoundManager().playSound(mario::event::SoundEvent::GAME_OVER);
         _context->changePage(std::make_unique<GameOverPage>(*_context));
         return;
     }
 
-    sf::FloatRect cameraBounds = camera.getCameraBounds();
+    sf::FloatRect cameraBounds = p_camera->getCameraBounds();
     cleanUpDeletedObject();
 
     // Handle network updates for multiplayer
@@ -467,12 +469,89 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
         handleNetworkUpdates(dt);
     }
     
+    if (backClicked) {
+        float t = backAnimClock.getElapsedTime().asSeconds();
+
+        if (t < backAnimDuration) {
+            float progress = t / backAnimDuration;
+            float scale = 0.9f - 0.1f * std::sin(progress * 3.14159f); 
+            homeSprite->setScale(sf::Vector2f(scale, scale));
+        } else {
+            homeSprite->setScale(sf::Vector2f(0.9f, 0.9f)); // reset scale
+            backClicked = false;
+
+            _isPaused = !_isPaused;
+            _context->changePage(std::make_shared<mario::pages::MainMenuPage>(*_context));
+        }
+    } else {
+        homeSprite->setScale(sf::Vector2f(0.9f, 0.9f));
+    }
+
+    if (pauseClicked) {
+        float t = pauseAnimClock.getElapsedTime().asSeconds();
+
+        if (t < pauseAnimDuration) {
+            float progress = t / pauseAnimDuration;
+            float scale = 0.9f - 0.1f * std::sin(progress * 3.14159f); 
+            pauseSprite->setScale(sf::Vector2f(scale, scale));
+        } else {
+            pauseSprite->setScale(sf::Vector2f(0.9f, 0.9f)); // reset scale
+            pauseClicked = false;
+
+            _isPaused = !_isPaused;
+            if(_isPaused) {
+                _context->getSoundManager().playSound(mario::event::SoundEvent::GAME_PAUSE);
+                _context->getSoundManager().pauseBackgroundMusic();
+                isSettingsPressed = true;
+            } else {
+                _context->getSoundManager().resumeBackgroundMusic();
+                if (p_player) {
+                    p_player->resetMove();
+                }
+                for (auto* enemy : enemies) {
+                    mario::entity::Enemy* enemyPtr = dynamic_cast<mario::entity::Enemy*>(enemy);
+                    if (enemyPtr && !enemyPtr->getActive()) {
+                        enemyPtr->setActive(true); // Resume enemy activity
+                    }
+                }
+                isSettingsPressed = false;
+            }
+        }
+    } else {
+        pauseSprite->setScale(sf::Vector2f(0.9f, 0.9f));
+    }
+
+    if (settingsClicked) {
+        float t = settingsAnimClock.getElapsedTime().asSeconds();
+
+        if (t < settingsAnimDuration) {
+            float progress = t / settingsAnimDuration;
+            float scale = 0.9f - 0.1f * std::sin(progress * 3.14159f); 
+            settingsSprite->setScale(sf::Vector2f(scale, scale));
+        } else {
+            settingsSprite->setScale(sf::Vector2f(0.9f, 0.9f)); // reset scale
+            settingsClicked = false;
+
+            isSettingsOpen = !isSettingsOpen;
+            if(!isSettingsPressed) {
+                _isPaused = !_isPaused;
+            }
+            if(isSettingsOpen) {
+                _context->getSoundManager().playSound(mario::event::SoundEvent::GAME_PAUSE);
+                _isPaused = true;
+            }
+        }
+    } else {
+        settingsSprite->setScale(sf::Vector2f(0.9f, 0.9f));
+    }
+
     if(!_isPaused) {
         if(!p_player->isTransforming() && !p_player->isInBehavior(mario::entity::PlayerBehavior::Dying) && !p_player->isInBehavior(mario::entity::PlayerBehavior::Climbing)
             && !p_player->isInBehavior(mario::entity::PlayerBehavior::GoToFortress) && !p_player->isInBehavior(mario::entity::PlayerBehavior::EnterFortress)
             && !p_player->isInBehavior(mario::entity::PlayerBehavior::FinishLevel)) {
                 currLevelState.update(dt);
                 if(currLevelState.times <= sf::seconds(0.f)) {
+                    _context->getSoundManager().playSound(mario::event::SoundEvent::TIME_WARNING);
                     p_player->changePlayerBehavior(mario::entity::PlayerBehavior::Dying);
                     currLevelState.times = sf::seconds(0.f);
                 }
@@ -496,18 +575,22 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
             collisionManager.updateCameraBounds(cameraBounds);
 
             // handle collision
-            if(currLevelState.level == 1 && p_player->getPosition().x >= 8180) {
+            if(currLevelState.level == 1 && p_player->getPosition().x >= 8180 && (p_player->getPlayerBehavior() != mario::entity::PlayerBehavior::EnterFortress)) {
                 p_player->setPosition(sf::Vector2f(8180, p_player->getPosition().y));
+                _context->getSoundManager().playSound(mario::event::SoundEvent::LEVEL_CLEAR);
                 p_player->enterFortressDoor();
             }
-            else if(currLevelState.level == 2 && p_player->getPosition().x >= 7540) {
+            else if(currLevelState.level == 2 && p_player->getPosition().x >= 7540 && (p_player->getPlayerBehavior() != mario::entity::PlayerBehavior::EnterFortress)) {
                 p_player->setPosition(sf::Vector2f(7540, p_player->getPosition().y));
+                _context->getSoundManager().playSound(mario::event::SoundEvent::LEVEL_CLEAR);
                 p_player->enterFortressDoor();
             }
-            else if(currLevelState.level == 3 && p_player->getPosition().x >= 8340) {
+            else if(currLevelState.level == 3 && p_player->getPosition().x >= 8340 && (p_player->getPlayerBehavior() != mario::entity::PlayerBehavior::EnterFortress)) {
                 p_player->setPosition(sf::Vector2f(8340, p_player->getPosition().y));
+                _context->getSoundManager().playSound(mario::event::SoundEvent::LEVEL_CLEAR);
                 p_player->enterFortressDoor();
             }
+
             collisionManager.checkCollisionEnemyWithBlocks(enemies, blocks);
             collisionManager.checkCollisionPlayerWithEnemies(p_player, enemies);
             collisionManager.checkCollisionPlayerWithItems(p_player, items);
@@ -591,53 +674,50 @@ void mario::pages::LevelsPage::handleEvent(const sf::RenderWindow *window, const
     if (auto* mouseButtonPressed = event.getIf<sf::Event::MouseButtonPressed>()) {
         if(mouseButtonPressed->button == sf::Mouse::Button::Left) {
             sf::Vector2i mousePos = sf::Mouse::getPosition(*window);
-            sf::Vector2f worldMousePos = camera.screenToWorld(mousePos, *window);   
+            sf::Vector2f worldMousePos = p_camera->screenToWorld(mousePos, *window);   
 
             sf::FloatRect pauseRectF = sf::FloatRect(pauseSprite->getPosition(), sf::Vector2f(pauseTexture->getSize().x * pauseSprite->getScale().x, pauseTexture->getSize().y * pauseSprite->getScale().y));
             sf::FloatRect homeRectF = sf::FloatRect(homeSprite->getPosition(), sf::Vector2f(homeTexture->getSize().x * homeSprite->getScale().x, homeTexture->getSize().y * homeSprite->getScale().y));
             sf::FloatRect settingsRectF = sf::FloatRect(settingsSprite->getPosition(), sf::Vector2f(settingsTexture->getSize().x * settingsSprite->getScale().x, settingsTexture->getSize().y * settingsSprite->getScale().y));
 
             if(pauseRectF.contains(sf::Vector2f(worldMousePos)) && !isSettingsOpen) {
-                _isPaused = !_isPaused;
-                if(_isPaused) {
-                    _context->getSoundManager().playSound(mario::event::SoundEvent::GAME_PAUSE);
-                    _context->getSoundManager().pauseBackgroundMusic();
-                    isSettingsPressed = true;
-                } else {
-                    _context->getSoundManager().resumeBackgroundMusic();
-                    if (p_player) {
-                        p_player->resetMove();
-                    }
-                    for (auto* enemy : enemies) {
-                        mario::entity::Enemy* enemyPtr = dynamic_cast<mario::entity::Enemy*>(enemy);
-                        if (enemyPtr && !enemyPtr->getActive()) {
-                            enemyPtr->setActive(true); // Resume enemy activity
-                        }
-                    }
-                    isSettingsPressed = false;
-                }
-            } else 
-                // if(homeRectF.contains(sf::Vector2f(mousePos))) {
-                //     _isPaused = !_isPaused;
-                //     camera.resetToDefaultView();
-                //     _context->changePage(std::make_shared<mario::pages::MainMenuPage>(*_context));
-                // } else 
-                //     if(settingsRectF.contains(sf::Vector2f(mousePos))) {
-                        
+                pauseClicked = true;
+                pauseAnimClock.restart();
+                // _isPaused = !_isPaused;
+                // if(_isPaused) {
+                //     _context->getSoundManager().playSound(mario::event::SoundEvent::GAME_PAUSE);
+                //     _context->getSoundManager().pauseBackgroundMusic();
+                //     isSettingsPressed = true;
+                // } else {
+                //     _context->getSoundManager().resumeBackgroundMusic();
+                //     if (p_player) {
+                //         p_player->resetMove();
+                //     }
+                //     for (auto* enemy : enemies) {
+                //         mario::entity::Enemy* enemyPtr = dynamic_cast<mario::entity::Enemy*>(enemy);
+                //         if (enemyPtr && !enemyPtr->getActive()) {
+                //             enemyPtr->setActive(true); // Resume enemy activity
+                //         }
+                //     }
+                //     isSettingsPressed = false;
+                // }
+            } else      
                 if(homeRectF.contains(sf::Vector2f(worldMousePos))) {
-                    _isPaused = !_isPaused;
-                    camera.resetToDefaultView();
-                    _context->changePage(std::make_shared<mario::pages::MainMenuPage>(*_context));
+                    backClicked = true;
+                    backAnimClock.restart();
+                    // _context->changePage(std::make_shared<mario::pages::MainMenuPage>(*_context));
                 } else 
                     if(settingsRectF.contains(sf::Vector2f(worldMousePos))) {
-                        isSettingsOpen = !isSettingsOpen;
-                        if(!isSettingsPressed) {
-                            _isPaused = !_isPaused;
-                        }
-                        if(isSettingsOpen) {
-                            _context->getSoundManager().playSound(mario::event::SoundEvent::GAME_PAUSE);
-                            _isPaused = true;
-                        }
+                        settingsClicked = true;
+                        settingsAnimClock.restart();
+                        // isSettingsOpen = !isSettingsOpen;
+                        // if(!isSettingsPressed) {
+                        //     _isPaused = !_isPaused;
+                        // }
+                        // if(isSettingsOpen) {
+                        //     _context->getSoundManager().playSound(mario::event::SoundEvent::GAME_PAUSE);
+                        //     _isPaused = true;
+                        // }
                     }
         } 
     }
@@ -880,7 +960,7 @@ void mario::pages::LevelsPage::renderLevelState(sf::RenderWindow *window, mario:
 }
 
 sf::Vector2f mario::pages::LevelsPage::getPositionRelativeToCamera(sf::Vector2f pos) {
-    sf::FloatRect rect = camera.getCameraBounds();
+    sf::FloatRect rect = p_camera->getCameraBounds();
     sf::Vector2f cameraPos = rect.position;
 
     return sf::Vector2f(pos.x + cameraPos.x, pos.y + cameraPos.y);
@@ -898,11 +978,11 @@ void mario::pages::LevelsPage::render(sf::RenderWindow *window) {
     window->draw(*backgroundSprite);
     if(flagPole->getWinState())testFireWorks->render(window);
     // std::cout << "Position's player: " << p_player->getPosition().x << ", " << p_player->getPosition().y << "\n";
-    camera.applyTo(*window);
+    p_camera->applyTo(*window);
 
     // draw background here
 
-    sf::FloatRect cameraBounds = camera.getCameraBounds();
+    sf::FloatRect cameraBounds = p_camera->getCameraBounds();
     sf::Vector2f topLeft = cameraBounds.position;
     
     // Set new position of sprites with camera
@@ -911,7 +991,7 @@ void mario::pages::LevelsPage::render(sf::RenderWindow *window) {
     settingsSprite->setPosition(topLeft + sf::Vector2f(20.f, 164.f));
 
     sf::Vector2u windowSize(1280, 720); // Size of window
-    sf::Vector2f cameraCenter = camera.getPosition(); // Center of camera
+    sf::Vector2f cameraCenter = p_camera->getPosition(); // Center of camera
 
     if (panelSprite) {
         sf::Vector2u textureSize = panelTexture->getSize();

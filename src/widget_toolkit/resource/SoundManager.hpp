@@ -33,6 +33,7 @@ namespace mario::audio{
         
         void loadSounds();
         void playSound(mario::event::SoundEvent event);
+        void stopSound(mario::event::SoundEvent event);
         void setBackgroundMusic(mario::event::BackgroundMusicState state);
         void toggleBackgroundMusic(bool enable);
         void toggleSoundEffects(bool enable);

@@ -170,6 +170,8 @@ namespace mario::entity {
             if(collision.isWithPlayer() && (side == SideCollision::Top) && currentState != KoopaState::Shell) {
                 hitByPlayer();
             } else if(collision.isWithPlayer() && currentState == KoopaState::Shell && lastState == KoopaState::Shell && !checkShell) {
+                // _context->getSoundManager().playSound(mario::event::SoundEvent::SHELL_KICK);
+                
                 DynamicBox* body = dynamic_cast<DynamicBox*>(p_body);
                 if(body) {
                     checkShell = true;

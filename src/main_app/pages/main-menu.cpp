@@ -21,13 +21,9 @@ mario::pages::MainMenuPage::MainMenuPage(mario::MainWindow &context) : Page(cont
     p_marioFont = std::make_unique<sf::Font>("../../asset/fonts/SuperMario256.ttf");
 
     p_levelDataManager = std::make_unique<mario::resource::LevelDataManager>();
-    
-    p_title = std::make_unique<sf::Text>(*p_marioFont, "Super Mario Bros", 50);
-    rePositionTextToMiddle(*p_title, 1280, 180);
-    p_title->setFillColor(sf::Color::White);
 
     p_showMenu = std::make_unique<sf::Text>(*p_marioFont, "Press any key to continue", 17);
-    rePositionTextToMiddle(*p_showMenu, 1280, 500);
+    rePositionTextToMiddle(*p_showMenu, 1300, 600);
     p_showMenu->setFillColor(sf::Color::White);
 
     p_menuButtonListNode = new ButtonListNode();
@@ -45,6 +41,7 @@ mario::pages::MainMenuPage::MainMenuPage(mario::MainWindow &context) : Page(cont
     p_button->buttonRect = sf::FloatRect(sf::Vector2f(540, 540), sf::Vector2f(200, 30));
     p_button->p_nodeOnButton = nullptr;
     p_button->Click.append([this]() {
+        _context->getSoundManager().playSound(mario::event::SoundEvent::LEVEL_ENTER);
         _context->changePage(std::make_shared<mario::pages::LevelsPage>(*_context, p_levelDataManager->loadAutoSaveLevelData()));
     });
 
@@ -87,6 +84,18 @@ mario::pages::MainMenuPage::MainMenuPage(mario::MainWindow &context) : Page(cont
     }
 
     p_currButtonList = std::make_unique<mario::ButtonList>(p_menuButtonListNode, nullptr);
+
+    // Load background texture and sprite
+    p_backgroundTexture = std::make_unique<sf::Texture>();
+    if (!p_backgroundTexture->loadFromFile("../../asset/sprites/main_menu_theme_new.png")) {
+        std::cerr << "Failed to load background image!" << std::endl;
+    }
+    p_backgroundSprite = std::make_unique<sf::Sprite>(*p_backgroundTexture);
+    
+    // Scale the sprite to fit the window size (1280x720)
+    float scaleX = 1280.0f / p_backgroundTexture->getSize().x;
+    float scaleY = 720.0f / p_backgroundTexture->getSize().y;
+    p_backgroundSprite->setScale(sf::Vector2f(scaleX, scaleY));
 }
 
 void mario::pages::MainMenuPage::handleEvent(const sf::RenderWindow *window, const sf::Event &event) {
@@ -101,19 +110,17 @@ void mario::pages::MainMenuPage::handleEvent(const sf::RenderWindow *window, con
 }
 
 void mario::pages::MainMenuPage::update(const sf::RenderWindow *window, float dt) {
-    if(_isMenuVisible && p_currButtonList != nullptr) {
+    if(_isMenuVisible && p_currButtonList != nullptr)
         p_currButtonList->update(window, dt);
-    }
 
-    std::cerr << "IS AUTO SAVE EXIST: " << p_levelDataManager->checkExistAutoSave() << '\n';
-    std::cerr << "Current path: " << std::filesystem::current_path() << '\n';
-    if(p_levelDataManager->checkExistAutoSave() != p_continueButton->isEnabled()) {
+    if(p_levelDataManager->checkExistAutoSave() != p_continueButton->isEnabled())
         p_continueButton->setEnableState(!p_continueButton->isEnabled());
-    }
 }
 
 void mario::pages::MainMenuPage::render(sf::RenderWindow *window) {
-    window->draw(*p_title);
+    // Draw background first
+    window->draw(*p_backgroundSprite);
+    
     if(!_isMenuVisible) {
         window->draw(*p_showMenu);
     } else 
