@@ -47,6 +47,7 @@ namespace mario::entity {
             virtual void setOnGround(bool isOnGround) = 0;
             virtual void setVelocity(sf::Vector2f vel) = 0;
             virtual void setAcceleration(sf::Vector2f acc) = 0;
+            virtual void setMaxVelocityX(float maxVX) = 0;
 
             virtual void move(bool isMoveRight, bool isReleased) {};
             virtual void moveLeft(bool isReleased) = 0;
