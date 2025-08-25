@@ -175,8 +175,9 @@ namespace mario::entity {
                 DynamicBox* body = dynamic_cast<DynamicBox*>(p_body);
                 if(body) {
                     checkShell = true;
-                    float pushSpeed = 1000.f;
+                    float pushSpeed = 500.f;
                     body->setVelocity({side == SideCollision::Right ? -pushSpeed : pushSpeed, body->getVelocity().y});
+                    body->setIsFaceForward(side == SideCollision::Left);
                     shellCollisionTimer = SHELL_COLLISION_DELAY;
                 }
             } else if(collision.isWithEnemy()){
@@ -210,9 +211,9 @@ namespace mario::entity {
                         body->setIsFaceForward(false);
                         // std::cout << "COLLISION: " << body->getVelocity().x << std::endl;
                     }
-                    if(p_animation->isFaceForward() != body->isFaceForward()) {
+
+                    if(p_animation->isFaceForward() != body->isFaceForward())
                         p_animation->rotate();
-                    }
                 }
             } else if(collision.isWithFireball()) {
                 currentState = KoopaState::DeadSpecial;
@@ -253,7 +254,7 @@ namespace mario::entity {
                 }
                 // p_body->move(p_body->isFaceForward(), false); 
             } else if (!(collision.isWithWall() && (side == SideCollision::Left || side == SideCollision::Right)) && currentState == KoopaState::Shell && lastState == KoopaState::Shell && checkShell) {
-                float pushSpeed = 1000.f;
+                float pushSpeed = 500.f;
                 p_body->setVelocity({p_body->getVelocity().x < 0 ? -pushSpeed : pushSpeed, p_body->getVelocity().y});
                 //std::cout << "After: " << p_body->getVelocity().x << std::endl;
                 // std::cout << "Before: " << p_body->getVelocity().x << std::endl;
@@ -361,6 +362,8 @@ namespace mario::entity {
                     stateTimer -= dt;
                     if (stateTimer <= 0.f) {
                         currentState = KoopaState::Shell;
+                        p_body->setAcceleration({0.f, p_body->getAcceleration().y});
+                        p_body->setMaxVelocityX(600.f);
                         loadShellAnimations();
                         try {
                             p_animation->setSpriteAnimation(typePrefix + "knocked-out[0]");
@@ -380,6 +383,12 @@ namespace mario::entity {
                     setIsCheckCollisionWithBlock(false);
                 } 
             }
+
+            if(currentState == KoopaState::Shell && checkShell) {
+                float pushSpeed = 500.f;
+                p_body->setVelocity({pushSpeed * (p_body->isFaceForward() > 0.f ? +1 : -1), p_body->getVelocity().y});
+            }
+ 
             updateBehavior(dt);
             p_animation->update(window, dt);
             p_body->updateSize(p_animation);

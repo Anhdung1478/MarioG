@@ -130,6 +130,10 @@ namespace mario::entity {
                 _isOnGround = false;
             }
 
+            void setMaxVelocityX(float maxVX) override {
+                maxVelocityX = maxVX;
+            }
+
             void resetMove() override {
                 velocity.x = 0.f;
                 _isRunningLeft = _isRunningRight = false;

@@ -36,6 +36,9 @@ namespace mario::entity {
             void resetMove() override {
             }
 
+            void setMaxVelocityX(float maxVX) override {
+            }
+
             void setAcceleration(sf::Vector2f acc) override {
             }
 
