@@ -45,8 +45,8 @@ namespace mario {
                     p_nodeOnButton = nullptr;
                 }
 
-            Button(std::string buttText = "") : fontSize(20), enabled(true), selected(false), buttonText(buttText) {
-                font = std::make_unique<sf::Font>("../../asset/fonts/SuperMario256.ttf");
+            Button(std::string buttText = "") : fontSize(12), enabled(true), selected(false), buttonText(buttText) {
+                font = std::make_unique<sf::Font>("../../asset/fonts/MarioPixelRegularFont.ttf");
                 p_leftMushroomSprite = new sf::Sprite(*p_texture);
                 p_rightMushroomSprite = new sf::Sprite(*p_texture);
 
@@ -150,7 +150,7 @@ namespace mario {
                 }
                 
                 text.setFillColor(textColor);
-                text.setPosition(sf::Vector2f(int(buttonRect.position.x + (buttonRect.size.x - textLenX) / 2.f), int(buttonRect.position.y - 4 + (buttonRect.size.y - textLenY) / 2.f)));
+                text.setPosition(sf::Vector2f(int(buttonRect.position.x + (buttonRect.size.x - textLenX) / 2.f), int(buttonRect.position.y + 4 + (buttonRect.size.y - textLenY) / 2.f)));
                 window->draw(text); 
             }
 
