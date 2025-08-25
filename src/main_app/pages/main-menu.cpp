@@ -22,8 +22,8 @@ mario::pages::MainMenuPage::MainMenuPage(mario::MainWindow &context) : Page(cont
 
     p_levelDataManager = std::make_unique<mario::resource::LevelDataManager>();
 
-    p_showMenu = std::make_unique<sf::Text>(*p_marioFont, "Press any key to continue", 17);
-    rePositionTextToMiddle(*p_showMenu, 1300, 600);
+    p_showMenu = std::make_unique<sf::Text>(*p_marioFont, "Press any key to continue", 22);
+    rePositionTextToMiddle(*p_showMenu, 1300, 560);
     p_showMenu->setFillColor(sf::Color::White);
 
     p_menuButtonListNode = new ButtonListNode();
