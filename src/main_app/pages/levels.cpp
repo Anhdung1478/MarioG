@@ -590,14 +590,15 @@ void mario::pages::LevelsPage::update(const sf::RenderWindow *window, float dt) 
                 _context->getSoundManager().playSound(mario::event::SoundEvent::LEVEL_CLEAR);
                 p_player->enterFortressDoor();
             }
-
+            if(p_player->getPosition().x <= 7000.f) _context->getSoundManager().stopSound(mario::event::SoundEvent::LEVEL_CLEAR);
+            
             collisionManager.checkCollisionEnemyWithBlocks(enemies, blocks);
             collisionManager.checkCollisionPlayerWithEnemies(p_player, enemies);
             collisionManager.checkCollisionPlayerWithItems(p_player, items);
             collisionManager.checkCollisionItemsWithBlocks(items, blocks);
             collisionManager.checkCollisionEnemyWithEnemy(enemies);
             flagPole->reactToCollision(p_player);
-
+            
             // Check for item collection and notify network
             checkItemCollection();
             
