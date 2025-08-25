@@ -31,14 +31,14 @@ mario::pages::MainMenuPage::MainMenuPage(mario::MainWindow &context) : Page(cont
 
     mario::Button *p_button;
     p_button = new mario::Button("New Game");
-    p_button->buttonRect = sf::FloatRect(sf::Vector2f(540, 490), sf::Vector2f(200, 30));
+    p_button->buttonRect = sf::FloatRect(sf::Vector2f(BUTTON_POS_X, 490), sf::Vector2f(BUTTON_SIZE_X, BUTTON_SIZE_Y));
     p_button->p_nodeOnButton = p_newGameButtonListNode;
     p_button->Click.append([this]() {});
 
     p_menuButtonListNode->buttonList.push_back(p_button);
 
     p_button = new mario::Button("Continue");
-    p_button->buttonRect = sf::FloatRect(sf::Vector2f(540, 540), sf::Vector2f(200, 30));
+    p_button->buttonRect = sf::FloatRect(sf::Vector2f(BUTTON_POS_X, 540), sf::Vector2f(BUTTON_SIZE_X, BUTTON_SIZE_Y));
     p_button->p_nodeOnButton = nullptr;
     p_button->Click.append([this]() {
         _context->getSoundManager().playSound(mario::event::SoundEvent::LEVEL_ENTER);
@@ -49,7 +49,7 @@ mario::pages::MainMenuPage::MainMenuPage(mario::MainWindow &context) : Page(cont
     p_menuButtonListNode->buttonList.push_back(p_button);
 
     p_button = new mario::Button("Settings");
-    p_button->buttonRect = sf::FloatRect(sf::Vector2f(540, 590), sf::Vector2f(200, 30));
+    p_button->buttonRect = sf::FloatRect(sf::Vector2f(BUTTON_POS_X, 590), sf::Vector2f(BUTTON_SIZE_X, BUTTON_SIZE_Y));
     p_button->p_nodeOnButton = nullptr;
     p_button->Click.append([this]() {
         _context->changePage(std::make_shared<mario::pages::SettingsPage>(*_context));
@@ -58,7 +58,7 @@ mario::pages::MainMenuPage::MainMenuPage(mario::MainWindow &context) : Page(cont
     p_menuButtonListNode->buttonList.push_back(p_button);
 
     p_button = new mario::Button("Exit Game");
-    p_button->buttonRect = sf::FloatRect(sf::Vector2f(540, 640), sf::Vector2f(200, 30));
+    p_button->buttonRect = sf::FloatRect(sf::Vector2f(BUTTON_POS_X, 640), sf::Vector2f(BUTTON_SIZE_X, BUTTON_SIZE_Y));
     p_button->p_nodeOnButton = nullptr;
     p_button->Click.append([this]() {
         closeWindow();
@@ -69,7 +69,7 @@ mario::pages::MainMenuPage::MainMenuPage(mario::MainWindow &context) : Page(cont
     Button *p_levelButton[NUM_LEVELS + 1];
     for (int i = 1; i <= NUM_LEVELS; ++i) {
         p_levelButton[i] = new mario::Button("Level " + std::to_string(i));
-        p_levelButton[i]->buttonRect = sf::FloatRect(sf::Vector2f(540, 440 + 50 * i), sf::Vector2f(200, 30));
+        p_levelButton[i]->buttonRect = sf::FloatRect(sf::Vector2f(BUTTON_POS_X, 440 + 50 * i), sf::Vector2f(BUTTON_SIZE_X, BUTTON_SIZE_Y));
         p_levelButton[i]->p_nodeOnButton = nullptr;
     }
 

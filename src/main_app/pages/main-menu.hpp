@@ -13,6 +13,9 @@ namespace mario::pages {
     class MainMenuPage : public Page {
         private:
             static constexpr float BUTTON_DELAY_TIME = 0.1f;
+            static constexpr float BUTTON_POS_X = 550.f;
+            static constexpr float BUTTON_SIZE_X = 200.f;
+            static constexpr float BUTTON_SIZE_Y = 30.f;
 
             std::unique_ptr<sf::Font> p_font;
             std::unique_ptr<sf::Font> p_marioFont;
