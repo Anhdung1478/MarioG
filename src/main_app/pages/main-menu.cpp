@@ -5,9 +5,21 @@
 #include "settings.hpp"
 
 mario::pages::MainMenuPage::MainMenuPage(mario::MainWindow &context) : Page(context) {
-    // Create a file to store autosave
+    // Create a folder to store autosave
     // Define the path for the new directory
     std::filesystem::path newDirPath = "asset/save_data"; 
+
+    // Attempt to create the directory
+    if (std::filesystem::create_directory(newDirPath)) {
+        std::cerr << "Directory '" << newDirPath << "' created successfully." << std::endl;
+    } else {
+        // This 'else' block covers cases where creation fails or the directory already exists.
+        std::cerr << "Failed to create directory '" << newDirPath << "' or it already exists." << std::endl;
+    }
+
+    // Create a folder to store key bindings
+    // Define the path for the new directory
+    newDirPath = "asset/key_bindings"; 
 
     // Attempt to create the directory
     if (std::filesystem::create_directory(newDirPath)) {

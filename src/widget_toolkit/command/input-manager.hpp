@@ -36,7 +36,7 @@ namespace mario::input {
 
             // Load key bindings from JSON file
             void loadKeyBindings() {
-                std::ifstream file("../../src/widget_toolkit/keybindings.json");
+                std::ifstream file("asset/key_bindings/keybindings.json");
                 nlohmann::json config;
                 if (file.is_open() && file.peek() != std::ifstream::traits_type::eof()) {
                     try {
