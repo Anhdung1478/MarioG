@@ -2,7 +2,7 @@
 #include "gameover-page.hpp"
 
 mario::pages::GameOverPage::GameOverPage(MainWindow &context) : Page(context) {
-    marioFont = std::make_unique<sf::Font>("../../asset/fonts/SuperMario256.ttf");
+    marioFont = std::make_unique<sf::Font>("asset/fonts/SuperMario256.ttf");
     delayTimeBeforeBackToMainMenu = sf::seconds(5);
 
     gameOverText = std::make_unique<sf::Text>(*marioFont, "GAME OVER", 50);

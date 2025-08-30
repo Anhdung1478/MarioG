@@ -14,7 +14,7 @@ mario::MainWindow::MainWindow() {
     isRunning = true;
 
     sf::Image marioCursorImage;
-    if(!marioCursorImage.loadFromFile("../../asset/sprites/mario-cursor.png"))
+    if(!marioCursorImage.loadFromFile("asset/sprites/mario-cursor.png"))
         throw std::runtime_error("Failed to load texture from file: " + std::string("asset/sprites/mario-cursor.png"));
 
     sf::Vector2u size = marioCursorImage.getSize();

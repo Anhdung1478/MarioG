@@ -91,13 +91,13 @@ namespace mario::entity {
 
                     // Stair blocks
                     case 351:
-                        return new SolidBlock("../../asset/maps/blocks/stair_block_1.png", sf::Vector2f(spawnPoint.x / 2.5f, spawnPoint.y / 2.5f), sf::Vector2f(16, 16), "stair_block_1", {"stair_block_1", 0, 0, 16, 16});
+                        return new SolidBlock("asset/maps/blocks/stair_block_1.png", sf::Vector2f(spawnPoint.x / 2.5f, spawnPoint.y / 2.5f), sf::Vector2f(16, 16), "stair_block_1", {"stair_block_1", 0, 0, 16, 16});
                     
                     case 352:
-                        return new SolidBlock("../../asset/maps/blocks/stair_block_2.png", sf::Vector2f(spawnPoint.x / 2.5f, spawnPoint.y / 2.5f), sf::Vector2f(16, 16), "stair_block_2", {"stair_block_2", 0, 0, 16, 16});
+                        return new SolidBlock("asset/maps/blocks/stair_block_2.png", sf::Vector2f(spawnPoint.x / 2.5f, spawnPoint.y / 2.5f), sf::Vector2f(16, 16), "stair_block_2", {"stair_block_2", 0, 0, 16, 16});
                         
                     case 353:
-                        return new SolidBlock("../../asset/maps/blocks/stair_block_3.png", sf::Vector2f(spawnPoint.x / 2.5f, spawnPoint.y / 2.5f), sf::Vector2f(16, 16), "stair_block_3", {"stair_block_3", 0, 0, 16, 16});
+                        return new SolidBlock("asset/maps/blocks/stair_block_3.png", sf::Vector2f(spawnPoint.x / 2.5f, spawnPoint.y / 2.5f), sf::Vector2f(16, 16), "stair_block_3", {"stair_block_3", 0, 0, 16, 16});
 
                         
                     // Question blocks

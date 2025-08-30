@@ -7,7 +7,7 @@
 mario::pages::MainMenuPage::MainMenuPage(mario::MainWindow &context) : Page(context) {
     // Create a file to store autosave
     // Define the path for the new directory
-    std::filesystem::path newDirPath = "../../asset/save_data"; 
+    std::filesystem::path newDirPath = "asset/save_data"; 
 
     // Attempt to create the directory
     if (std::filesystem::create_directory(newDirPath)) {
@@ -17,8 +17,8 @@ mario::pages::MainMenuPage::MainMenuPage(mario::MainWindow &context) : Page(cont
         std::cerr << "Failed to create directory '" << newDirPath << "' or it already exists." << std::endl;
     }
 
-    p_font = std::make_unique<sf::Font>("../../asset/fonts/Cascadia.ttf");
-    p_marioFont = std::make_unique<sf::Font>("../../asset/fonts/MarioPixelRegularFont.ttf");
+    p_font = std::make_unique<sf::Font>("asset/fonts/Cascadia.ttf");
+    p_marioFont = std::make_unique<sf::Font>("asset/fonts/MarioPixelRegularFont.ttf");
 
     p_levelDataManager = std::make_unique<mario::resource::LevelDataManager>();
 
@@ -87,7 +87,7 @@ mario::pages::MainMenuPage::MainMenuPage(mario::MainWindow &context) : Page(cont
 
     // Load background texture and sprite
     p_backgroundTexture = std::make_unique<sf::Texture>();
-    if (!p_backgroundTexture->loadFromFile("../../asset/sprites/main_menu_theme_new.png")) {
+    if (!p_backgroundTexture->loadFromFile("asset/sprites/main_menu_theme_new.png")) {
         std::cerr << "Failed to load background image!" << std::endl;
     }
     p_backgroundSprite = std::make_unique<sf::Sprite>(*p_backgroundTexture);

@@ -33,7 +33,7 @@ namespace mario::entity {
         if (imagePath.find("Image/") == 0) {
             imagePath = imagePath.substr(6); // Remove "Image/" prefix
         }
-        imagePath = "../../asset/maps/Image/" + imagePath; // Add relative path
+        imagePath = "asset/maps/Image/" + imagePath; // Add relative path
         
         if (!tilesetTexture.loadFromFile(imagePath)) {
             std::cerr << "Failed to load tileset texture: " << imagePath << std::endl;
@@ -245,57 +245,57 @@ namespace mario::entity {
         // posY = y + 16
         if(levelState == 1){
             // ground
-            groundBlocks.push_back(new SolidBlock("../../asset/maps/Image/Map_1.png", sf::Vector2f(0 + 544, 256 + 16), sf::Vector2f(1104, 32), "ground", {"ground", 0, 256, 1104, 32}));
-            groundBlocks.push_back(new SolidBlock("../../asset/maps/Image/Map_1.png", sf::Vector2f(1136 + 112, 256 + 16), sf::Vector2f(240, 32), "ground", {"ground", 1136, 256, 240, 32}));
-            groundBlocks.push_back(new SolidBlock("../../asset/maps/Image/Map_1.png", sf::Vector2f(1424 + 504, 256 + 16), sf::Vector2f(1024, 32), "ground", {"ground", 1424, 256, 1024, 32}));
-            groundBlocks.push_back(new SolidBlock("../../asset/maps/Image/Map_1.png", sf::Vector2f(2480 + 464, 256 + 16), sf::Vector2f(944, 32), "ground", {"ground", 2480, 256, 944, 32}));
+            groundBlocks.push_back(new SolidBlock("asset/maps/Image/Map_1.png", sf::Vector2f(0 + 544, 256 + 16), sf::Vector2f(1104, 32), "ground", {"ground", 0, 256, 1104, 32}));
+            groundBlocks.push_back(new SolidBlock("asset/maps/Image/Map_1.png", sf::Vector2f(1136 + 112, 256 + 16), sf::Vector2f(240, 32), "ground", {"ground", 1136, 256, 240, 32}));
+            groundBlocks.push_back(new SolidBlock("asset/maps/Image/Map_1.png", sf::Vector2f(1424 + 504, 256 + 16), sf::Vector2f(1024, 32), "ground", {"ground", 1424, 256, 1024, 32}));
+            groundBlocks.push_back(new SolidBlock("asset/maps/Image/Map_1.png", sf::Vector2f(2480 + 464, 256 + 16), sf::Vector2f(944, 32), "ground", {"ground", 2480, 256, 944, 32}));
             // pipe
-            blocks.push_back(new SolidBlock("../../asset/maps/Image/Map_1.png", sf::Vector2f(448 + 8, 224 + 16), sf::Vector2f(32, 32), "pipe", {"pipe", 448, 224, 32, 32}));
-            blocks.push_back(new SolidBlock("../../asset/maps/Image/Map_1.png", sf::Vector2f(608 + 8, 208 + 32), sf::Vector2f(32, 48), "pipe", {"pipe", 608, 208, 32, 48}));
-            blocks.push_back(new SolidBlock("../../asset/maps/Image/Map_1.png", sf::Vector2f(736 + 8, 192 + 48), sf::Vector2f(32, 64), "pipe", {"pipe", 736, 192, 32, 64}));
-            blocks.push_back(new SolidBlock("../../asset/maps/Image/Map_1.png", sf::Vector2f(912 + 8, 192 + 48), sf::Vector2f(32, 64), "pipe", {"pipe", 912, 192, 32, 64}));
-            blocks.push_back(new SolidBlock("../../asset/maps/Image/Map_1.png", sf::Vector2f(2608 + 8, 224 + 16), sf::Vector2f(32, 32), "pipe", {"pipe", 2608, 224, 32, 32}));
-            blocks.push_back(new SolidBlock("../../asset/maps/Image/Map_1.png", sf::Vector2f(2864 + 8, 224 + 16), sf::Vector2f(32, 32), "pipe", {"pipe", 2864, 224, 32, 32}));
+            blocks.push_back(new SolidBlock("asset/maps/Image/Map_1.png", sf::Vector2f(448 + 8, 224 + 16), sf::Vector2f(32, 32), "pipe", {"pipe", 448, 224, 32, 32}));
+            blocks.push_back(new SolidBlock("asset/maps/Image/Map_1.png", sf::Vector2f(608 + 8, 208 + 32), sf::Vector2f(32, 48), "pipe", {"pipe", 608, 208, 32, 48}));
+            blocks.push_back(new SolidBlock("asset/maps/Image/Map_1.png", sf::Vector2f(736 + 8, 192 + 48), sf::Vector2f(32, 64), "pipe", {"pipe", 736, 192, 32, 64}));
+            blocks.push_back(new SolidBlock("asset/maps/Image/Map_1.png", sf::Vector2f(912 + 8, 192 + 48), sf::Vector2f(32, 64), "pipe", {"pipe", 912, 192, 32, 64}));
+            blocks.push_back(new SolidBlock("asset/maps/Image/Map_1.png", sf::Vector2f(2608 + 8, 224 + 16), sf::Vector2f(32, 32), "pipe", {"pipe", 2608, 224, 32, 32}));
+            blocks.push_back(new SolidBlock("asset/maps/Image/Map_1.png", sf::Vector2f(2864 + 8, 224 + 16), sf::Vector2f(32, 32), "pipe", {"pipe", 2864, 224, 32, 32}));
 
             // background
-            backgroundBlocks.push_back(new BackgroundBlock("../../asset/maps/Image/Map_1.png", sf::Vector2f(3232 + 40, 176 + 64), sf::Vector2f(96, 80), "background", {"background", 3233, 176, 94, 80}));
+            backgroundBlocks.push_back(new BackgroundBlock("asset/maps/Image/Map_1.png", sf::Vector2f(3232 + 40, 176 + 64), sf::Vector2f(96, 80), "background", {"background", 3233, 176, 94, 80}));
         }
         else if (levelState == 2) {
             // ground
-            groundBlocks.push_back(new SolidBlock("../../asset/maps/Image/Map_2.png", sf::Vector2f(0 + 631, 256 + 16), sf::Vector2f(1278, 32), "ground", {"ground", 0, 256, 1278, 32}));
-            groundBlocks.push_back(new SolidBlock("../../asset/maps/Image/Map_2.png", sf::Vector2f(1329 + 287, 256 + 16), sf::Vector2f(590, 32), "ground", {"ground", 1329, 256, 590, 32}));
-            groundBlocks.push_back(new SolidBlock("../../asset/maps/Image/Map_2.png", sf::Vector2f(1953 + 7, 256 + 16), sf::Vector2f(30, 32), "ground", {"ground", 1953, 256, 30, 32}));
-            groundBlocks.push_back(new SolidBlock("../../asset/maps/Image/Map_2.png", sf::Vector2f(2017 + 87, 256 + 16), sf::Vector2f(190, 32), "ground", {"ground", 2017, 256, 190, 32}));
-            groundBlocks.push_back(new SolidBlock("../../asset/maps/Image/Map_2.png", sf::Vector2f(2321 + 55, 256 + 16), sf::Vector2f(126, 32), "ground", {"ground", 2321, 256, 126, 32}));
-            groundBlocks.push_back(new SolidBlock("../../asset/maps/Image/Map_2.png", sf::Vector2f(2560 + 288, 256 + 16), sf::Vector2f(591, 32), "ground", {"ground", 2560, 256, 591, 32}));
+            groundBlocks.push_back(new SolidBlock("asset/maps/Image/Map_2.png", sf::Vector2f(0 + 631, 256 + 16), sf::Vector2f(1278, 32), "ground", {"ground", 0, 256, 1278, 32}));
+            groundBlocks.push_back(new SolidBlock("asset/maps/Image/Map_2.png", sf::Vector2f(1329 + 287, 256 + 16), sf::Vector2f(590, 32), "ground", {"ground", 1329, 256, 590, 32}));
+            groundBlocks.push_back(new SolidBlock("asset/maps/Image/Map_2.png", sf::Vector2f(1953 + 7, 256 + 16), sf::Vector2f(30, 32), "ground", {"ground", 1953, 256, 30, 32}));
+            groundBlocks.push_back(new SolidBlock("asset/maps/Image/Map_2.png", sf::Vector2f(2017 + 87, 256 + 16), sf::Vector2f(190, 32), "ground", {"ground", 2017, 256, 190, 32}));
+            groundBlocks.push_back(new SolidBlock("asset/maps/Image/Map_2.png", sf::Vector2f(2321 + 55, 256 + 16), sf::Vector2f(126, 32), "ground", {"ground", 2321, 256, 126, 32}));
+            groundBlocks.push_back(new SolidBlock("asset/maps/Image/Map_2.png", sf::Vector2f(2560 + 288, 256 + 16), sf::Vector2f(591, 32), "ground", {"ground", 2560, 256, 591, 32}));
             // pipe
-            blocks.push_back(new SolidBlock("../../asset/maps/Image/Map_2.png", sf::Vector2f(1648 + 8, 208 + 32), sf::Vector2f(32, 48), "pipe", {"pipe", 1648, 208, 32, 48}));
-            blocks.push_back(new SolidBlock("../../asset/maps/Image/Map_2.png", sf::Vector2f(1744 + 8, 192 + 48), sf::Vector2f(32, 64), "pipe", {"pipe", 1744, 192, 32, 64}));
-            blocks.push_back(new SolidBlock("../../asset/maps/Image/Map_2.png", sf::Vector2f(1840 + 8, 224 + 16), sf::Vector2f(32, 32), "pipe", {"pipe", 1840, 224, 32, 32}));
+            blocks.push_back(new SolidBlock("asset/maps/Image/Map_2.png", sf::Vector2f(1648 + 8, 208 + 32), sf::Vector2f(32, 48), "pipe", {"pipe", 1648, 208, 32, 48}));
+            blocks.push_back(new SolidBlock("asset/maps/Image/Map_2.png", sf::Vector2f(1744 + 8, 192 + 48), sf::Vector2f(32, 64), "pipe", {"pipe", 1744, 192, 32, 64}));
+            blocks.push_back(new SolidBlock("asset/maps/Image/Map_2.png", sf::Vector2f(1840 + 8, 224 + 16), sf::Vector2f(32, 32), "pipe", {"pipe", 1840, 224, 32, 32}));
 
             // background
-            backgroundBlocks.push_back(new BackgroundBlock("../../asset/maps/Image/Map_2.png", sf::Vector2f(2960 + 72, 128 + 112), sf::Vector2f(160, 128), "background", {"background", 2960, 128, 160, 128}));
+            backgroundBlocks.push_back(new BackgroundBlock("asset/maps/Image/Map_2.png", sf::Vector2f(2960 + 72, 128 + 112), sf::Vector2f(160, 128), "background", {"background", 2960, 128, 160, 128}));
         }
         else if (levelState == 3){
             // ground
-            groundBlocks.push_back(new SolidBlock("../../asset/maps/Image/Map_3.png", sf::Vector2f(0 + 736 - 8, 256 + 16), sf::Vector2f(1472, 32), "ground", {"ground", 0, 256, 1472, 32}));
-            groundBlocks.push_back(new SolidBlock("../../asset/maps/Image/Map_3.png", sf::Vector2f(1536 + 80 - 8, 256 + 16), sf::Vector2f(160, 32), "ground", {"ground", 1536, 256, 160, 32}));
-            groundBlocks.push_back(new SolidBlock("../../asset/maps/Image/Map_3.png", sf::Vector2f(1744 + 240 - 8, 256 + 16), sf::Vector2f(480, 32), "ground", {"ground", 1744, 256, 480, 32}));
-            groundBlocks.push_back(new SolidBlock("../../asset/maps/Image/Map_3.png", sf::Vector2f(2272 + 80 - 8, 256 + 16), sf::Vector2f(160, 32), "ground", {"ground", 2272, 256, 160, 32}));
-            groundBlocks.push_back(new SolidBlock("../../asset/maps/Image/Map_3.png", sf::Vector2f(2464 + 504 - 8, 256 + 16), sf::Vector2f(1008, 32), "ground", {"ground", 2464, 256, 1008, 32}));
+            groundBlocks.push_back(new SolidBlock("asset/maps/Image/Map_3.png", sf::Vector2f(0 + 736 - 8, 256 + 16), sf::Vector2f(1472, 32), "ground", {"ground", 0, 256, 1472, 32}));
+            groundBlocks.push_back(new SolidBlock("asset/maps/Image/Map_3.png", sf::Vector2f(1536 + 80 - 8, 256 + 16), sf::Vector2f(160, 32), "ground", {"ground", 1536, 256, 160, 32}));
+            groundBlocks.push_back(new SolidBlock("asset/maps/Image/Map_3.png", sf::Vector2f(1744 + 240 - 8, 256 + 16), sf::Vector2f(480, 32), "ground", {"ground", 1744, 256, 480, 32}));
+            groundBlocks.push_back(new SolidBlock("asset/maps/Image/Map_3.png", sf::Vector2f(2272 + 80 - 8, 256 + 16), sf::Vector2f(160, 32), "ground", {"ground", 2272, 256, 160, 32}));
+            groundBlocks.push_back(new SolidBlock("asset/maps/Image/Map_3.png", sf::Vector2f(2464 + 504 - 8, 256 + 16), sf::Vector2f(1008, 32), "ground", {"ground", 2464, 256, 1008, 32}));
             // pipe
-            blocks.push_back(new SolidBlock("../../asset/maps/Image/Map_3.png", sf::Vector2f(736 + 8, 192 + 48), sf::Vector2f(32, 64), "pipe", {"pipe", 736, 192, 32, 64}));
-            blocks.push_back(new SolidBlock("../../asset/maps/Image/Map_3.png", sf::Vector2f(1184 + 8, 192 + 48), sf::Vector2f(32, 64), "pipe", {"pipe", 1184, 192, 32, 64}));
-            blocks.push_back(new SolidBlock("../../asset/maps/Image/Map_3.png", sf::Vector2f(1648 + 8, 192 + 48), sf::Vector2f(32, 64), "pipe", {"pipe", 1648, 192, 32, 64}));
-            blocks.push_back(new SolidBlock("../../asset/maps/Image/Map_3.png", sf::Vector2f(1840 + 8, 224 + 16), sf::Vector2f(32, 32), "pipe", {"pipe", 1840, 224, 32, 32}));
-            blocks.push_back(new SolidBlock("../../asset/maps/Image/Map_3.png", sf::Vector2f(1952 + 8, 192 + 48), sf::Vector2f(32, 64), "pipe", {"pipe", 1952, 192, 32, 64}));
-            blocks.push_back(new SolidBlock("../../asset/maps/Image/Map_3.png", sf::Vector2f(2016 + 8, 208 + 32), sf::Vector2f(32, 48), "pipe", {"pipe", 2016, 208, 32, 48}));
-            blocks.push_back(new SolidBlock("../../asset/maps/Image/Map_3.png", sf::Vector2f(2080 + 8, 176 + 64), sf::Vector2f(32, 80), "pipe", {"pipe", 2080, 176, 32, 80}));
-            blocks.push_back(new SolidBlock("../../asset/maps/Image/Map_3.png", sf::Vector2f(2816 + 8, 208 + 32), sf::Vector2f(32, 48), "pipe", {"pipe", 2816, 208, 32, 48}));
+            blocks.push_back(new SolidBlock("asset/maps/Image/Map_3.png", sf::Vector2f(736 + 8, 192 + 48), sf::Vector2f(32, 64), "pipe", {"pipe", 736, 192, 32, 64}));
+            blocks.push_back(new SolidBlock("asset/maps/Image/Map_3.png", sf::Vector2f(1184 + 8, 192 + 48), sf::Vector2f(32, 64), "pipe", {"pipe", 1184, 192, 32, 64}));
+            blocks.push_back(new SolidBlock("asset/maps/Image/Map_3.png", sf::Vector2f(1648 + 8, 192 + 48), sf::Vector2f(32, 64), "pipe", {"pipe", 1648, 192, 32, 64}));
+            blocks.push_back(new SolidBlock("asset/maps/Image/Map_3.png", sf::Vector2f(1840 + 8, 224 + 16), sf::Vector2f(32, 32), "pipe", {"pipe", 1840, 224, 32, 32}));
+            blocks.push_back(new SolidBlock("asset/maps/Image/Map_3.png", sf::Vector2f(1952 + 8, 192 + 48), sf::Vector2f(32, 64), "pipe", {"pipe", 1952, 192, 32, 64}));
+            blocks.push_back(new SolidBlock("asset/maps/Image/Map_3.png", sf::Vector2f(2016 + 8, 208 + 32), sf::Vector2f(32, 48), "pipe", {"pipe", 2016, 208, 32, 48}));
+            blocks.push_back(new SolidBlock("asset/maps/Image/Map_3.png", sf::Vector2f(2080 + 8, 176 + 64), sf::Vector2f(32, 80), "pipe", {"pipe", 2080, 176, 32, 80}));
+            blocks.push_back(new SolidBlock("asset/maps/Image/Map_3.png", sf::Vector2f(2816 + 8, 208 + 32), sf::Vector2f(32, 48), "pipe", {"pipe", 2816, 208, 32, 48}));
 
             // background
-            backgroundBlocks.push_back(new BackgroundBlock("../../asset/maps/Image/Map_3.png", sf::Vector2f(0 + 72, 80 + 160), sf::Vector2f(160, 176), "background", {"background", 0, 80, 160, 176}));
-            backgroundBlocks.push_back(new BackgroundBlock("../../asset/maps/Image/Map_3.png", sf::Vector2f(3264 + 72, 80 + 160), sf::Vector2f(160, 176), "background", {"background", 3264, 80, 160, 176}));
+            backgroundBlocks.push_back(new BackgroundBlock("asset/maps/Image/Map_3.png", sf::Vector2f(0 + 72, 80 + 160), sf::Vector2f(160, 176), "background", {"background", 0, 80, 160, 176}));
+            backgroundBlocks.push_back(new BackgroundBlock("asset/maps/Image/Map_3.png", sf::Vector2f(3264 + 72, 80 + 160), sf::Vector2f(160, 176), "background", {"background", 3264, 80, 160, 176}));
         }
 
         // FlagPole
@@ -346,8 +346,8 @@ namespace mario::entity {
 
                 if(tileId == 120){ // Coin
                     items.push_back(new mario::entity::Coin(
-                                    "../../asset/sprites/coin.json",
-                                    "../../asset/maps/Image/tiles-8.png",
+                                    "asset/sprites/coin.json",
+                                    "asset/maps/Image/tiles-8.png",
                                     sf::Vector2f(2.5f, 2.5f),
                                     "coin[0]",
                                     sf::Vector2f(x * tileWidth, y * tileHeight),

@@ -25,7 +25,7 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
     
     if(gameMode == GameMode::SinglePlayer) {
         p_player->loadDataFrom(currLevelState);
-        ofstream ofs("../../asset/save_data/autosave.svx");
+        ofstream ofs("asset/save_data/autosave.svx");
         ofs << " ";
     }
 
@@ -56,7 +56,7 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
     }
     // Load level and other game elements
     flagPole = new mario::entity::FlagPole();
-    tileMap = std::make_unique<mario::entity::TileMap>("../../asset/maps/tiles-8.json", "../../asset/maps/Map_" + std::to_string(currLevelState.level) + ".json", currLevelState.level, currLevelState.level-1);
+    tileMap = std::make_unique<mario::entity::TileMap>("asset/maps/tiles-8.json", "asset/maps/Map_" + std::to_string(currLevelState.level) + ".json", currLevelState.level, currLevelState.level-1);
     tileMap->loadObjects(enemies, items, blocks, groundBlocks, backgroundBlocks, flagPole);
     collisionManager.loadGroundBlocks(groundBlocks);
     // enemies.push_back(std::make_shared<InverseGoomba>(Vector2f(500, 400)));
@@ -85,7 +85,7 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
         }
     }
 
-    if (!backgroundTexture.loadFromFile("../../asset/maps/MapBackground/map_" + std::to_string(currLevelState.level) + "_background.png")) {
+    if (!backgroundTexture.loadFromFile("asset/maps/MapBackground/map_" + std::to_string(currLevelState.level) + "_background.png")) {
         std::cout << "Failed to load background texture for level " << currLevelState.level << "\n";
         exit(1);
     }
@@ -109,35 +109,35 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
 
 
     // Mario font initalize
-    marioFont = std::make_unique<sf::Font>("../../asset/fonts/SuperMario256.ttf");
+    marioFont = std::make_unique<sf::Font>("asset/fonts/SuperMario256.ttf");
 
     // Pause/Resume game
-    pauseTexture = std::make_unique<sf::Texture>("../../asset/textures/pause-button.png");
+    pauseTexture = std::make_unique<sf::Texture>("asset/textures/pause-button.png");
     pauseSprite = std::make_unique<sf::Sprite>(*pauseTexture);
     pauseSprite->setPosition({20, 97});
     pauseSprite->setScale({0.9f, 0.9f});
 
-    pauseHoverTexture = std::make_unique<sf::Texture>("../../asset/textures/pause-button-hover.png");
-    resumeTexture = std::make_unique<sf::Texture>("../../asset/textures/resume-button-hover.png");
+    pauseHoverTexture = std::make_unique<sf::Texture>("asset/textures/pause-button-hover.png");
+    resumeTexture = std::make_unique<sf::Texture>("asset/textures/resume-button-hover.png");
 
     // Home
-    homeTexture = std::make_unique<sf::Texture>("../../asset/textures/home.png");
+    homeTexture = std::make_unique<sf::Texture>("asset/textures/home.png");
     homeSprite = std::make_unique<sf::Sprite>(*homeTexture);
     homeSprite->setPosition({20, 30});
     homeSprite->setScale({0.9f, 0.9f});
 
-    homeHoverTexture = std::make_unique<sf::Texture>("../../asset/textures/home-hover.png");
+    homeHoverTexture = std::make_unique<sf::Texture>("asset/textures/home-hover.png");
 
     // Settings
-    settingsTexture = std::make_unique<sf::Texture>("../../asset/textures/settings.png");
+    settingsTexture = std::make_unique<sf::Texture>("asset/textures/settings.png");
     settingsSprite = std::make_unique<sf::Sprite>(*settingsTexture);
     settingsSprite->setPosition({20, 164});
     settingsSprite->setScale({0.9f, 0.9f});
 
-    settingsHoverTexture = std::make_unique<sf::Texture>("../../asset/textures/settings-hover.png");
+    settingsHoverTexture = std::make_unique<sf::Texture>("asset/textures/settings-hover.png");
 
     // Panel
-    panelTexture = std::make_unique<sf::Texture>("../../asset/textures/pause-text.png");
+    panelTexture = std::make_unique<sf::Texture>("asset/textures/pause-text.png");
     panelSprite = std::make_unique<sf::Sprite>(*panelTexture);
 
     sf::Vector2u windowSize = sf::Vector2u(1280, 720);
@@ -147,11 +147,11 @@ mario::pages::LevelsPage::LevelsPage(MainWindow &context, mario::resource::Level
     panelSprite->setPosition(sf::Vector2f((windowSize.x - panelSize.x) / 2.0f, (windowSize.y - panelSize.y) / 2.0f));
 
     // Settings panel
-    font = std::make_unique<sf::Font>("../../asset/fonts/Cascadia.ttf");
+    font = std::make_unique<sf::Font>("asset/fonts/Cascadia.ttf");
     
-    settingsPanelTexture = std::make_unique<sf::Texture>("../../asset/textures/settings-panel.png");
-    sliderBarTexture = std::make_unique<sf::Texture>("../../asset/textures/slider-bar.png");
-    sliderHandleTexture = std::make_unique<sf::Texture>("../../asset/textures/slider-handle.png");
+    settingsPanelTexture = std::make_unique<sf::Texture>("asset/textures/settings-panel.png");
+    sliderBarTexture = std::make_unique<sf::Texture>("asset/textures/slider-bar.png");
+    sliderHandleTexture = std::make_unique<sf::Texture>("asset/textures/slider-handle.png");
 
     settingsPanelSprite = std::make_unique<sf::Sprite>(*settingsPanelTexture);
     settingsPanelSprite->setOrigin(sf::Vector2f(settingsPanelTexture->getSize().x / 2.f, settingsPanelTexture->getSize().y / 2.f));

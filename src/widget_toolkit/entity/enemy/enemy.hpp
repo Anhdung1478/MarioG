@@ -8,7 +8,7 @@
 #include "../blocks/Block.hpp"
 
 namespace mario::entity {
-    #define FILE_PATH "../../asset/sprites/"
+    #define FILE_PATH "asset/sprites/"
 
     enum class EnemyBehavior {
         Patrol,

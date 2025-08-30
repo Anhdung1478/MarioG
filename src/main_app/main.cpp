@@ -26,7 +26,7 @@ void printMemoryUsage() {
 
 void initalizeForStaticMember() {
     sf::Texture *button_texture = new sf::Texture();
-    if(!button_texture->loadFromFile("../../asset/sprites/main_menu_button_mushroom.png")) {
+    if(!button_texture->loadFromFile("asset/sprites/main_menu_button_mushroom.png")) {
         std::cerr << "Could not load texture for main menu button mushroom !!\n";
     }
     

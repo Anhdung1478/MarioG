@@ -46,7 +46,7 @@ namespace mario {
                 }
 
             Button(std::string buttText = "") : fontSize(12), enabled(true), selected(false), buttonText(buttText) {
-                font = std::make_unique<sf::Font>("../../asset/fonts/MarioPixelRegularFont.ttf");
+                font = std::make_unique<sf::Font>("asset/fonts/MarioPixelRegularFont.ttf");
                 p_leftMushroomSprite = new sf::Sprite(*p_texture);
                 p_rightMushroomSprite = new sf::Sprite(*p_texture);
 

@@ -11,7 +11,7 @@ namespace mario::entity {
         : Block(pos, size, name)
     {
         InitSpritesSheet();
-        p_animation = new mario::entity::Animation("../../asset/maps/Image/tiles-8.png", BLOCK_SCALE, sprites);
+        p_animation = new mario::entity::Animation("asset/maps/Image/tiles-8.png", BLOCK_SCALE, sprites);
         if(name == "grass[0][0]"){
             p_animation->addAnimationStep("grass[0][0]");
             p_animation->addAnimationStep("grass[0][1]");
@@ -55,7 +55,7 @@ namespace mario::entity {
     BackgroundBlock::BackgroundBlock(const sf::Vector2f &pos, const sf::Vector2f &size, const std::string &name, const SpriteData2& sprite)
         : Block(pos, size, name)
     {
-        p_animation = new mario::entity::Animation("../../asset/maps/Image/tiles-8.png", BLOCK_SCALE, sprite);
+        p_animation = new mario::entity::Animation("asset/maps/Image/tiles-8.png", BLOCK_SCALE, sprite);
         // p_animation->setSpriteAnimation(name);
         p_animation->setSpriteAnimation(name);
         p_animation->setAnimationState(false);

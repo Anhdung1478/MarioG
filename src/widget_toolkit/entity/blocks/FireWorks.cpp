@@ -10,7 +10,7 @@ namespace mario::entity {
     FireWorks::FireWorks(const sf::Vector2f &pos, const sf::Vector2f &size)
         : position(pos), size(size),Entity()
     {
-       if(!texture.loadFromFile("../../asset/sprites/effects.png")) {
+       if(!texture.loadFromFile("asset/sprites/effects.png")) {
            std::cout << "Fail to load fireworks texture\n";
        }
        createFireworksAnimation();

@@ -150,8 +150,8 @@ namespace mario::entity {
                     
                     if(typeOfItem == 1) { // Red-mushroom
                         items.push_back(new RedMushroom(
-                            "../../asset/sprites/red-mushroom.json",
-                            "../../asset/maps/Image/tiles-8.png",
+                            "asset/sprites/red-mushroom.json",
+                            "asset/maps/Image/tiles-8.png",
                             sf::Vector2f(2.5f, 2.5f),
                             "red-mushroom[0]",
                             sf::Vector2f(block->getPosition().x, block->getPosition().y - block->getSize().y/2.0f),
@@ -161,8 +161,8 @@ namespace mario::entity {
                     } 
                     else if(typeOfItem == 2) { // Fire flower
                         items.push_back(new FireFlower(
-                            "../../asset/sprites/fireflower.json",
-                            "../../asset/maps/Image/tiles-8.png",
+                            "asset/sprites/fireflower.json",
+                            "asset/maps/Image/tiles-8.png",
                             sf::Vector2f(2.5f, 2.5f),
                             "fireflower[0]",
                             sf::Vector2f(block->getPosition().x, block->getPosition().y - block->getSize().y/2.0f),
@@ -172,8 +172,8 @@ namespace mario::entity {
                     } 
                     else if(typeOfItem == 3) { // One-up mushroom
                         items.push_back(new OneupMushroom(
-                            "../../asset/sprites/1up-mushroom.json",
-                            "../../asset/maps/Image/tiles-8.png",
+                            "asset/sprites/1up-mushroom.json",
+                            "asset/maps/Image/tiles-8.png",
                             sf::Vector2f(2.5f, 2.5f),
                             "1up-mushroom[0]",
                             sf::Vector2f(block->getPosition().x, block->getPosition().y - block->getSize().y/2.0f),
@@ -183,8 +183,8 @@ namespace mario::entity {
                     } 
                     else if(typeOfItem == 4) { // Starman
                         items.push_back(new Starman(
-                            "../../asset/sprites/starman.json",
-                            "../../asset/maps/Image/tiles-8.png",
+                            "asset/sprites/starman.json",
+                            "asset/maps/Image/tiles-8.png",
                             sf::Vector2f(2.5f, 2.5f),
                             "starman[0]",
                             sf::Vector2f(block->getPosition().x, block->getPosition().y - block->getSize().y/2.0f),

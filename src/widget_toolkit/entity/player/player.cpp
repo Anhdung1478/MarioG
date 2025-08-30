@@ -2,7 +2,7 @@
 #include "player.hpp"
 #include "../../networking/NetworkManager.hpp"
 
-#define FILE_PATH "../../asset/sprites/"
+#define FILE_PATH "asset/sprites/"
 
 mario::entity::Player::Player(sf::Vector2f spawnPoint, CharacterListType characterType, player_state::PlayerStateType stateType, int level, mario::audio::SoundManager& soundManager, NetworkManager& networkManager)
              : _characterType(characterType), _isAlive(true), soundManager(soundManager), networkManager(networkManager) {
@@ -10,7 +10,7 @@ mario::entity::Player::Player(sf::Vector2f spawnPoint, CharacterListType charact
     _isDeadAlready = false;
     playerBehavior = PlayerBehavior::Normal;
 
-    std::string fontPath = "../../asset/fonts/SuperMario256.ttf";
+    std::string fontPath = "asset/fonts/SuperMario256.ttf";
 
     sf::Color popUpScoreColor = (level == 1) ? sf::Color(255, 228, 105, 255) : (level == 2) ? sf::Color(255, 228, 105, 255) : sf::Color(255, 228, 105, 255);
     popUpScoreList = new PopUpTextList(1.5f, 25, sf::Vector2f(0, -25.f), fontPath, popUpScoreColor);

@@ -5,7 +5,7 @@
 #include "enemy.hpp"
 
 namespace mario::entity {
-    #define FILE_PATH "../../asset/sprites/"
+    #define FILE_PATH "asset/sprites/"
 
     class Ball : public Enemy {
     protected:

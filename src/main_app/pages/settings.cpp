@@ -4,10 +4,10 @@
 using namespace mario::pages;
 
 SettingsPage::SettingsPage(MainWindow& context) : Page(context) {
-    p_font = std::make_unique<sf::Font>("../../asset/fonts/SuperMario256.ttf");
+    p_font = std::make_unique<sf::Font>("asset/fonts/SuperMario256.ttf");
     
     // Background texture and sprite
-    backgroundTexture = std::make_unique<sf::Texture>("../../asset/sprites/mario-theme.png");
+    backgroundTexture = std::make_unique<sf::Texture>("asset/sprites/mario-theme.png");
     backgroundSprite = std::make_unique<sf::Sprite>(*backgroundTexture);
     sf::Vector2u windowSize = sf::Vector2u(1280, 720);
     float bgScaleX = static_cast<float>(windowSize.x) / backgroundTexture->getSize().x;
@@ -56,8 +56,8 @@ SettingsPage::SettingsPage(MainWindow& context) : Page(context) {
                                 rightPanel->getPosition().y + 50.f));
 
     // Slider textures
-    sliderBarTexture = std::make_unique<sf::Texture>("../../asset/textures/slider-bar.png");
-    sliderHandleTexture = std::make_unique<sf::Texture>("../../asset/textures/slider-handle.png");
+    sliderBarTexture = std::make_unique<sf::Texture>("asset/textures/slider-bar.png");
+    sliderHandleTexture = std::make_unique<sf::Texture>("asset/textures/slider-handle.png");
 
     sf::Vector2f pos = {windowSize.x / 2.f, windowSize.y / 2.f};
 
@@ -97,8 +97,8 @@ SettingsPage::SettingsPage(MainWindow& context) : Page(context) {
     });
     
     // Back Button (as sprite)
-    backTexture = std::make_unique<sf::Texture>("../../asset/textures/home.png");
-    backHoverTexture = std::make_unique<sf::Texture>("../../asset/textures/home-hover.png");
+    backTexture = std::make_unique<sf::Texture>("asset/textures/home.png");
+    backHoverTexture = std::make_unique<sf::Texture>("asset/textures/home-hover.png");
     backSprite = std::make_unique<sf::Sprite>(*backTexture);
     backSprite->setPosition({20, 20});
     backSprite->setScale({1.f, 1.f});

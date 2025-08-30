@@ -15,7 +15,7 @@ namespace mario::entity {
 
     void FlagPole::addEnemiesFlag(sf::Vector2f pos) {
         std::cout << "Position: " << pos.x << ", " << pos.y << "\n";
-        enemiesFlagAnimation = new Animation("../../asset/maps/Image/tiles-8.png", BLOCK_SCALE, {
+        enemiesFlagAnimation = new Animation("asset/maps/Image/tiles-8.png", BLOCK_SCALE, {
             {"enemies-flag[0]", 1, 171, 16, 16},
             {"enemies-flag[1]", 18, 171, 16, 16},
             {"enemies-flag[2]", 35, 171, 16, 16}
@@ -29,7 +29,7 @@ namespace mario::entity {
     }
 
     void FlagPole::addAlliesFlag(sf::Vector2f pos) {
-        alliesFlagAnimation = new Animation("../../asset/maps/Image/tiles-8.png", BLOCK_SCALE, {
+        alliesFlagAnimation = new Animation("asset/maps/Image/tiles-8.png", BLOCK_SCALE, {
             {"win-flag[0]", 1, 188, 16, 16},
             {"win-flag[1]", 18, 188, 16, 16},
             {"win-flag[2]", 35, 188, 16, 16},

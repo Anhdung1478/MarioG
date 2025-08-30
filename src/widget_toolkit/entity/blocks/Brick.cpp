@@ -7,16 +7,16 @@ namespace mario::entity {
     {
         InitSpritesSheet();
         name = "brick_" + std::to_string(themeID + 1) + ".png";
-        // p_animation = new mario::entity::Animation("../../asset/maps/Image/tiles-8.png", BLOCK_SCALE, sprites);
+        // p_animation = new mario::entity::Animation("asset/maps/Image/tiles-8.png", BLOCK_SCALE, sprites);
         p_animation = new mario::entity::Animation(
-            "../../asset/maps/blocks/brick_" + std::to_string(themeID + 1) + ".png", 
+            "asset/maps/blocks/brick_" + std::to_string(themeID + 1) + ".png", 
             BLOCK_SCALE, 
             {"brick_" + std::to_string(themeID + 1) + ".png", 0, 0, 16, 16}
         );
         p_animation->setSpriteAnimation(name);
         p_animation->setAnimationState(false);
 
-        if(!textureFragments.loadFromFile("../../asset/maps/blocks/brick_fragment.png")) {
+        if(!textureFragments.loadFromFile("asset/maps/blocks/brick_fragment.png")) {
             std::cout << "can load brick fragments from tiles-8.png" << std::endl;
         }
 
@@ -53,7 +53,7 @@ namespace mario::entity {
             {"empty-brick-block[1]", 35, 69, 16, 16},
             {"empty-brick-block[2]", 69, 69, 16, 16}
         };
-        coins_animation = new mario::entity::Animation("../../asset/maps/items/coin_effect.png", BLOCK_SCALE, {
+        coins_animation = new mario::entity::Animation("asset/maps/items/coin_effect.png", BLOCK_SCALE, {
             {"coin[0]", 0, 0, 20, 16},
             {"coin[1]", 21, 0, 20, 16},
             {"coin[2]", 42, 0, 20, 16},
@@ -64,7 +64,7 @@ namespace mario::entity {
             {"coin[7]", 147, 0, 20, 16},
             {"coin[8]", 168, 0, 20, 16}
         });
-        // coins_animation = new mario::entity::Animation("../../asset/maps/Image/items-coins.png", BLOCK_SCALE, {
+        // coins_animation = new mario::entity::Animation("asset/maps/Image/items-coins.png", BLOCK_SCALE, {
         //     {"coin[0]", 3, 73, 20, 16},
         //     {"coin[1]", 24, 73, 20, 16},
         //     {"coin[2]", 45, 73, 20, 16},
@@ -81,7 +81,7 @@ namespace mario::entity {
         delete p_animation;
         name = "empty_block_" + std::to_string(themeID + 1) + ".png";
         p_animation = new mario::entity::Animation(
-            "../../asset/maps/blocks/empty_block_" + std::to_string(themeID + 1) + ".png", 
+            "asset/maps/blocks/empty_block_" + std::to_string(themeID + 1) + ".png", 
             BLOCK_SCALE, 
             {"empty_block_" + std::to_string(themeID + 1) + ".png", 0, 0, 16, 16}
         );

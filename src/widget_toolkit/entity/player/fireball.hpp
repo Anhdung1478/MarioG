@@ -18,8 +18,8 @@ namespace mario::entity {
 
         public:
             Fireball(sf::Vector2f spawnPoint, bool _isFaceForward) {
-                p_animation = new Animation("../../asset/sprites/fire.json", "../../asset/sprites/effects.png", sf::Vector2f(2.5f, 2.5f), "fire.roll[0]");
-                p_animation->loadSheet("../../asset/sprites/explosion.json", "../../asset/sprites/effects.png");
+                p_animation = new Animation("asset/sprites/fire.json", "asset/sprites/effects.png", sf::Vector2f(2.5f, 2.5f), "fire.roll[0]");
+                p_animation->loadSheet("asset/sprites/explosion.json", "asset/sprites/effects.png");
                 
                 p_body = new DynamicBox(spawnPoint, FIREBALL_GLOBAL_SIZE, 0.f, 400.f, -200.f, 1);
                 p_body->setVelocity(sf::Vector2f((_isFaceForward ? 1 : -1) * 400.f, 0.f));

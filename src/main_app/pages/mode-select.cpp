@@ -8,12 +8,12 @@ namespace mario::pages {
     
     ModeSelectPage::ModeSelectPage(MainWindow& context) 
         : Page(context),
-          marioFont(std::make_unique<sf::Font>("../../asset/fonts/SuperMario256.ttf")),
+          marioFont(std::make_unique<sf::Font>("asset/fonts/SuperMario256.ttf")),
           _selectedLevel(1)  // Initialize _selectedLevel
     {
         // Setup background
         _backgroundTexture = std::make_unique<sf::Texture>();
-        if (!_backgroundTexture->loadFromFile("../../asset/sprites/mario-theme.png")) {
+        if (!_backgroundTexture->loadFromFile("asset/sprites/mario-theme.png")) {
             std::cerr << "Failed to load background image!" << std::endl;
         }
         _backgroundSprite = std::make_unique<sf::Sprite>(*_backgroundTexture);

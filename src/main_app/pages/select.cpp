@@ -8,11 +8,11 @@
 mario::pages::SelectPage::SelectPage(MainWindow &context, int level)
     : Page(context), selectedChar(0), selectedLevel(level), selectedFrame(0), FRAME_SCALE(4.0f), FRAMES_Y(380.0f), framesStartX(0.0f), frameWidth(0.0f), FRAME_SPACING(200.0f),
       curtainSprite([&]() -> const sf::Texture& {
-          TextureManager::getInstance().loadSheet("../../asset/sprites/curtain.json", "../../asset/sprites/curtain.png");
+          TextureManager::getInstance().loadSheet("asset/sprites/curtain.json", "asset/sprites/curtain.png");
           return *TextureManager::getInstance().getSpriteData("curtain[0]").texture;
       }()),
       titleSprite([&]() -> const sf::Texture& {
-          TextureManager::getInstance().loadSheet("../../asset/sprites/selection-frames.json", "../../asset/sprites/selection-frames.png");
+          TextureManager::getInstance().loadSheet("asset/sprites/selection-frames.json", "asset/sprites/selection-frames.png");
           return *TextureManager::getInstance().getSpriteData("select-title[0]").texture;
       }()) {
 
